@@ -29,11 +29,7 @@
 		328BDCE420DE09C300682698 /* CGMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328BDCDD20DE09C300682698 /* CGMath.swift */; };
 		32AD7597217A3A6D002FFE17 /* PBPopupContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AD7596217A3A6D002FFE17 /* PBPopupContentView.swift */; };
 		32B1E211209ABC2D00143DA6 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E210209ABC2D00143DA6 /* UIColor+Random.swift */; };
-		32B3DE9221D507910078BEBC /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 32B3DE9121D507910078BEBC /* CHANGELOG.md */; };
 		32BA2A9D20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA2A9C20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift */; };
-		32BC2B4721D49E73008656EC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 32BC2B4421D49E73008656EC /* README.md */; };
-		32BC2B4821D49E73008656EC /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 32BC2B4521D49E73008656EC /* LICENSE */; };
-		32BC2B4921D49E73008656EC /* PBPopupController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 32BC2B4621D49E73008656EC /* PBPopupController.podspec */; };
 		32C045B921A7DD840028DB85 /* PBPopupPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325626DE20FC74AC008739D6 /* PBPopupPresentationController.swift */; };
 		32E1F39D21AFCEEB009A1DF1 /* UIView+CornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E1F39C21AFCEEB009A1DF1 /* UIView+CornerRadius.swift */; };
 		32E52FE520DA1A2A00A6A11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 32E52FE420DA1A2A00A6A11E /* Assets.xcassets */; };
@@ -68,11 +64,7 @@
 		328BDCDD20DE09C300682698 /* CGMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGMath.swift; sourceTree = "<group>"; };
 		32AD7596217A3A6D002FFE17 /* PBPopupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBPopupContentView.swift; sourceTree = "<group>"; };
 		32B1E210209ABC2D00143DA6 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
-		32B3DE9121D507910078BEBC /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../../../CHANGELOG.md; sourceTree = "<group>"; };
 		32BA2A9C20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBPopupInteractivePresentationController.swift; sourceTree = "<group>"; };
-		32BC2B4421D49E73008656EC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../../README.md; sourceTree = "<group>"; };
-		32BC2B4521D49E73008656EC /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../../../LICENSE; sourceTree = "<group>"; };
-		32BC2B4621D49E73008656EC /* PBPopupController.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PBPopupController.podspec; path = ../../../PBPopupController.podspec; sourceTree = "<group>"; };
 		32E1F39C21AFCEEB009A1DF1 /* UIView+CornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+CornerRadius.swift"; sourceTree = "<group>"; };
 		32E52FE420DA1A2A00A6A11E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,7 +101,6 @@
 		32080BEB208715920017FECD /* PBPopupController */ = {
 			isa = PBXGroup;
 			children = (
-				32BC2B4321D49E44008656EC /* Metadata */,
 				328BDCD720DE099E00682698 /* CGMathSwift */,
 				32559939209063AC009047FB /* PBChevronView.swift */,
 				3255993D2091BE00009047FB /* PBPopupCloseButton.swift */,
@@ -172,17 +163,6 @@
 				328BDCDD20DE09C300682698 /* CGMath.swift */,
 			);
 			path = CGMathSwift;
-			sourceTree = "<group>";
-		};
-		32BC2B4321D49E44008656EC /* Metadata */ = {
-			isa = PBXGroup;
-			children = (
-				32B3DE9121D507910078BEBC /* CHANGELOG.md */,
-				32BC2B4521D49E73008656EC /* LICENSE */,
-				32BC2B4621D49E73008656EC /* PBPopupController.podspec */,
-				32BC2B4421D49E73008656EC /* README.md */,
-			);
-			path = Metadata;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -256,10 +236,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32BC2B4721D49E73008656EC /* README.md in Resources */,
-				32B3DE9221D507910078BEBC /* CHANGELOG.md in Resources */,
-				32BC2B4921D49E73008656EC /* PBPopupController.podspec in Resources */,
-				32BC2B4821D49E73008656EC /* LICENSE in Resources */,
 				32E52FE520DA1A2A00A6A11E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

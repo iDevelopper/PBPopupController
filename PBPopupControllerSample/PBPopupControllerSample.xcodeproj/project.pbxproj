@@ -16,6 +16,10 @@
 		32080C2220872EB80017FECD /* PBPopupController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 32080C1B20872DDD0017FECD /* PBPopupController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		32080C582089C20E0017FECD /* DemoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32080C572089C20E0017FECD /* DemoTableViewController.swift */; };
 		32276941213E7EE500C6AB19 /* CustomPopupBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32276940213E7EE500C6AB19 /* CustomPopupBarViewController.swift */; };
+		3235201821D5271D00D1CAD9 /* PBPopupController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 3235201421D5271C00D1CAD9 /* PBPopupController.podspec */; };
+		3235201921D5271D00D1CAD9 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 3235201521D5271C00D1CAD9 /* CHANGELOG.md */; };
+		3235201A21D5271D00D1CAD9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3235201621D5271D00D1CAD9 /* README.md */; };
+		3235201B21D5271D00D1CAD9 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3235201721D5271D00D1CAD9 /* LICENSE */; };
 		323E309C2194A42A00CB8150 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323E309B2194A42A00CB8150 /* SplitViewController.swift */; };
 		324639782196DB5A0036E3B3 /* PopupContentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324639772196DB590036E3B3 /* PopupContentTableViewController.swift */; };
 		3246397A2197F96D0036E3B3 /* PlayerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324639792197F96D0036E3B3 /* PlayerTableViewCell.swift */; };
@@ -78,6 +82,10 @@
 		3229ECC321D4A9E500E6CC75 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		3229ECC521D4AACB00E6CC75 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		3229ECC821D4EFD600E6CC75 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PBPopupControllerSample/Info.plist; sourceTree = SOURCE_ROOT; };
+		3235201421D5271C00D1CAD9 /* PBPopupController.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PBPopupController.podspec; path = ../PBPopupController.podspec; sourceTree = "<group>"; };
+		3235201521D5271C00D1CAD9 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
+		3235201621D5271D00D1CAD9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		3235201721D5271D00D1CAD9 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		323E309B2194A42A00CB8150 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		324639772196DB590036E3B3 /* PopupContentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupContentTableViewController.swift; sourceTree = "<group>"; };
 		324639792197F96D0036E3B3 /* PlayerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerTableViewCell.swift; sourceTree = "<group>"; };
@@ -121,6 +129,7 @@
 		32080BBB2087130E0017FECD = {
 			isa = PBXGroup;
 			children = (
+				3235201221D526E000D1CAD9 /* Metadata */,
 				32080BC62087130E0017FECD /* PBPopupControllerSample */,
 				32080BC52087130E0017FECD /* Products */,
 				32080C1620872DDC0017FECD /* PBPopupController.xcodeproj */,
@@ -171,6 +180,17 @@
 				32080C1B20872DDD0017FECD /* PBPopupController.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3235201221D526E000D1CAD9 /* Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				3235201521D5271C00D1CAD9 /* CHANGELOG.md */,
+				3235201721D5271D00D1CAD9 /* LICENSE */,
+				3235201421D5271C00D1CAD9 /* PBPopupController.podspec */,
+				3235201621D5271D00D1CAD9 /* README.md */,
+			);
+			name = Metadata;
 			sourceTree = "<group>";
 		};
 		3268B820219C0E1700AC66EF /* Cells */ = {
@@ -294,7 +314,11 @@
 				32E1F3AE21B26D1D009A1DF1 /* Localizable.strings in Resources */,
 				32080BD22087130F0017FECD /* LaunchScreen.storyboard in Resources */,
 				32080BCF2087130F0017FECD /* Assets.xcassets in Resources */,
+				3235201821D5271D00D1CAD9 /* PBPopupController.podspec in Resources */,
 				32080BCD2087130E0017FECD /* Main.storyboard in Resources */,
+				3235201921D5271D00D1CAD9 /* CHANGELOG.md in Resources */,
+				3235201B21D5271D00D1CAD9 /* LICENSE in Resources */,
+				3235201A21D5271D00D1CAD9 /* README.md in Resources */,
 				32C0B675216C71BC00E0AC2B /* Custom.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

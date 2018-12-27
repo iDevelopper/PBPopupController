@@ -1,0 +1,138 @@
+
+/* Class = "UILabel"; text = "Popup Top"; ObjectID = "1ID-AD-3Dk"; */
+"1ID-AD-3Dk.text" = "Popup Top";
+
+/* Class = "UILabel"; text = "Presenting Top"; ObjectID = "1b4-Wx-fiW"; */
+"1b4-Wx-fiW.text" = "Presenting Top";
+
+/* Class = "UISegmentedControl"; 3tH-jL-mlC.segmentTitles[0] = "Default"; ObjectID = "3tH-jL-mlC"; */
+"3tH-jL-mlC.segmentTitles[0]" = "Default";
+
+/* Class = "UISegmentedControl"; 3tH-jL-mlC.segmentTitles[1] = "Deck"; ObjectID = "3tH-jL-mlC"; */
+"3tH-jL-mlC.segmentTitles[1]" = "Deck";
+
+/* Class = "UISegmentedControl"; 3tH-jL-mlC.segmentTitles[2] = "Full"; ObjectID = "3tH-jL-mlC"; */
+"3tH-jL-mlC.segmentTitles[2]" = "Full";
+
+/* Class = "UISegmentedControl"; 3tH-jL-mlC.segmentTitles[3] = "Custom"; ObjectID = "3tH-jL-mlC"; */
+"3tH-jL-mlC.segmentTitles[3]" = "Custom";
+
+/* Class = "UIButton"; normalTitle = "Dismiss"; ObjectID = "560-Z5-k9f"; */
+"560-Z5-k9f.normalTitle" = "Dismiss";
+
+/* Class = "UILabel"; text = "Album"; ObjectID = "6JJ-sI-RCO"; */
+"6JJ-sI-RCO.text" = "Album";
+
+/* Class = "UIButton"; normalTitle = "Hide/Show Tab Bar"; ObjectID = "6co-wr-HKg"; */
+"6co-wr-HKg.normalTitle" = "Hide/Show Tab Bar";
+
+/* Class = "UINavigationItem"; title = "PBPopupController"; ObjectID = "7co-5b-xgp"; */
+"7co-5b-xgp.title" = "PBPopupController";
+
+/* Class = "UILabel"; text = "YT Style Example"; ObjectID = "AFd-0P-5Uj"; */
+"AFd-0P-5Uj.text" = "YT Style Example";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "B3K-cy-Dbc"; */
+"B3K-cy-Dbc.text" = "Label";
+
+/* Class = "UISearchBar"; placeholder = "Search for a place or address"; ObjectID = "DP4-Qv-jS3"; */
+"DP4-Qv-jS3.placeholder" = "Search for a place or address";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "DhI-6w-K5T"; */
+"DhI-6w-K5T.text" = "Title";
+
+/* Class = "UISegmentedControl"; Gyy-Wn-204.segmentTitles[0] = "Default"; ObjectID = "Gyy-Wn-204"; */
+"Gyy-Wn-204.segmentTitles[0]" = "Default";
+
+/* Class = "UISegmentedControl"; Gyy-Wn-204.segmentTitles[1] = "Chevron"; ObjectID = "Gyy-Wn-204"; */
+"Gyy-Wn-204.segmentTitles[1]" = "Chevron";
+
+/* Class = "UISegmentedControl"; Gyy-Wn-204.segmentTitles[2] = "Round"; ObjectID = "Gyy-Wn-204"; */
+"Gyy-Wn-204.segmentTitles[2]" = "Round";
+
+/* Class = "UISegmentedControl"; Gyy-Wn-204.segmentTitles[3] = "None"; ObjectID = "Gyy-Wn-204"; */
+"Gyy-Wn-204.segmentTitles[3]" = "None";
+
+/* Class = "UILabel"; text = "Demo Song"; ObjectID = "KZO-No-OT3"; */
+"KZO-No-OT3.text" = "Demo Song";
+
+/* Class = "UILabel"; text = "Title"; ObjectID = "LLX-q5-jWz"; */
+"LLX-q5-jWz.text" = "Title";
+
+/* Class = "UILabel"; text = "Album"; ObjectID = "Qi2-FG-xfn"; */
+"Qi2-FG-xfn.text" = "Album";
+
+/* Class = "UIButton"; normalTitle = "Present"; ObjectID = "SWB-vR-ddL"; */
+"SWB-vR-ddL.normalTitle" = "Present";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Sb8-rZ-ITz"; */
+"Sb8-rZ-ITz.text" = "Label";
+
+/* Class = "UILabel"; text = "Demo Song"; ObjectID = "Tqd-AU-CY7"; */
+"Tqd-AU-CY7.text" = "Demo Song";
+
+/* Class = "UIButton"; normalTitle = "Next"; ObjectID = "VVI-9S-Ymh"; */
+"VVI-9S-Ymh.normalTitle" = "Next";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "Wtc-Rv-RKc"; */
+"Wtc-Rv-RKc.text" = "Label";
+
+/* Class = "UILabel"; text = "PopupPresentationStyle"; ObjectID = "XGd-ve-Smo"; */
+"XGd-ve-Smo.text" = "PopupPresentationStyle";
+
+/* Class = "UILabel"; text = "PopupContentViewController"; ObjectID = "YFr-IB-HiW"; */
+"YFr-IB-HiW.text" = "PopupContentViewController";
+
+/* Class = "UILabel"; text = "Presenting Bottom"; ObjectID = "Yj6-85-A9h"; */
+"Yj6-85-A9h.text" = "Presenting Bottom";
+
+/* Class = "UISegmentedControl"; Z8H-kH-6kP.segmentTitles[0] = "Default"; ObjectID = "Z8H-kH-6kP"; */
+"Z8H-kH-6kP.segmentTitles[0]" = "Default";
+
+/* Class = "UISegmentedControl"; Z8H-kH-6kP.segmentTitles[1] = "Prominent"; ObjectID = "Z8H-kH-6kP"; */
+"Z8H-kH-6kP.segmentTitles[1]" = "Prominent";
+
+/* Class = "UISegmentedControl"; Z8H-kH-6kP.segmentTitles[2] = "Compact"; ObjectID = "Z8H-kH-6kP"; */
+"Z8H-kH-6kP.segmentTitles[2]" = "Compact";
+
+/* Class = "UISegmentedControl"; Z8H-kH-6kP.segmentTitles[3] = "Custom"; ObjectID = "Z8H-kH-6kP"; */
+"Z8H-kH-6kP.segmentTitles[3]" = "Custom";
+
+/* Class = "UIButton"; normalTitle = "Home"; ObjectID = "bYg-h3-JoH"; */
+"bYg-h3-JoH.normalTitle" = "Home";
+
+/* Class = "UISegmentedControl"; gdm-pq-Dde.segmentTitles[0] = "View"; ObjectID = "gdm-pq-Dde"; */
+"gdm-pq-Dde.segmentTitles[0]" = "View";
+
+/* Class = "UISegmentedControl"; gdm-pq-Dde.segmentTitles[1] = "Scroll view"; ObjectID = "gdm-pq-Dde"; */
+"gdm-pq-Dde.segmentTitles[1]" = "Scroll view";
+
+/* Class = "UIButton"; normalTitle = "Present PopupContentViewController"; ObjectID = "icC-KJ-tZd"; */
+"icC-KJ-tZd.normalTitle" = "Present PopupContentViewController";
+
+/* Class = "UILabel"; text = "PopupBarStyle"; ObjectID = "krz-l2-1DJ"; */
+"krz-l2-1DJ.text" = "PopupBarStyle";
+
+/* Class = "UILabel"; text = "Popup Bottom"; ObjectID = "kzO-Ag-n6b"; */
+"kzO-Ag-n6b.text" = "Popup Bottom";
+
+/* Class = "UILabel"; text = "Demo Album"; ObjectID = "lrl-0W-L6d"; */
+"lrl-0W-L6d.text" = "Demo Album";
+
+/* Class = "UILabel"; text = "Demo Album"; ObjectID = "lz2-nu-oKE"; */
+"lz2-nu-oKE.text" = "Demo Album";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "poq-ZB-Ekg"; */
+"poq-ZB-Ekg.text" = "Label";
+
+/* Class = "UILabel"; text = "PopupCloseButtonStyle"; ObjectID = "szI-Ir-g2K"; */
+"szI-Ir-g2K.text" = "PopupCloseButtonStyle";
+
+/* Class = "UILabel"; text = "Example"; ObjectID = "tlb-fB-jVx"; */
+"tlb-fB-jVx.text" = "Example";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "utH-qD-Isa"; */
+"utH-qD-Isa.text" = "Label";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "zmb-nz-0w7"; */
+"zmb-nz-0w7.text" = "Label";

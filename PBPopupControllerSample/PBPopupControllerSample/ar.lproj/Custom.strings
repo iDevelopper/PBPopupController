@@ -1,0 +1,39 @@
+
+/* Class = "UIButton"; normalTitle = "Present Custom"; ObjectID = "4aF-5c-0or"; */
+"4aF-5c-0or.normalTitle" = "Present Custom";
+
+/* Class = "UILabel"; text = "Example"; ObjectID = "8kk-7Q-IfX"; */
+"8kk-7Q-IfX.text" = "Example";
+
+/* Class = "UILabel"; text = "Youtube Style Example"; ObjectID = "CWf-Sl-q76"; */
+"CWf-Sl-q76.text" = "Youtube Style Example";
+
+/* Class = "UIButton"; normalTitle = "Child2"; ObjectID = "Cou-vd-J33"; */
+"Cou-vd-J33.normalTitle" = "Child2";
+
+/* Class = "UIButton"; normalTitle = "Child1"; ObjectID = "F8e-Th-vdZ"; */
+"F8e-Th-vdZ.normalTitle" = "Child1";
+
+/* Class = "UIButton"; normalTitle = "Dismiss"; ObjectID = "GSF-qh-faT"; */
+"GSF-qh-faT.normalTitle" = "Dismiss";
+
+/* Class = "UIButton"; normalTitle = "Home"; ObjectID = "WEH-ph-yF8"; */
+"WEH-ph-yF8.normalTitle" = "Home";
+
+/* Class = "UIButton"; normalTitle = "Additional Safe Area (iOS>=11)"; ObjectID = "Zmb-5V-HC8"; */
+"Zmb-5V-HC8.normalTitle" = "Additional Safe Area (iOS>=11)";
+
+/* Class = "UILabel"; text = "Correct Top Layout Guide"; ObjectID = "bv1-Bk-dNK"; */
+"bv1-Bk-dNK.text" = "Correct Top Layout Guide";
+
+/* Class = "UILabel"; text = "Correct Bottom Layout Guide"; ObjectID = "g7n-ZO-wCD"; */
+"g7n-ZO-wCD.text" = "Correct Bottom Layout Guide";
+
+/* Class = "UIButton"; normalTitle = "Reset Additional Safe Area"; ObjectID = "gLr-Rw-No3"; */
+"gLr-Rw-No3.normalTitle" = "Reset Additional Safe Area";
+
+/* Class = "UIButton"; normalTitle = "Present"; ObjectID = "iXk-4m-O3q"; */
+"iXk-4m-O3q.normalTitle" = "Present";
+
+/* Class = "UIButton"; normalTitle = "Child3"; ObjectID = "iab-tv-dUu"; */
+"iab-tv-dUu.normalTitle" = "Child3";

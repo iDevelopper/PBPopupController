@@ -1,0 +1,9 @@
+/* 
+  Localizable.strings
+  PBPopupControllerSample
+
+  Created by Patrick BODET on 01/12/2018.
+  Copyright © 2018 Patrick BODET. All rights reserved.
+*/
+"Close" = "Fermer";
+"Double tap to close popup content" = "Taper deux fois pour fermer";

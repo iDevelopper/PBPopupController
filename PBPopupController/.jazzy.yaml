@@ -1,0 +1,11 @@
+module: PBPopupController
+author: Patrick BODET
+author_url: https://github.com/iDevelopper/PBPopupController
+github_url: https://github.com/iDevelopper/PBPopupController
+exclude:
+- "EasyAnimation/*"
+- "PBPopupController/CGMathSwift/*"
+
+copyright: '© 2018 [Patrick BODET aka iDevelopper](http://bustoutsolutions.com) under [open source license](https://github.com/bustoutsolutions/siesta/blob/master/LICENSE).'
+
+#swift_version: 4.2

@@ -88,7 +88,7 @@ import UIKit
         }
     }
     
-    internal var popupCloseButton: PBPopupCloseButton!
+    @objc public var popupCloseButton: PBPopupCloseButton!
     
     // The size of the popup content view (see popupContentSize).
     internal var size: CGSize! = .zero
@@ -150,10 +150,10 @@ import UIKit
             self.popupCloseButton.addTarget(self.popupController, action: #selector(PBPopupController.closePopupContent), for: .touchUpInside)
             self.addSubview(self.popupCloseButton)
             self.popupCloseButton.translatesAutoresizingMaskIntoConstraints = false
-            self.popupCloseButton?.setContentHuggingPriority(.required, for: .vertical)
-            self.popupCloseButton?.setContentHuggingPriority(.required, for: .horizontal)
-            self.popupCloseButton?.setContentCompressionResistancePriority(.required, for: .vertical)
-            self.popupCloseButton?.setContentCompressionResistancePriority(.required, for: .horizontal)
+            self.popupCloseButton.setContentHuggingPriority(.required, for: .vertical)
+            self.popupCloseButton.setContentHuggingPriority(.required, for: .horizontal)
+            self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .vertical)
+            self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? /*12*/12 : 8)
             if self.popupCloseButtonStyle == .round {
                 popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12)

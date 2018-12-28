@@ -1181,7 +1181,10 @@ A set of methods used by the delegate to respond, with a preview view controller
         {
             self.titleLabel.attributedText = NSAttributedString(string: self.title!, attributes: (defaultTitleAttribures as! [NSAttributedString.Key : Any]))
         }
-        
+        else {
+            self.titleLabel.text = nil
+        }
+
         font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 14 : 11/*12*/, weight: .regular)
         if #available(iOS 11.0, *) {
             font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
@@ -1196,6 +1199,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         if (self.subtitle != nil)
         {
             self.subtitleLabel.attributedText = NSAttributedString(string: self.subtitle!, attributes: (defaultSubTitleAttribures as! [NSAttributedString.Key : Any]))
+        }
+        else {
+            self.subtitleLabel.text = nil
         }
     }
     

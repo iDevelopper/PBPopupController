@@ -78,35 +78,10 @@ class PopupContentTableViewController: UITableViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        
-        if #available(iOS 11.0, *) {
-            //let insets = self.view.safeAreaInsets
-            //print("SafeAreaInsets: \(insets)")
-            //self.tableView.contentInset = UIEdgeInsets(top: -insets.top, left: 0, bottom: 0, right: 0)
-        } else {
-            // Fallback on earlier versions
-        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
-        //print("close button frame: \(self.closeButton.frame)")
-        if #available(iOS 11.0, *) {
-            //let insets = self.view.safeAreaInsets
-            //print("SafeAreaInsets: \(insets)")
-            //self.tableView.contentInset = UIEdgeInsets.init(top: -insets.top, left: 0, bottom: 0, right: 0)
-        } else {
-            // Fallback on earlier versions
-        }
-        /*
-        if self.popupContainerViewController?.popupContentView.popupPresentationStyle == .deck {
-            let statusBarFrame = UIApplication.shared.statusBarFrame
-            let insets = UIEdgeInsetsMake(topLayoutGuide.length, 0, statusBarFrame.height + 8.0 + 34, 0)
-            tableView.contentInset = insets
-            tableView.scrollIndicatorInsets = insets
-        }
-        */
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
@@ -160,6 +135,10 @@ class PopupContentTableViewController: UITableViewController {
             // Configure the cell...
             cell.contentView.addSubview(self.playerView)
             cell.contentView.bringSubviewToFront(cell.closeButton)
+            cell.closeButton.setImage(nil, for: .normal)
+            if self.popupContainerViewController != nil {
+                self.popupContainerViewController.popupContentView.popupCloseButton = cell.closeButton
+            }
             cell.closeButton.removeTarget(nil, action: nil, for: .touchUpInside)
             cell.closeButton.addTarget(self, action: #selector(closePopupContent), for: .touchUpInside)
 
@@ -196,20 +175,24 @@ class PopupContentTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         //cell.backgroundColor = UIColor.clear
+        if indexPath.section == 0 {
+            self.popupContentVC.songNameLabel.restartLabel()
+            self.popupContentVC.albumNameLabel.restartLabel()
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if indexPath.section == 1 {
-            let musicCell = tableView.cellForRow(at: indexPath) as! MusicTableViewCell
+            //let musicCell = tableView.cellForRow(at: indexPath) as! MusicTableViewCell
             
             if self.popupContainerViewController != nil, let popupBar = self.popupContainerViewController.popupBar {
-                self.popupContentVC.albumArtImage = musicCell.albumArtImageView.image
-                self.popupContentVC.songNameLabel.text = musicCell.songNameLabel.text
-                self.popupContentVC.albumNameLabel.text = musicCell.albumNameLabel.text
-                popupBar.image = popupContentVC.albumArtImage
-                popupBar.title = popupContentVC.songNameLabel.text
-                popupBar.subtitle = popupContentVC.albumNameLabel.text
+                self.popupContentVC.albumArtImage = self.images[indexPath.row]
+                self.popupContentVC.songNameLabel.text = self.titles[indexPath.row]
+                self.popupContentVC.albumNameLabel.text = self.subtitles[indexPath.row]
+                popupBar.image = self.images[indexPath.row]
+                popupBar.title = self.titles[indexPath.row]
+                popupBar.subtitle = self.subtitles[indexPath.row]
                 DispatchQueue.main.async {
                     self.tableView.scrollToRow(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .top, animated: true)
                 }

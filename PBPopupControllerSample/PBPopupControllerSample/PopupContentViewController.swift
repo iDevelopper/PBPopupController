@@ -257,7 +257,7 @@ class PopupContentViewController: UIViewController {
         
         self.albumArtImage = popupBar.image
         self.songNameLabel.text = popupBar.title
-        self.albumNameLabel.text = popupBar.title
+        self.albumNameLabel.text = popupBar.subtitle
     }
     
     @IBAction func nextAction(_ sender: Any) {
@@ -272,7 +272,7 @@ class PopupContentViewController: UIViewController {
         
         self.albumArtImage = popupBar.image
         self.songNameLabel.text = popupBar.title
-        self.albumNameLabel.text = popupBar.title
+        self.albumNameLabel.text = popupBar.subtitle
     }
     
     @objc func tick() {

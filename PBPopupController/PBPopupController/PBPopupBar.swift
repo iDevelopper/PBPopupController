@@ -623,7 +623,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var titlesViewRightConstraint: NSLayoutConstraint!
     
     // true if we have to ask for a custom label (i.e. MarqueeLabel)
-    private var askForLabels: Bool = true
+    private var askForLabels: Bool = false
     
     // The label containing the title text
     private var titleLabel: UILabel!
@@ -667,11 +667,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.backgroundView.autoresizingMask = []
         self.backgroundView.isUserInteractionEnabled = false
         self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
-        //self.backgroundView.backgroundColor = UIColor(white: 0.97, alpha: 0.8)
         self.addSubview(self.backgroundView)
         
         if #available(iOS 11.0, *) {
-            //            self.safeAreaBackgroundView = UIVisualEffectView(effect: effect)
             self.safeAreaBackgroundView = PBPopupSafeAreaBackgroundView(effect: effect)
             self.safeAreaBackgroundView.autoresizesSubviews = true
             self.safeAreaBackgroundView.clipsToBounds = false
@@ -696,25 +694,18 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.toolbar.autoresizingMask = []
         self.toolbar.isTranslucent = true
         
-        //self.toolbar.backgroundColor = UIColor.clear
-        
-        // For background color, we have to replace the system image
+        // For background color, we have to replace the system image.
         // -- > self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        // The backgroundColor is not translucent
-        //self.toolbar.backgroundColor = UIColor.red
+        // The backgroundColor is not translucent.
         
-        // For barTintColor, do not replace the system image
+        // For barTintColor, do not replace the system image.
         // --> self.toolbar.setBackgroundImage(nil, forToolbarPosition: .any, barMetrics: .default)
-        // The barTintColor is translucent if the toolbar is translucent
-        //self.toolbar.barTintColor = UIColor.lightGray
+        // The barTintColor is translucent if the toolbar is translucent.
         
-        // For effect view, replace the system image (extraLight give the same appearance than the tab bar
+        // For effect view, replace the system image.
         // --> self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         
-        // For background color: do it, for tint color: don't do it, for effect view: do it
-        
         if #available(iOS 11.0, *) {
-            //self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .bottom, barMetrics: .default)
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         }
         else {
@@ -726,15 +717,12 @@ A set of methods used by the delegate to respond, with a preview view controller
         // Or if toolbar.clipsToBounds = false
         // --> self.toolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
         
-        //self.toolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
-        
         // 1 - Must be called before clipsToBounds else the shadow line not shown
         self.toolbar.layer.masksToBounds = true
         
         // 2 - For the shadow image (top line)
         self.toolbar.clipsToBounds = false
         
-        //self.backgroundView.contentView.addSubview(self.toolbar)
         self.addSubview(self.toolbar)
         
         self.imageView = UIImageView()
@@ -749,22 +737,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.imageView.layer.cornerRadius = 3.0
         self.imageView.layer.masksToBounds = true
         
-        // TODO
-        /*
         self.shadowImageView = PBPopupRoundShadowImageView(frame: self.imageView.bounds)
         self.shadowImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.shadowImageView.backgroundColor = UIColor.clear
-        self.shadowImageView.layer.masksToBounds = false
-        self.shadowImageView.layer.shadowColor = UIColor.black.cgColor
-        self.shadowImageView.layer.shadowOffset = CGSize(width: 0.0, height: 0.0)
-        self.shadowImageView.layer.shadowRadius = 3.0
-        self.shadowImageView.layer.shadowOpacity = 0.5
-        */
-        
-        self.shadowImageView = PBPopupRoundShadowImageView(frame: self.imageView.bounds)
-        self.shadowImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        self.shadowImageView.backgroundColor = UIColor.clear
-        //self.shadowImageView.layer.masksToBounds = false
         self.shadowImageView.shadowColor = UIColor.black
         self.shadowImageView.shadowOffset = CGSize(width: 0.0, height: 0.0)
         self.shadowImageView.shadowRadius = 3.0
@@ -1098,9 +1073,6 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: 0.0).isActive = true
         self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
         
-        //self.titlesViewLeftConstraint?.isActive = false
-        //self.titlesViewRightConstraint?.isActive = false
-
         if let leftConstraint = self.titlesViewLeftConstraint {
             leftConstraint.constant = left
         }
@@ -1146,6 +1118,10 @@ A set of methods used by the delegate to respond, with a preview view controller
         if self.askForLabels {
             self.askForLabels = false
             if let titleLabel = self.dataSource?.titleLabel?(for: self) {
+                NSLayoutConstraint.deactivate(self.titleLabel.constraints)
+                self.titleLabelTopConstraint = nil
+                self.titleLabelHeightConstraint = nil
+                self.titleLabelCenterConstraint = nil
                 self.titleLabel.removeFromSuperview()
                 self.titleLabel = titleLabel
                 if PBPopupBarShowColors == true {
@@ -1155,6 +1131,10 @@ A set of methods used by the delegate to respond, with a preview view controller
             }
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
+                NSLayoutConstraint.deactivate(self.subtitleLabel.constraints)
+                self.subtitleLabelBottomConstraint = nil
+                self.subtitleLabelHeightConstraint = nil
+                self.subtitleLabelCenterConstraint = nil
                 self.subtitleLabel.removeFromSuperview()
                 self.subtitleLabel = subtitleLabel
                 if PBPopupBarShowColors == true {
@@ -1524,20 +1504,6 @@ extension PBPopupBar {
         }
     }
     
-    /**
-     Add a shadow's layer to the popup bar image view views.
-     */
-    /*
-    public class PBPopupBarShadowImageView: UIView {
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-        }
-        
-        required init(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-    */
     internal class PBPopupBarHighlightView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)

@@ -42,6 +42,24 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     
     var effectView: UIVisualEffectView!
     
+    lazy var label: MarqueeLabel = {
+        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
+        marqueeLabel.leadingBuffer = 0.0
+        marqueeLabel.trailingBuffer = 5.0
+        marqueeLabel.animationDelay = 1.0
+        marqueeLabel.type = .continuous
+        return marqueeLabel
+    }()
+    
+    lazy var sublabel: MarqueeLabel = {
+        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 20, fadeLength: 10)
+        marqueeLabel.leadingBuffer = 0.0
+        marqueeLabel.trailingBuffer = 5.0
+        marqueeLabel.animationDelay = 1.0
+        marqueeLabel.type = .continuous
+        return marqueeLabel
+    }()
+    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -859,21 +877,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     // MARK: - PBPopupBar dataSource
     
     func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
-        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
-        marqueeLabel.leadingBuffer = 0.0
-        marqueeLabel.trailingBuffer = 5.0
-        marqueeLabel.animationDelay = 1.0
-        marqueeLabel.type = .continuous
-        return marqueeLabel
+        return self.label
     }
     
     func subtitleLabel(for popupBar: PBPopupBar) -> UILabel? {
-        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 20, fadeLength: 10)
-        marqueeLabel.leadingBuffer = 0.0
-        marqueeLabel.trailingBuffer = 5.0
-        marqueeLabel.animationDelay = 1.0
-        marqueeLabel.type = .continuous
-        return marqueeLabel
+        return self.sublabel
     }
 }
 

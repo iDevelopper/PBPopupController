@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
     DESC
 
     s.homepage     = "https://github.com/iDevelopper/PBPopupController"
-  # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
+    # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
     s.license = { :type => "MIT", :file => "LICENSE" }
 
@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 
     s.source_files  = "PBPopupController/**/*.{swift,h,m}"
-    s.exclude_files = "PBPopupController/CGMathSwift"
+    # s.exclude_files = "PBPopupController/CGMathSwift"
 
     s.swift_version = '4.2'
 

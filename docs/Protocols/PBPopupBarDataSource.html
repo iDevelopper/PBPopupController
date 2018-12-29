@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PBPopupBarDataSource Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/PBPopupBarDataSource" class="dashAnchor"></a>
+    <a title="PBPopupBarDataSource Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">PBPopupController Docs</a> (86% documented)</p>
+        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">PBPopupController Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        PBPopupBarDataSource Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupBar.html">PBPopupBar</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupCloseButton.html">PBPopupCloseButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupContentView.html">PBPopupContentView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupController.html">PBPopupController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:17PBPopupController5PBLog_5error4file8function_yxyXK_SbS2SSitlF">PBLog(_:error:file:function:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarDataSource.html">PBPopupBarDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>PBPopupBarDataSource</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PBPopupBarDataSource</span> <span class="p">:</span> <span class="kt">NSObjectProtocol</span></code></pre>
+
+                </div>
+              </div>
+            <p>The data source providing custom labels instances to the popup bar so they can be used instead of the default provided ones.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupBarDataSource(im)titleLabelFor:"></a>
+                    <a name="//apple_ref/swift/Method/titleLabel(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupBarDataSource(im)titleLabelFor:">titleLabel(for:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a UIlabel subclass object to be used by the popup bar instead of the default title label (for example a MarqueeLabel instance).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">titleLabel</span><span class="p">(</span><span class="k">for</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UILabel</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupBar</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar object asking for a label.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A <code>UIlabel</code> object to be used instead of the default one.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupBarDataSource(im)subtitleLabelFor:"></a>
+                    <a name="//apple_ref/swift/Method/subtitleLabel(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupBarDataSource(im)subtitleLabelFor:">subtitleLabel(for:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns a UIlabel subclass object to be used by the popup bar instead of the default subtitle label (for example a MarqueeLabel instance).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">subtitleLabel</span><span class="p">(</span><span class="k">for</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UILabel</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A UIlabel object to be used instead of the default one.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-29)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

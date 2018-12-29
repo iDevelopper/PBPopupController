@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PBPopupControllerDelegate Protocol Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Protocol/PBPopupControllerDelegate" class="dashAnchor"></a>
+    <a title="PBPopupControllerDelegate Protocol Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">PBPopupController Docs</a> (86% documented)</p>
+        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">PBPopupController Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        PBPopupControllerDelegate Protocol Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupBar.html">PBPopupBar</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupCloseButton.html">PBPopupCloseButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupContentView.html">PBPopupContentView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupController.html">PBPopupController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:17PBPopupController5PBLog_5error4file8function_yxyXK_SbS2SSitlF">PBLog(_:error:file:function:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarDataSource.html">PBPopupBarDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>PBPopupControllerDelegate</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">PBPopupControllerDelegate</span> <span class="p">:</span> <span class="kt">NSObjectProtocol</span></code></pre>
+
+                </div>
+              </div>
+            <p>Undocumented</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willPresent:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:willPresent:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willPresent:">popupController(_:willPresent:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just before the popup bar view is presenting.</p>
+
+<ul>
+<li>popupController:     The popup controller object.</li>
+<li>popupBar       :     The popup bar object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">willPresent</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willDismiss:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:willDismiss:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willDismiss:">popupController(_:willDismiss:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just before the popup bar view is dismissing.</p>
+
+<ul>
+<li>popupController:     The popup controller object.</li>
+<li>popupBar       :     The popup bar object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">willDismiss</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didPresent:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:didPresent:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didPresent:">popupController(_:didPresent:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just after the popup bar view is presenting.</p>
+
+<ul>
+<li>popupController:     The popup controller object.</li>
+<li>popupBar       :     The popup bar object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">didPresent</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didDismiss:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:didDismiss:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didDismiss:">popupController(_:didDismiss:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just after the popup bar view is dismissing.</p>
+
+<ul>
+<li>popupController:     The popup controller object.</li>
+<li>popupBar       :     The popup bar object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">didDismiss</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willOpen:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:willOpen:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willOpen:">popupController(_:willOpen:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just before the popup content view is about to be open.</p>
+
+<ul>
+<li>popupController:             The popup controller object.</li>
+<li>popuContentViewController:   The popup content view controller object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">willOpen</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willClose:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:willClose:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:willClose:">popupController(_:willClose:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just before the popup content view is about to be closed.</p>
+
+<ul>
+<li>popupController:             The popup controller object.</li>
+<li>popuContentViewController:   The popup content view controller object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">willClose</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didOpen:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:didOpen:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didOpen:">popupController(_:didOpen:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just after the popup content view is open.</p>
+
+<ul>
+<li>popupController:             The popup controller object.</li>
+<li>popuContentViewController:   The popup content view controller object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">didOpen</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didClose:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:didClose:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:didClose:">popupController(_:didClose:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called just after the popup content view is closed.</p>
+
+<ul>
+<li>popupController:             The popup controller object.</li>
+<li>popuContentViewController:   The popup content view controller object.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">didClose</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:interactivePresentationFor:state:progress:location:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:interactivePresentationFor:state:progress:location:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:interactivePresentationFor:state:progress:location:">popupController(_:interactivePresentationFor:state:progress:location:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called several times during the interactive presentation.</p>
+<li>popupController:             The popup controller object.</li>
+<li>popuContentViewController:   The popup content view controller object.</li>
+<li>state:                       The popup presentation state (closed / open).</li>
+<li>progress:                    The current progress of the interactive presentation</li>
+<li><p>location:                    The current location. The y-coordinate of the point on screen.</p></li>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>The current progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the completion of the interactive presentation.</p>
+
+</div>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <p><code><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></code>.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">interactivePresentationFor</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">,</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></span><span class="p">,</span> <span class="nv">progress</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">,</span> <span class="nv">location</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:stateChanged:previousState:"></a>
+                    <a name="//apple_ref/swift/Method/popupController(_:stateChanged:previousState:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:stateChanged:previousState:">popupController(_:stateChanged:previousState:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Called when the presentation state of the popup controller has changed.</p>
+<li>popupController:  The popup controller object.</li>
+<li>state:            The popup presentation state.</li>
+<li><p>previousState:    The previous popup presentation state.</p></li>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <p><code><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></code>.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">stateChanged</span> <span class="nv">state</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></span><span class="p">,</span> <span class="nv">previousState</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-29)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

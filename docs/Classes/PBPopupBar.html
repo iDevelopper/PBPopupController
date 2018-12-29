@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PBPopupBar Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/PBPopupBar" class="dashAnchor"></a>
+    <a title="PBPopupBar Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">PBPopupController Docs</a> (86% documented)</p>
+        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">PBPopupController Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        PBPopupBar Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupBar.html">PBPopupBar</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupCloseButton.html">PBPopupCloseButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupContentView.html">PBPopupContentView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupController.html">PBPopupController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:17PBPopupController5PBLog_5error4file8function_yxyXK_SbS2SSitlF">PBLog(_:error:file:function:_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarDataSource.html">PBPopupBarDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>PBPopupBar</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupBar</span> <span class="p">:</span> <span class="kt">UIView</span></code></pre>
+
+                </div>
+              </div>
+            <p>A popup bar presented with a content view controller such as a <code>UITabBarController</code>, a <code>UINavigationController</code>, a <code>UIViewController</code> or a custom container view controller. The user can swipe or tap the popup bar at any point to present the popup content view controller. After presenting, the user dismisses the popup content view controller by either swiping or tapping an optional popup close button. The contents of the popup bar is built dynamically using its own properties. The popup bar may be a custom one if <code><a href="../Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">PBPopupBar.customPopupBarViewController</a></code> is set.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Public%20Properties"></a>
+                <a name="//apple_ref/swift/Section/Public Properties" class="dashAnchor"></a>
+                <a href="#/Public%20Properties">
+                  <h3 class="section-name">Public Properties</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)dataSource"></a>
+                    <a name="//apple_ref/swift/Property/dataSource" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)dataSource">dataSource</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The data source of the PBPopupBar object.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Protocols/PBPopupBarDataSource.html">PBPopupBarDataSource</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">dataSource</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupBarDataSource.html">PBPopupBarDataSource</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)previewingDelegate"></a>
+                    <a name="//apple_ref/swift/Property/previewingDelegate" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)previewingDelegate">previewingDelegate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The previewing delegate object mediates the presentation of views from the preview (peek) view controller and the commit (pop) view controller. In practice, these two are typically the same view controller. The delegate performs this mediation through your implementation of the methods of the <code><a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a></code> protocol.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">previewingDelegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupBarPreviewingDelegate.html">PBPopupBarPreviewingDelegate</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)PBPopupBarShowColors"></a>
+                    <a name="//apple_ref/swift/Property/PBPopupBarShowColors" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)PBPopupBarShowColors">PBPopupBarShowColors</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>For debug: If <code>true</code>, the popup bar will attribute some colors to its subviews.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">PBPopupBarShowColors</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupBarPresentationDuration"></a>
+                    <a name="//apple_ref/swift/Property/popupBarPresentationDuration" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupBarPresentationDuration">popupBarPresentationDuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar presentation duration when presenting from hidden to closed state.</p>
+<div class="aside aside-seealso">
+    <p class="aside-title">Seealso</p>
+    <code><a href="../Classes/PBPopupContentView.html#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupPresentationDuration">PBPopupContentView.popupPresentationDuration</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBarPresentationDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupTapGestureRecognizer"></a>
+                    <a name="//apple_ref/swift/Property/popupTapGestureRecognizer" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupTapGestureRecognizer">popupTapGestureRecognizer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The tap gesture recognizer attached to the popup bar for presenting the popup content view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupTapGestureRecognizer</span><span class="p">:</span> <span class="kt">UITapGestureRecognizer</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController"></a>
+                    <a name="//apple_ref/swift/Property/customPopupBarViewController" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">customPopupBarViewController</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Set this property with a custom popup bar view controller object to provide a popup bar with custom content. In this custom view controller, use the preferredContentSize property to set the size of the custom popup bar (example: preferredContentSize = CGSize(width: -1, height: 65)).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">customPopupBarViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)inheritsVisualStyleFromBottomBar"></a>
+                    <a name="//apple_ref/swift/Property/inheritsVisualStyleFromBottomBar" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)inheritsVisualStyleFromBottomBar">inheritsVisualStyleFromBottomBar</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, the popup bar will automatically inherit its style from the bottom bar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">inheritsVisualStyleFromBottomBar</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupBarStyle"></a>
+                    <a name="//apple_ref/swift/Property/popupBarStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)popupBarStyle">popupBarStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar style (see PBPopupBarStyle).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBarStyle</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barStyle"></a>
+                    <a name="//apple_ref/swift/Property/barStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barStyle">barStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The bar style of the popup bar&rsquo; toolbar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">barStyle</span><span class="p">:</span> <span class="kt">UIBarStyle</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)backgroundStyle"></a>
+                    <a name="//apple_ref/swift/Property/backgroundStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)backgroundStyle">backgroundStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar background style that specifies its visual effect appearance.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>UIBlurEffect.Style</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">backgroundStyle</span><span class="p">:</span> <span class="kt">UIBlurEffect</span><span class="o">.</span><span class="kt">Style</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)isTranslucent"></a>
+                    <a name="//apple_ref/swift/Property/isTranslucent" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)isTranslucent">isTranslucent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value that indicates whether the popup bar is translucent (<code>true</code>) or not (<code>false</code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">isTranslucent</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)backgroundColor"></a>
+                    <a name="//apple_ref/swift/Property/backgroundColor" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)backgroundColor">backgroundColor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The background color of the popup bar&rsquo; toolbar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barTintColor"></a>
+                    <a name="//apple_ref/swift/Property/barTintColor" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barTintColor">barTintColor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The tint color to apply to the popup bar background.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">barTintColor</span><span class="p">:</span> <span class="kt">UIColor</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)tintColor"></a>
+                    <a name="//apple_ref/swift/Property/tintColor" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)tintColor">tintColor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The tint color to apply to the popup bar items.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">tintColor</span><span class="p">:</span> <span class="kt">UIColor</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)image"></a>
+                    <a name="//apple_ref/swift/Property/image" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)image">image</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar&rsquo;s image.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    The image will only be displayed on prominent popup bars.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">UIImage</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)imageView"></a>
+                    <a name="//apple_ref/swift/Property/imageView" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)imageView">imageView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An image view displayed when the bar style is prominent. (read-only)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">imageView</span><span class="p">:</span> <span class="kt">UIImageView</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)shadowImageView"></a>
+                    <a name="//apple_ref/swift/Property/shadowImageView" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)shadowImageView">shadowImageView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The view providing a shadow&rsquo; layer to the popup bar image view.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Read-only, but its properties can be set. For example for no shadow, use <code>popupBar.shadowImageView.layer.shadowOpacity = 0</code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">shadowImageView</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a></span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)title"></a>
+                    <a name="//apple_ref/swift/Property/title" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)title">title</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar&rsquo;s title.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    If no subtitle is set, the title will be centered vertically.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)titleTextAttributes"></a>
+                    <a name="//apple_ref/swift/Property/titleTextAttributes" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)titleTextAttributes">titleTextAttributes</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Display attributes for the popup bar’s title text.</p>
+
+<p>You may specify the font, text color, and shadow properties for the title in the text attributes dictionary, using the keys found in <code>NSAttributedString.h</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">titleTextAttributes</span><span class="p">:</span> <span class="p">[</span><span class="kt">NSAttributedString</span><span class="o">.</span><span class="kt">Key</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)subtitle"></a>
+                    <a name="//apple_ref/swift/Property/subtitle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)subtitle">subtitle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar&rsquo;s subtitle.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    If no title is set, the subtitle will be centered vertically.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">subtitle</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)subtitleTextAttributes"></a>
+                    <a name="//apple_ref/swift/Property/subtitleTextAttributes" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)subtitleTextAttributes">subtitleTextAttributes</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Display attributes for the popup bar’s subtitle text.</p>
+
+<p>You may specify the font, text color, and shadow properties for the subtitle in the text attributes dictionary, using the keys found in <code>NSAttributedString.h</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">subtitleTextAttributes</span><span class="p">:</span> <span class="p">[</span><span class="kt">NSAttributedString</span><span class="o">.</span><span class="kt">Key</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityLabel"></a>
+                    <a name="//apple_ref/swift/Property/accessibilityLabel" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityLabel">accessibilityLabel</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The string that succinctly identifies the accessibility element (titles view, the container for title and subtitle labels).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">accessibilityLabel</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityHint"></a>
+                    <a name="//apple_ref/swift/Property/accessibilityHint" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityHint">accessibilityHint</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The string that briefly describes the result of performing an action on the accessibility title view (container for title and subtitle labels).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">accessibilityHint</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)semanticContentAttribute"></a>
+                    <a name="//apple_ref/swift/Property/semanticContentAttribute" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)semanticContentAttribute">semanticContentAttribute</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The semantic description of the view’s contents, used to determine whether the view should be flipped when switching between left-to-right and right-to-left layouts.</p>
+
+<p>Defaults to <code>UISemanticContentAttribute.unspecified</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">semanticContentAttribute</span><span class="p">:</span> <span class="kt">UISemanticContentAttribute</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)leftBarButtonItems"></a>
+                    <a name="//apple_ref/swift/Property/leftBarButtonItems" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)leftBarButtonItems">leftBarButtonItems</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An array of custom bar button items to display on the left side. Or right side if RTL.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">leftBarButtonItems</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIBarButtonItem</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)rightBarButtonItems"></a>
+                    <a name="//apple_ref/swift/Property/rightBarButtonItems" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)rightBarButtonItems">rightBarButtonItems</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An array of custom bar button items to display on the right side. Or left side if RTL.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">rightBarButtonItems</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIBarButtonItem</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barButtonItemsSemanticContentAttribute"></a>
+                    <a name="//apple_ref/swift/Property/barButtonItemsSemanticContentAttribute" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)barButtonItemsSemanticContentAttribute">barButtonItemsSemanticContentAttribute</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The semantic description of the bar items, used to determine the order of bar items when switching between left-to-right and right-to-left layouts.</p>
+
+<p>Defaults to <code>UISemanticContentAttribute.playback</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">barButtonItemsSemanticContentAttribute</span><span class="p">:</span> <span class="kt">UISemanticContentAttribute</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)progressViewStyle"></a>
+                    <a name="//apple_ref/swift/Property/progressViewStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)progressViewStyle">progressViewStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar&rsquo;s progress view style.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">progressViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)progress"></a>
+                    <a name="//apple_ref/swift/Property/progress" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)progress">progress</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup bar progress view&rsquo;s progress.</p>
+
+<p>The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the completion of the task. The default value is 0.0. Values less than 0.0 and greater than 1.0 are pinned to those limits.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">progress</span><span class="p">:</span> <span class="kt">Float</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityProgressLabel"></a>
+                    <a name="//apple_ref/swift/Property/accessibilityProgressLabel" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityProgressLabel">accessibilityProgressLabel</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The accessibility label of the progress, in a localized string.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">accessibilityProgressLabel</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityProgressValue"></a>
+                    <a name="//apple_ref/swift/Property/accessibilityProgressValue" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)accessibilityProgressValue">accessibilityProgressValue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The accessibility value of the progress, in a localized string.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">accessibilityProgressValue</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Public%20Methods"></a>
+                <a name="//apple_ref/swift/Section/Public Methods" class="dashAnchor"></a>
+                <a href="#/Public%20Methods">
+                  <h3 class="section-name">Public Methods</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupBar(im)updatePopupBarAppearance"></a>
+                    <a name="//apple_ref/swift/Method/updatePopupBarAppearance()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupBar(im)updatePopupBarAppearance">updatePopupBarAppearance()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Call this method to update the popup bar appearance (style, tint color, etc.) according to its docking view. You should call this after updating the docking view.
+If the popup bar&rsquo;s <code><a href="../Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)inheritsVisualStyleFromBottomBar">inheritsVisualStyleFromBottomBar</a></code> property is set to <code>false</code>, this method has no effect.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)inheritsVisualStyleFromBottomBar">PBPopupBar.inheritsVisualStyleFromBottomBar</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">updatePopupBarAppearance</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-29)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

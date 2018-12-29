@@ -82,6 +82,7 @@
 		3235201521D5271C00D1CAD9 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CHANGELOG.md; path = ../CHANGELOG.md; sourceTree = "<group>"; };
 		3235201621D5271D00D1CAD9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		3235201721D5271D00D1CAD9 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		3235202521D7CA3B00D1CAD9 /* build_docs.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = build_docs.sh; path = ../build_docs.sh; sourceTree = "<group>"; };
 		323E309B2194A42A00CB8150 /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		324639772196DB590036E3B3 /* PopupContentTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopupContentTableViewController.swift; sourceTree = "<group>"; };
 		324639792197F96D0036E3B3 /* PlayerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerTableViewCell.swift; sourceTree = "<group>"; };
@@ -181,6 +182,7 @@
 		3235201221D526E000D1CAD9 /* Metadata */ = {
 			isa = PBXGroup;
 			children = (
+				3235202521D7CA3B00D1CAD9 /* build_docs.sh */,
 				3235201521D5271C00D1CAD9 /* CHANGELOG.md */,
 				3235201721D5271D00D1CAD9 /* LICENSE */,
 				3235201421D5271C00D1CAD9 /* PBPopupController.podspec */,

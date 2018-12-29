@@ -16,10 +16,6 @@
 		32080C2220872EB80017FECD /* PBPopupController.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 32080C1B20872DDD0017FECD /* PBPopupController.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		32080C582089C20E0017FECD /* DemoTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32080C572089C20E0017FECD /* DemoTableViewController.swift */; };
 		32276941213E7EE500C6AB19 /* CustomPopupBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32276940213E7EE500C6AB19 /* CustomPopupBarViewController.swift */; };
-		3235201821D5271D00D1CAD9 /* PBPopupController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 3235201421D5271C00D1CAD9 /* PBPopupController.podspec */; };
-		3235201921D5271D00D1CAD9 /* CHANGELOG.md in Resources */ = {isa = PBXBuildFile; fileRef = 3235201521D5271C00D1CAD9 /* CHANGELOG.md */; };
-		3235201A21D5271D00D1CAD9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3235201621D5271D00D1CAD9 /* README.md */; };
-		3235201B21D5271D00D1CAD9 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 3235201721D5271D00D1CAD9 /* LICENSE */; };
 		323E309C2194A42A00CB8150 /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323E309B2194A42A00CB8150 /* SplitViewController.swift */; };
 		324639782196DB5A0036E3B3 /* PopupContentTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324639772196DB590036E3B3 /* PopupContentTableViewController.swift */; };
 		3246397A2197F96D0036E3B3 /* PlayerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324639792197F96D0036E3B3 /* PlayerTableViewCell.swift */; };
@@ -314,11 +310,7 @@
 				32E1F3AE21B26D1D009A1DF1 /* Localizable.strings in Resources */,
 				32080BD22087130F0017FECD /* LaunchScreen.storyboard in Resources */,
 				32080BCF2087130F0017FECD /* Assets.xcassets in Resources */,
-				3235201821D5271D00D1CAD9 /* PBPopupController.podspec in Resources */,
 				32080BCD2087130E0017FECD /* Main.storyboard in Resources */,
-				3235201921D5271D00D1CAD9 /* CHANGELOG.md in Resources */,
-				3235201B21D5271D00D1CAD9 /* LICENSE in Resources */,
-				3235201A21D5271D00D1CAD9 /* README.md in Resources */,
 				32C0B675216C71BC00E0AC2B /* Custom.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

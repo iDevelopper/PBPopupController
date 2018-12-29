@@ -9,6 +9,8 @@ Pod::Spec.new do |s|
     DESC
 
     s.homepage     = "https://github.com/iDevelopper/PBPopupController"
+    s.documentation_url = 'http://iDevelopper.github.io/PBPopupController/'
+
     # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
 
     s.license = { :type => "MIT", :file => "LICENSE" }

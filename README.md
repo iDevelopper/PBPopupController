@@ -5,6 +5,10 @@ PBPopupController is a framework for presenting view controllers as popups, much
 
 Overview, installation, Cocoapods, features, gif, documentation, etc...
 
+## Documentation
+
+You can find [the docs here](http://iDevelopper.github.io/PBPopupController/). Documentation is generated with [jazzy](https://github.com/realm/jazzy) and hosted on [GitHub-Pages](https://pages.github.com).
+
 ## Special Mention
 
 A Special Thank to [Leo Natan](https://github.com/LeoNatan).

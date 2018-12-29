@@ -283,14 +283,14 @@ extension PBPopupPresentationStyle {
     
     - SeeAlso: `PBPopupControllerDataSource`.
     */
-   @objc weak open var dataSource: PBPopupControllerDataSource?
+   @objc weak public var dataSource: PBPopupControllerDataSource?
    
    /**
     The delegate of the PBPopupController object.
     
     - SeeAlso: `PBPopupControllerDelegate`.
     */
-   @objc weak open var delegate: PBPopupControllerDelegate?
+   @objc weak public var delegate: PBPopupControllerDelegate?
    
    /**
     The state of the popup presentation. (read-only)

@@ -71,7 +71,7 @@ internal class PBChevronView: UIView {
         self.isUserInteractionEnabled = false
     }
 
-    override open func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         if leftView == nil {
             self.leftView = UIView(frame: CGRect.zero)

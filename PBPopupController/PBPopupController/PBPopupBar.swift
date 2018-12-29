@@ -187,7 +187,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      
      - SeeAlso: `PBPopupBarDataSource`.
      */
-    @objc weak open var dataSource: PBPopupBarDataSource? {
+    @objc weak public var dataSource: PBPopupBarDataSource? {
         didSet {
             self.askForLabels = true
         }
@@ -352,7 +352,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     /**
      The background color of the popup bar' toolbar.
      */
-    @objc override open var backgroundColor: UIColor? {
+    @objc override public var backgroundColor: UIColor? {
         get {
             return self.toolbar.backgroundColor
         }
@@ -391,7 +391,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     /**
      The tint color to apply to the popup bar items.
      */
-    @objc override open var tintColor: UIColor! {
+    @objc override public var tintColor: UIColor! {
         get {
             return self.toolbar.tintColor
         }

@@ -205,7 +205,7 @@ extension PBPopupPresentationStyle {
     Called just before the popup content view is about to be open.
     
     - Parameter popupController:             The popup controller object.
-    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter popupContentViewController:  The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController)
    
@@ -213,7 +213,7 @@ extension PBPopupPresentationStyle {
     Called just before the popup content view is about to be closed.
     
     - Parameter popupController:             The popup controller object.
-    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter popupContentViewController:  The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController)
    
@@ -221,7 +221,7 @@ extension PBPopupPresentationStyle {
     Called just after the popup content view is open.
     
     - Parameter popupController:             The popup controller object.
-    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter popupContentViewController:  The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController)
    
@@ -229,7 +229,7 @@ extension PBPopupPresentationStyle {
     Called just after the popup content view is closed.
     
     - Parameter popupController:             The popup controller object.
-    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter popupContentViewController:  The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController)
    
@@ -237,7 +237,7 @@ extension PBPopupPresentationStyle {
     Called several times during the interactive presentation.
     
     - Parameter popupController:             The popup controller object.
-    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter popupContentViewController:  The popup content view controller object.
     - Parameter state:                       The popup presentation state (closed / open).
     - Parameter progress:                    The current progress of the interactive presentation
     - Parameter location:                    The current location. The y-coordinate of the point on screen.

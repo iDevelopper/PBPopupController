@@ -130,7 +130,7 @@ internal extension UITabBarController {
     
     @objc internal override func insetsForBottomBar() -> UIEdgeInsets {
         if #available(iOS 11.0, *) {
-            return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.superview?.safeAreaInsets ?? UIEdgeInsets.zero
+            return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         } else {
             return UIEdgeInsets.zero
         }
@@ -252,7 +252,7 @@ internal extension UINavigationController {
             if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
                 return tabBarController.insetsForBottomBar()
             }
-            return self.view.superview?.safeAreaInsets ?? UIEdgeInsets.zero
+            return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         } else {
             return UIEdgeInsets.zero
         }
@@ -451,7 +451,7 @@ internal extension UIViewController {
     @objc internal func insetsForBottomBar() -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
         if #available(iOS 11.0, *) {
-            insets = self.view.superview?.safeAreaInsets ?? UIEdgeInsets.zero
+            insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
             if self.popupController.dataSource?.bottomBarView?(for: self.popupController) != nil {
                 if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
                     insets = bottomBarInsets
@@ -461,26 +461,6 @@ internal extension UIViewController {
         }
         return insets
     }
-    
-    /*
-     @objc internal func insetsForView() -> UIEdgeInsets {
-     if #available(iOS 11.0, *) {
-     return self.view.superview?.safeAreaInsets ?? UIEdgeInsets.zero
-     } else {
-     return UIEdgeInsets.zero
-     }
-     }
-     */
-    
-    /*
-     @objc internal func insetsForView() -> UIEdgeInsets {
-     if #available(iOS 11.0, *) {
-     return self.view.safeAreaInsets
-     } else {
-     return UIEdgeInsets.zero
-     }
-     }
-     */
     
     @objc internal func defaultFrameForBottomBar() -> CGRect {
         var bottomBarFrame = CGRect(x: 0.0, y: self.view.bounds.size.height, width: self.view.bounds.size.width, height: 0.0)

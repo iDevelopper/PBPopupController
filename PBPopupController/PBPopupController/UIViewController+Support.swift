@@ -178,6 +178,8 @@ public extension UIViewController {
     
     /**
     Returns the view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect. (read-only).
+
+     - SeeAlso: `PBPopupContentView`.
      */
     @objc public internal(set) var popupContentView: PBPopupContentView! {
         get {

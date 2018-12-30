@@ -8,14 +8,24 @@
  
 PBPopupController is a framework for presenting view controllers as popups, much like the Apple Music and Podcasts apps.
 
-<img src="./PBPopupController/Assets/iTunesArtwork.png" width=256/>
-
 ![Image](https://raw.githubusercontent.com/iDevelopper/PBPopupController/master/PBPopupController/Assets/iTunesArtwork.png)
 
 
 ## Overview
 
+PBPopupController allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.
 
+Each view controller can present a popup bar, docked to a bottom view. For `UITabBarController` subclasses, the default is the tab bar. For `UINavigationController` subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.
+
+Once the popup bar is configured (see the properties in the `PBPopupBar` class) with a style, an image, a title, a sub-title, buttons, effects and colors, you present it with the above view controller providing a required popup content view controller (like the maxi player of Apple Music App).
+
+Once the popup bar is presented with a popup content view controller, the user can swipe or tap the popup bar at any point to present the content view controller. After finishing, the user dismisses this view controller by either swiping or tapping the popup close button porvided by the system.
+ 
+You can also present and dismiss the popup content view controller programmatically.
+
+The popup bar has a `prominent` style for iOS 10 and below and a `compact` style for iOS 9. You can change these default values.
+
+The presentation options provided by the framework are listed in the `PBPopupPresentationStyle` enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style is `fullScreen` by default and for iOS 10 and below, the style is `deck`. You can change these default values. The `custom` option allows you to present the controller on a part of the screen.
 
 ## Adding to Your Project
 
@@ -40,6 +50,88 @@ Add the following to your project's Podfile:
 pod 'PBRevealViewController'
 ```
 
+## Requirements
+
+* iOS 9.3 or later.
+* ARC memory management.
+
+## Features
+
+* Category methods on UIViewController.
+* Handling of rotations.
+* Plays nicely with any child view controllers or parent controllers.
+* Seamless integration of tap and pan gesture recognizers.
+* Delegate methods for getting full state of the controller and implementing your own code hooks for customizing behavior.
+* Data source methods for asking custom popup bar' labels.
+* Full Right-To-Left support.
+* Accessibility support.
+
+## Basic API Description
+
+* Configuring and presenting a popup bar:
+```Swift
+        self.tabBarController?.popupController.delegate = self
+        
+        if let popupBar = self.tabBarController?.popupBar {
+
+            popupBar.dataSource = self
+            
+            popupBar.image = UIImage(named: "Cover01")
+            popupBar.title = "Title"
+            popupBar.subtitle = " A subtitle"
+            popupBar.accessibilityLabel = "My custom label"
+            
+            let popupPlayButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
+            popupPlayButtonItem.accessibilityLabel = NSLocalizedString("Play", comment: "")
+            let popupNextButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
+            popupNextButtonItem.accessibilityLabel = NSLocalizedString("Next track", comment: "")
+            
+            popupBar.rightBarButtonItems = [popupPlayButtonItem, popupNextButtonItem]
+            
+            let popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+            
+            self.tabBarController?.presentPopupBar(withPopupContentViewController: popupContentVC, animated: true, completion: {
+                print("Presented")
+            })
+        }
+```
+* Opening a popup content view controller programmatically:
+```Swift
+        self.tabBarController?.openPopup(animated: true, completion: {
+            print("Open")
+        })
+```
+* Closing a popup content view controller programmatically:
+```Swift
+        self.tabBarController?.closePopup(animated: true, completion: {
+            print("Closed")
+        })
+```
+* Delegate methods for getting state of the controller:
+```Swift
+    func popupController(_ popupController: PBPopupController, stateChanged state: PBPopupPresentationState, previousState: PBPopupPresentationState) {
+        PBLog("stateChanged state: \(state.description) - previousState: \(previousState.description)")
+    }
+```
+```Swift
+    func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
+        PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
+    }
+```
+etc...
+
+
+* PBPopupBar DataSource methods for providing label instances (such as MarqueeLabel):
+```Swift
+    func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
+        return self.label
+    }
+```
+```Swift
+    func subtitleLabel(for popupBar: PBPopupBar) -> UILabel? {
+        return self.sublabel
+    }
+```
 
 ## API Documentation
 

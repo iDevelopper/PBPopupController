@@ -134,9 +134,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0//32.0
 @objc public protocol PBPopupBarDataSource: NSObjectProtocol {
     /**
      Returns a UIlabel subclass object to be used by the popup bar instead of the default title label (for example a MarqueeLabel instance).
-     
-     - Parameters:
-        - popupBar: The popup bar object asking for a label.
+    
+     - Parameter popupBar: The popup bar object asking for a label.
      
      - returns: A `UIlabel` object to be used instead of the default one.
      */
@@ -145,8 +144,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0//32.0
     /**
      Returns a UIlabel subclass object to be used by the popup bar instead of the default subtitle label (for example a MarqueeLabel instance).
      
-     - Parameters:
-        -popupBar: The popup bar object asking for a label.
+     - Parameter popupBar: The popup bar object asking for a label.
      
      - returns: A UIlabel object to be used instead of the default one.
      */
@@ -162,6 +160,8 @@ A set of methods used by the delegate to respond, with a preview view controller
      
      The default implementation returns `nil` and no preview is displayed.
      
+     - Parameter popupBar: The popup bar object.
+
      - returns: The view controller whose view you want to provide as the preview (peek), or `nil` to disable preview.
      */
     @objc optional func previewingViewControllerFor(_ popupBar: PBPopupBar) -> UIViewController?
@@ -170,6 +170,9 @@ A set of methods used by the delegate to respond, with a preview view controller
      Called when the user performs a pop action on the popup bar.
      
      The default implementation does not commit the view controller.
+     
+     - Parameter popupBar:                  The popup bar object.
+     - Parameter viewControllerToCommit:    The view controller to commit.
      */
     @objc optional func popupBar(_ popupBar: PBPopupBar, commit viewControllerToCommit: UIViewController)
 }

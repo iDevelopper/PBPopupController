@@ -45,8 +45,6 @@
 		32080BFB208716140017FECD /* PBPopupController.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 3; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = PBPopupController.swift; sourceTree = "<group>"; };
 		32080C0520871C220017FECD /* UIViewController+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Private.h"; sourceTree = "<group>"; };
 		32080C0720871C220017FECD /* UIViewController+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Private.m"; sourceTree = "<group>"; };
-		32080C1220872AA60017FECD /* UIViewController+Insets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Insets.h"; sourceTree = "<group>"; };
-		32080C1320872AA60017FECD /* UIViewController+Insets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Insets.m"; sourceTree = "<group>"; };
 		32559939209063AC009047FB /* PBChevronView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBChevronView.swift; sourceTree = "<group>"; };
 		3255993D2091BE00009047FB /* PBPopupCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBPopupCloseButton.swift; sourceTree = "<group>"; };
 		325626DE20FC74AC008739D6 /* PBPopupPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupPresentationController.swift; sourceTree = "<group>"; };
@@ -111,8 +109,6 @@
 				325626DE20FC74AC008739D6 /* PBPopupPresentationController.swift */,
 				32BA2A9C20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift */,
 				326DB7FC21A16A6400E28986 /* PBPopupRoundShadowImageView.swift */,
-				32080C1220872AA60017FECD /* UIViewController+Insets.h */,
-				32080C1320872AA60017FECD /* UIViewController+Insets.m */,
 				32080BFA208716140017FECD /* UIViewController+Private.swift */,
 				32080BF8208716140017FECD /* UIViewController+Support.swift */,
 				32B1E210209ABC2D00143DA6 /* UIColor+Random.swift */,

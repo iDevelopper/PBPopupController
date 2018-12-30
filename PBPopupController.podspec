@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "0.1.2"
+    s.version      = "0.1.4"
     s.summary      = "PBPopupController is a framework for presenting view controllers as popups."
 
     s.description  = <<-DESC

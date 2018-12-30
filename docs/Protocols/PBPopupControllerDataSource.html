@@ -14,7 +14,7 @@
     <a title="PBPopupControllerDataSource Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController Docs</a> (86% documented)</p>
+        <p><a href="../index.html">PBPopupController Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -138,10 +138,6 @@
                       <div class="abstract">
                         <p>Returns a custom bottom bar view. The popup bar will be attached to.</p>
 
-<ul>
-<li><p>popupController:             The popup controller object.</p></li>
-</ul>
-
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -151,6 +147,25 @@
 <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">bottomBarView</span><span class="p">(</span><span class="k">for</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIView</span><span class="p">?</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -173,8 +188,6 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Returns the default frame for the bottom bar view.</p>
-<li>popupController:             The popup controller object.</li>
-<li><p>bottomBarView:               The bottom bar view returned by &lsquo;bottomBarView(for:)&rsquo;</p></li>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <p>bottomBarView(for:)</p>
@@ -190,6 +203,37 @@
 <span class="kd">optional</span> <span class="kd">func</span> <span class="nf">popupController</span><span class="p">(</span><span class="n">_</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="n">defaultFrameFor</span> <span class="nv">bottomBarView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">CGRect</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bottomBarView</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The bottom bar view returned by &lsquo;bottomBarView(for:)&rsquo;</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -214,8 +258,6 @@
                         <p>Returns the insets for the bottom bar view from bottom of the container controller&rsquo;s view. By default, this is set to the container controller view&rsquo;s safe area insets since iOS 11 or <code>UIEdgeInsets.zero</code> otherwise. Currently, only the bottom inset is respected.</p>
 
 <p>The system calculates the position of the popup bar by summing the bottom bar height and the bottom of the insets.</p>
-<li>popupController:             The popup controller object.</li>
-<li><p>bottomBarView:               The bottom bar view returned by &lsquo;bottomBarView(for:)&rsquo;</p></li>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <p>bottomBarView(for:)</p>
@@ -233,6 +275,37 @@
                         </div>
                       </div>
                       <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bottomBarView</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The bottom bar view returned by &lsquo;bottomBarView(for:)&rsquo;</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
                         <h4>Return Value</h4>
                         <p>The insets for the bottom bar view from bottom of the container controller&rsquo;s view. If <code>bottomBarView</code> returns nil or is not implemented, this method is not called, and the default system-provided bottom inset is used.</p>
                       </div>
@@ -244,7 +317,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-29)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-30)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

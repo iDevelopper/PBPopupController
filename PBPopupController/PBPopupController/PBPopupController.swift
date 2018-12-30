@@ -132,8 +132,7 @@ extension PBPopupPresentationStyle {
    /**
     Returns a custom bottom bar view. The popup bar will be attached to.
     
-    - Parameters:
-    - popupController:             The popup controller object.
+    - Parameter popupController:             The popup controller object.
     
     - Returns:
     The view object representing the bottom bar view.
@@ -143,9 +142,8 @@ extension PBPopupPresentationStyle {
    /**
     Returns the default frame for the bottom bar view.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - bottomBarView:               The bottom bar view returned by 'bottomBarView(for:)'
+    - Parameter popupController:             The popup controller object.
+    - Parameter bottomBarView:               The bottom bar view returned by 'bottomBarView(for:)'
     
     - Returns:
     The default frame for the bottom bar view, when the popup is in hidden or closed state. If `bottomBarView` returns nil or is not implemented, this method is not called, and the default system-provided frame is used.
@@ -159,9 +157,8 @@ extension PBPopupPresentationStyle {
     
     The system calculates the position of the popup bar by summing the bottom bar height and the bottom of the insets.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - bottomBarView:               The bottom bar view returned by 'bottomBarView(for:)'
+    - Parameter popupController:             The popup controller object.
+    - Parameter bottomBarView:               The bottom bar view returned by 'bottomBarView(for:)'
 
     - Returns:
     The insets for the bottom bar view from bottom of the container controller's view. If `bottomBarView` returns nil or is not implemented, this method is not called, and the default system-provided bottom inset is used.
@@ -175,84 +172,75 @@ extension PBPopupPresentationStyle {
    /**
     Called just before the popup bar view is presenting.
     
-    - Parameters:
-    - popupController:     The popup controller object.
-    - popupBar       :     The popup bar object.
+    - Parameter popupController:     The popup controller object.
+    - Parameter popupBar       :     The popup bar object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willPresent popupBar: PBPopupBar)
    
    /**
     Called just before the popup bar view is dismissing.
     
-    - Parameters:
-    - popupController:     The popup controller object.
-    - popupBar       :     The popup bar object.
+    - Parameter popupController:     The popup controller object.
+    - Parameter popupBar       :     The popup bar object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willDismiss popupBar: PBPopupBar)
    
    /**
     Called just after the popup bar view is presenting.
     
-    - Parameters:
-    - popupController:     The popup controller object.
-    - popupBar       :     The popup bar object.
+    - Parameter popupController:     The popup controller object.
+    - Parameter popupBar       :     The popup bar object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didPresent popupBar: PBPopupBar)
    
    /**
     Called just after the popup bar view is dismissing.
     
-    - Parameters:
-    - popupController:     The popup controller object.
-    - popupBar       :     The popup bar object.
+    - Parameter popupController:     The popup controller object.
+    - Parameter popupBar       :     The popup bar object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didDismiss popupBar: PBPopupBar)
    
    /**
     Called just before the popup content view is about to be open.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - popuContentViewController:   The popup content view controller object.
+    - Parameter popupController:             The popup controller object.
+    - Parameter popuContentViewController:   The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController)
    
    /**
     Called just before the popup content view is about to be closed.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - popuContentViewController:   The popup content view controller object.
+    - Parameter popupController:             The popup controller object.
+    - Parameter popuContentViewController:   The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController)
    
   /**
     Called just after the popup content view is open.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - popuContentViewController:   The popup content view controller object.
+    - Parameter popupController:             The popup controller object.
+    - Parameter popuContentViewController:   The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController)
    
    /**
     Called just after the popup content view is closed.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - popuContentViewController:   The popup content view controller object.
+    - Parameter popupController:             The popup controller object.
+    - Parameter popuContentViewController:   The popup content view controller object.
     */
    @objc optional func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController)
    
    /**
     Called several times during the interactive presentation.
     
-    - Parameters:
-    - popupController:             The popup controller object.
-    - popuContentViewController:   The popup content view controller object.
-    - state:                       The popup presentation state (closed / open).
-    - progress:                    The current progress of the interactive presentation
-    - location:                    The current location. The y-coordinate of the point on screen.
+    - Parameter popupController:             The popup controller object.
+    - Parameter popuContentViewController:   The popup content view controller object.
+    - Parameter state:                       The popup presentation state (closed / open).
+    - Parameter progress:                    The current progress of the interactive presentation
+    - Parameter location:                    The current location. The y-coordinate of the point on screen.
     
     - Note: The current progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the completion of the interactive presentation.
     
@@ -263,10 +251,9 @@ extension PBPopupPresentationStyle {
    /**
     Called when the presentation state of the popup controller has changed.
     
-    - Parameters:
-    - popupController:  The popup controller object.
-    - state:            The popup presentation state.
-    - previousState:    The previous popup presentation state.
+    - Parameter popupController:  The popup controller object.
+    - Parameter state:            The popup presentation state.
+    - Parameter previousState:    The previous popup presentation state.
     
     - SeeAlso: `PBPopupPresentationState`.
     */
@@ -296,8 +283,8 @@ extension PBPopupPresentationStyle {
     The state of the popup presentation. (read-only)
     
     - SeeAlso:
-      - `PBPopupPresentationState`.
-      - `PBPopupControllerDelegate`.
+      `PBPopupPresentationState`.
+      `PBPopupControllerDelegate`.
     */
    @objc public internal(set) var popupPresentationState: PBPopupPresentationState
 

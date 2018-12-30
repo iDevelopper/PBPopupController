@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+The view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect.
+ */
 @objc public class PBPopupContentView: UIView {
     
     // MARK: - Public Properties

@@ -13,7 +13,7 @@
     <a title="PBPopupController  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">PBPopupController Docs</a> (86% documented)</p>
+        <p><a href="index.html">PBPopupController Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -111,11 +111,127 @@
             
             <h1 id='pbpopupcontroller' class='heading'>PBPopupController</h1>
 
-<p>PBPopupController is a framework for presenting view controllers as popups, much like the Apple Music and Podcasts apps.</p>
-<h2 id='todo' class='heading'>TODO</h2>
+<p><a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a>
+<a href="http://cocoapods.org/pods/PBPopupController"><img src="https://img.shields.io/cocoapods/v/PBPopupController.svg?style=flat" alt="Version"></a>
+<a href="https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/PBPopupController.svg?style=flat" alt="License"></a>
+<a href="http://cocoapods.org/pods/PBPopupController"><img src="https://img.shields.io/cocoapods/p/PBPopupController.svg?style=flat" alt="Platform"></a>
+<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%204.2-brightgreen.svg" alt="Swift Version"></a> </p>
 
-<p>Overview, installation, Cocoapods, features, gif, documentation, etc&hellip;</p>
-<h2 id='documentation' class='heading'>Documentation</h2>
+<p>PBPopupController is a framework for presenting view controllers as popups, much like the Apple Music and Podcasts apps.</p>
+
+<p><img src="https://raw.githubusercontent.com/iDevelopper/PBPopupController/master/PBPopupController/Assets/iTunesArtwork.png" alt="Image"></p>
+<h2 id='overview' class='heading'>Overview</h2>
+
+<p>PBPopupController allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.</p>
+
+<p>Each view controller can present a popup bar, docked to a bottom view. For <code>UITabBarController</code> subclasses, the default is the tab bar. For <code>UINavigationController</code> subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.</p>
+
+<p>Once the popup bar is configured (see the properties in the <code><a href="Classes/PBPopupBar.html">PBPopupBar</a></code> class) with a style, an image, a title, a sub-title, buttons, effects and colors, you present it with the above view controller providing a required popup content view controller (like the maxi player of Apple Music App).</p>
+
+<p>Once the popup bar is presented with a popup content view controller, the user can swipe or tap the popup bar at any point to present the content view controller. After finishing, the user dismisses this view controller by either swiping or tapping the popup close button porvided by the system.
+ 
+You can also present and dismiss the popup content view controller programmatically.</p>
+
+<p>The popup bar has a <code>prominent</code> style for iOS 10 and below and a <code>compact</code> style for iOS 9. You can change these default values.</p>
+
+<p>The presentation options provided by the framework are listed in the <code><a href="Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></code> enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style is <code>fullScreen</code> by default and for iOS 10 and below, the style is <code>deck</code>. You can change these default values. The <code>custom</code> option allows you to present the controller on a part of the screen.</p>
+<h2 id='adding-to-your-project' class='heading'>Adding to Your Project</h2>
+<h3 id='carthage' class='heading'>Carthage</h3>
+
+<p>Add the following to your Cartfile:</p>
+
+<p><code>github &quot;iDevelopper/PBPopupController&quot;</code></p>
+
+<p>Make sure you follow the Carthage integration instructions <a href="https://github.com/Carthage/Carthage#if-youre-building-for-ios-tvos-or-watchos">here</a>.</p>
+<h3 id='manual' class='heading'>Manual</h3>
+
+<p>Drag the <code>PBPopupController.xcodeproj</code> project to your project, and add <code>PBPopupController.framework</code> to <strong>Embedded Binaries</strong> in your project target&rsquo;s <strong>General</strong> tab. Xcode should sort everything else on its own.</p>
+<h3 id='cocoapods' class='heading'>CocoaPods</h3>
+
+<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> is available for installation using the Cocoa dependency manager <a href="http://cocoapods.org/">CocoaPods</a>. </p>
+
+<p>Add the following to your project&rsquo;s Podfile:</p>
+<pre class="highlight ruby"><code><span class="n">pod</span> <span class="s1">'PBRevealViewController'</span>
+</code></pre>
+<h2 id='requirements' class='heading'>Requirements</h2>
+
+<ul>
+<li>iOS 9.3 or later.</li>
+<li>ARC memory management.</li>
+</ul>
+<h2 id='features' class='heading'>Features</h2>
+
+<ul>
+<li>Category methods on UIViewController.</li>
+<li>Handling of rotations.</li>
+<li>Plays nicely with any child view controllers or parent controllers.</li>
+<li>Seamless integration of tap and pan gesture recognizers.</li>
+<li>Delegate methods for getting full state of the controller and implementing your own code hooks for customizing behavior.</li>
+<li>Data source methods for asking custom popup bar&rsquo; labels.</li>
+<li>Full Right-To-Left support.</li>
+<li>Accessibility support.</li>
+</ul>
+<h2 id='basic-api-description' class='heading'>Basic API Description</h2>
+
+<ul>
+<li><p>Configuring and presenting a popup bar:</p>
+<pre class="highlight plaintext"><code>    self.tabBarController?.popupController.delegate = self
+
+    if let popupBar = self.tabBarController?.popupBar {
+
+        popupBar.dataSource = self
+
+        popupBar.image = UIImage(named: "Cover01")
+        popupBar.title = "Title"
+        popupBar.subtitle = " A subtitle"
+        popupBar.accessibilityLabel = "My custom label"
+
+        let popupPlayButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
+        popupPlayButtonItem.accessibilityLabel = NSLocalizedString("Play", comment: "")
+        let popupNextButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
+        popupNextButtonItem.accessibilityLabel = NSLocalizedString("Next track", comment: "")
+
+        popupBar.rightBarButtonItems = [popupPlayButtonItem, popupNextButtonItem]
+
+        let popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+
+        self.tabBarController?.presentPopupBar(withPopupContentViewController: popupContentVC, animated: true, completion: {
+            print("Presented")
+        })
+    }
+</code></pre></li>
+<li><p>Opening a popup content view controller programmatically:</p>
+<pre class="highlight plaintext"><code>    self.tabBarController?.openPopup(animated: true, completion: {
+        print("Open")
+    })
+</code></pre></li>
+<li><p>Closing a popup content view controller programmatically:</p>
+<pre class="highlight plaintext"><code>    self.tabBarController?.closePopup(animated: true, completion: {
+        print("Closed")
+    })
+</code></pre></li>
+<li><p>Delegate methods for getting state of the controller:</p>
+<pre class="highlight plaintext"><code>func popupController(_ popupController: PBPopupController, stateChanged state: PBPopupPresentationState, previousState: PBPopupPresentationState) {
+    PBLog("stateChanged state: \(state.description) - previousState: \(previousState.description)")
+}
+</code></pre>
+<pre class="highlight plaintext"><code>func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
+    PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
+}
+</code></pre>
+
+<p>etc&hellip;</p></li>
+<li><p>PBPopupBar DataSource methods for providing label instances (such as MarqueeLabel):</p>
+<pre class="highlight plaintext"><code>func titleLabel(for popupBar: PBPopupBar) -&gt; UILabel? {
+    return self.label
+}
+</code></pre>
+<pre class="highlight plaintext"><code>func subtitleLabel(for popupBar: PBPopupBar) -&gt; UILabel? {
+    return self.sublabel
+}
+</code></pre></li>
+</ul>
+<h2 id='api-documentation' class='heading'>API Documentation</h2>
 
 <p>You can find <a href="http://iDevelopper.github.io/PBPopupController/">the docs here</a>. Documentation is generated with <a href="https://github.com/realm/jazzy">jazzy</a> and hosted on <a href="https://pages.github.com">GitHub-Pages</a>.</p>
 <h2 id='special-mention' class='heading'>Special Mention</h2>
@@ -128,7 +244,7 @@
 <p>iDevelopper, <a href="mailto:patrick.bodet4@wanadoo.fr">patrick.bodet4@wanadoo.fr</a></p>
 <h2 id='license' class='heading'>License</h2>
 
-<p>PBPopupController is available under the MIT license. See the LICENSE file for more info.</p>
+<p>PBPopupController is available under the MIT license, see the <a href="https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE">LICENSE</a> file for more information.</p>
 
 <p>Please tell me when you use this controller in your project!</p>
 
@@ -139,7 +255,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-29)</p>
+          <p>&copy; 2018 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2018-12-30)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

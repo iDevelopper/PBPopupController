@@ -375,8 +375,7 @@ public extension UIViewController {
             
             let coordinator = _PBPopupTransitionCoordinator(containerView: self.view)
             
-            //self.viewWillTransition(to: self.view.frame.size, with: coordinator)
-            self.popupContentViewController.viewWillTransition(to: self.view.frame.size, with: coordinator)
+            self.viewWillTransition(to: self.view.frame.size, with: coordinator)
         }
     }
     

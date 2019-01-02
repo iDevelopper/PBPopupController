@@ -254,7 +254,7 @@
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xB7-sS-idG">
-                                    <rect key="frame" x="326" y="7" width="41" height="30"/>
+                                    <rect key="frame" x="326" y="14" width="41" height="30"/>
                                     <state key="normal" title="Home"/>
                                     <connections>
                                         <action selector="dismiss:" destination="7YS-XD-K47" eventType="touchUpInside" id="2d4-4J-Gb8"/>
@@ -263,7 +263,7 @@
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstItem="xB7-sS-idG" firstAttribute="centerY" secondItem="E0B-dR-BLP" secondAttribute="centerY" id="BlT-yK-2ba"/>
+                                <constraint firstItem="8Su-bA-qp1" firstAttribute="bottom" secondItem="xB7-sS-idG" secondAttribute="bottom" id="Jta-ix-ASG"/>
                                 <constraint firstItem="xB7-sS-idG" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8Su-bA-qp1" secondAttribute="leading" symbolic="YES" id="OwQ-Dv-Fv6"/>
                                 <constraint firstItem="8Su-bA-qp1" firstAttribute="trailing" secondItem="xB7-sS-idG" secondAttribute="trailing" constant="8" id="tCc-OT-JZ8"/>
                             </constraints>
@@ -714,7 +714,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kb1-JN-Hre" customClass="PBPopupCloseButton" customModule="PBPopupController">
-                                            <rect key="frame" x="171.5" y="15" width="32" height="15"/>
+                                            <rect key="frame" x="171.5" y="23" width="32" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="fXh-zm-Ifk"/>
                                             </constraints>
@@ -722,7 +722,7 @@
                                         </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Kb1-JN-Hre" firstAttribute="top" secondItem="c36-F4-Ga6" secondAttribute="topMargin" constant="4" id="YRB-Y7-jbK"/>
+                                        <constraint firstItem="Kb1-JN-Hre" firstAttribute="top" secondItem="c36-F4-Ga6" secondAttribute="topMargin" constant="12" id="YRB-Y7-jbK"/>
                                         <constraint firstItem="Kb1-JN-Hre" firstAttribute="centerX" secondItem="c36-F4-Ga6" secondAttribute="centerX" id="t8x-b4-gyF"/>
                                     </constraints>
                                 </tableViewCellContentView>
@@ -1003,8 +1003,6 @@
                         <outlet property="albumArtImageView" destination="7RQ-q7-Hqx" id="oLc-Yl-ceS"/>
                         <outlet property="albumNameLabel" destination="0GJ-2E-1Na" id="bvY-4W-gua"/>
                         <outlet property="controlsModule" destination="KHi-tz-jPz" id="RtI-fW-bm5"/>
-                        <outlet property="controlsModuleBottomConstraint" destination="pxE-NZ-rzZ" id="R0o-fe-hu5"/>
-                        <outlet property="controlsModuleHeightConstraint" destination="bC8-tM-hMA" id="pUU-1p-rUz"/>
                         <outlet property="controlsModuleTopConstraint" destination="PLy-na-fAU" id="tmq-gt-5m9"/>
                         <outlet property="imageModule" destination="okS-5s-7ek" id="xta-Hi-krU"/>
                         <outlet property="imageModuleLeadingConstraint" destination="YYG-0h-8kR" id="Civ-z4-MFk"/>

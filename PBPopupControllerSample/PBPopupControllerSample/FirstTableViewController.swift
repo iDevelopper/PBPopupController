@@ -520,12 +520,21 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         else {
             popupController = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as! PopupContentTableViewController
         }
+        
+        /*
         popupController.modalPresentationStyle = .popover
         popupController.popoverPresentationController?.delegate = self
         popupController.popoverPresentationController?.sourceView = self.view
         popupController.popoverPresentationController?.permittedArrowDirections = []
         
         self.containerVC.present(popupController, animated: true) {
+            //
+        }
+        */
+        
+        popupController.modalPresentationStyle = .fullScreen
+        self.containerVC.present(popupController, animated: true) {
+            //
         }
     }
     

@@ -35,8 +35,6 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var controlsModule: UIView!
     @IBOutlet weak var controlsModuleTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var controlsModuleBottomConstraint: NSLayoutConstraint!
-    @IBOutlet weak var controlsModuleHeightConstraint: NSLayoutConstraint!
     
     @IBOutlet weak var progressView: UIProgressView!
 

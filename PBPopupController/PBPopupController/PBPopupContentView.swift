@@ -201,7 +201,7 @@ The view where is embedded the popupContentViewController's view for presentatio
             if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
                 self.setNeedsUpdateConstraints()
                 
-                 UIView.animate(withDuration: UIApplication.shared.statusBarOrientationAnimationDuration, delay: 0.0, usingSpringWithDamping: 0.0, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
+                 UIView.animate(withDuration: UIApplication.shared.statusBarOrientationAnimationDuration, delay: 0.0, usingSpringWithDamping: 0.001, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
                  self.layoutIfNeeded()
                  }, completion: nil)
             }

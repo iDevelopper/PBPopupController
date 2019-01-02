@@ -42,9 +42,6 @@ class DemoTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        //self.numberOfRowsInSection = Int(arc4random() % 25) + 20
-        //self.tableView.backgroundColor = UIColor.PBRandomDarkColor()
-                
         self.tableView.reloadData()
     }
     

@@ -381,7 +381,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 self.presentedView?.frame = self.presentedViewFrameForPopupStateOpen()
                 self.popupContentView.updatePopupCloseButtonPosition()
-                self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
+                self.popupContentView.updateCornerRadiusTo(self.popupPresentationStyle == .deck ? 10.0 : 0.0, rect: self.popupContentViewFrameForPopupStateOpen())
             }
             self.popupBarView.frame.size.width = self.popupContentView.bounds.width
         }) { (context) in

@@ -332,10 +332,11 @@ public extension UIViewController {
         }
     }
     
+    //_setContentOverlayInsets:
     @objc private func _sCoOvIns(insets: UIEdgeInsets) {
         let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
         if rv != nil {
-            if self.popupController.popupPresentationState != .dismissing {
+            if !(rv!.isHidden) && self.popupController.popupPresentationState != .dismissing {
                 var newInsets = insets
                 newInsets.bottom += (rv?.frame.size.height)!
                 self._sCoOvIns(insets:newInsets)

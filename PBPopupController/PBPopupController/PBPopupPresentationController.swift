@@ -485,7 +485,7 @@ extension PBPopupPresentationController {
     // MARK: - Snapshot views
     
     private func rectForPopupBarForPresentation() -> CGRect {
-        var rect: CGRect = self.popupBarView.frame
+        let rect: CGRect = self.popupBarView.frame
         //rect.size.height = self.presentingVC.popupBar.popupBarHeight
         return rect
     }

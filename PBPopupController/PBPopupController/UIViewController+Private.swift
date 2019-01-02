@@ -327,7 +327,7 @@ public extension UIViewController {
     @objc public static func vc_swizzle() {
         _ = self.swizzleImplementation
         
-        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
+        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10) {
             EasyAnimation.enable()
         }
     }

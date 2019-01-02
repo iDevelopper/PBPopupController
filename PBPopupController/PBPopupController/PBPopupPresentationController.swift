@@ -133,15 +133,15 @@ internal class PBPopupPresentationController: UIPresentationController {
         containerView.addSubview(self.popupContentView)
         self.popupContentView.updatePopupCloseButtonPosition()
         
-         coordinator.animate(alongsideTransition: { (context) in
-         
-            if self.popupPresentationStyle == .deck {
+        if self.popupPresentationStyle == .deck {
+            coordinator.animate(alongsideTransition: { (context) in
+                
                 self.animateBackingViewToDeck(true, animated: true)
+                
+            }) { (context) in
+                //
             }
-
-         }) { (context) in
-            //
-         }
+        }
     }
     
     override func presentationTransitionDidEnd(_ completed: Bool) {
@@ -167,15 +167,13 @@ internal class PBPopupPresentationController: UIPresentationController {
                 self.setupBackingView()
                 self.animateBackingViewToDeck(true, animated: false)
                 
-            }
-            coordinator.animate(alongsideTransition: { (context) in
-                
-                if self.popupPresentationStyle == .deck {
+                coordinator.animate(alongsideTransition: { (context) in
+                    
                     self.animateBackingViewToDeck(false, animated: true)
+                    
+                }) { (context) in
+                    //
                 }
-
-            }) { (context) in
-                //
             }
         }
     }
@@ -223,9 +221,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
             
             self.popupContentView.popupCloseButton?.alpha = 0.0
             
-            if self.popupPresentationStyle == .deck {
-                self.popupContentView.setupCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
-            }
+            self.popupContentView.setupCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
             
             self.popupContentView.contentView.addSubview(self.popupBarForPresentation)
             
@@ -247,10 +243,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                     self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
                 }
                 
-                // Without EasyAnimation
-                //self.popupContentView._animateCornerRadiusTo(10.0, rect:  self._popupContentViewFrameForPopupStateOpen(), duration: self.lowerDuration, delay: 0.0, timingFunctionName: kCAMediaTimingFunctionLinear as CAMediaTimingFunctionName)
-                //
-
                 self.animateImageModuleInFinalPosition()
                 
                 self.animateControlsModuleInFinalPosition()
@@ -269,6 +261,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.imageViewForPresentation = nil
                 if transitionContext.transitionWasCancelled {
                     self.popupContentView.popupCloseButton?.setButtonStateStationary()
+                    
                     // Restore the initial frame after cancel presenting
                     self.configureControlsModuleInOriginalPosition()
                }
@@ -325,12 +318,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed()
                 presentedView.frame = self.presentedViewFrameForPopupStateClosed()
 
-                if self.popupPresentationStyle == .deck {
-                    self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
-                    // Without EasyAnimation
-                    //self.popupContentView._animateCornerRadiusTo(0.0, rect:  self._popupContentViewFrameForPopupStateOpen(), duration: self.lowerDuration, delay: 0.0, timingFunctionName: kCAMediaTimingFunctionLinear as CAMediaTimingFunctionName)
-                    //
-                }
+                self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
+            
                 if !transitionContext.isInteractive {
                     self.animateImageModuleInFinalPosition()
                     self.animateControlsModuleInFinalPosition()
@@ -392,9 +381,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 self.presentedView?.frame = self.presentedViewFrameForPopupStateOpen()
                 self.popupContentView.updatePopupCloseButtonPosition()
-                if self.popupPresentationStyle == .deck {
-                    self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
-                }
+                self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
             }
             self.popupBarView.frame.size.width = self.popupContentView.bounds.width
         }) { (context) in
@@ -499,7 +486,7 @@ extension PBPopupPresentationController {
     
     private func rectForPopupBarForPresentation() -> CGRect {
         var rect: CGRect = self.popupBarView.frame
-        rect.size.height = self.presentingVC.popupBar.popupBarHeight
+        //rect.size.height = self.presentingVC.popupBar.popupBarHeight
         return rect
     }
     
@@ -544,9 +531,6 @@ extension PBPopupPresentationController {
             }
             else {
                 self.backingView.updateCornerRadiusTo(10.0, rect: self.backingView.frame)
-                // Without EasyAnimation
-                //self.backingView._animateCornerRadiusTo(10.0, rect: self.backingView.frame, duration: self.lowerDuration, delay: 0.0, timingFunctionName: kCAMediaTimingFunctionLinear as CAMediaTimingFunctionName)
-                //
             }
             self.dimmerView.alpha = 0.5
             self.backingView.transform = self.backingView.transform.scaledBy(x: 0.95, y: self.statusBarFrame.height > 0 ? 0.95 : 1.0)
@@ -554,9 +538,6 @@ extension PBPopupPresentationController {
         }
         else {
             self.backingView.updateCornerRadiusTo(0.0, rect: self.backingView.bounds)
-            // Without EasyAnimation
-            //self.backingView._animateCornerRadiusTo(0.0, rect: self.backingView.bounds, duration: self.lowerDuration, delay: 0.0, timingFunctionName: kCAMediaTimingFunctionLinear as CAMediaTimingFunctionName)
-            //
             self.dimmerView.alpha = 0.0
             self.backingView.transform = .identity
         }

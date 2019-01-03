@@ -65,11 +65,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
-        self.tabBarController?.delegate = self
-        
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 2) {
-            
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
             titles += [LoremIpsum.title]
@@ -107,6 +103,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        self.tabBarController?.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {

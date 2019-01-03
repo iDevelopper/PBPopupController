@@ -47,7 +47,7 @@ Drag the `PBPopupController.xcodeproj` project to your project, and add `PBPopup
 
 Add the following to your project's Podfile:
 ```ruby
-pod 'PBRevealViewController'
+pod 'PBPopupController'
 ```
 
 ## Requirements

@@ -19,7 +19,7 @@ internal class PBPopupPresentationController: UIPresentationController {
         return popupController.popupPresentationState
     }
     
-    private var backingView: UIView!
+    internal var backingView: UIView!
 
     internal var popupPresentationStyle = PBPopupPresentationStyle.deck
     internal var isPresenting = false
@@ -318,8 +318,10 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed()
                 presentedView.frame = self.presentedViewFrameForPopupStateClosed()
 
-                self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
-            
+                if ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 10 {
+                    self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
+                }
+
                 if !transitionContext.isInteractive {
                     self.animateImageModuleInFinalPosition()
                     self.animateControlsModuleInFinalPosition()
@@ -350,11 +352,27 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
             self.popupBarForPresentation?.alpha = 0.0
 
             if transitionContext.isInteractive {
-                
-                UIView.animate(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
-                    animations()
-                }) { (finished) in
-                    completion()
+                // This is a workarround: In iOS 10, there is a bug when when the interactive interaction is cancelled.
+                if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 10 {
+                    UIView.animate(withDuration: self.popupContentView.popupPresentationDuration) {
+                        self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
+                    }
+                    
+                    if #available(iOS 10.0, *) {
+                        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
+                            animations()
+                        }) { (_) in
+                            completion()
+                        }
+                    }
+                }
+                //
+                else {
+                    UIView.animate(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
+                        animations()
+                    }) { (finished) in
+                        completion()
+                    }
                 }
             }
             else {
@@ -425,7 +443,7 @@ extension PBPopupPresentationController {
         return frame
     }
     
-    private func popupContentViewFrameForPopupStateOpen() -> CGRect {
+    internal func popupContentViewFrameForPopupStateOpen() -> CGRect {
 
         var y: CGFloat = 0.0
         

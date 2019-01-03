@@ -34,6 +34,10 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     weak var delegate: PBPopupInteractivePresentationDelegate?
     
+    private var presentationController: PBPopupPresentationController! {
+        return popupController.popupPresentationController
+    }
+    
     func attachToViewController(popupController: PBPopupController, withView view: UIView, presenting: Bool) {
         self.popupController = popupController
         self.view = view
@@ -48,7 +52,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     override var completionSpeed: CGFloat {
         get {
-            return 1 + self.percentComplete
+            return 1
+            //return 1 + self.percentComplete
         }
         set {}
     }
@@ -107,7 +112,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             
             if self.isPresenting {
                 let alpha = (0.30 - self.progress) / 0.30
-                self.popupController.popupPresentationController?.popupBarForPresentation?.alpha = alpha
+                self.presentationController?.popupBarForPresentation?.alpha = alpha
                 vc.popupContentView.popupCloseButton?.alpha = (self.progress - 0.30) / 0.70
             }
             
@@ -120,14 +125,15 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             vc._setBottomBarPosition(barPosition)
             
             if self.isPresenting || self.isDismissing {
-                update(self.progress)
+                self.update(self.progress)
             }
 
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location)
             
         case .cancelled:
             self.isDismissing = false
-            cancel()
+            self.cancel()
+            
         case .ended:
             self.isDismissing = false
 
@@ -144,26 +150,26 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     UIView.animate(withDuration: TimeInterval(duration - (duration * percentComplete)), delay: 0.0, options: .curveLinear, animations: {
                         vc.popupContentView.popupCloseButton?.alpha = 1.0
                         vc._animateBottomBarToHidden(true)
-                        self.popupController.popupPresentationController?.animateImageModuleInFinalPosition()
-                        self.popupController.popupPresentationController?.animateControlsModuleInFinalPosition()
+                        self.presentationController?.animateImageModuleInFinalPosition()
+                        self.presentationController?.animateControlsModuleInFinalPosition()
                     }) { (_) in
                         //
                     }
                 
-                    self.popupController.popupPresentationController?.popupBarForPresentation?.alpha = 0.0
+                    self.presentationController?.popupBarForPresentation?.alpha = 0.0
                     self.popupController.popupPresentationState = .opening
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: .closed)
                     self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
                 }
                 else {
-                    self.popupController.popupPresentationController?.containerView?.layoutIfNeeded()
+                    self.presentationController?.containerView?.layoutIfNeeded()
                     UIView.animate(withDuration: TimeInterval((duration - (duration * percentComplete)) / completionSpeed), delay: 0.0, options: [.curveLinear], animations: {
-                        self.popupController.popupPresentationController?.popupBarForPresentation?.alpha = 1.0
-                        self.popupController.popupPresentationController?.animateImageModuleInFinalPosition()
-                        self.popupController.popupPresentationController?.animateControlsModuleInFinalPosition()
+                        self.presentationController?.popupBarForPresentation?.alpha = 1.0
+                        self.presentationController?.animateImageModuleInFinalPosition()
+                        self.presentationController?.animateControlsModuleInFinalPosition()
                         vc._animateBottomBarToHidden(false)
                         
-                        self.popupController.popupPresentationController?.containerView?.layoutIfNeeded()
+                        self.presentationController?.containerView?.layoutIfNeeded()
                     }) { (_) in
                         //
                     }
@@ -172,13 +178,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: .open)
                     self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
                 }
-                finish()
+                self.finish()
             }
             else {
                 //cancel()
                 if self.isPresenting {
                     UIView.animate(withDuration: TimeInterval((duration * percentComplete) / completionSpeed), delay: 0.0, options: .curveLinear, animations: {
-                        self.popupController.popupPresentationController?.popupBarForPresentation?.alpha = 1.0
+                        self.presentationController?.popupBarForPresentation?.alpha = 1.0
                         vc._animateBottomBarToHidden(false)
                     }) { (_) in
                         //
@@ -187,7 +193,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 else {
                     vc._animateBottomBarToHidden(true)
                 }
-                cancel()
+                self.cancel()
+                if vc.popupContentView.popupPresentationStyle == .deck {
+                    self.presentationController.backingView.setupCornerRadiusTo(10.0, rect: self.presentationController.backingView.bounds)
+                    vc.popupContentView.updateCornerRadiusTo(10.0, rect: self.presentationController.popupContentViewFrameForPopupStateOpen())
+                }
             }
             break
         default:

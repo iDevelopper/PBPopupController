@@ -620,8 +620,8 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var imageViewHeightConstraint: NSLayoutConstraint!
     
     // The container view for titleLabel and subtitleLabel
-    private var titlesView: PBPopupBarTitlesView!
-    
+    @objc dynamic private var titlesView: PBPopupBarTitlesView!
+
     private var titlesViewLeftConstraint: NSLayoutConstraint!
     private var titlesViewRightConstraint: NSLayoutConstraint!
     
@@ -643,13 +643,13 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var subtitleLabelHeightConstraint: NSLayoutConstraint!
     
     // The progress view (see PBPopupBarProgressViewStyle and progress property)
-    private var progressView: PBPopupBarProgressView!
-    
+    @objc dynamic private var progressView: PBPopupBarProgressView!
+
     private var progressViewVerticalConstraints: [NSLayoutConstraint]!
     
     // Highlighted view when taping or paning the popupBar
-    internal var highlightView: PBPopupBarHighlightView!
-    
+    @objc dynamic internal var highlightView: PBPopupBarHighlightView!
+
     // MARK: - Private Init
     
     required internal init?(coder aDecoder: NSCoder) {

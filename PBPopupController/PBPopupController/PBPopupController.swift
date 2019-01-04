@@ -404,8 +404,8 @@ extension PBPopupPresentationStyle {
       rv.clipsToBounds = false
 
       rv.popupController = self
-      //rv.autoresizesSubviews = true // default: true
-      //rv.contentView.autoresizesSubviews = true // default: true
+      rv.autoresizesSubviews = false // default: true
+      rv.contentView.autoresizesSubviews = false // default: true
       rv.preservesSuperviewLayoutMargins = true // default: false
       rv.contentView.preservesSuperviewLayoutMargins = true  // default: false
       rv.layer.masksToBounds = true

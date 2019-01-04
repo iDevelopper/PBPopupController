@@ -276,10 +276,27 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
             self.popupBarForPresentation?.alpha = 1.0
 
             if transitionContext.isInteractive {
-                UIView.animate(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
-                    animations()
-                }) { (finished) in
-                    completion()
+                // Fix iOS 10 bug when cancel interactive presentation animation
+                if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 10 {
+                    if self.popupPresentationStyle == .deck {
+                        UIView.animate(withDuration: self.popupContentView.popupPresentationDuration) {
+                            self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
+                        }
+                    }
+                    if #available(iOS 10.0, *) {
+                        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
+                            animations()
+                        }) { (_) in
+                            completion()
+                        }
+                    }
+                }
+                else {
+                    UIView.animate(withDuration: self.popupContentView.popupPresentationDuration, delay: 0.0, options: options, animations: {
+                        animations()
+                    }) { (finished) in
+                        completion()
+                    }
                 }
             }
             else {
@@ -318,9 +335,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed()
                 presentedView.frame = self.presentedViewFrameForPopupStateClosed()
 
-                if ProcessInfo.processInfo.operatingSystemVersion.majorVersion != 10 {
-                    self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
-                }
+                self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
 
                 if !transitionContext.isInteractive {
                     self.animateImageModuleInFinalPosition()
@@ -522,7 +537,7 @@ extension PBPopupPresentationController {
         //for debug
         //let image = presentingVC.view.makeSnapshot(from: imageRect)
         
-        self.backingView = self.presentingVC.view.resizableSnapshotView(from: imageRect, afterScreenUpdates: false, withCapInsets: .zero)
+        self.backingView = self.presentingVC.view.resizableSnapshotView(from: imageRect, afterScreenUpdates: true, withCapInsets: .zero)
         self.backingView.autoresizingMask = []
 
         self.popupBarView.isHidden = isHidden

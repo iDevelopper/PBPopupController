@@ -8,15 +8,13 @@
 
 import Foundation
 
-let debug: Bool = false
+let debug: Bool = true
 
 /**
 Logs an message to the Apple System Log facility.
  */
 public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: String = #file, function: String = #function, _ line: Int = #line)
 {
-    //let debug: Bool = false
-    
     #if DEBUG
     
     if debug {

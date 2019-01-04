@@ -189,14 +189,15 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     }) { (_) in
                         //
                     }
+                    self.cancel()
                 }
                 else {
                     vc._animateBottomBarToHidden(true)
-                }
-                self.cancel()
-                if vc.popupContentView.popupPresentationStyle == .deck {
-                    self.presentationController.backingView.setupCornerRadiusTo(10.0, rect: self.presentationController.backingView.bounds)
-                    vc.popupContentView.updateCornerRadiusTo(10.0, rect: self.presentationController.popupContentViewFrameForPopupStateOpen())
+                    self.cancel()
+                    if vc.popupContentView.popupPresentationStyle == .deck {
+                        self.presentationController.backingView.setupCornerRadiusTo(10.0, rect: self.presentationController.backingView.bounds)
+                        vc.popupContentView.updateCornerRadiusTo(10.0, rect: self.presentationController.popupContentViewFrameForPopupStateOpen())
+                    }
                 }
             }
             break

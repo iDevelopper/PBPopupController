@@ -1,6 +1,6 @@
 # PBPopupController
 
-[![Build Status](https://travis-ci.org/PBPopupController/PBPopupController.svg?branch=master)](https://travis-ci.org/iDevelopper/PBPopupController)
+[![Build Status](https://travis-ci.org/iDevelopper/PBPopupController.svg?branch=master)](https://travis-ci.org/iDevelopper/PBPopupController)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/PBPopupController.svg?style=flat)](http://cocoapods.org/pods/PBPopupController)
 [![License](https://img.shields.io/cocoapods/l/PBPopupController.svg?style=flat)](https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE)

@@ -6,8 +6,7 @@
 //  Copyright © 2018 Patrick BODET. All rights reserved.
 //
 
-//#import <UIKit/UIKit.h>
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @class PBPopupBar;
 @class PBPopupController;

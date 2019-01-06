@@ -7,4 +7,4 @@ global:
 - IOS_SDK=iphonesimulator12.1
 script:
 - xcodebuild -showsdks
-- xcodebuild -project PBPopupController/PBPopupController.xcodeproj -scheme 'PBPopupController' -sdk $IOS_SDK build analyze
+- xcodebuild -project PBPopupController/PBPopupController.xcodeproj -scheme 'PBPopupController' -sdk "$IOS_SDK" build analyze

@@ -7,7 +7,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/PBPopupController.svg?style=flat)](http://cocoapods.org/pods/PBPopupController)
 [![Swift Version](https://img.shields.io/badge/language-swift%204.2-brightgreen.svg)](https://developer.apple.com/swift) 
  
-PBPopupController is a framework for presenting view controllers as popups, much like the Apple Music and Podcasts apps.
+PBPopupController is a framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App.
 
 ![Image](https://raw.githubusercontent.com/iDevelopper/PBPopupController/master/PBPopupController/Assets/iTunesArtwork.png)
 
@@ -123,6 +123,17 @@ etc...
 
 
 * PBPopupBar DataSource methods for providing label instances (such as MarqueeLabel):
+```Swift
+    lazy var label: MarqueeLabel = {
+        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
+        marqueeLabel.leadingBuffer = 0.0
+        marqueeLabel.trailingBuffer = 5.0
+        marqueeLabel.animationDelay = 1.0
+        marqueeLabel.type = .continuous
+        return marqueeLabel
+    }()
+```
+...
 ```Swift
     func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
         return self.label

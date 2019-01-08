@@ -813,6 +813,15 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     
     // MARK: - PBPopupController delegate
     
+    func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        /*
+         if state == .open {
+         return false
+         }
+         */
+        return true
+    }
+    
     func popupController(_ popupController: PBPopupController, willPresent popupBar: PBPopupBar) {
         PBLog("willPresent - state: \(popupController.popupPresentationState.description)")
     }

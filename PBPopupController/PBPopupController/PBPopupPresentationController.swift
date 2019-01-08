@@ -581,7 +581,7 @@ extension PBPopupPresentationController {
         let alpha = self.popupBarView.alpha
         self.popupBarView.alpha = 1.0
         
-        if !self.isCompactOrPhoneInLandscape() {
+        if !self.isCompactOrPhoneInLandscape() && self.popupContentView.popupImageView != nil {
             self.presentingVC.popupBar.imageView.isHidden = true
         }
 

@@ -70,7 +70,9 @@ public extension UITabBarController {
     @objc private func _hBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = true
         
-        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.35) {
+            self.view.layoutIfNeeded()
+        }
         
         self._hBWT(t: t, iE: iE)
         
@@ -86,7 +88,16 @@ public extension UITabBarController {
     @objc private func _sBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = false
         
-        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.35) {
+            self.view.layoutIfNeeded()
+        }
+        
+        self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
+        }, completion: { (_ context) in
+            if context.isCancelled {
+                self.isTabBarHiddenDuringTransition = true
+            }
+        })
         
         self._sBWT(t: t, iE: iE)
         
@@ -97,7 +108,7 @@ public extension UITabBarController {
             }
         }
     }
-    
+
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         if #available(iOS 12.0, *) {
             for obj in viewControllers {
@@ -186,19 +197,29 @@ public extension UINavigationController {
     @objc public static func nc_swizzle() {
         _ = self.swizzleImplementation
     }
-    
+
     //_setToolbarHidden:edge:duration:
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat) {
         
-        self.view.layoutIfNeeded()
-        
-        self._sTH(h: h, e: e, d: d)
         let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
         if (rv != nil) {
-            self.bottomBar.isHidden = h
+            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+            
+            self._sTH(h: h, e: e, d: d)
+            
+            if let coordinator = self.transitionCoordinator {
+                coordinator.animate(alongsideTransition: { (_ context) in
+                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                }) { (_ context) in
+                    //
+                }
+            }
+        }
+        else {
+            self._sTH(h: h, e: e, d: d)
         }
     }
-    
+
     @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool) {
         if #available(iOS 12.0, *) {
             _LNPopupSupportFixInsetsForViewController(viewController, false, self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0)

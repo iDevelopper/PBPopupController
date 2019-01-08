@@ -34,7 +34,8 @@ public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: 
             fatalError("PBLog only works for values that conform to CustomDebugStringConvertible or CustomStringConvertible")
         }
         
-        let fileURL = NSURL(string: file)?.lastPathComponent ?? "Unknown file"
+        //let fileURL = NSURL(string: file)?.lastPathComponent ?? "Unknown file"
+        let fileURL = NSURL(string: file.addingPercentEncoding(withAllowedCharacters:CharacterSet.urlPathAllowed) ?? " ")?.lastPathComponent ?? "Unknown file"
         let queue = Thread.isMainThread ? "UI" : "BG"
         let gFormatter = DateFormatter()
         gFormatter.dateFormat = "HH:mm:ss:SSS"

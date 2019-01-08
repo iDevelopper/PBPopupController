@@ -223,7 +223,11 @@ public extension UIViewController {
         self.presentPopupBar(withPopupContentViewController: controller, animated: openPopup ? false : animated) {
             if openPopup == true {
                 self.openPopup(animated: animated, completion: {
+                    completion?()
                 })
+            }
+            else {
+                completion?()
             }
         }
     }

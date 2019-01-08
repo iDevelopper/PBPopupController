@@ -259,6 +259,20 @@ extension PBPopupPresentationStyle {
     */
    @objc optional func popupController(_ popupController: PBPopupController, stateChanged state: PBPopupPresentationState, previousState: PBPopupPresentationState)
    
+   /**
+    Implement this to return NO when you want the pan gesture recognizer to be ignored.
+    
+    See also:
+    
+    panGestureRecognizer
+    
+    - Parameter popupController:    The popup controller object.
+    - Parameter state:              The popup presentation state.
+    
+    - Returns:
+    `false` if you want the pan gesture recognizer to be ignored, `true` otherwise.
+    */
+   @objc optional func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool
 }
 
 @objc public class PBPopupController: UIViewController {
@@ -425,7 +439,9 @@ extension PBPopupPresentationStyle {
          return
       }
       
-      if self.popupPresentationState != .hidden {
+      if self.popupPresentationState != .hidden
+      {
+         completionBlock?()
          return
       }
       /*

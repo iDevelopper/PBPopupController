@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
     s.version      = "1.0.1"
-    s.summary      = "PBPopupController is a framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
+    s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
 
     s.description  = <<-DESC
     PBPopupController is a framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App.

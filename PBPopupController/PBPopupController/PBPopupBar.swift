@@ -842,7 +842,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             self.frame.size.height = self.popupBarHeight
             
-            self.layoutToolbar()
+            //self.layoutToolbar()
             
             self.layoutAllViews()
             
@@ -879,7 +879,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     
     private func layoutCustomPopupBarView() {
         if self.customPopupBarViewController != nil {
-            // TODO: Ask for this?
+
             self.customPopupBarViewController?.view.preservesSuperviewLayoutMargins = true
             
             self.customPopupBarViewController?.view.translatesAutoresizingMaskIntoConstraints = false
@@ -916,11 +916,13 @@ A set of methods used by the delegate to respond, with a preview view controller
     
     private func layoutSafeAreaBackgroundView() {
         if #available(iOS 11.0, *) {
-            self.safeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-            self.safeAreaBackgroundView.preservesSuperviewLayoutMargins = false
-            self.safeAreaBackgroundView.topAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
-            self.safeAreaBackgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-            self.safeAreaBackgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+            if self.safeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints == true {
+                self.safeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints = false
+                self.safeAreaBackgroundView.preservesSuperviewLayoutMargins = false
+                self.safeAreaBackgroundView.topAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+                self.safeAreaBackgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+                self.safeAreaBackgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+            }
             if let heightConstraint = self.safeAreaBackgroundViewHeightConstraint {
                 heightConstraint.constant = self.safeBottom()
             }
@@ -935,12 +937,14 @@ A set of methods used by the delegate to respond, with a preview view controller
                 self.safeAreaToolbar.barTintColor = UIColor.blue
             }
             
-            self.safeAreaToolbar?.translatesAutoresizingMaskIntoConstraints = false
-            self.safeAreaToolbar?.preservesSuperviewLayoutMargins = false
-            self.safeAreaToolbar?.topAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.topAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar?.leftAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.leftAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar?.rightAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.rightAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar?.bottomAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.bottomAnchor, constant: 0.0).isActive = true
+            if self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints == true {
+                self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints = false
+                self.safeAreaToolbar.preservesSuperviewLayoutMargins = false
+                self.safeAreaToolbar.topAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.topAnchor, constant: 0.0).isActive = true
+                self.safeAreaToolbar.leftAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.leftAnchor, constant: 0.0).isActive = true
+                self.safeAreaToolbar.rightAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.rightAnchor, constant: 0.0).isActive = true
+                self.safeAreaToolbar.bottomAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.bottomAnchor, constant: 0.0).isActive = true
+            }
         }
     }
     
@@ -950,20 +954,23 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.toolbar.setShadowImage(nil, forToolbarPosition: .topAttached)
             self.toolbar.barTintColor = UIColor.orange
         }
-        
-        self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
-        self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
-        self.backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-        self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
-        self.backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        if self.backgroundView.translatesAutoresizingMaskIntoConstraints == true {
+            self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
+            self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
+            self.backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+            self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+            self.backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        }
     }
     
     private func layoutToolbar() {
-        self.toolbar.translatesAutoresizingMaskIntoConstraints = false
-        self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
-        self.toolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-        self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
-        self.toolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        if self.toolbar.translatesAutoresizingMaskIntoConstraints == true {
+            self.toolbar.translatesAutoresizingMaskIntoConstraints = false
+            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
+            self.toolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+            self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+            self.toolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        }
     }
     
     private func layoutImageView() {
@@ -1069,12 +1076,12 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.titlesView.backgroundColor = UIColor.yellow
         }
         
-        
-        
-        self.titlesView.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: 0.0).isActive = true
-        self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
+        if self.titlesView.translatesAutoresizingMaskIntoConstraints == true {
+            self.titlesView.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: 0.0).isActive = true
+            self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
+        }
         
         if let leftConstraint = self.titlesViewLeftConstraint {
             leftConstraint.constant = left
@@ -1216,7 +1223,12 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.titleLabel.backgroundColor = UIColor.magenta
         }
         
-        self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        if self.titleLabel.translatesAutoresizingMaskIntoConstraints == true {
+            self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.titleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
+            self.titleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
+        }
         
         if self.subtitle == nil {
             if self.titleLabelCenterConstraint == nil {
@@ -1236,14 +1248,17 @@ A set of methods used by the delegate to respond, with a preview view controller
             }
             self.titleLabelTopConstraint.isActive = true
         }
-        self.titleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
-        self.titleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
         
         if PBPopupBarShowColors == true {
             self.subtitleLabel.backgroundColor = UIColor.cyan
         }
         
-        self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        if self.subtitleLabel.translatesAutoresizingMaskIntoConstraints == true {
+            self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.subtitleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
+            self.subtitleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
+        }
         
         if self.title == nil {
             if self.subtitleLabelCenterConstraint == nil {
@@ -1263,8 +1278,6 @@ A set of methods used by the delegate to respond, with a preview view controller
             }
             self.subtitleLabelBottomConstraint.isActive = true
         }
-        self.subtitleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
-        self.subtitleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
         
         if self.title != nil && self.subtitle != nil {
             let fullHeight = self.titleLabel.font.lineHeight + self.subtitleLabel.font.lineHeight
@@ -1331,12 +1344,15 @@ A set of methods used by the delegate to respond, with a preview view controller
     }
     
     private func layoutHighlightView() {
-        self.highlightView.translatesAutoresizingMaskIntoConstraints = false
         
-        self.highlightView.topAnchor.constraint(equalTo: (self.superview?.topAnchor)!, constant: 0.0).isActive = true
-        self.highlightView.leftAnchor.constraint(equalTo: (self.superview?.leftAnchor)!, constant: 0.0).isActive = true
-        self.highlightView.bottomAnchor.constraint(equalTo: (self.superview?.bottomAnchor)!, constant: 0.0).isActive = true
-        self.highlightView.rightAnchor.constraint(equalTo: (self.superview?.rightAnchor)!, constant: 0.0).isActive = true
+        if self.highlightView.translatesAutoresizingMaskIntoConstraints == true {
+            self.highlightView.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.highlightView.topAnchor.constraint(equalTo: (self.superview?.topAnchor)!, constant: 0.0).isActive = true
+            self.highlightView.leftAnchor.constraint(equalTo: (self.superview?.leftAnchor)!, constant: 0.0).isActive = true
+            self.highlightView.bottomAnchor.constraint(equalTo: (self.superview?.bottomAnchor)!, constant: 0.0).isActive = true
+            self.highlightView.rightAnchor.constraint(equalTo: (self.superview?.rightAnchor)!, constant: 0.0).isActive = true
+        }
     }
     
     private func getMostLeftAndRightItemsXPositions() -> [CGFloat] {

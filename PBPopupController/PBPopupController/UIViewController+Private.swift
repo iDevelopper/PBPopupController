@@ -70,15 +70,20 @@ public extension UITabBarController {
     @objc private func _hBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = true
         
-        UIView.animate(withDuration: 0.35) {
-            self.view.layoutIfNeeded()
-        }
-        
         self._hBWT(t: t, iE: iE)
         
         if (t > 0) {
             let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
             if (rv != nil) {
+                if popupController.popupPresentationState != .hidden {
+                    var duration: TimeInterval = 0.35
+                    if let coordinator = self.selectedViewController?.transitionCoordinator {
+                        duration = coordinator.transitionDuration
+                    }
+                    UIView.animate(withDuration: duration) {
+                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                    }
+                }
                 self.bottomBar.isHidden = true
             }
         }
@@ -88,22 +93,31 @@ public extension UITabBarController {
     @objc private func _sBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = false
         
-        UIView.animate(withDuration: 0.35) {
-            self.view.layoutIfNeeded()
-        }
-        
-        self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
-        }, completion: { (_ context) in
-            if context.isCancelled {
-                self.isTabBarHiddenDuringTransition = true
-            }
-        })
-        
         self._sBWT(t: t, iE: iE)
         
         if (t > 0) {
             let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
             if (rv != nil) {
+                if popupController.popupPresentationState != .hidden {
+                    var duration: TimeInterval = 0.35
+                    if let coordinator = self.selectedViewController?.transitionCoordinator {
+                        duration = coordinator.transitionDuration
+                    }
+                    
+                    UIView.animate(withDuration: duration) {
+                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                    }
+                    
+                    self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
+                    }, completion: { (_ context) in
+                        if context.isCancelled {
+                            self.isTabBarHiddenDuringTransition = true
+                            UIView.animate(withDuration: 0.15) {
+                                self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                            }
+                        }
+                    })
+                }
                 self.bottomBar.isHidden = false
             }
         }
@@ -203,16 +217,21 @@ public extension UINavigationController {
         
         let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
         if (rv != nil) {
-            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-            
-            self._sTH(h: h, e: e, d: d)
-            
-            if let coordinator = self.transitionCoordinator {
-                coordinator.animate(alongsideTransition: { (_ context) in
-                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                }) { (_ context) in
-                    //
+            if popupController.popupPresentationState != .hidden {
+                self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                
+                self._sTH(h: h, e: e, d: d)
+                
+                if let coordinator = self.transitionCoordinator {
+                    coordinator.animate(alongsideTransition: { (_ context) in
+                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                    }) { (_ context) in
+                        //
+                    }
                 }
+            }
+            else {
+                self._sTH(h: h, e: e, d: d)
             }
         }
         else {

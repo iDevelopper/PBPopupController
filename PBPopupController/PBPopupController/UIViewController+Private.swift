@@ -80,15 +80,22 @@ public extension UITabBarController {
                     if let coordinator = self.selectedViewController?.transitionCoordinator {
                         duration = coordinator.transitionDuration
                     }
+                    var insets: UIEdgeInsets = .zero
+                    if #available(iOS 11.0, *) {
+                        insets = self.view.window?.safeAreaInsets ?? .zero
+                    }
+                    
                     UIView.animate(withDuration: duration) {
                         self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                        self.popupController.popupBarView.frame.origin.y -= insets.bottom
+                        self.popupController.popupBarView.frame.size.height += insets.bottom
                     }
                 }
                 self.bottomBar.isHidden = true
             }
         }
     }
-    
+
     //_showBarWithTransition:isExplicit:
     @objc private func _sBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = false

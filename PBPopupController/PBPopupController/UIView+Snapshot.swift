@@ -9,23 +9,15 @@
 import UIKit
 
 internal extension UIView  {
-    internal func makeSnapshot() -> UIImage? {
+    func makeSnapshot() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(bounds.size, true, 0.0)
         drawHierarchy(in: bounds, afterScreenUpdates: true)
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return image
     }
-    /*
-    internal func makeSnapshot2(from rect: CGRect) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(rect.size, true, 0.0)
-        drawHierarchy(in: rect, afterScreenUpdates: true)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return image
-    }
-    */
-    internal func makeSnapshot(from rect: CGRect? = nil) -> UIImage? {
+
+    func makeSnapshot(from rect: CGRect? = nil) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(bounds.size, isOpaque, UIScreen.main.scale)
         
         self.layer.render(in: UIGraphicsGetCurrentContext()!)
@@ -43,11 +35,11 @@ internal extension UIView  {
         return UIImage(cgImage: cgImage, scale: scale, orientation: .up)
     }
 
-    internal func snapshot() -> UIImageView {
+    func snapshot() -> UIImageView {
         return UIImageView(image: asImage())
     }
     
-    internal func asImage() -> UIImage? {
+    func asImage() -> UIImage? {
         if #available(iOS 10.0, *) {
             let renderer = UIGraphicsImageRenderer(bounds: bounds)
             return renderer.image { rendererContext in

@@ -1129,6 +1129,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.askForLabels = false
             if let titleLabel = self.dataSource?.titleLabel?(for: self) {
                 NSLayoutConstraint.deactivate(self.titleLabel.constraints)
+                self.titleLabel.translatesAutoresizingMaskIntoConstraints = true
                 self.titleLabelTopConstraint = nil
                 self.titleLabelHeightConstraint = nil
                 self.titleLabelCenterConstraint = nil
@@ -1142,6 +1143,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
                 NSLayoutConstraint.deactivate(self.subtitleLabel.constraints)
+                self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = true
                 self.subtitleLabelBottomConstraint = nil
                 self.subtitleLabelHeightConstraint = nil
                 self.subtitleLabelCenterConstraint = nil

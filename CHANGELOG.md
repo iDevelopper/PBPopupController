@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 1.0.4
+
+Enhancements and refactor.
+
 ## 1.0.3
 
 hidesBottomBarWhenPushed animation fix.

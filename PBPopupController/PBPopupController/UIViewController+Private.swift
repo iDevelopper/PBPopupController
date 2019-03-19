@@ -62,7 +62,7 @@ public extension UITabBarController {
     /**
      :nodoc:
      */
-    @objc public static func tbc_swizzle() {
+    @objc static func tbc_swizzle() {
         _ = self.swizzleImplementation
     }
     
@@ -141,7 +141,7 @@ public extension UITabBarController {
 }
 
 internal extension UITabBarController {
-    @objc internal override func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
         let height = self.tabBar.frame.height
         if height > 0.0 {
             if hidden == false {
@@ -153,14 +153,14 @@ internal extension UITabBarController {
         }
     }
     
-    @objc internal override func _setBottomBarPosition( _ position: CGFloat) {
+    @objc override func _setBottomBarPosition( _ position: CGFloat) {
         let height = self.tabBar.frame.height
         if height > 0.0 {
             self.tabBar.frame.origin.y = position
         }
     }
     
-    @objc internal override func insetsForBottomBar() -> UIEdgeInsets {
+    @objc override func insetsForBottomBar() -> UIEdgeInsets {
         if #available(iOS 11.0, *) {
             return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         } else {
@@ -168,7 +168,7 @@ internal extension UITabBarController {
         }
     }
     
-    @objc internal override func defaultFrameForBottomBar() -> CGRect {
+    @objc override func defaultFrameForBottomBar() -> CGRect {
         var bottomBarFrame = self.tabBar.frame
         let bottomBarSizeThatFits = self.tabBar.sizeThatFits(CGSize.zero)
         
@@ -215,7 +215,7 @@ public extension UINavigationController {
     /**
      :nodoc:
      */
-    @objc public static func nc_swizzle() {
+    @objc static func nc_swizzle() {
         _ = self.swizzleImplementation
     }
 
@@ -265,7 +265,7 @@ public extension UINavigationController {
 }
 
 internal extension UINavigationController {
-    @objc internal override func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
         var height = self.toolbar.frame.height
         if let tabBarController = self.tabBarController {
             height += tabBarController.defaultFrameForBottomBar().height
@@ -287,14 +287,14 @@ internal extension UINavigationController {
         }
     }
     
-    @objc internal override func _setBottomBarPosition( _ position: CGFloat) {
+    @objc override func _setBottomBarPosition( _ position: CGFloat) {
         let height = self.toolbar.frame.height
         if height > 0.0 {
             self.toolbar.frame.origin.y = position
         }
     }
     
-    @objc internal override func insetsForBottomBar() -> UIEdgeInsets {
+    @objc override func insetsForBottomBar() -> UIEdgeInsets {
         if #available(iOS 11.0, *) {
             if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
                 return tabBarController.insetsForBottomBar()
@@ -305,7 +305,7 @@ internal extension UINavigationController {
         }
     }
     
-    @objc internal override func defaultFrameForBottomBar() -> CGRect {
+    @objc override func defaultFrameForBottomBar() -> CGRect {
         var toolBarFrame = self.toolbar.frame
         
         toolBarFrame.origin = CGPoint(x: toolBarFrame.origin.x, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
@@ -371,7 +371,7 @@ public extension UIViewController {
     /**
      :nodoc:
      */
-    @objc public static func vc_swizzle() {
+    @objc static func vc_swizzle() {
         _ = self.swizzleImplementation
         
         if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10) {
@@ -474,7 +474,7 @@ public extension UIViewController {
 }
 
 internal extension UIViewController {
-    @objc internal func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc func _animateBottomBarToHidden( _ hidden: Bool) {
         let height = self.popupController.bottomBarHeight
         
         let insets = self.insetsForBottomBar()
@@ -489,14 +489,14 @@ internal extension UIViewController {
         }
     }
     
-    @objc internal func _setBottomBarPosition( _ position: CGFloat) {
+    @objc func _setBottomBarPosition( _ position: CGFloat) {
         let height = self.popupController.bottomBarHeight
         if height > 0.0 {
             self.bottomBar.frame.origin.y = position
         }
     }
     
-    @objc internal func insetsForBottomBar() -> UIEdgeInsets {
+    @objc func insetsForBottomBar() -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
         if #available(iOS 11.0, *) {
             insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
@@ -510,7 +510,7 @@ internal extension UIViewController {
         return insets
     }
     
-    @objc internal func defaultFrameForBottomBar() -> CGRect {
+    @objc func defaultFrameForBottomBar() -> CGRect {
         var bottomBarFrame = CGRect(x: 0.0, y: self.view.bounds.size.height, width: self.view.bounds.size.width, height: 0.0)
         if let bottomBarView = self.popupController.dataSource?.bottomBarView?(for: self.popupController) {
             if let defaultFrame = self.popupController.dataSource?.popupController?(self.popupController, defaultFrameFor: self.bottomBar) {

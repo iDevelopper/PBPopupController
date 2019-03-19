@@ -52,8 +52,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     override var completionSpeed: CGFloat {
         get {
-            return 1
-            //return 1 + self.percentComplete
+            return (self.shouldComplete ? 1.5 : 1.0) + self.percentComplete
         }
         set {}
     }
@@ -149,9 +148,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     // finish()
                     UIView.animate(withDuration: TimeInterval(duration - (duration * percentComplete)), delay: 0.0, options: .curveLinear, animations: {
                         vc.popupContentView.popupCloseButton?.alpha = 1.0
-                        vc._animateBottomBarToHidden(true)
                         self.presentationController?.animateImageModuleInFinalPosition()
                         self.presentationController?.animateControlsModuleInFinalPosition()
+                        vc._animateBottomBarToHidden(true)
                     }) { (_) in
                         //
                     }
@@ -164,6 +163,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 else {
                     self.presentationController?.containerView?.layoutIfNeeded()
                     UIView.animate(withDuration: TimeInterval((duration - (duration * percentComplete)) / completionSpeed), delay: 0.0, options: [.curveLinear], animations: {
+                        vc.popupContentView.popupCloseButton?.alpha = 0.0
                         self.presentationController?.popupBarForPresentation?.alpha = 1.0
                         self.presentationController?.animateImageModuleInFinalPosition()
                         self.presentationController?.animateControlsModuleInFinalPosition()

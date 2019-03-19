@@ -11,7 +11,7 @@ import Foundation
 
 internal extension UIView
 {
-    internal func setupCornerRadiusTo(_ cornerRadius: CGFloat, rect: CGRect) {
+    func setupCornerRadiusTo(_ cornerRadius: CGFloat, rect: CGRect) {
         if #available(iOS 11.0, *) {
             self.layer.cornerRadius = CGFloat(cornerRadius)
             self.clipsToBounds = true
@@ -26,7 +26,7 @@ internal extension UIView
         }
     }
     
-    internal func updateCornerRadiusTo(_ cornerRadius: CGFloat, rect: CGRect) {
+    func updateCornerRadiusTo(_ cornerRadius: CGFloat, rect: CGRect) {
         if #available(iOS 11.0, *) {
             self.layer.cornerRadius = CGFloat(cornerRadius)
             self.clipsToBounds = true

@@ -11,7 +11,7 @@ import PBPopupController
 
 public extension UIViewController {
     
-    public var containerController: DemoContainerController? {
+    var containerController: DemoContainerController? {
         var current: UIViewController? = parent
         
         repeat {

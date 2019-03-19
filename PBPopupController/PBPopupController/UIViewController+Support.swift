@@ -54,7 +54,7 @@ public extension UIViewController {
      
      - SeeAlso: `PBPopupBar`.
      */
-    @objc public internal(set) var popupBar: PBPopupBar! {
+    @objc internal(set) var popupBar: PBPopupBar! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
@@ -82,7 +82,7 @@ public extension UIViewController {
      A default implementation is provided for `UIViewController`, `UINavigationController` and `UITabBarController`.
      The default implmentation for `UIViewController` returns an invisible `UIView` instance, docked to the bottom of the screen. For `UINavigationController`, the toolbar is returned. For `UITabBarController`, the tab bar is returned.
      */
-    @objc public internal(set) var bottomBar: UIView! {
+    @objc internal(set) var bottomBar: UIView! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) as? UIView
@@ -112,7 +112,7 @@ public extension UIViewController {
         - `PBPopupController.delegate`.
         - `PBPopupController.popupPresentationState`.
      */
-    @objc public internal(set) var popupController: PBPopupController! {
+    @objc internal(set) var popupController: PBPopupController! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupController) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupController) as? PBPopupController
@@ -137,7 +137,7 @@ public extension UIViewController {
     /**
      Returns the container (presenting) view controller for the popup bar, and for the presented view controller (popupContentViewController). May be `UIViewController`, `UINavigationController`, `UITabBarController` or a custom container view controller. (read-only).
      */
-    @objc public internal(set) var popupContainerViewController: UIViewController! {
+    @objc internal(set) var popupContainerViewController: UIViewController! {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController
         }
@@ -157,7 +157,7 @@ public extension UIViewController {
     /**
      Returns the popup content view controller of the container. If there is no popup bar presentation, the property will be `nil`. (read-only).
      */
-    @objc public internal(set) var popupContentViewController: UIViewController! {
+    @objc internal(set) var popupContentViewController: UIViewController! {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.popupContentViewController) as? UIViewController
         }
@@ -181,7 +181,7 @@ public extension UIViewController {
 
      - SeeAlso: `PBPopupContentView`.
      */
-    @objc public internal(set) var popupContentView: PBPopupContentView! {
+    @objc internal(set) var popupContentView: PBPopupContentView! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) as? PBPopupContentView
@@ -219,7 +219,7 @@ public extension UIViewController {
                 `PBPopupController.dataSource` for a custom bottom bar view.
                 `presentPopupBar(withPopupContentViewController:animated:completion:)`.
      */
-    @objc public func presentPopupBar(withPopupContentViewController controller: UIViewController!, openPopup: Bool, animated: Bool, completion: (() -> Swift.Void)? = nil) {
+    @objc func presentPopupBar(withPopupContentViewController controller: UIViewController!, openPopup: Bool, animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.presentPopupBar(withPopupContentViewController: controller, animated: openPopup ? false : animated) {
             if openPopup == true {
                 self.openPopup(animated: animated, completion: {
@@ -247,7 +247,7 @@ public extension UIViewController {
                 `PBPopupController.dataSource` for a custom bottom bar view.
                 `presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)`.
      */
-    @objc public func presentPopupBar(withPopupContentViewController controller: UIViewController!, animated: Bool, completion: (() -> Swift.Void)? = nil) {
+    @objc func presentPopupBar(withPopupContentViewController controller: UIViewController!, animated: Bool, completion: (() -> Swift.Void)? = nil) {
         
         assert(controller != nil, "Content view controller cannot be nil.")
         if controller == nil {
@@ -270,7 +270,7 @@ public extension UIViewController {
         - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
         - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
-    @objc public func dismissPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+    @objc func dismissPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
             self.popupController._closePopupAnimated(false) {
                 self.popupController._dismissPopupBarAnimated(animated) {
@@ -292,7 +292,7 @@ public extension UIViewController {
         - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
         - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
-    @objc public func openPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+    @objc func openPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.popupController._openPopupAnimated(animated) {
             completion?()
         }
@@ -305,7 +305,7 @@ public extension UIViewController {
         - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
         - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
-    @objc public func closePopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+    @objc func closePopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.popupController._closePopupAnimated(animated) {
             completion?()
         }
@@ -317,7 +317,7 @@ public extension UIViewController {
      
      - SeeAlso: `PBPopupBar.inheritsVisualStyleFromBottomBar`.
      */
-    @objc public func updatePopupBarAppearance() {
+    @objc func updatePopupBarAppearance() {
         self.popupBar.inheritsVisualStyleFromBottomBar = true
         self.popupBar.updatePopupBarAppearance()
     }

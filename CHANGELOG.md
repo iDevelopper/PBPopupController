@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 1.0.6
+
+Do not end the popup bar gesture recognizer when the finger is still pressed on the screen and the popup controller is closed.
+
 ## 1.0.5
 
 Remove 1.0.4 tag.

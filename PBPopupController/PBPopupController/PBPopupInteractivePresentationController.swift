@@ -116,7 +116,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             }
             
             if self.isPresenting && (self.progress >= 100 || self.progress <= 0) {
-                gesture.state = .ended
+                    self.progress = self.progress >= 100 ? 100 : 0
             }
             
             let barHeight = self.popupController.bottomBarHeight + vc.insetsForBottomBar().bottom

@@ -84,6 +84,10 @@ class MainTableViewController: UITableViewController {
                 }
             }
             vc.title = items[indexPath.row]
+            vc.modalPresentationStyle = .fullScreen
+            if #available(iOS 13.0, *) {
+                vc.isModalInPresentation = true
+            }
             self.present(vc, animated: true) {
                 //
                 

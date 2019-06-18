@@ -283,6 +283,9 @@ public extension UIViewController {
                 }
             }
         }
+        else {
+            completion?()
+        }
     }
     
     /**

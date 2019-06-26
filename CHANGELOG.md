@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 1.1.0
+
+Support iOS 13 dark mode.
+
 ## 1.0.6
 
 Do not end the popup bar gesture recognizer when the finger is still pressed on the screen and the popup controller is closed.

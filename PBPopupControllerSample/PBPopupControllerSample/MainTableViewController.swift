@@ -18,11 +18,11 @@ class MainTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.tableView.backgroundColor = UIColor.systemBackground
+            #endif
+        }
     }
 
     // MARK: - Navigation
@@ -57,6 +57,12 @@ class MainTableViewController: UITableViewController {
         if indexPath.row == 8 {
             let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
             vc.title = items[indexPath.row]
+            vc.modalPresentationStyle = .fullScreen
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                vc.isModalInPresentation = true
+            }
+            #endif
             self.present(vc, animated: true) {
                 //
                 
@@ -84,10 +90,14 @@ class MainTableViewController: UITableViewController {
                 }
             }
             vc.title = items[indexPath.row]
+            
             vc.modalPresentationStyle = .fullScreen
+            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 vc.isModalInPresentation = true
             }
+            #endif
+            
             self.present(vc, animated: true) {
                 //
                 

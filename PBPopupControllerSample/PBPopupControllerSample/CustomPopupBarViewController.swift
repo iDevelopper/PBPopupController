@@ -28,6 +28,13 @@ class CustomPopupBarViewController: UIViewController {
         barView.layer.shadowOffset = CGSize(width: 0, height: 0)
         
         barView.layer.cornerRadius = 2
+        
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            titleLabel.textColor = UIColor.darkText
+            subtitleLabel.textColor = UIColor.darkGray
+        }
+        #endif
     }
     
     @IBAction func playPause(_ sender: Any) {

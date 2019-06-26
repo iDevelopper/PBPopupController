@@ -291,18 +291,23 @@ A set of methods used by the delegate to respond, with a preview view controller
             return self.toolbar.barStyle
         }
         set(newValue) {
-            if newValue == .black {
-                //self.backgroundStyle = .dark
-                self.backgroundView.backgroundColor = UIColor.clear
-                if #available(iOS 11.0, *) {
-                    self.safeAreaBackgroundView.backgroundColor = UIColor.clear
-                }
+            self.systemBarStyle = newValue
+            if #available(iOS 13.0, *) {
+                self.backgroundView.backgroundColor = nil
+                self.safeAreaBackgroundView.backgroundColor = nil
             }
             else {
-                //self.backgroundStyle = .light
-                self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
-                if #available(iOS 11.0, *) {
-                    self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+                if newValue == .black {
+                    self.backgroundView.backgroundColor = UIColor.clear
+                    if #available(iOS 11.0, *) {
+                        self.safeAreaBackgroundView.backgroundColor = UIColor.clear
+                    }
+                }
+                else {
+                    self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+                    if #available(iOS 11.0, *) {
+                        self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+                    }
                 }
             }
             self.toolbar.barStyle = newValue
@@ -314,13 +319,24 @@ A set of methods used by the delegate to respond, with a preview view controller
      
      - SeeAlso: `UIBlurEffect.Style`
      */
-    @objc public var backgroundStyle: UIBlurEffect.Style = .light {
-        didSet {
+    @objc public var backgroundStyle: UIBlurEffect.Style {
+        get {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                if self.systemBarStyle == .black {
+                    return self.popupBarStyle == .compact ? .systemChromeMaterialDark : .systemUltraThinMaterialDark
+                }
+                return self.popupBarStyle == .compact ? .systemChromeMaterial : .systemUltraThinMaterial
+            }
+            #endif
+            return self.systemBarStyle == .black ? .dark : popupBarStyle == .compact ? .extraLight : .light
+        }
+        set {
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-            self.backgroundView.effect = UIBlurEffect(style: backgroundStyle)
+            self.backgroundView.effect = UIBlurEffect(style: newValue)
             if #available(iOS 11.0, *) {
                 self.safeAreaToolbar?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-                self.safeAreaBackgroundView?.effect = UIBlurEffect(style: backgroundStyle)
+                self.safeAreaBackgroundView?.effect = UIBlurEffect(style: newValue)
             }
         }
     }
@@ -603,6 +619,8 @@ A set of methods used by the delegate to respond, with a preview view controller
         return self.popupBarStyle == .prominent ? PBPopupBarHeightProminent : PBPopupBarHeightCompact
     }
     
+    private var systemBarStyle: UIBarStyle!
+    
     private var backgroundView: UIVisualEffectView!
     
     private var toolbar: PBPopupToolbar!
@@ -664,12 +682,17 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         self.autoresizingMask = []
         
-        let effect = UIBlurEffect(style: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10 ? .extraLight: self.backgroundStyle)
+        let effect = UIBlurEffect(style: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10 ? .extraLight : self.backgroundStyle)
         self.backgroundView = UIVisualEffectView(effect: effect)
         self.backgroundView.clipsToBounds = false
         self.backgroundView.autoresizingMask = []
         self.backgroundView.isUserInteractionEnabled = false
-        self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+        if #available(iOS 13.0, *) {
+            self.backgroundView.backgroundColor = nil
+        }
+        else {
+            self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+        }
         self.addSubview(self.backgroundView)
         
         if #available(iOS 11.0, *) {
@@ -678,7 +701,12 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.safeAreaBackgroundView.clipsToBounds = false
             self.safeAreaBackgroundView.autoresizingMask = []
             self.safeAreaBackgroundView.isUserInteractionEnabled = false
-            self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+            if #available(iOS 13.0, *) {
+                self.safeAreaBackgroundView.backgroundColor = nil
+            }
+            else {
+                self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+            }
             self.addSubview(self.safeAreaBackgroundView)
             
             self.safeAreaToolbar = UIToolbar()
@@ -842,7 +870,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             self.frame.size.height = self.popupBarHeight
             
-            //self.layoutToolbar()
+            self.layoutToolbar()
             
             self.layoutAllViews()
             

@@ -13,11 +13,21 @@ class DemoTableViewController: UITableViewController {
 
     @IBOutlet weak var headerView: UIView!
 
-    weak var firstVC: FirstTableViewController!
+    weak var firstVC: FirstTableViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
+    
         self.tableView.tableFooterView = UIView()
         
         self.tableView.tableHeaderView = nil
@@ -80,16 +90,17 @@ class DemoTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.firstVC.images.count
+        guard let vc = self.firstVC else {return 0}
+        return vc.images.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "musicTableViewCell", for: indexPath) as! MusicTableViewCell
 
         // Configure the cell...
-        cell.albumArtImageView.image = self.firstVC.images[indexPath.row]
-        cell.songNameLabel.text = self.firstVC.titles[indexPath.row]
-        cell.albumNameLabel.text = self.firstVC.subtitles[indexPath.row]
+        cell.albumArtImageView.image = self.firstVC!.images[indexPath.row]
+        cell.songNameLabel.text = self.firstVC!.titles[indexPath.row]
+        cell.albumNameLabel.text = self.firstVC!.subtitles[indexPath.row]
 
         if #available(iOS 11.0, *) {
             var font = UIFont.systemFont(ofSize: 17, weight: .regular)
@@ -108,7 +119,14 @@ class DemoTableViewController: UITableViewController {
                 cell.albumNameLabel.adjustsFontForContentSizeCategory = true
             }
         }
-        cell.albumNameLabel.textColor = UIColor.gray
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            cell.songNameLabel.textColor = UIColor.label
+            cell.albumNameLabel.textColor = UIColor.secondaryLabel
+        }
+        #endif
+
+        cell.backgroundColor = UIColor.clear
         
         return cell
     }
@@ -128,12 +146,12 @@ class DemoTableViewController: UITableViewController {
 
         let cell = tableView.cellForRow(at: indexPath) as! MusicTableViewCell
         
-        self.firstVC.containerVC.popupBar.image = cell.albumArtImageView.image
-        self.firstVC.containerVC.popupBar.title = cell.songNameLabel.text
-        self.firstVC.containerVC.popupBar.subtitle = cell.albumNameLabel.text
+        self.firstVC!.containerVC.popupBar.image = cell.albumArtImageView.image
+        self.firstVC!.containerVC.popupBar.title = cell.songNameLabel.text
+        self.firstVC!.containerVC.popupBar.subtitle = cell.albumNameLabel.text
         
-        if self.firstVC.containerVC.popupController.popupPresentationState == .hidden {
-            self.firstVC.presentPopBar(cell)
+        if self.firstVC!.containerVC.popupController.popupPresentationState == .hidden {
+            self.firstVC!.presentPopBar(cell)
         }
     }
 }

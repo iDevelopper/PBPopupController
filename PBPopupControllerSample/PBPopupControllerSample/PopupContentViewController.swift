@@ -58,6 +58,19 @@ class PopupContentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.albumNameLabel.textColor = UIColor.red
+        
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = UIColor.secondarySystemBackground
+            self.songNameLabel.textColor = UIColor.label
+            self.albumNameLabel.textColor = UIColor.systemPink
+            self.prevButton.tintColor = UIColor.label
+            self.playPauseButton.tintColor = UIColor.label
+            self.nextButton.tintColor = UIColor.label
+        }
+        #endif
+        
         self.songNameLabel.animationDelay = 2
         self.songNameLabel.speed = .rate(15)
         self.albumNameLabel.animationDelay = 2
@@ -163,8 +176,8 @@ class PopupContentViewController: UIViewController {
     // MARK: - Setups
     
     func setupImageViewForPlaying(_ playing: Bool) {
-        if playing == true {
-            
+        if playing == true
+        {
             self.imageModuleTopConstraint.constant -= 20;
             self.imageModuleLeadingConstraint.constant -= 20
             self.imageModuleTrailingConstraint.constant -= 20
@@ -181,8 +194,8 @@ class PopupContentViewController: UIViewController {
             self.imageModule.layer.shadowOffset = CGSize(width: 0.0, height: 20.0)
             self.imageModule.layer.shadowRadius = 20
         }
-        else {
-            
+        else
+        {
             self.imageModuleTopConstraint.constant += 20;
             self.imageModuleLeadingConstraint.constant += 20
             self.imageModuleTrailingConstraint.constant += 20
@@ -200,15 +213,10 @@ class PopupContentViewController: UIViewController {
             self.albumArtImageView.layer.cornerRadius = 10
             self.albumArtImageView.layer.masksToBounds = true
         }
-        
     }
 
     func setupTimer() {
         if self.timer == nil {
-            /*
-            self.timer = Timer(timeInterval: 0.01, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
-            RunLoop.current.add(self.timer!, forMode: RunLoop.Mode.common)
-            */
             self.timer = Timer.scheduledTimer(timeInterval: 0.05, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
         }
     }

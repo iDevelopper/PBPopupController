@@ -477,6 +477,7 @@ extension PBPopupPresentationStyle {
       vc.popupBar.layoutIfNeeded()
       
       vc.popupBar.isHidden = false
+      //vc.popupBar.inheritsVisualStyleFromBottomBar = true
       
       UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveEaseInOut/*, .layoutSubviews*/], animations: {
          

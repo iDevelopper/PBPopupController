@@ -41,4 +41,38 @@ public extension UIColor {
         
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1)
     }
+    
+    #if compiler(>=5.1)
+    @available(iOS 13.0, *)
+    @objc class func PBRandomAdaptiveColor() -> UIColor {
+        let lightColor = UIColor.PBRandomLightColor()
+        let darkColor = UIColor.PBRandomDarkColor()
+        
+        return UIColor { (traitCollection) -> UIColor in
+            if traitCollection.userInterfaceStyle == .dark {
+                return darkColor!
+            }
+            else {
+                return lightColor!
+            }
+        }
+    }
+    #endif
+    
+    #if compiler(>=5.1)
+    @available(iOS 13.0, *)
+    @objc class func PBRandomAdaptiveInvertedColor() -> UIColor {
+        let lightColor = UIColor.PBRandomLightColor()
+        let darkColor = UIColor.PBRandomDarkColor()
+        
+        return UIColor { (traitCollection) -> UIColor in
+            if traitCollection.userInterfaceStyle == .dark {
+                return lightColor!
+            }
+            else {
+                return darkColor!
+            }
+        }
+    }
+    #endif
 }

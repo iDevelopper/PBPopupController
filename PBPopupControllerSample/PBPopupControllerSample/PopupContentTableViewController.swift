@@ -36,12 +36,19 @@ class PopupContentTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.tableView.tableFooterView = UIView()
+
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            self.tableView.backgroundColor = UIColor.secondarySystemBackground
+        }
+        #endif
+        
         if #available(iOS 11.0, *) {
             self.tableView.insetsContentViewsToSafeArea = true
         }
-
+    
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 1) {
-            
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
             titles += [LoremIpsum.title]
@@ -66,6 +73,14 @@ class PopupContentTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        /*
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            self.tableView.backgroundColor = UIColor.secondarySystemBackground
+        }
+        #endif
+        */
         
         if self.popupContainerViewController != nil {
             self.popupContentVC.albumArtImage = self.popupContainerViewController.popupBar.image
@@ -144,6 +159,8 @@ class PopupContentTableViewController: UITableViewController {
 
             cell.selectionStyle = .none
             
+            cell.backgroundColor = UIColor.clear
+
             return cell
         }
         
@@ -152,6 +169,17 @@ class PopupContentTableViewController: UITableViewController {
             cell.albumArtImageView.image = images[indexPath.row]
             cell.songNameLabel.text = titles[indexPath.row]
             cell.albumNameLabel.text = subtitles[indexPath.row]
+            
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                cell.songNameLabel.textColor = UIColor.label
+                cell.albumNameLabel.textColor = UIColor.secondaryLabel
+            }
+            #endif
+            
+            cell.selectionStyle = .default
+
+            cell.backgroundColor = UIColor.clear
             
             return cell
         }
@@ -174,7 +202,7 @@ class PopupContentTableViewController: UITableViewController {
     // MARK: - Table view delegate
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        //cell.backgroundColor = UIColor.clear
+        cell.backgroundColor = UIColor.clear
         if indexPath.section == 0 {
             self.popupContentVC.songNameLabel.restartLabel()
             self.popupContentVC.albumNameLabel.restartLabel()

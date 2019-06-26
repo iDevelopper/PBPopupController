@@ -16,6 +16,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.window?.tintColor = UIColor.systemPink
+            #else
+            self.window?.tintColor = UIColor.red
+            #endif
+        } else {
+            self.window?.tintColor = UIColor.red
+        }
         return true
     }
 

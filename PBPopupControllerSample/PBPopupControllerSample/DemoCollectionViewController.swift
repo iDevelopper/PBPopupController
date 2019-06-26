@@ -27,6 +27,16 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.collectionView.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
+        
         if #available(iOS 11.0, *) {
             self.collectionView.contentInsetAdjustmentBehavior = .always
         }
@@ -73,7 +83,6 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.firstVC.images.count
     }
@@ -86,6 +95,13 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         cell.title.text = self.firstVC.titles[indexPath.row]
         cell.subtitle.text = self.firstVC.subtitles[indexPath.row]
         
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            cell.title.textColor = UIColor.label
+            cell.subtitle.textColor = UIColor.secondaryLabel
+        }
+        #endif
+
         return cell
     }
     

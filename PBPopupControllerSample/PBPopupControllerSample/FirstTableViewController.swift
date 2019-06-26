@@ -72,7 +72,15 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             subtitles += [LoremIpsum.sentence]
         }
         
-        self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
 
         self.tableView.tableFooterView = UIView()
         
@@ -217,7 +225,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             popupBar.dataSource = self
             popupBar.previewingDelegate = self
             
-            popupBar.inheritsVisualStyleFromBottomBar = false
+            popupBar.inheritsVisualStyleFromBottomBar = true
             
             popupBar.shadowImageView.shadowOpacity = 0
             
@@ -251,12 +259,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         }
     }
     
-    func createBarButtonItems() {
-        //let fixedButton = UIButton(type: .system)
-        //fixedButton.setImage(#imageLiteral(resourceName: "pause-small"), for: .normal)
-        //self.popupPlayButtonItem = UIBarButtonItem(customView: fixedButton)
-        //fixedButton.addTarget(self, action: #selector(playPauseAction(_:)), for: .touchUpInside)
-        
+    func createBarButtonItems()
+    {
         self.popupPlayButtonItemForProminent = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
         self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString("Play", comment: "")
         
@@ -325,12 +329,34 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
             navigationController?.toolbar.barStyle = aStyle
         }
-        if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
-            navigationController?.toolbar.tintColor = aColor
+
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
+                navigationController?.toolbar.tintColor = aColor
+            }
+            
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
+                navigationController?.toolbar.barTintColor = aColor
+            }
+            #else
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
+                navigationController?.toolbar.tintColor = aColor
+            }
+            
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
+                navigationController?.toolbar.barTintColor = aColor
+            }
+            #endif
         }
-        
-        if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
-            navigationController?.toolbar.barTintColor = aColor
+        else {
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
+                navigationController?.toolbar.tintColor = aColor
+            }
+            
+            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
+                navigationController?.toolbar.barTintColor = aColor
+            }
         }
         
         (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
@@ -387,7 +413,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         case 2:
             self.progressViewStyle = .top
         case 3:
-            self.progressViewStyle = .none
+            self.progressViewStyle = PBPopupBarProgressViewStyle.none
         default:
             break
         }
@@ -430,7 +456,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         case 2:
             self.popupCloseButtonStyle = .round
         case 3:
-            self.popupCloseButtonStyle = .none
+            self.popupCloseButtonStyle = PBPopupCloseButtonStyle.none
         default:
             break
         }
@@ -457,7 +483,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             self.containerVC.popupContentView.popupCloseButtonStyle = .default
         case 1:
             self.popupContentIsTableView = true
-            self.popupCloseButtonStyle = .none
+            self.popupCloseButtonStyle = PBPopupCloseButtonStyle.none
             self.containerVC.popupContentView.popupCloseButtonStyle = .none
         default:
             break
@@ -557,7 +583,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
         self.popupPlayButtonItemForCompact.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
         self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
-        (self.popupContentVC as! PopupContentViewController).playPauseAction(sender)
+        
+        if self.popupContentVC is PopupContentViewController {
+            (self.popupContentVC as! PopupContentViewController).playPauseAction(sender)
+        }
+        else {
+            (self.popupContentVC as! PopupContentTableViewController).popupContentVC.playPauseAction(sender)
+        }
     }
     
     @IBAction func prevAction(_ sender: Any) {
@@ -696,6 +728,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             
             cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
             
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                cell.titleLabel.textColor = UIColor.label
+            }
+            #endif
+
             if #available(iOS 10.0, *) {
                 cell.titleLabel.adjustsFontForContentSizeCategory = true
             }
@@ -767,9 +805,23 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
                     cell.albumNameLabel.adjustsFontForContentSizeCategory = true
                 }
             }
-            cell.albumNameLabel.textColor = UIColor.gray
+            
+            if #available(iOS 13.0, *) {
+                #if compiler(>=5.1)
+                cell.songNameLabel.textColor = UIColor.label
+                cell.albumNameLabel.textColor = UIColor.secondaryLabel
+                #else
+                cell.songNameLabel.textColor = UIColor.darkText
+                cell.albumNameLabel.textColor = UIColor.darkGray
+                #endif
+            }
+            else {
+                cell.songNameLabel.textColor = UIColor.darkText
+                cell.albumNameLabel.textColor = UIColor.darkGray
+            }
 
             return cell
+            
         default:
             break
         }
@@ -846,12 +898,30 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
                 controlsModule.alpha = 1.0
             }
         }
-        popupContentViewController.view.backgroundColor = UIColor.white
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
+            #else
+            popupContentViewController.view.backgroundColor = UIColor.white
+            #endif
+        }
+        else {
+            popupContentViewController.view.backgroundColor = UIColor.white
+        }
         if popupContentViewController is PopupContentTableViewController {
-            (popupContentViewController as! PopupContentTableViewController).popupContentVC.view.backgroundColor = UIColor.white
+            if #available(iOS 13.0, *) {
+                #if compiler(>=5.1)
+                (popupContentViewController as! PopupContentTableViewController).popupContentVC.view.backgroundColor = UIColor.secondarySystemBackground
+                #else
+                (popupContentViewController as! PopupContentTableViewController).popupContentVC.view.backgroundColor = UIColor.white
+                #endif
+            }
+            else {
+                (popupContentViewController as! PopupContentTableViewController).popupContentVC.view.backgroundColor = UIColor.white
+            }
         }
     }
-    
+ 
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
         PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
     }

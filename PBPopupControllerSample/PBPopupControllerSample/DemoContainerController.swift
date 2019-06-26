@@ -48,6 +48,15 @@ public class DemoContainerController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            bottomBarView.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            bottomBarView.backgroundColor = UIColor.lightGray
+            #endif
+        } else {
+            bottomBarView.backgroundColor = UIColor.lightGray
+        }
         self.viewControllers = [UIViewController]()
         
         buttonsStackView.alignment = .fill
@@ -59,16 +68,40 @@ public class DemoContainerController: UIViewController {
         }
         
         let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        childVC1?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            childVC1?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            childVC1?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            childVC1?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
         
         let childVC2 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        childVC2?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            childVC2?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            childVC2?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            childVC2?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
         childVC2?.title = "ChildVC2"
         let nc = UINavigationController(rootViewController: childVC2!)
         nc.view.backgroundColor = childVC2?.view.backgroundColor
 
         let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        childVC3?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            childVC3?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+            #else
+            childVC3?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            #endif
+        } else {
+            childVC3?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+        }
 
         self.viewControllers = [childVC1, nc, childVC3]
         

@@ -45,6 +45,12 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         self.gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gesture:)))
         self.gesture.delegate = self
         view.addGestureRecognizer(self.gesture)
+        if presenting {
+            self.popupController.popupBarPanGestureRecognizer = self.gesture
+        }
+        else {
+            self.popupController.popupContentPanGestureRecognizer = self.gesture
+        }
         self.isPresenting = presenting
         self.isDismissing = false
         self.completionCurve = .linear
@@ -148,8 +154,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     // finish()
                     UIView.animate(withDuration: TimeInterval(duration - (duration * percentComplete)), delay: 0.0, options: .curveLinear, animations: {
                         vc.popupContentView.popupCloseButton?.alpha = 1.0
-                        self.presentationController?.animateImageModuleInFinalPosition()
-                        self.presentationController?.animateControlsModuleInFinalPosition()
+                        self.presentationController?.animateImageViewInFinalPosition()
+                        self.presentationController?.animateBottomModuleInFinalPosition()
                         vc._animateBottomBarToHidden(true)
                     }) { (_) in
                         //
@@ -165,8 +171,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     UIView.animate(withDuration: TimeInterval((duration - (duration * percentComplete)) / completionSpeed), delay: 0.0, options: [.curveLinear], animations: {
                         vc.popupContentView.popupCloseButton?.alpha = 0.0
                         self.presentationController?.popupBarForPresentation?.alpha = 1.0
-                        self.presentationController?.animateImageModuleInFinalPosition()
-                        self.presentationController?.animateControlsModuleInFinalPosition()
+                        self.presentationController?.animateImageViewInFinalPosition()
+                        self.presentationController?.animateBottomModuleInFinalPosition()
                         vc._animateBottomBarToHidden(false)
                         
                         self.presentationController?.containerView?.layoutIfNeeded()

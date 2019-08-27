@@ -302,10 +302,35 @@ extension PBPopupPresentationStyle {
     */
    @objc public internal(set) var popupPresentationState: PBPopupPresentationState
 
+   /**
+    The pan gesture recognizer attached to the popup bar for presenting the popup content view.
+    */
+   @objc public var popupBarPanGestureRecognizer: UIPanGestureRecognizer!
    
+    /**
+     The pan gesture recognizer attached to the popup content view for dismissing the popup content view.
+     */
+    @objc public var popupContentPanGestureRecognizer: UIPanGestureRecognizer!
+
    // MARK: - Private Properties
    
    @objc internal var containerViewController: UIViewController!
+   
+   internal var systemBarStyle: UIBarStyle! {
+      didSet {
+         if let popupContentView = self.containerViewController.popupContentView, popupContentView.popupEffectView.effect != nil {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                if systemBarStyle == .black {
+                  popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterialDark)
+                }
+                popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
+            }
+            popupContentView.popupEffectView.effect = systemBarStyle == .black ? UIBlurEffect(style: .dark) : UIBlurEffect(style: .light)
+            #endif
+         }
+      }
+   }
    
    internal var popupBarView: PBPopupBarView! = {
       let view = PBPopupBarView()
@@ -418,8 +443,7 @@ extension PBPopupPresentationStyle {
       rv.clipsToBounds = false
 
       rv.popupController = self
-      rv.autoresizesSubviews = false // default: true
-      rv.contentView.autoresizesSubviews = false // default: true
+      
       rv.preservesSuperviewLayoutMargins = true // default: false
       rv.contentView.preservesSuperviewLayoutMargins = true  // default: false
       rv.layer.masksToBounds = true
@@ -477,7 +501,6 @@ extension PBPopupPresentationStyle {
       vc.popupBar.layoutIfNeeded()
       
       vc.popupBar.isHidden = false
-      //vc.popupBar.inheritsVisualStyleFromBottomBar = true
       
       UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveEaseInOut/*, .layoutSubviews*/], animations: {
          
@@ -489,12 +512,9 @@ extension PBPopupPresentationStyle {
          self.popupPresentationState = .closed
          self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
          self.delegate?.popupController?(self, didPresent: vc.popupBar)
-
-         self.preparePopupContentViewControllerForPresentation()
          
          completionBlock?()
       }
-      
    }
 
    internal func _dismissPopupBarAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil) {
@@ -639,7 +659,6 @@ extension PBPopupPresentationStyle {
             }
             completionBlock?()
          }
-         //}
       }
    }
    
@@ -670,7 +689,6 @@ extension PBPopupPresentationStyle {
       if self.bottomBarHeight == 0.0 {
          height += insets.bottom
       }
-      //
 
       let frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
       
@@ -780,11 +798,9 @@ extension PBPopupController: UIViewControllerPreviewingDelegate {
          if let rv = vc.popupBar.previewingDelegate?.previewingViewControllerFor?(vc.popupBar) {
 
             // Disable interaction if a preview view controller is about to be presented.
-//          forceTouchOverride = true
             vc.popupBar.popupTapGestureRecognizer.isEnabled = false
             self.popupPresentationInteractiveController.gesture.isEnabled = false
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-//             forceTouchOverride = false
                vc.popupBar.popupTapGestureRecognizer.isEnabled = true
                self.popupPresentationInteractiveController.gesture.isEnabled = true
 })

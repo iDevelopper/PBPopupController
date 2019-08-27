@@ -42,18 +42,18 @@ import UIKit
         }
     }
     
-    @objc public var shadowOpacity: CGFloat = 0.5 {
+    @objc public var shadowOpacity: Float = 0.0 {
         didSet {
             layer.shadowOpacity = Float(shadowOpacity)
         }
     }
-    
-    @objc public var shadowRadius: CGFloat = 3.0 {
+
+    @objc public var shadowRadius: CGFloat = 0.0 {
         didSet {
             layer.shadowRadius = shadowRadius
         }
     }
-    
+
     // MARK: - Init
     
     @objc internal override init(frame: CGRect) {

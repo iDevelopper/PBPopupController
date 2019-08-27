@@ -46,6 +46,11 @@ The view where is embedded the popupContentViewController's view for presentatio
     }
     
     /**
+    The view containing the top subviews (i.e. labels, image view, etc...) of the popup content view controller (optional but needed if bottom module is used). Used to animate the popup presentation. This view will be used for correctly positioning the bottom module during presentation animation.
+     */
+    @objc public var popupTopModule: UIView?
+    
+    /**
     The image view's container view of the popup content view controller (optional). Useful for shadows. Used to animate the popup presentation.
      */
     @objc public var popupImageModule: UIView?
@@ -58,13 +63,25 @@ The view where is embedded the popupContentViewController's view for presentatio
     /**
      The view containing the controls subviews (i.e. playback buttons, volume slider, progress view, etc...) of the popup content view controller (optional). Used to animate the popup presentation. This view will be animated so as to be positioned under the image that grows.
      */
+    @available(*, deprecated, message: "Use popupBottomModule and popupTopModule instead")
     @objc public var popupControlsModule: UIView?
+    
+    /**
+     The view containing the controls subviews (i.e. playback buttons, volume slider, progress view, etc...) of the popup content view controller (optional). Used to animate the popup presentation. This view will be animated so as to be positioned under the image that grows.
+     */
+    @objc public var popupBottomModule: UIView?
     
     /**
      Required if popupControlsModule is provided. This is the top constraint against the popupImageModule view.
      */
+    @available(*, deprecated, message: "Use popupBottomModuleTopConstraint instead")
     @objc public var popupControlsModuleTopConstraint: NSLayoutConstraint?
     
+    /**
+     Required if popupBottomModule is provided. This is the top constraint against the popupTopModule view.
+     */
+    @objc public var popupBottomModuleTopConstraint: NSLayoutConstraint?
+
     /**
      The popup close button style.
      
@@ -127,20 +144,22 @@ The view where is embedded the popupContentViewController's view for presentatio
         PBLog("deinit \(self)")
     }
     
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+
+        self.popupEffectView.frame = self.bounds
+    }
+    
     // MARK: - private Methods
     
     private func setupEffectView() {
         let effect = UIBlurEffect(style: .light)
-        self.popupEffectView = PBPopupEffectView(effect: effect)        
-        
-        self.addSubview(self.popupEffectView)
 
-        self.popupEffectView.translatesAutoresizingMaskIntoConstraints = false
-        self.popupEffectView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
-        self.popupEffectView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
-        self.popupEffectView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0).isActive = true
-        self.popupEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
-        
+        self.popupEffectView = PBPopupEffectView(effect: effect)
+        self.popupEffectView.frame = self.bounds
+        self.popupEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+        self.addSubview(self.popupEffectView)
     }
 
     private func setupPopupCloseButton()

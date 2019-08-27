@@ -13,6 +13,14 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate, PBPo
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            self.view.tintColor = UIColor.white
+            #else
+            self.view.tintColor = UIColor.white
+            #endif
+        }
     }
     
     // MARK: - Navigation
@@ -25,11 +33,20 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate, PBPo
     // MARK: - Actions
     
     @IBAction func presentPopupBar(_ sender: UIButton) {
-        self.presentPopup()
+        if let containerVC = self.containerController {
+            containerVC.dismissPopupBar(animated: false) {
+                self.presentPopup()
+            }
+        }
+
     }
     
     @IBAction func presentCustomPopupBar(_ sender: UIButton) {
-        self.presentCustomPopup()
+        if let containerVC = self.containerController {
+            containerVC.dismissPopupBar(animated: false) {
+                self.presentCustomPopup()
+            }
+        }
     }
     
     @IBAction func dismissPopupBar(_ sender: UIButton) {
@@ -45,13 +62,14 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate, PBPo
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.customPopupBarViewController = customYTBar
             containerVC.popupContentView.popupCloseButtonStyle = .round
+            containerVC.popupContentView.popupEffectView.effect = nil
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
             containerVC.popupBar.image = customYTBar.imageView.image
             containerVC.popupBar.title = customYTBar.titleLabel.text
             containerVC.popupBar.subtitle = customYTBar.subtitleLabel.text
             DispatchQueue.main.async {
                 containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
-                    PBLog("Popup Bar Presented")
+                    PBLog("Custom Popup Bar Presented")
                 }
             }
         }
@@ -65,10 +83,13 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate, PBPo
             containerVC.popupBar.image = UIImage(named: "Cover22")
             containerVC.popupBar.title = LoremIpsum.title
             
+            containerVC.popupContentView.popupEffectView.effect = nil
             //containerVC.popupContentView.popupPresentationDuration = 6
             
-            containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
-                PBLog("Popup Bar Presented")
+            DispatchQueue.main.async {
+                containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
+                    PBLog("Popup Bar Presented")
+                }
             }
         }
     }

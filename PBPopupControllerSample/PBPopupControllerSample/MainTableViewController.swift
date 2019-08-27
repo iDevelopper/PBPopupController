@@ -65,7 +65,6 @@ class MainTableViewController: UITableViewController {
             #endif
             self.present(vc, animated: true) {
                 //
-                
             }
         }
         
@@ -100,7 +99,6 @@ class MainTableViewController: UITableViewController {
             
             self.present(vc, animated: true) {
                 //
-                
             }
         }
     }

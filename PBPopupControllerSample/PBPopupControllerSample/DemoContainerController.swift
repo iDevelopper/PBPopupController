@@ -48,15 +48,8 @@ public class DemoContainerController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
-            bottomBarView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            bottomBarView.backgroundColor = UIColor.lightGray
-            #endif
-        } else {
-            bottomBarView.backgroundColor = UIColor.lightGray
-        }
+        bottomBarView.backgroundColor = UIColor.init(hue: 0.5, saturation: 0.5, brightness: 0.5, alpha: 0.25)
+        
         self.viewControllers = [UIViewController]()
         
         buttonsStackView.alignment = .fill
@@ -115,7 +108,7 @@ public class DemoContainerController: UIViewController {
     }
     
     @objc func tabButtonAction(button: UIButton) {
-        if let index = self.buttonsStackView.arrangedSubviews.index(of: button) {
+        if let index = self.buttonsStackView.arrangedSubviews.firstIndex(of: button) {
             if index != self.selectedIndex {
                 self.selectedIndex = index
                 self.presentChild()
@@ -132,12 +125,13 @@ public class DemoContainerController: UIViewController {
             self.currentChildVC = childVC
             
             self.view.backgroundColor = currentChildVC.view.backgroundColor
+            
             self.setupConstraintsForChildController()
         }
     }
 
-    override public func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override public func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         
         if useConstraintsForBottomBar == true {
             self.setupConstraintsForBottomBar()

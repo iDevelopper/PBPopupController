@@ -272,8 +272,8 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.layoutSubviews()
-            
+            self.setNeedsLayout()
+
             if self.popupController.popupPresentationState != .hidden && oldValue != popupBarStyle {
                 self.popupController.popupPresentationState = .hidden
                 let vc = self.popupController.containerViewController!
@@ -292,6 +292,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         set(newValue) {
             self.systemBarStyle = newValue
+            self.popupController.systemBarStyle = newValue
             if #available(iOS 13.0, *) {
                 self.backgroundView.backgroundColor = nil
                 self.safeAreaBackgroundView.backgroundColor = nil
@@ -324,9 +325,9 @@ A set of methods used by the delegate to respond, with a preview view controller
             #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 if self.systemBarStyle == .black {
-                    return self.popupBarStyle == .compact ? .systemChromeMaterialDark : .systemUltraThinMaterialDark
+                    return .systemChromeMaterialDark
                 }
-                return self.popupBarStyle == .compact ? .systemChromeMaterial : .systemUltraThinMaterial
+                return .systemChromeMaterial
             }
             #endif
             return self.systemBarStyle == .black ? .dark : popupBarStyle == .compact ? .extraLight : .light
@@ -429,6 +430,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc public var image: UIImage? = nil {
         didSet {
             self.imageView?.image = image
+            self.layoutImageView()
         }
     }
     
@@ -451,6 +453,9 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var title: String? {
         didSet {
+            self.toolbar.setNeedsLayout()
+            self.toolbar.layoutIfNeeded()
+            
             self.configureTitleLabels()
             self.configureAccessibility()
         }
@@ -474,6 +479,9 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var subtitle: String? {
         didSet {
+            self.toolbar.setNeedsLayout()
+            self.toolbar.layoutIfNeeded()
+            
             self.configureTitleLabels()
             self.configureAccessibility()
         }
@@ -531,7 +539,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.layoutSubviews()
+            self.setNeedsLayout()
         }
     }
     
@@ -540,10 +548,13 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var leftBarButtonItems: [UIBarButtonItem]? {
         didSet {
+            self.toolbar.setNeedsLayout()
+            self.toolbar.layoutIfNeeded()
+
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.layoutSubviews()
+            self.setNeedsLayout()
         }
     }
     
@@ -552,10 +563,13 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var rightBarButtonItems: [UIBarButtonItem]? {
         didSet {
+            self.toolbar.setNeedsLayout()
+            self.toolbar.layoutIfNeeded()
+            
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.layoutSubviews()
+            self.setNeedsLayout()
         }
     }
     
@@ -566,10 +580,13 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var barButtonItemsSemanticContentAttribute: UISemanticContentAttribute = .playback {
         didSet {
+            self.toolbar.setNeedsLayout()
+            self.toolbar.layoutIfNeeded()
+
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.layoutSubviews()
+            self.setNeedsLayout()
         }
     }
     
@@ -664,7 +681,8 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc dynamic private var progressView: PBPopupBarProgressView!
 
     private var progressViewVerticalConstraints: [NSLayoutConstraint]!
-    
+    private var progressViewHorizontalConstraints: [NSLayoutConstraint]!
+
     // Highlighted view when taping or paning the popupBar
     @objc dynamic internal var highlightView: PBPopupBarHighlightView!
 
@@ -721,7 +739,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.safeAreaBackgroundView.contentView.addSubview(safeAreaToolbar)
         }
         
-        self.toolbar = PBPopupToolbar()
+        self.toolbar = PBPopupToolbar(frame: self.bounds)
         self.toolbar.autoresizingMask = []
         self.toolbar.isTranslucent = true
         
@@ -755,7 +773,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.toolbar.clipsToBounds = false
         
         self.addSubview(self.toolbar)
-        
+                
         self.imageView = UIImageView()
         
         self.imageView.accessibilityTraits = UIAccessibilityTraits.image
@@ -859,6 +877,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         super.layoutSubviews()
         
         guard let popupBarView = self.superview else {return}
+        
+        //self.toolbar.setNeedsLayout()
+        //self.toolbar.layoutIfNeeded()
         
         if self.ignoreLayoutDuringTransition {
             return
@@ -1056,6 +1077,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         
         self.imageView.isHidden = (self.image == nil || self.popupBarStyle == .compact)
+        self.imageView.layoutIfNeeded()
     }
     
     private func layoutTitlesView() {
@@ -1090,13 +1112,14 @@ A set of methods used by the delegate to respond, with a preview view controller
                     left = 16
                 }
                 left += safeLeading
+                if left > right {right = self.toolbar.frame.size.width}
                 if #available(iOS 11.0, *) {
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
                 else {
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
-                if right > left {right = 0}
+                //if right > left {right = 0}
             }
         }
         
@@ -1118,7 +1141,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.titlesViewLeftConstraint = self.titlesView.leftAnchor.constraint(equalTo: self.toolbar.leftAnchor, constant: left)
         }
         self.titlesViewLeftConstraint.isActive = true
-        
+
         if let rightConstraint = self.titlesViewRightConstraint {
             rightConstraint.constant = -right
         }
@@ -1265,6 +1288,12 @@ A set of methods used by the delegate to respond, with a preview view controller
                 self.titleLabelCenterConstraint = self.titleLabel.centerYAnchor.constraint(equalTo: self.titlesView.centerYAnchor, constant: 0)
                 self.titleLabelCenterConstraint.isActive = true
             }
+            else {
+                if let topConstraint = self.titleLabelTopConstraint {
+                    NSLayoutConstraint.deactivate([topConstraint])
+                }
+                self.titleLabelCenterConstraint.isActive = true
+            }
         }
         else {
             if let centerConstraint = self.titleLabelCenterConstraint {
@@ -1293,6 +1322,12 @@ A set of methods used by the delegate to respond, with a preview view controller
         if self.title == nil {
             if self.subtitleLabelCenterConstraint == nil {
                 self.subtitleLabelCenterConstraint = self.subtitleLabel.centerYAnchor.constraint(equalTo: self.titlesView.centerYAnchor, constant: 0)
+                self.subtitleLabelCenterConstraint.isActive = true
+            }
+            else {
+                if let bottomConstraint = self.subtitleLabelBottomConstraint {
+                    NSLayoutConstraint.deactivate([bottomConstraint])
+                }
                 self.subtitleLabelCenterConstraint.isActive = true
             }
         }
@@ -1329,7 +1364,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.subtitleLabelHeightConstraint.isActive = true
         }
     }
-    
+
     private func layoutToolbarItems() {
         let barItemsLayoutDirection = UIView.userInterfaceLayoutDirection(for: self.barButtonItemsSemanticContentAttribute)
         let layoutDirection = UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute)
@@ -1339,17 +1374,18 @@ A set of methods used by the delegate to respond, with a preview view controller
         let flexibleBarButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         flexibleBarButtonItem.tag = 999
         if let leftBarButtonItems = self.leftBarButtonItems, self.popupBarStyle == .compact {
-            self.toolbar.items = !isReversed ? leftBarButtonItems : leftBarButtonItems.reversed()
+            self.toolbar.setItems(!isReversed ? leftBarButtonItems : leftBarButtonItems.reversed(), animated: false)
             if let rightBarButtonItems = self.rightBarButtonItems {
-                self.toolbar.items = (!isReversed ? leftBarButtonItems : leftBarButtonItems.reversed()) + [flexibleBarButtonItem] + (!isReversed ? rightBarButtonItems : rightBarButtonItems.reversed())
+                self.toolbar.setItems((!isReversed ? leftBarButtonItems : leftBarButtonItems.reversed()) + [flexibleBarButtonItem] + (!isReversed ? rightBarButtonItems : rightBarButtonItems.reversed()), animated: false)
             }
         }
         else {
             if let rightBarButtonItems = self.rightBarButtonItems {
-                self.toolbar.items = [flexibleBarButtonItem] + (!isReversed ? rightBarButtonItems : rightBarButtonItems.reversed())
+                self.toolbar.setItems([flexibleBarButtonItem] + (!isReversed ? rightBarButtonItems : rightBarButtonItems.reversed()), animated: false)
             }
         }
-        self.layoutIfNeeded()
+        self.toolbar.layoutIfNeeded()
+        self.layoutSubviews()
     }
     
     private func layoutProgressView() {
@@ -1370,9 +1406,13 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         self.addConstraints(progressViewVerticalConstraints)
         
-        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views))
+        if let horizontalConstraints = self.progressViewHorizontalConstraints {
+            NSLayoutConstraint.deactivate(horizontalConstraints)
+        }
+        self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views)
+        self.addConstraints(progressViewHorizontalConstraints)
     }
-    
+
     private func layoutHighlightView() {
         
         if self.highlightView.translatesAutoresizingMaskIntoConstraints == true {
@@ -1580,7 +1620,7 @@ extension PBPopupBar {
     }
 }
 
-/*
+
 extension NSLayoutConstraint {
     class func reportAmbiguity (_ v:UIView?) {
         var v = v
@@ -1610,4 +1650,4 @@ extension NSLayoutConstraint {
         }
     }
 }
-*/
+

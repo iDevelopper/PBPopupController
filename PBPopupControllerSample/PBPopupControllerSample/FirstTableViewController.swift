@@ -10,7 +10,7 @@ import UIKit
 import PBPopupController
 
 class FirstTableViewController: UITableViewController, PBPopupControllerDelegate, PBPopupControllerDataSource, PBPopupBarDataSource {
-
+    
     // MARK: - Properties
     
     @IBOutlet weak var headerView: UIView!
@@ -41,24 +41,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     var subtitles = [String]()
     
     var effectView: UIVisualEffectView!
-    
-    lazy var label: MarqueeLabel = {
-        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
-        marqueeLabel.leadingBuffer = 0.0
-        marqueeLabel.trailingBuffer = 5.0
-        marqueeLabel.animationDelay = 1.0
-        marqueeLabel.type = .continuous
-        return marqueeLabel
-    }()
-    
-    lazy var sublabel: MarqueeLabel = {
-        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 20, fadeLength: 10)
-        marqueeLabel.leadingBuffer = 0.0
-        marqueeLabel.trailingBuffer = 5.0
-        marqueeLabel.animationDelay = 1.0
-        marqueeLabel.type = .continuous
-        return marqueeLabel
-    }()
     
     // MARK: - View lifecycle
     
@@ -135,12 +117,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         }, completion: nil)
     }
 
-    /*
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    */
-    
     // MARK: - Setups
     
     deinit {
@@ -192,20 +168,22 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     }
     
     func commonSetup() {
-        self.popupBarStyle = self.containerVC.popupBar.popupBarStyle
-        
-        self.progressViewStyle = self.containerVC.popupBar.progressViewStyle
-        
-        self.popupPresentationStyle = self.containerVC.popupContentView.popupPresentationStyle
-        
-        self.popupCloseButtonStyle = self.containerVC.popupContentView.popupCloseButtonStyle
-        
-        self.containerVC.popupController.delegate = self
-        self.containerVC.popupController.dataSource = self
-        
-        self.containerVC.popupContentView.popupContentSize = CGSize(width: self.view.bounds.width, height: self.view.bounds.height * 0.80)
+        if let popupBar = self.containerVC.popupBar {
+            self.popupBarStyle = popupBar.popupBarStyle
+            
+            self.progressViewStyle = popupBar.progressViewStyle
+            
+            self.popupPresentationStyle = self.containerVC.popupContentView.popupPresentationStyle
+            
+            self.popupCloseButtonStyle = self.containerVC.popupContentView.popupCloseButtonStyle
+            
+            self.containerVC.popupController.delegate = self
+            self.containerVC.popupController.dataSource = self
+            
+            self.containerVC.popupContentView.popupContentSize = CGSize(width: self.view.bounds.width, height: self.view.bounds.height * 0.80)
 
-        self.tableView.reloadData()
+            self.tableView.reloadData()
+        }
     }
     
     func setupCustomPopupBar() {
@@ -242,11 +220,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             }
             
             popupBar.image?.accessibilityLabel = NSLocalizedString("Cover", comment: "")
-
-            popupBar.tintColor = self.popupBarStyle == .compact ? UIColor.red : UIColor.black
             
             self.configureBarButtonItems()
-            
+
+            if #available(iOS 13.0, *) {
+                let interaction = UIContextMenuInteraction(delegate: self)
+                popupBar.addInteraction(interaction)
+            }
             //popupBar.semanticContentAttribute = .forceRightToLeft
             //popupBar.barButtonItemsSemanticContentAttribute = .forceRightToLeft
             
@@ -259,8 +239,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         }
     }
     
-    func createBarButtonItems()
-    {
+    func createBarButtonItems() {
         self.popupPlayButtonItemForProminent = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
         self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString("Play", comment: "")
         
@@ -303,7 +282,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
                 }
             }
         }
-    }
+        
+        self.popupPlayButtonItemForProminent.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+        self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
+        self.popupPlayButtonItemForCompact.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+        self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
+ }
     
     // MARK: - Toolbar container actions
     
@@ -321,10 +305,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         navigationController?.updatePopupBarAppearance()
     }
 
-    @IBAction func hideToolbar(_ sender: UIBarButtonItem) {
-        navigationController?.setToolbarHidden(true, animated: true)
-    }
-    
     @IBAction func changeToolbarStyle(_ sender: Any) {
         if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
             navigationController?.toolbar.barStyle = aStyle
@@ -395,9 +375,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             self.setupCustomPopupBar()
             return
         }
+
         if let popupBar = self.containerVC.popupBar {
             popupBar.popupBarStyle = self.popupBarStyle
-            popupBar.tintColor = self.popupBarStyle == .compact ? UIColor.red : UIColor.black
             self.configureBarButtonItems()
         }
         
@@ -520,10 +500,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             self.containerVC.presentPopupBar(withPopupContentViewController: self.popupContentVC, animated: true, completion: {
                 PBLog("Popup Bar Presented")
             })
-            
-            /*
-            self.containerVC.presentPopupBar(withPopupContentViewController: self.popupContentVC, openPopup: true, animated: true)
-            */
         }
     }
     
@@ -535,41 +511,15 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     
     // MARK: - Menu Actions
     
-    @IBAction func presentPopupContentViewController(_ sender: UIButton) {
-        var popupController: UIViewController
-        // Reinstantiate to be sure of the initial state
-        if !self.popupContentIsTableView {
-            popupController = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
-        }
-        else {
-            popupController = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as! PopupContentTableViewController
-        }
-        
-        /*
-        popupController.modalPresentationStyle = .popover
-        popupController.popoverPresentationController?.delegate = self
-        popupController.popoverPresentationController?.sourceView = self.view
-        popupController.popoverPresentationController?.permittedArrowDirections = []
-        
-        self.containerVC.present(popupController, animated: true) {
-            //
-        }
-        */
-        
-        popupController.modalPresentationStyle = .fullScreen
-        self.containerVC.present(popupController, animated: true) {
-            //
-        }
-    }
-    
    @IBAction func pushNext(_ sender: Any) {
-        if let firstVC = self.storyboard?.instantiateViewController(withIdentifier: "FirstTableViewController") as? FirstTableViewController {
-            firstVC.hidesBottomBarWhenPushed = true
+        if let demoVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as? DemoViewController {
+            demoVC.hidesBottomBarWhenPushed = true
             if let navigationController = self.navigationController as? NavigationController {
                 navigationController.toolbarIsShown = false
             }
-            firstVC.title = self.title
-            self.show(firstVC, sender: sender)
+            demoVC.title = self.title
+            demoVC.modalPresentationStyle = .fullScreen
+            self.show(demoVC, sender: sender)
         }
     }
     
@@ -579,10 +529,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         PBLog("PopupBar playPauseAction")
         
         self.isPlaying = !self.isPlaying
-        self.popupPlayButtonItemForProminent.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
-        self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
-        self.popupPlayButtonItemForCompact.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
-        self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
+        
+        self.configureBarButtonItems()
         
         if self.popupContentVC is PopupContentViewController {
             (self.popupContentVC as! PopupContentViewController).playPauseAction(sender)
@@ -621,7 +569,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     }
     
     @IBAction func moreAction(_ sender: Any) {
-        PBLog("")
+        PBLog("moreAction")
     }
     
     // MARK: - Table view data source
@@ -638,7 +586,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         case 0:
             return 5
         case 1:
-            return 4
+            return 3
         case 2:
             return 22
         default:
@@ -649,7 +597,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
-        // Configure the cell...
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "segmentedTableViewCell", for: indexPath) as! SegmentedTableViewCell
@@ -716,7 +663,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
                 cell.segmentedControl.removeAllSegments()
                 cell.segmentedControl.insertSegment(withTitle: "View", at: 0, animated: false)
                 cell.segmentedControl.insertSegment(withTitle: "Table View", at: 1, animated: false)
-                //cell.segmentedControl.insertSegment(withTitle: "Third", at: 2, animated: false)
                 cell.segmentedControl.selectedSegmentIndex = self.popupContentIsTableView ? 1 : 0
                 cell.segmentedControl.removeTarget(nil, action: nil, for: .valueChanged)
                 cell.segmentedControl.addTarget(self, action: #selector(popupContentViewChanged(_:)), for: .valueChanged)
@@ -756,15 +702,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
                 cell.button.removeTarget(nil, action: nil, for: .touchUpInside)
                 cell.button.addTarget(self, action: #selector(dismissPopBar(_:)), for: .touchUpInside)
                 cell.selectionStyle = .none
-                
+
             case 2:
-                // Present PopupContentViewController
-                cell.button.setTitle("Present PopupContentViewController", for: .normal)
-                cell.button.removeTarget(nil, action: nil, for: .touchUpInside)
-                cell.button.addTarget(self, action: #selector(presentPopupContentViewController(_:)), for: .touchUpInside)
-                cell.selectionStyle = .none
-                
-            case 3:
                 // Push next
                 cell.button.setTitle("Next", for: .normal)
                 cell.button.removeTarget(nil, action: nil, for: .touchUpInside)
@@ -866,11 +805,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     // MARK: - PBPopupController delegate
     
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
-        /*
-         if state == .open {
-         return false
-         }
-         */
+        PBLog("popupControllerPanGestureShouldBegin - state: \(state.description)")
         return true
     }
     
@@ -894,8 +829,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
         PBLog("willOpen - state: \(popupController.popupPresentationState.description)")
         
         if let popupContentView = self.containerVC.popupContentView {
-            if let controlsModule = popupContentView.popupControlsModule {
-                controlsModule.alpha = 1.0
+            if let bottomModule = popupContentView.popupBottomModule {
+                bottomModule.alpha = 1.0
             }
         }
         if #available(iOS 13.0, *) {
@@ -921,7 +856,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             }
         }
     }
- 
+
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
         PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
     }
@@ -941,10 +876,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     func popupController(_ popupController: PBPopupController, interactivePresentationFor popupContentViewController: UIViewController, state: PBPopupPresentationState, progress: CGFloat, location: CGFloat) {
         let state = popupController.popupPresentationState
         if state == .closed {
-            
             if let popupContentView = self.containerVC.popupContentView {
-                if let controlsModule = popupContentView.popupControlsModule {
-                    controlsModule.alpha = progress
+                if let bottomModule = popupContentView.popupBottomModule {
+                    bottomModule.alpha = progress
                 }
             }
             
@@ -959,15 +893,25 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             }
         }
     }
-
+    
     // MARK: - PBPopupBar dataSource
     
     func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
-        return self.label
+        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
+        marqueeLabel.leadingBuffer = 0.0
+        marqueeLabel.trailingBuffer = 5.0
+        marqueeLabel.animationDelay = 1.0
+        marqueeLabel.type = .continuous
+        return marqueeLabel
     }
     
     func subtitleLabel(for popupBar: PBPopupBar) -> UILabel? {
-        return self.sublabel
+        let marqueeLabel = MarqueeLabel(frame: .zero, rate: 20, fadeLength: 10)
+        marqueeLabel.leadingBuffer = 0.0
+        marqueeLabel.trailingBuffer = 5.0
+        marqueeLabel.animationDelay = 1.0
+        marqueeLabel.type = .continuous
+        return marqueeLabel
     }
 }
 
@@ -1000,7 +944,6 @@ extension FirstTableViewController: UITabBarControllerDelegate {
 }
 
 extension FirstTableViewController: PBPopupBarPreviewingDelegate, UIPopoverPresentationControllerDelegate {
-    
     
     func previewingViewControllerFor(_ popupBar: PBPopupBar) -> UIViewController? {
         
@@ -1048,7 +991,6 @@ extension FirstTableViewController: PBPopupBarPreviewingDelegate, UIPopoverPrese
     }
     
     func blurView() {
-        //self.view.backgroundColor = UIColor.clear
         let blur = UIBlurEffect(style: .light)
         self.effectView = UIVisualEffectView(effect: blur)
         self.effectView.frame = self.view.bounds
@@ -1057,7 +999,6 @@ extension FirstTableViewController: PBPopupBarPreviewingDelegate, UIPopoverPrese
         vib.autoresizingMask = [.flexibleHeight, .flexibleWidth]
         self.effectView.contentView.addSubview(vib)
         self.tabBarController?.view.addSubview(self.effectView)
-
     }
     
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
@@ -1076,14 +1017,31 @@ extension FirstTableViewController: PBPopupBarPreviewingDelegate, UIPopoverPrese
         }
         return true
     }
-/*
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        if let touch = touches.first {
-            if (touch.view == self.view) {
-                self.dismiss(animated: true, completion: nil)
-            }
+}
+
+@available(iOS 13.0, *)
+extension FirstTableViewController: UIContextMenuInteractionDelegate {
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willEndFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
+        animator?.addCompletion {
+            let avc = UIActivityViewController(activityItems: [URL(string: "https://github.com/iDevelopper/PBPopupController")!], applicationActivities: nil)
+            avc.modalPresentationStyle = .formSheet
+            avc.popoverPresentationController?.sourceView = self.containerVC.popupBar
+            self.present(avc, animated: true, completion: nil)
         }
     }
- */
+    // TODO
+    /*
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        //
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        //
+    }
+    */
 }

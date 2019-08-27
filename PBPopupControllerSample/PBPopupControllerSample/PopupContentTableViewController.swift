@@ -13,7 +13,13 @@ class PopupContentTableViewController: UITableViewController {
 
     var popupContentVC: PopupContentViewController!
     
-    weak var firstVC: FirstTableViewController!
+    weak var firstVC: FirstTableViewController! {
+        didSet {
+            images = firstVC.images
+            titles = firstVC.titles
+            subtitles = firstVC.subtitles
+        }
+    }
 
     var playerView: UIView!
 
@@ -48,12 +54,14 @@ class PopupContentTableViewController: UITableViewController {
             self.tableView.insetsContentViewsToSafeArea = true
         }
     
+        /*
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 1) {
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
             titles += [LoremIpsum.title]
             subtitles += [LoremIpsum.sentence]
         }
+        */
         
         self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
         self.popupContentVC.modalPresentationStyle = .custom
@@ -61,27 +69,20 @@ class PopupContentTableViewController: UITableViewController {
         self.playerView = self.popupContentVC?.view
         
         // Test in case of UIModalPresentationStyle == .fullScreen (not presented by popupController, not .custom)
-        if self.popupContainerViewController != nil {
+        //if self.popupContainerViewController != nil {
             if let popupContentView = self.popupContainerViewController.popupContentView {
                 popupContentView.popupImageModule = popupContentVC.imageModule
                 popupContentView.popupImageView = popupContentVC.albumArtImageView
-                popupContentView.popupControlsModule = popupContentVC.controlsModule
-                popupContentView.popupControlsModuleTopConstraint = popupContentVC.controlsModuleTopConstraint
+                popupContentView.popupTopModule = popupContentVC.topModule
+                popupContentView.popupBottomModule = popupContentVC.bottomModule
+                popupContentView.popupBottomModuleTopConstraint = popupContentVC.bottomModuleTopConstraint
             }
-        }
+        //}
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        /*
-        #if compiler(>=5.1)
-        if #available(iOS 13.0, *) {
-            self.tableView.backgroundColor = UIColor.secondarySystemBackground
-        }
-        #endif
-        */
-        
         if self.popupContainerViewController != nil {
             self.popupContentVC.albumArtImage = self.popupContainerViewController.popupBar.image
             self.popupContentVC.songNameLabel.text = self.popupContainerViewController.popupBar.title
@@ -189,12 +190,7 @@ class PopupContentTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
-            if self.popupContainerViewController != nil {
-                return self.view.bounds.height
-            }
-            else {
-                return self.view.bounds.height
-            }
+            return self.view.bounds.height
         }
         return 60
     }

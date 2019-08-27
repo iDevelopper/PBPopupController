@@ -17,12 +17,38 @@ class PopupContentViewController: UIViewController {
     
     var isPlaying: Bool = false
     
-    @IBOutlet weak var imageModule: UIView!
+    @IBOutlet weak var imageModule: UIView! {
+        didSet {
+            if let firstVC = self.firstVC {
+                if let popupContentView = firstVC.containerVC.popupContentView {
+                    popupContentView.popupImageModule = imageModule
+                }
+            }
+            
+            imageModule.layer.backgroundColor = UIColor.clear.cgColor
+            imageModule.layer.shadowOpacity = 0.0
+        }
+    }
     @IBOutlet weak var imageModuleTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageModuleLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageModuleTrailingConstraint: NSLayoutConstraint!
 
-    @IBOutlet weak var albumArtImageView: UIImageView!
+    @IBOutlet weak var albumArtImageView: UIImageView! {
+        didSet {
+            if let firstVC = self.firstVC {
+                if let popupContentView = firstVC.containerVC.popupContentView {
+                    popupContentView.popupImageView = albumArtImageView
+                }
+            }
+            // DemoChildViewController
+            else if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupImageView = albumArtImageView
+            }
+            
+            albumArtImageView.layer.cornerRadius = 10
+            albumArtImageView.layer.masksToBounds = true
+        }
+    }
     
     var albumArtImage: UIImage? {
         get {
@@ -33,24 +59,102 @@ class PopupContentViewController: UIViewController {
         }
     }
     
-    @IBOutlet weak var controlsModule: UIView!
-    @IBOutlet weak var controlsModuleTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var topModule: UIView! {
+        didSet {
+            if let firstVC = self.firstVC {
+                if let popupContentView = firstVC.containerVC.popupContentView {
+                    popupContentView.popupTopModule = self.topModule
+                }
+            }
+        }
+    }
+    @IBOutlet weak var bottomModule: UIView! {
+        didSet {
+            if let firstVC = self.firstVC {
+                if let popupContentView = firstVC.containerVC.popupContentView {
+                    popupContentView.popupBottomModule = bottomModule
+                }
+            }
+        }
+    }
+    @IBOutlet weak var bottomModuleTopConstraint: NSLayoutConstraint! {
+        didSet {
+            if let firstVC = self.firstVC {
+                if let popupContentView = firstVC.containerVC.popupContentView {
+                    popupContentView.popupBottomModuleTopConstraint = bottomModuleTopConstraint
+                }
+            }
+        }
+    }
     
     @IBOutlet weak var progressView: UIProgressView!
 
-    //@IBOutlet weak var songNameLabel: UILabel!
-    //@IBOutlet weak var albumNameLabel: UILabel!
-
-    @IBOutlet weak var songNameLabel: MarqueeLabel!
-    @IBOutlet weak var albumNameLabel: MarqueeLabel!
+    @IBOutlet weak var songNameLabel: MarqueeLabel! {
+        didSet {
+            songNameLabel.animationDelay = 2
+            songNameLabel.speed = .rate(15)
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                songNameLabel.textColor = UIColor.label
+            }
+            #endif
+        }
+    }
+    @IBOutlet weak var albumNameLabel: MarqueeLabel! {
+        didSet {
+            albumNameLabel.textColor = UIColor.red
+            albumNameLabel.animationDelay = 2
+            albumNameLabel.speed = .rate(20)
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                albumNameLabel.textColor = UIColor.systemPink
+            }
+            #endif
+        }
+    }
     
-    @IBOutlet weak var prevButton: UIButton!
-    @IBOutlet weak var playPauseButton: UIButton!
-    @IBOutlet weak var nextButton: UIButton!
+    @IBOutlet weak var prevButton: UIButton! {
+        didSet {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                prevButton.tintColor = UIColor.label
+            }
+            #endif
+        }
+    }
     
-    @IBOutlet weak var volumeSlider: UISlider!
+    @IBOutlet weak var playPauseButton: UIButton! {
+        didSet {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                playPauseButton.tintColor = UIColor.label
+            }
+            #endif
+        }
+    }
+    
+    @IBOutlet weak var nextButton: UIButton! {
+        didSet {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                nextButton.tintColor = UIColor.label
+            }
+            #endif
+        }
+    }
+    
+    @IBOutlet weak var volumeSlider: UISlider! {
+        didSet {
+            #if compiler(>=5.1)
+            if #available(iOS 13.0, *) {
+                volumeSlider.tintColor = UIColor.label
+            }
+            #endif
+        }
+    }
     
     let accessibilityDateComponentsFormatter = DateComponentsFormatter()
+    
     var timer: Timer?
     
     // MARK: - View lifecycle
@@ -58,30 +162,13 @@ class PopupContentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.albumNameLabel.textColor = UIColor.red
-        
         #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
-            self.songNameLabel.textColor = UIColor.label
-            self.albumNameLabel.textColor = UIColor.systemPink
-            self.prevButton.tintColor = UIColor.label
-            self.playPauseButton.tintColor = UIColor.label
-            self.nextButton.tintColor = UIColor.label
         }
         #endif
         
-        self.songNameLabel.animationDelay = 2
-        self.songNameLabel.speed = .rate(15)
-        self.albumNameLabel.animationDelay = 2
-        self.albumNameLabel.speed = .rate(20)
-        
-        self.closeButton = PBPopupCloseButton(style: .round)
-        let statusBarFrame = UIApplication.shared.statusBarFrame
-        self.closeButton.frame = CGRect(x: 8, y: statusBarFrame.height + 8.0, width: 25, height: 25)
-        self.closeButton.addTarget(self, action: #selector(dismiss(_:)), for: .touchUpInside)
-
-        self.setupImageViewForPlaying(self.isPlaying)
+        self.setupImageViewForPlaying()
 
         self.accessibilityDateComponentsFormatter.unitsStyle = .spellOut
     }
@@ -90,24 +177,20 @@ class PopupContentViewController: UIViewController {
         PBLog("viewWillAppear")
         super.viewWillAppear(animated)
     
-        if self.popupContainerViewController != nil {
-            self.albumArtImage = self.popupContainerViewController.popupBar.image
-            self.songNameLabel.text = self.popupContainerViewController.popupBar.title
-            self.albumNameLabel.text = self.popupContainerViewController.popupBar.subtitle
-            
-            if let popupContentView = self.popupContainerViewController.popupContentView {
-                popupContentView.popupImageModule = self.imageModule
-                popupContentView.popupImageView = self.albumArtImageView
-                popupContentView.popupControlsModule = self.controlsModule
-                popupContentView.popupControlsModuleTopConstraint = self.controlsModuleTopConstraint
+        if let firstVC = self.firstVC {
+            if let popupBar = firstVC.containerVC.popupBar {
+                self.albumArtImage = popupBar.image
+                self.songNameLabel.text = popupBar.title
+                self.albumNameLabel.text = popupBar.subtitle
             }
         }
-        
-        if self.modalPresentationStyle != .custom {
-            self.view.addSubview(self.closeButton)
-        }
-        else {
-            self.closeButton.removeFromSuperview()
+        // DemoChildViewController
+        else if let containerVC = self.popupContainerViewController {
+            if let popupBar = containerVC.popupBar {
+                self.albumArtImage = popupBar.image
+                self.songNameLabel.text = popupBar.title
+                self.albumNameLabel.text = popupBar.subtitle
+            }
         }
     }
     
@@ -126,40 +209,29 @@ class PopupContentViewController: UIViewController {
         super.viewDidDisappear(animated)
     }
     
-    /*
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-     
-        coordinator.animate(alongsideTransition: { (context) in
-        })
-    }
-    */
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    /*
-    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .fade
-    }
-    */
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if self.modalPresentationStyle == .fullScreen {
-            return .default
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        #if compiler(>=5.1)
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = UIColor.secondarySystemBackground
         }
-        guard let containerVC = self.popupContainerViewController else {return .default}
-        guard let popupContentView = containerVC.popupContentView else {return .default}
+        #endif
+    }
+    
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let firstVC = self.firstVC else {return .lightContent}
+        guard let popupContentView = firstVC.containerVC.popupContentView else {return .default}
+        
         if popupContentView.popupPresentationStyle != .deck {
             return .default
         }
         return .lightContent
     }
-    /*
-    override var prefersStatusBarHidden: Bool {
-        return true
-    }
-    */
+
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
     }
@@ -175,13 +247,12 @@ class PopupContentViewController: UIViewController {
     
     // MARK: - Setups
     
-    func setupImageViewForPlaying(_ playing: Bool) {
-        if playing == true
+    func setupImageViewForPlaying() {
+        if self.isPlaying == true
         {
             self.imageModuleTopConstraint.constant -= 20;
             self.imageModuleLeadingConstraint.constant -= 20
             self.imageModuleTrailingConstraint.constant -= 20
-            self.controlsModuleTopConstraint.constant -= 20
             
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
@@ -199,19 +270,14 @@ class PopupContentViewController: UIViewController {
             self.imageModuleTopConstraint.constant += 20;
             self.imageModuleLeadingConstraint.constant += 20
             self.imageModuleTrailingConstraint.constant += 20
-            self.controlsModuleTopConstraint.constant += 20
 
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
             }) { (_ ) in
                 //
             }
-            
             self.imageModule.layer.backgroundColor = UIColor.clear.cgColor
             self.imageModule.layer.shadowOpacity = 0.0
-
-            self.albumArtImageView.layer.cornerRadius = 10
-            self.albumArtImageView.layer.masksToBounds = true
         }
     }
 
@@ -232,17 +298,16 @@ class PopupContentViewController: UIViewController {
         PBLog("playPauseAction")
         self.isPlaying = !self.isPlaying
         self.playPauseButton.setImage(self.isPlaying ? #imageLiteral(resourceName: "nowPlaying_pause") : #imageLiteral(resourceName: "nowPlaying_play"), for: .normal)
-        guard let firstVC = self.firstVC else {return}
-        guard let popupContentVC = firstVC.popupContentVC else {return}
-        guard let containerVC = popupContentVC.popupContainerViewController else {return}
-        guard let popupBar = containerVC.popupBar else {return}
         
+        guard let firstVC = self.firstVC else {return}
+        
+        guard let popupBar = firstVC.containerVC.popupBar else {return}
         if popupBar.popupBarStyle == .prominent {
             popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
         }
         let dev = UIDevice.current.userInterfaceIdiom
         popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
-        self.setupImageViewForPlaying(self.isPlaying)
+        self.setupImageViewForPlaying()
         if self.isPlaying {
             self.setupTimer()
         }
@@ -255,11 +320,10 @@ class PopupContentViewController: UIViewController {
         PBLog("prevAction")
 
         guard let firstVC = self.firstVC else {return}
-        guard let popupContentVC = firstVC.popupContentVC else {return}
-        guard let containerVC = popupContentVC.popupContainerViewController else {return}
-        guard let popupBar = containerVC.popupBar else {return}
         
         firstVC.prevAction(self)
+        
+        guard let popupBar = firstVC.containerVC.popupBar else {return}
         
         self.albumArtImage = popupBar.image
         self.songNameLabel.text = popupBar.title
@@ -270,11 +334,10 @@ class PopupContentViewController: UIViewController {
         PBLog("nextAction")
         
         guard let firstVC = self.firstVC else {return}
-        guard let popupContentVC = firstVC.popupContentVC else {return}
-        guard let containerVC = popupContentVC.popupContainerViewController else {return}
-        guard let popupBar = containerVC.popupBar else {return}
         
         firstVC.nextAction(self)
+        
+        guard let popupBar = firstVC.containerVC.popupBar else {return}
         
         self.albumArtImage = popupBar.image
         self.songNameLabel.text = popupBar.title
@@ -283,9 +346,8 @@ class PopupContentViewController: UIViewController {
     
     @objc func tick() {
         guard let firstVC = self.firstVC else {return}
-        guard let popupContentVC = firstVC.popupContentVC else {return}
-        guard let containerVC = popupContentVC.popupContainerViewController else {return}
-        guard let popupBar = containerVC.popupBar else {return}
+        
+        guard let popupBar = firstVC.containerVC.popupBar else {return}
         
         popupBar.progress += 0.002
         popupBar.accessibilityProgressLabel = NSLocalizedString("Playback Progress", comment: "")
@@ -301,11 +363,5 @@ class PopupContentViewController: UIViewController {
             self.progressView.setProgress(0, animated: false)
             self.playPauseAction(nil)
         }
-    }
-    
-    // MARK: - Navigation
-    
-    @objc func dismiss(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
     }
 }

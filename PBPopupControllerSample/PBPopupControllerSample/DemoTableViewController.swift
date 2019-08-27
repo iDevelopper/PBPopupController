@@ -55,19 +55,6 @@ class DemoTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        
-        coordinator.animate(alongsideTransition: { (context) in
-            PBLog("viewWillTransition")
-            /*
-            if self.isViewLoaded {
-                self.tableView.reloadData()
-            }
-            */
-        }, completion: nil)
-    }
-    
     deinit {
         PBLog("deinit \(self)")
     }

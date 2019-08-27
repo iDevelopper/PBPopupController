@@ -42,11 +42,7 @@ internal class PBPopupPresentationController: UIPresentationController {
 
     internal var imageViewForPresentation: PBPopupRoundShadowImageView?
 
-    private var controlsModuleTopConstraint: NSLayoutConstraint?
-    private var controlsModuleTopConstant: CGFloat!
-    private var controlsModuleBottomConstant: CGFloat!
-    
-    private var controlsModuleFrameForPopupStateOpen: CGRect = .zero
+    private var bottomModuleFrameForPopupStateOpen: CGRect = .zero
 
     private var dimmerView: UIView = {
         let view = UIView()
@@ -90,10 +86,6 @@ internal class PBPopupPresentationController: UIPresentationController {
 
         let presentedView = self.presentedView!
         
-        presentedView.setNeedsUpdateConstraints()
-        presentedView.setNeedsLayout()
-        presentedView.layoutIfNeeded()
-        
         self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
         presentedView.frame = self.frameOfPresentedViewInContainerView
     }
@@ -107,14 +99,13 @@ internal class PBPopupPresentationController: UIPresentationController {
         guard let containerView = self.containerView else { return }
         guard let coordinator = self.presentedViewController.transitionCoordinator else { return }
         
-        //presentingVC.beginAppearanceTransition(false, animated: true)
+        self.presentedViewController.beginAppearanceTransition(true, animated: true)
+        presentingVC.beginAppearanceTransition(false, animated: true)
 
         containerView.frame = self.presentingVC.view.frame
 
         self.popupBarForPresentation = self.setupPopupBarForPresentation()
-        
-        //self.popupBarView.isHidden = true
-        
+                
         if self.popupPresentationStyle == .deck {
             
             self.blackView.frame = self.popupBlackViewFrame()
@@ -127,9 +118,6 @@ internal class PBPopupPresentationController: UIPresentationController {
             }
         }
  
-        self.popupContentView.autoresizesSubviews = false
-        self.popupContentView.contentView.autoresizesSubviews = false
-        
         containerView.addSubview(self.popupContentView)
         self.popupContentView.updatePopupCloseButtonPosition()
         
@@ -150,6 +138,8 @@ internal class PBPopupPresentationController: UIPresentationController {
         }
         else {
             self.blackView.alpha = 1.0
+            self.presentingVC.endAppearanceTransition()
+            self.presentedViewController.endAppearanceTransition()
         }
     }
     
@@ -158,8 +148,9 @@ internal class PBPopupPresentationController: UIPresentationController {
         guard self.containerView != nil else { return }
         guard let coordinator = self.presentedViewController.transitionCoordinator else { return }
 
-        //presentingVC.beginAppearanceTransition(true, animated: true)
-        
+        presentingVC.beginAppearanceTransition(true, animated: true)
+        self.presentedViewController.beginAppearanceTransition(false, animated: true)
+
         self.popupBarForPresentation = self.setupPopupBarForPresentation()
         
         if self.popupPresentationState == .closing || self.popupPresentationState == .open {
@@ -182,7 +173,8 @@ internal class PBPopupPresentationController: UIPresentationController {
         
         if completed {
             self._cleanup()
-            //self.presentingVC.endAppearanceTransition()
+            self.presentedViewController.endAppearanceTransition()
+            self.presentingVC.endAppearanceTransition()
         }
         else {
             self.blackView.alpha = 1.0
@@ -210,12 +202,14 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard (transitionContext.viewController(forKey: self.isPresenting ? .to : .from)) != nil else { return }
         guard let presentedView = transitionContext.view(forKey: self.isPresenting ? .to : .from) else { return }
-                
+                        
         if self.isPresenting {
             
             self.popupContentView.contentView.addSubview(presentedView)
             self.popupContentView.contentView.sendSubviewToBack(presentedView)
 
+            presentedView.layoutIfNeeded()
+            
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed()
             presentedView.frame = self.presentedViewFrameForPopupStateClosed()
             
@@ -228,13 +222,11 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
             self.imageViewForPresentation = self.setupImageViewForPresentation()
             if self.imageViewForPresentation != nil {
                 self.popupContentView.contentView.addSubview(self.imageViewForPresentation!)
-                self.configureImageModuleInStartPosition()
+                self.configureImageViewInStartPosition()
             }
 
-            self.configureControlsModuleInStartPosition()
-            
-            self.popupContentView.layoutIfNeeded()
-            
+            self.configureBottomModuleInStartPosition()
+
             let animations: (() -> Void) = {() -> Void in
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 presentedView.frame = self.presentedViewFrameForPopupStateOpen()
@@ -243,11 +235,9 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                     self.popupContentView.updateCornerRadiusTo(10.0, rect: self.popupContentViewFrameForPopupStateOpen())
                 }
                 
-                self.animateImageModuleInFinalPosition()
+                self.animateImageViewInFinalPosition()
                 
-                self.animateControlsModuleInFinalPosition()
-                
-                self.popupContentView.layoutIfNeeded()
+                self.animateBottomModuleInFinalPosition()
             }
             
             let options: UIView.AnimationOptions = transitionContext.isInteractive ? [.curveLinear] : [.curveEaseInOut]
@@ -263,7 +253,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                     self.popupContentView.popupCloseButton?.setButtonStateStationary()
                     
                     // Restore the initial frame after cancel presenting
-                    self.configureControlsModuleInOriginalPosition()
+                    self.configureBottomModuleInOriginalPosition()
                }
                 else {
                     self.popupContentView.popupCloseButton?.alpha = 1.0
@@ -312,6 +302,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
         }
         // Dismiss
         else {
+            presentedView.layoutIfNeeded()
+            
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
             presentedView.frame = self.presentedViewFrameForPopupStateOpen()
             
@@ -321,14 +313,12 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
             
             if self.imageViewForPresentation != nil {
                 self.popupContentView.contentView.addSubview(self.imageViewForPresentation!)
-                self.configureImageModuleInStartPosition()
+                self.configureImageViewInStartPosition()
             }
 
-            self.configureControlsModuleInStartPosition()
+            self.configureBottomModuleInStartPosition()
 
             self.popupBarView.alpha = 0.0
-            
-            self.popupContentView.layoutIfNeeded()
             
             let animations: (() -> Void) = {() -> Void in
                 
@@ -338,10 +328,9 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.updateCornerRadiusTo(0.0, rect: self.popupContentViewFrameForPopupStateOpen())
 
                 if !transitionContext.isInteractive {
-                    self.animateImageModuleInFinalPosition()
-                    self.animateControlsModuleInFinalPosition()
+                    self.animateImageViewInFinalPosition()
+                    self.animateBottomModuleInFinalPosition()
                 }
-                self.popupContentView.layoutIfNeeded()
             }
             
             let options: UIView.AnimationOptions = transitionContext.isInteractive ? [.curveLinear] : [.curveEaseInOut]
@@ -358,7 +347,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                 self.popupContentView.popupCloseButton?.setButtonStateStationary()
                 
                 // Restore the initial frame after dismiss
-                self.configureControlsModuleInOriginalPosition()
+                self.configureBottomModuleInOriginalPosition()
 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
@@ -423,8 +412,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning {
                     self.setupBackingView()
                     self.animateBackingViewToDeck(true, animated: false)
                 }
-                if let controlsModule = self.popupContentView.popupControlsModule {
-                    self.controlsModuleFrameForPopupStateOpen = controlsModule.frame
+                if let bottomModule = self.popupContentView.popupBottomModule {
+                    self.bottomModuleFrameForPopupStateOpen = bottomModule.frame
                 }
             }
         }
@@ -519,7 +508,6 @@ extension PBPopupPresentationController {
     
     private func rectForPopupBarForPresentation() -> CGRect {
         let rect: CGRect = self.popupBarView.frame
-        //rect.size.height = self.presentingVC.popupBar.popupBarHeight
         return rect
     }
     
@@ -605,63 +593,68 @@ extension PBPopupPresentationController {
         
         if self.isCompactOrPhoneInLandscape() {return nil}
         
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageModule = self.popupContentView.popupImageModule, let artImageView = self.popupContentView.popupImageView {
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageView = self.popupContentView.popupImageView {
+
+            let moduleView = PBPopupRoundShadowImageView(frame: imageView.frame)
             
-            let moduleView = PBPopupRoundShadowImageView(frame: imageModule.frame)
+            moduleView.image = imageView.image
+            moduleView.imageView.backgroundColor = imageView.backgroundColor
+            moduleView.imageView.contentMode = imageView.contentMode
+            moduleView.imageView.clipsToBounds = imageView.clipsToBounds
             
-            moduleView.image = artImageView.image
-            moduleView.imageView.contentMode = artImageView.contentMode
-            moduleView.imageView.clipsToBounds = artImageView.clipsToBounds
-            
-            moduleView.clipsToBounds = imageModule.clipsToBounds
-            moduleView.shadowColor = UIColor(cgColor: imageModule.layer.shadowColor ?? UIColor.black.cgColor)
-            moduleView.shadowOffset = imageModule.layer.shadowOffset
-            moduleView.shadowOpacity = CGFloat(imageModule.layer.shadowOpacity)
-            moduleView.shadowRadius = imageModule.layer.shadowRadius
+            if let imageModule = self.popupContentView.popupImageModule {
+                moduleView.clipsToBounds = imageModule.clipsToBounds
+                moduleView.shadowColor = UIColor(cgColor: imageModule.layer.shadowColor ?? UIColor.black.cgColor)
+                moduleView.shadowOffset = imageModule.layer.shadowOffset
+                moduleView.shadowOpacity = imageModule.layer.shadowOpacity
+                moduleView.shadowRadius = imageModule.layer.shadowRadius
+            }
             
             return moduleView
         }
         return nil
     }
-    
-    // MARK: - Image module
-    
-    private func configureImageModuleInStartPosition() {
-        
-        if self.isCompactOrPhoneInLandscape() {return}
 
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let imageModule = self.popupContentView.popupImageModule, let imageView = self.popupContentView.popupImageView {
+    // MARK: - Image view
+
+    private func configureImageViewInStartPosition()
+    {
+        if self.isCompactOrPhoneInLandscape() {return}
+        
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let imageView = self.popupContentView.popupImageView {
             if self.isPresenting {
                 let closedFrame = self.presentingVC.popupBar.convert(self.presentingVC.popupBar.imageView.frame, to: self.popupContentView)
                 imageViewForPresentation.frame = closedFrame
                 imageViewForPresentation.cornerRadius = 3.0
             }
             else {
-                    if var openFrame = presentedView?.convert(imageModule.frame, to: self.popupContentView) {
-                        if #available(iOS 11.0, *) {
-                            openFrame.origin.x += presentedView!.safeAreaInsets.left
-                        }
-                        imageViewForPresentation.frame = openFrame
-                    }
+                var openFrame = imageView.convert(imageView.bounds, to: self.popupContentView)
+                if #available(iOS 11.0, *) {
+                    openFrame.origin.x += presentedView!.safeAreaInsets.left
+                }
+                imageViewForPresentation.frame = openFrame
                 imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
                 imageViewForPresentation.isHidden = false
             }
-            imageModule.isHidden = true
+            imageView.isHidden = true
+            if let imageModule = self.popupContentView.popupImageModule {
+                imageModule.isHidden = true
+            }
         }
     }
-    
-    internal func animateImageModuleInFinalPosition() {
-        
+
+    internal func animateImageViewInFinalPosition()
+    {
         if self.isCompactOrPhoneInLandscape() {return}
         
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let imageModule = self.popupContentView.popupImageModule, let imageView = self.popupContentView.popupImageView {
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let imageView = self.popupContentView.popupImageView {
             if self.isPresenting {
-                if var openFrame = presentedView?.convert(imageModule.frame, to: self.popupContentView) {
-                    if #available(iOS 11.0, *) {
-                        openFrame.origin.x += presentedView!.safeAreaInsets.left
-                    }
-                    imageViewForPresentation.frame = openFrame
+                var openFrame = imageView.convert(imageView.bounds, to: self.popupContentView)
+
+                if #available(iOS 11.0, *) {
+                    openFrame.origin.x += presentedView!.safeAreaInsets.left
                 }
+                imageViewForPresentation.frame = openFrame
                 imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
             }
             else {
@@ -671,52 +664,53 @@ extension PBPopupPresentationController {
             }
         }
     }
-    
-    // MARK: - Controls module
-    
-    private func configureControlsModuleInStartPosition() {
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let controlsModule = self.popupContentView.popupControlsModule, let controlsModuleTopConstraint = self.popupContentView.popupControlsModuleTopConstraint {
+
+    // MARK: - Bottom module
+
+    private func configureBottomModuleInStartPosition()
+    {
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let imageView = self.popupContentView.popupImageView, let topModule = self.popupContentView.popupTopModule, let bottomModule = self.popupContentView.popupBottomModule, let bottomModuleTopConstraint = self.popupContentView.popupBottomModuleTopConstraint {
             
             
             if self.isPresenting {
-                self.presentedView?.layoutIfNeeded()
-                let openFrame = controlsModule.frame
-                // Save the controls module real position when open
-                self.controlsModuleFrameForPopupStateOpen = openFrame
-                // Move up controls module just below imageForPresentation
-                controlsModule.frame.origin.y = imageViewForPresentation.frame.origin.y + imageViewForPresentation.frame.height + controlsModuleTopConstraint.constant
+                let openFrame = bottomModule.frame
+                // Save the bottom module real position when open
+                self.bottomModuleFrameForPopupStateOpen = openFrame
+                // Move up bottom module just below imageForPresentation
+                bottomModule.frame.origin.y = topModule.frame.origin.y + topModule.frame.height + bottomModuleTopConstraint.constant - (imageView.frame.size.height - imageViewForPresentation.frame.size.height)
             }
             else {
-                if self.controlsModuleFrameForPopupStateOpen != .zero {
-                    controlsModule.frame = self.controlsModuleFrameForPopupStateOpen
+                if self.bottomModuleFrameForPopupStateOpen != .zero {
+                    bottomModule.frame = self.bottomModuleFrameForPopupStateOpen
                 }
             }
         }
     }
 
-    internal func animateControlsModuleInFinalPosition() {
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let imageViewForPresentation = self.imageViewForPresentation, let controlsModule = self.popupContentView.popupControlsModule, let controlsModuleTopConstraint = self.popupContentView.popupControlsModuleTopConstraint {
+    internal func animateBottomModuleInFinalPosition()
+    {
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let _ = self.imageViewForPresentation, let topModule = self.popupContentView.popupTopModule, let bottomModule = self.popupContentView.popupBottomModule, let bottomModuleTopConstraint = self.popupContentView.popupBottomModuleTopConstraint {
             
             if self.isPresenting {
-                // Animate controls module frame to its open position
-                controlsModule.frame = self.controlsModuleFrameForPopupStateOpen
+                // Animate bottom module frame to its open position
+                bottomModule.frame = self.bottomModuleFrameForPopupStateOpen
             }
             else {
-                controlsModule.frame.origin.y = imageViewForPresentation.frame.origin.y + imageViewForPresentation.frame.height + controlsModuleTopConstraint.constant
+                bottomModule.frame.origin.y = topModule.frame.origin.y + topModule.frame.height + bottomModuleTopConstraint.constant
             }
         }
     }
-    
-    private func configureControlsModuleInOriginalPosition() {
 
-        if self.presentingVC.popupBar.popupBarStyle == .prominent, let controlsModule = self.popupContentView.popupControlsModule {
+    private func configureBottomModuleInOriginalPosition()
+    {
+        if self.presentingVC.popupBar.popupBarStyle == .prominent, let bottomModule = self.popupContentView.popupBottomModule {
             
-            if self.controlsModuleFrameForPopupStateOpen != .zero {
-                controlsModule.frame = self.controlsModuleFrameForPopupStateOpen
+            if self.bottomModuleFrameForPopupStateOpen != .zero {
+                bottomModule.frame = self.bottomModuleFrameForPopupStateOpen
             }
         }
     }
-    
+
     // MARK: - Helpers
     
     private func isCompactOrPhoneInLandscape() -> Bool {

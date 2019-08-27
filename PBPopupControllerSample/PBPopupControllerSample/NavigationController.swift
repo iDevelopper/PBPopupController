@@ -16,11 +16,9 @@ class NavigationController: UINavigationController {
         super.viewDidLoad()
 
         if let splitViewController = self.splitViewController as? SplitViewController {
-            //if splitViewController.masterIsTarget == true {
-                if let navigationController = splitViewController.viewControllers.first as? UINavigationController {
-                    navigationController.topViewController?.title = splitViewController.title
-                }
-            //}
+            if let navigationController = splitViewController.viewControllers.first as? UINavigationController {
+                navigationController.topViewController?.title = splitViewController.title
+            }
         }
         
         else if let tabBarController = self.tabBarController {

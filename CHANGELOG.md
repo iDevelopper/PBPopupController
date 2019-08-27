@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 2.0.0
+
+Refactor, improvements and fix layout issues.
+
 ## 1.1.0
 
 Support iOS 13 dark mode.

@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 2.1.0
+
+Fix layout issues.
+
 ## 2.0.0
 
 Refactor, improvements and fix layout issues.

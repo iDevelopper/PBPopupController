@@ -66,6 +66,7 @@ pod 'PBPopupController'
 * Data source methods for asking custom popup bar' labels.
 * Full Right-To-Left support.
 * Accessibility support.
+* iOS 13 support.
 
 ## Basic API Description
 

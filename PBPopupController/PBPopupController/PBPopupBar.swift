@@ -267,13 +267,13 @@ A set of methods used by the delegate to respond, with a preview view controller
                     NSException.raise(NSExceptionName.internalInconsistencyException, format: "Custom popuBar view controller cannot be nil.", arguments: getVaList([]))
                 }
             }
+            self.layoutIfNeeded()
+
             self.setupCustomPopupBarView()
             
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
-            self.setNeedsLayout()
-
             if self.popupController.popupPresentationState != .hidden && oldValue != popupBarStyle {
                 self.popupController.popupPresentationState = .hidden
                 let vc = self.popupController.containerViewController!
@@ -453,8 +453,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var title: String? {
         didSet {
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.layoutIfNeeded()
             
             self.configureTitleLabels()
             self.configureAccessibility()
@@ -468,6 +467,8 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var titleTextAttributes: [NSAttributedString.Key: Any]? {
         didSet {
+            self.layoutIfNeeded()
+            
             self.configureTitleLabels()
         }
     }
@@ -479,8 +480,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var subtitle: String? {
         didSet {
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.layoutIfNeeded()
             
             self.configureTitleLabels()
             self.configureAccessibility()
@@ -494,6 +494,8 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var subtitleTextAttributes: [NSAttributedString.Key: Any]? {
         didSet {
+            self.layoutIfNeeded()
+            
             self.configureTitleLabels()
         }
     }
@@ -531,15 +533,12 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc override public var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
-            self.toolbar.semanticContentAttribute = semanticContentAttribute
+            self.layoutIfNeeded()
             
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.toolbar.semanticContentAttribute = semanticContentAttribute
             
             self.layoutToolbarItems()
             self.configureTitleLabels()
-            
-            self.setNeedsLayout()
         }
     }
     
@@ -548,13 +547,10 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var leftBarButtonItems: [UIBarButtonItem]? {
         didSet {
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.layoutIfNeeded()
 
             self.layoutToolbarItems()
             self.configureTitleLabels()
-            
-            self.setNeedsLayout()
         }
     }
     
@@ -563,13 +559,10 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var rightBarButtonItems: [UIBarButtonItem]? {
         didSet {
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.layoutIfNeeded()
             
             self.layoutToolbarItems()
             self.configureTitleLabels()
-            
-            self.setNeedsLayout()
         }
     }
     
@@ -580,13 +573,10 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var barButtonItemsSemanticContentAttribute: UISemanticContentAttribute = .playback {
         didSet {
-            self.toolbar.setNeedsLayout()
-            self.toolbar.layoutIfNeeded()
+            self.layoutIfNeeded()
 
             self.layoutToolbarItems()
             self.configureTitleLabels()
-            
-            self.setNeedsLayout()
         }
     }
     
@@ -595,6 +585,8 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var progressViewStyle: PBPopupBarProgressViewStyle = .default {
         didSet {
+            self.layoutIfNeeded()
+            
             self.layoutProgressView()
         }
     }
@@ -877,9 +869,6 @@ A set of methods used by the delegate to respond, with a preview view controller
         super.layoutSubviews()
         
         guard let popupBarView = self.superview else {return}
-        
-        //self.toolbar.setNeedsLayout()
-        //self.toolbar.layoutIfNeeded()
         
         if self.ignoreLayoutDuringTransition {
             return

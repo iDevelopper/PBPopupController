@@ -99,7 +99,6 @@ internal class PBPopupPresentationController: UIPresentationController {
         guard let containerView = self.containerView else { return }
         guard let coordinator = self.presentedViewController.transitionCoordinator else { return }
         
-        self.presentedViewController.beginAppearanceTransition(true, animated: true)
         presentingVC.beginAppearanceTransition(false, animated: true)
 
         containerView.frame = self.presentingVC.view.frame
@@ -139,7 +138,6 @@ internal class PBPopupPresentationController: UIPresentationController {
         else {
             self.blackView.alpha = 1.0
             self.presentingVC.endAppearanceTransition()
-            self.presentedViewController.endAppearanceTransition()
         }
     }
     
@@ -149,7 +147,6 @@ internal class PBPopupPresentationController: UIPresentationController {
         guard let coordinator = self.presentedViewController.transitionCoordinator else { return }
 
         presentingVC.beginAppearanceTransition(true, animated: true)
-        self.presentedViewController.beginAppearanceTransition(false, animated: true)
 
         self.popupBarForPresentation = self.setupPopupBarForPresentation()
         
@@ -173,7 +170,6 @@ internal class PBPopupPresentationController: UIPresentationController {
         
         if completed {
             self._cleanup()
-            self.presentedViewController.endAppearanceTransition()
             self.presentingVC.endAppearanceTransition()
         }
         else {

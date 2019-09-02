@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 2.1.1
+
+Fix toolbar layout issue.
+
 ## 2.1.0
 
 Fix layout issues.

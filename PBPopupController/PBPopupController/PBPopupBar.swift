@@ -881,7 +881,8 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.frame.size.height = self.popupBarHeight
             
             self.layoutToolbar()
-            
+            self.toolbar.layoutIfNeeded()
+
             self.layoutAllViews()
             
             if popupBarStyle == .custom {self.layoutCustomPopupBarView()}

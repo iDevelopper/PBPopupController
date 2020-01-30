@@ -328,6 +328,7 @@ public extension UIViewController {
         var originalMethod: Method!
         var swizzledMethod: Method!
         
+        #if !targetEnvironment(macCatalyst)
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 11 {
             //_setContentOverlayInsets:
             var selName = _PBPopupDecodeBase64String(base64String: sCoOvBase64)!
@@ -348,7 +349,16 @@ public extension UIViewController {
                 method_exchangeImplementations(originalMethod, swizzledMethod)
             }
         }
-        
+        #else
+        var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
+        var selector = NSSelectorFromString(selName)
+        originalMethod = class_getInstanceMethod(aClass, selector)
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_uCOIFPIN))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        #endif
+
         originalMethod = class_getInstanceMethod(aClass, #selector(addChild(_:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_addChild(_ :)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -360,7 +370,13 @@ public extension UIViewController {
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-        
+        /*
+        originalMethod = class_getInstanceMethod(aClass, #selector(willTransition(to:with:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_willTransition(to:with:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        */
         originalMethod = class_getInstanceMethod(aClass, #selector(viewWillTransition(to:with:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewWillTransition(to:with:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -374,9 +390,11 @@ public extension UIViewController {
     @objc static func vc_swizzle() {
         _ = self.swizzleImplementation
         
+        #if !targetEnvironment(macCatalyst)
         if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10) {
             EasyAnimation.enable()
         }
+        #endif
     }
     
     //_setContentOverlayInsets:
@@ -417,6 +435,7 @@ public extension UIViewController {
     
     @objc private func pb_viewDidLayoutSubviews() {
         self.pb_viewDidLayoutSubviews()
+        /*
         if self.popupContentViewController != nil {
             //self is the container
             if self.popupController.popupPresentationState == .presenting || self.popupController.popupPresentationState == .opening || self.popupController.popupPresentationState == .closing { return }
@@ -425,6 +444,7 @@ public extension UIViewController {
             
             self.viewWillTransition(to: self.view.frame.size, with: coordinator)
         }
+        */
     }
     
     private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator) {
@@ -446,19 +466,21 @@ public extension UIViewController {
             rv.layoutIfNeeded()
         }
     }
-    
+
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
         self.pb_viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
-            self.viewWillTransitionToSize(size, with: coordinator)
-            
-        }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
-            // Fix for split view controller layout issue
-            if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-                rv.layoutSubviews()
-            }
-        })
+        if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
+            coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
+                self.viewWillTransitionToSize(size, with: coordinator)
+                
+            }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
+                // Fix for split view controller layout issue
+                if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
+                    rv.layoutSubviews()
+                }
+            })
+        }
     }
     
     internal func _cleanupPopup() {
@@ -515,6 +537,7 @@ internal extension UIViewController {
         if let bottomBarView = self.popupController.dataSource?.bottomBarView?(for: self.popupController) {
             if let defaultFrame = self.popupController.dataSource?.popupController?(self.popupController, defaultFrameFor: self.bottomBar) {
                 bottomBarFrame = defaultFrame
+                return bottomBarFrame
             }
             else {
                 bottomBarFrame = bottomBarView.frame
@@ -524,7 +547,7 @@ internal extension UIViewController {
         return bottomBarFrame
     }
 }
-
+/*
 internal class _PBPopupTransitionCoordinator: NSObject, UIViewControllerTransitionCoordinator {
     
     internal var isAnimated: Bool = false
@@ -594,3 +617,4 @@ internal class _PBPopupTransitionCoordinator: NSObject, UIViewControllerTransiti
     {
     }
 }
+*/

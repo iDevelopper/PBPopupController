@@ -31,9 +31,11 @@ import UIKit
      Default style: Chevron button style for iOS 10 and above, otherwise round button.
      */
     public static let `default`: PBPopupCloseButtonStyle = {
+        #if !targetEnvironment(macCatalyst)
         if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
             return .round
         }
+        #endif
         return .chevron
     }()
 }

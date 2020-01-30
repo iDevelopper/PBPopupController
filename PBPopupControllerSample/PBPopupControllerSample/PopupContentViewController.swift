@@ -215,6 +215,7 @@ class PopupContentViewController: UIViewController {
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
@@ -297,16 +298,16 @@ class PopupContentViewController: UIViewController {
     @IBAction func playPauseAction(_ sender: Any?) {
         PBLog("playPauseAction")
         self.isPlaying = !self.isPlaying
-        self.playPauseButton.setImage(self.isPlaying ? #imageLiteral(resourceName: "nowPlaying_pause") : #imageLiteral(resourceName: "nowPlaying_play"), for: .normal)
-        
+        self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
+
         guard let firstVC = self.firstVC else {return}
         
         guard let popupBar = firstVC.containerVC.popupBar else {return}
         if popupBar.popupBarStyle == .prominent {
-            popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+            popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         }
         let dev = UIDevice.current.userInterfaceIdiom
-        popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+        popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         self.setupImageViewForPlaying()
         if self.isPlaying {
             self.setupTimer()

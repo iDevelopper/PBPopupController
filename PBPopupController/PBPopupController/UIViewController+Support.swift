@@ -337,10 +337,6 @@ public extension UIViewController {
         return subviewArray
     }
     
-    internal func topMostViewController() -> UIViewController? {
-        return self.topViewControllerForRoot(UIApplication.shared.keyWindow?.rootViewController)
-    }
-    
     internal func topViewControllerForRoot(_ rootViewController: UIViewController?) -> UIViewController? {
         guard let rootViewController = rootViewController else {
             return nil

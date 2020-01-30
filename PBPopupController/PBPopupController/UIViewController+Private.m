@@ -22,17 +22,11 @@ static NSString *const upCoOvBase64 = @"X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRm9y
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         [UIViewController vc_swizzle];
-        /*
-        if (NSProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10) {
-            [EasyAnimation enable];
-        }
-         */
     });
 }
 
-static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom) API_AVAILABLE(ios(12.0))
+static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom) API_AVAILABLE(ios(11.0))
 {
-#ifndef LNPopupControllerEnforceStrictClean
     if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class])
     {
         [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop) {
@@ -64,12 +58,10 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
         [controller.view setNeedsLayout];
         [controller.view layoutIfNeeded];
     }
-#endif
 }
 
 static inline void _LNPopupSupportFixInsetsForViewController_legacy(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom)
 {
-#ifndef LNPopupControllerEnforceStrictClean
     static NSString* selName;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -96,12 +88,11 @@ static inline void _LNPopupSupportFixInsetsForViewController_legacy(UIViewContro
         [controller.view setNeedsLayout];
         [controller.view layoutIfNeeded];
     }
-#endif
 }
 
 void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom)
 {
-    if (@available(iOS 12.0, *))
+    if (@available(iOS 11.0, *))
     {
         _LNPopupSupportFixInsetsForViewController_modern(controller, layout, additionalSafeAreaInsetsBottom);
     }

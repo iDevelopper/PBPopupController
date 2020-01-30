@@ -16,10 +16,18 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     
     fileprivate var itemsPerRow: CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad {return 4}
-        if UIApplication.shared.statusBarOrientation == .portrait {return 2}
+        var statusBarOrientation: UIInterfaceOrientation = .unknown
+        #if !targetEnvironment(macCatalyst)
+        if #available(iOS 13.0, *) {
+            statusBarOrientation = self.view.window?.windowScene?.interfaceOrientation ?? .unknown
+        } else {
+           statusBarOrientation = UIApplication.shared.statusBarOrientation
+        }
+        #endif
+        if statusBarOrientation == .portrait {return 2}
         return 4
     }
-    
+
     weak var firstVC: FirstTableViewController!
 
     // MARK: - View lifecycle
@@ -45,11 +53,13 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
+        #if !targetEnvironment(macCatalyst)
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10 {
             let insets = UIEdgeInsets.init(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
             self.collectionView.contentInset = insets
             self.collectionView.scrollIndicatorInsets = insets
         }
+        #endif
     }
     
     override func viewWillAppear(_ animated: Bool) {

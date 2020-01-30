@@ -38,9 +38,11 @@ import ObjectiveC
      Default style: prominent style for iOS 10 and above, otherwise compact.
      */
     public static let `default`: PBPopupBarStyle = {
+        #if !targetEnvironment(macCatalyst)
         if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
             return .compact
         }
+        #endif
         return .prominent
     }()
 }
@@ -89,9 +91,11 @@ extension PBPopupBarStyle {
      Default style: none for iOS 10 and above, otherwise bottom.
      */
     public static let `default`: PBPopupBarProgressViewStyle = {
+        #if !targetEnvironment(macCatalyst)
         if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
             return .bottom
         }
+        #endif
         return .none
     }()
 }
@@ -267,9 +271,9 @@ A set of methods used by the delegate to respond, with a preview view controller
                     NSException.raise(NSExceptionName.internalInconsistencyException, format: "Custom popuBar view controller cannot be nil.", arguments: getVaList([]))
                 }
             }
-            self.layoutIfNeeded()
-
             self.setupCustomPopupBarView()
+            
+            self.layoutIfNeeded()
             
             self.layoutToolbarItems()
             self.configureTitleLabels()
@@ -277,7 +281,9 @@ A set of methods used by the delegate to respond, with a preview view controller
             if self.popupController.popupPresentationState != .hidden && oldValue != popupBarStyle {
                 self.popupController.popupPresentationState = .hidden
                 let vc = self.popupController.containerViewController!
-                _LNPopupSupportFixInsetsForViewController(vc, false,  oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height)! : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact)
+                if self.popupController.wantsAdditionalSafeAreaInset {
+                    _LNPopupSupportFixInsetsForViewController(vc, false,  oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height)! : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact)
+                }
                 self.popupController._presentPopupBarAnimated(true)
             }
         }
@@ -292,7 +298,11 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         set(newValue) {
             self.systemBarStyle = newValue
-            self.popupController.systemBarStyle = newValue
+            self.popupController.barStyle = newValue
+
+            #if targetEnvironment(macCatalyst)
+            self.backgroundView.backgroundColor = nil
+            #else
             if #available(iOS 13.0, *) {
                 self.backgroundView.backgroundColor = nil
                 self.safeAreaBackgroundView.backgroundColor = nil
@@ -311,6 +321,7 @@ A set of methods used by the delegate to respond, with a preview view controller
                     }
                 }
             }
+            #endif
             self.toolbar.barStyle = newValue
         }
     }
@@ -453,6 +464,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var title: String? {
         didSet {
+            self.titleLabel.isHidden = title == nil
             self.layoutIfNeeded()
             
             self.configureTitleLabels()
@@ -480,6 +492,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var subtitle: String? {
         didSet {
+            self.subtitleLabel.isHidden = subtitle == nil
             self.layoutIfNeeded()
             
             self.configureTitleLabels()
@@ -678,6 +691,9 @@ A set of methods used by the delegate to respond, with a preview view controller
     // Highlighted view when taping or paning the popupBar
     @objc dynamic internal var highlightView: PBPopupBarHighlightView!
 
+    // Border view for iPad when the popup bar is the neighbour of another object
+    @objc dynamic internal var borderView: UIView!
+
     // MARK: - Private Init
     
     required internal init?(coder aDecoder: NSCoder) {
@@ -692,7 +708,11 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         self.autoresizingMask = []
         
+        #if !targetEnvironment(macCatalyst)
         let effect = UIBlurEffect(style: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10 ? .extraLight : self.backgroundStyle)
+        #else
+        let effect = UIBlurEffect(style: self.backgroundStyle)
+        #endif
         self.backgroundView = UIVisualEffectView(effect: effect)
         self.backgroundView.clipsToBounds = false
         self.backgroundView.autoresizingMask = []
@@ -705,6 +725,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         self.addSubview(self.backgroundView)
         
+        #if !targetEnvironment(macCatalyst)
         if #available(iOS 11.0, *) {
             self.safeAreaBackgroundView = PBPopupSafeAreaBackgroundView(effect: effect)
             self.safeAreaBackgroundView.autoresizesSubviews = true
@@ -730,6 +751,7 @@ A set of methods used by the delegate to respond, with a preview view controller
 
             self.safeAreaBackgroundView.contentView.addSubview(safeAreaToolbar)
         }
+        #endif
         
         self.toolbar = PBPopupToolbar(frame: self.bounds)
         self.toolbar.autoresizingMask = []
@@ -746,13 +768,8 @@ A set of methods used by the delegate to respond, with a preview view controller
         // For effect view, replace the system image.
         // --> self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         
-        if #available(iOS 11.0, *) {
-            self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        }
-        else {
-            self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        }
-        
+        self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+
         // To remove the top line:
         // --> self.toolbar.clipsToBounds = true
         // Or if toolbar.clipsToBounds = false
@@ -810,8 +827,11 @@ A set of methods used by the delegate to respond, with a preview view controller
         */
         self.titleLabel.backgroundColor = UIColor.clear
         
-        self.titlesView.addSubview(self.titleLabel)
-        
+        //self.titlesView.addSubview(self.titleLabel)
+        self.titleLabel.isHidden = true
+        self.titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        self.titlesView.addArrangedSubview(self.titleLabel)
+
         self.subtitleLabel = UILabel()
         self.subtitleLabel.isAccessibilityElement = true
         /*
@@ -822,8 +842,11 @@ A set of methods used by the delegate to respond, with a preview view controller
         */
         self.subtitleLabel.backgroundColor = UIColor.clear
         
-        self.titlesView.addSubview(self.subtitleLabel)
-        
+        //self.titlesView.addSubview(self.subtitleLabel)
+        self.subtitleLabel.isHidden = true
+        self.subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
+        self.titlesView.addArrangedSubview(self.subtitleLabel)
+
         self.progressView = PBPopupBarProgressView(progressViewStyle: .default)
         self.progressView.trackImage = UIImage()
         
@@ -837,6 +860,12 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         self.highlightView.alpha = 0.0
         self.addSubview(self.highlightView)
+        
+        self.borderView = UIView()
+        self.borderView.autoresizingMask = []
+        self.borderView.backgroundColor = UIColor.lightGray
+        
+        self.addSubview(borderView)
         
         self.isAccessibilityElement = false
         self.configureAccessibility()
@@ -935,7 +964,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         self.layoutBackgroundView()
         
+        #if !targetEnvironment(macCatalyst)
         self.layoutSafeAreaBackgroundView()
+        #endif
         
         self.layoutToolbar()
         
@@ -943,11 +974,13 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         self.layoutTitlesView()
         
-        self.layoutTitleLabels()
+        //self.layoutTitleLabels()
         
         self.layoutProgressView()
         
         self.layoutHighlightView()
+        
+        self.layoutBorderView()
         
         //NSLayoutConstraint.reportAmbiguity(self)
         //NSLayoutConstraint.listConstraints(self)
@@ -995,7 +1028,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         if self.backgroundView.translatesAutoresizingMaskIntoConstraints == true {
             self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
-            self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
+            self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
             self.backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
             self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
             self.backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
@@ -1005,7 +1038,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     private func layoutToolbar() {
         if self.toolbar.translatesAutoresizingMaskIntoConstraints == true {
             self.toolbar.translatesAutoresizingMaskIntoConstraints = false
-            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.33).isActive = true
+            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
             self.toolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
             self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
             self.toolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
@@ -1120,8 +1153,8 @@ A set of methods used by the delegate to respond, with a preview view controller
         if self.titlesView.translatesAutoresizingMaskIntoConstraints == true {
             self.titlesView.translatesAutoresizingMaskIntoConstraints = false
             
-            self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: 0.0).isActive = true
-            self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
+            self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: 8.0).isActive = true
+            self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: -8.0).isActive = true
         }
         
         if let leftConstraint = self.titlesViewLeftConstraint {
@@ -1175,11 +1208,13 @@ A set of methods used by the delegate to respond, with a preview view controller
                 self.titleLabelHeightConstraint = nil
                 self.titleLabelCenterConstraint = nil
                 self.titleLabel.removeFromSuperview()
+                self.titlesView.removeArrangedSubview(self.titleLabel)
                 self.titleLabel = titleLabel
                 if PBPopupBarShowColors == true {
                     self.titleLabel.backgroundColor = UIColor.magenta
                 }
-                self.titlesView.addSubview(self.titleLabel)
+                //self.titlesView.addSubview(self.titleLabel)
+                self.titlesView.addArrangedSubview(self.titleLabel)
             }
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
@@ -1189,11 +1224,13 @@ A set of methods used by the delegate to respond, with a preview view controller
                 self.subtitleLabelHeightConstraint = nil
                 self.subtitleLabelCenterConstraint = nil
                 self.subtitleLabel.removeFromSuperview()
+                self.titlesView.removeArrangedSubview(self.subtitleLabel)
                 self.subtitleLabel = subtitleLabel
                 if PBPopupBarShowColors == true {
                     self.subtitleLabel.backgroundColor = UIColor.cyan
                 }
-                self.titlesView.addSubview(self.subtitleLabel)
+                //self.titlesView.addSubview(self.subtitleLabel)
+                self.titlesView.addArrangedSubview(self.subtitleLabel)
             }
         }
         
@@ -1415,6 +1452,18 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
     }
     
+    private func layoutBorderView() {
+
+        if self.borderView.translatesAutoresizingMaskIntoConstraints == true {
+            self.borderView.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.borderView.topAnchor.constraint(equalTo: (self.superview?.topAnchor)!, constant: self.imageView.frame.minY).isActive = true
+            self.borderView.leftAnchor.constraint(equalTo: (self.superview?.leftAnchor)!, constant: 0.0).isActive = true
+            self.borderView.widthAnchor.constraint(equalToConstant: 1.0).isActive = true
+            self.borderView.heightAnchor.constraint(equalToConstant: self.imageView.frame.height).isActive = true
+        }
+    }
+    
     private func getMostLeftAndRightItemsXPositions() -> [CGFloat] {
         
         var left: CGFloat = 0.0
@@ -1569,9 +1618,23 @@ extension PBPopupBar {
     /**
      Custom views For Debug View Hierarchy Names
      */
+    /*
     internal class PBPopupBarTitlesView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    */
+    
+    internal class PBPopupBarTitlesView: UIStackView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+            self.axis = .vertical
+            self.distribution = .fillEqually
         }
         
         required init(coder aDecoder: NSCoder) {

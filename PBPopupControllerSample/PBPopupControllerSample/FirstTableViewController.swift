@@ -84,11 +84,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
+        #if !targetEnvironment(macCatalyst)
         if ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10 {
             let insets = UIEdgeInsets.init(top: topLayoutGuide.length, left: 0, bottom: bottomLayoutGuide.length, right: 0)
             self.tableView.contentInset = insets
             self.tableView.scrollIndicatorInsets = insets
         }
+        #endif
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -240,22 +242,22 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
     }
     
     func createBarButtonItems() {
-        self.popupPlayButtonItemForProminent = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
+        self.popupPlayButtonItemForProminent = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
         self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString("Play", comment: "")
         
-        self.popupNextButtonItemForProminent = UIBarButtonItem(image: #imageLiteral(resourceName: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
+        self.popupNextButtonItemForProminent = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
         self.popupNextButtonItemForProminent.accessibilityLabel = NSLocalizedString("Next track", comment: "")
 
-        self.popupMoreButtonItemForCompact = UIBarButtonItem(image: #imageLiteral(resourceName: "more"), style: .plain, target: self, action: #selector(moreAction(_:)))
+        self.popupMoreButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: self, action: #selector(moreAction(_:)))
         self.popupMoreButtonItemForCompact.accessibilityLabel = NSLocalizedString("More", comment: "")
 
-        self.popupPlayButtonItemForCompact = UIBarButtonItem(image: #imageLiteral(resourceName: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
+        self.popupPlayButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
         self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString("Play", comment: "")
 
-        self.popupNextButtonItemForCompact = UIBarButtonItem(image: #imageLiteral(resourceName: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
+        self.popupNextButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
         self.popupNextButtonItemForCompact.accessibilityLabel = NSLocalizedString("Next track", comment: "")
 
-        self.popupPrevButtonItemForCompact = UIBarButtonItem(image: #imageLiteral(resourceName: "prev-small"), style: .plain, target: self, action: #selector(prevAction(_:)))
+        self.popupPrevButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: self, action: #selector(prevAction(_:)))
         self.popupPrevButtonItemForCompact.accessibilityLabel = NSLocalizedString("Previous track", comment: "")
     }
     
@@ -283,9 +285,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
             }
         }
         
-        self.popupPlayButtonItemForProminent.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+        self.popupPlayButtonItemForProminent.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
-        self.popupPlayButtonItemForCompact.image = self.isPlaying ? #imageLiteral(resourceName: "pause-small") : #imageLiteral(resourceName: "play-small")
+        self.popupPlayButtonItemForCompact.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
  }
     
@@ -312,6 +314,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDelegate
 
         if #available(iOS 13.0, *) {
             #if compiler(>=5.1)
+            if let currentStyle = navigationController?.traitCollection.userInterfaceStyle {
+                navigationController?.overrideUserInterfaceStyle = (currentStyle == .dark ? .light : .dark)
+            }
             if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
                 navigationController?.toolbar.tintColor = aColor
             }

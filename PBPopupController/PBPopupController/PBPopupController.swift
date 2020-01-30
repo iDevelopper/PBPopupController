@@ -100,10 +100,14 @@ extension PBPopupPresentationState {
     Default presentation style: fullScreen for iOS 9 and above, otherwise deck.
     */
    public static let `default`: PBPopupPresentationStyle = {
+      #if targetEnvironment(macCatalyst)
+      return .fullScreen
+      #else
       if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
          return .fullScreen
       }
       return .deck
+      #endif
    }()
 }
 
@@ -312,21 +316,34 @@ extension PBPopupPresentationStyle {
      */
     @objc public var popupContentPanGestureRecognizer: UIPanGestureRecognizer!
 
+   /**
+     Set this property to `false` if you want addional safe area insets to be ignored when the popup bar is presented (usefull for iPad when the popup is the neighbour of another object).
+     */
+   @objc public var wantsAdditionalSafeAreaInset: Bool = true
+
    // MARK: - Private Properties
    
    @objc internal var containerViewController: UIViewController!
    
-   internal var systemBarStyle: UIBarStyle! {
+   internal var barStyle: UIBarStyle! {
       didSet {
          if let popupContentView = self.containerViewController.popupContentView, popupContentView.popupEffectView.effect != nil {
             #if compiler(>=5.1)
+            // COMMMIT
+            #if targetEnvironment(macCatalyst)
+            if barStyle == .black {
+              popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterialDark)
+            }
+            popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterial)
+            #else
             if #available(iOS 13.0, *) {
-                if systemBarStyle == .black {
+                if barStyle == .black {
                   popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterialDark)
                 }
                 popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
             }
-            popupContentView.popupEffectView.effect = systemBarStyle == .black ? UIBlurEffect(style: .dark) : UIBlurEffect(style: .light)
+            popupContentView.popupEffectView.effect = barStyle == .black ? UIBlurEffect(style: .dark) : UIBlurEffect(style: .light)
+            #endif
             #endif
          }
       }
@@ -384,7 +401,9 @@ extension PBPopupPresentationStyle {
    deinit {
       PBLog("deinit \(self)")
       if let previewingContext = self.previewingContext, let vc = self.containerViewController {
+         #if !targetEnvironment(macCatalyst)
          vc.unregisterForPreviewing(withContext: previewingContext)
+         #endif
          self.containerViewController = nil
       }
    }
@@ -440,7 +459,7 @@ extension PBPopupPresentationStyle {
       let rv = PBPopupContentView()
       rv.autoresizingMask = []
 
-      rv.clipsToBounds = false
+      rv.clipsToBounds = true
 
       rv.popupController = self
       
@@ -478,9 +497,11 @@ extension PBPopupPresentationStyle {
        }
        */
       
+      #if !targetEnvironment(macCatalyst)
       if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 9), vc.traitCollection.forceTouchCapability == .available {
          self.previewingContext = vc.registerForPreviewing(with: self, sourceView: vc.popupBar)
       }
+      #endif
       
       var previousState = self.popupPresentationState
       self.popupPresentationState = .presenting
@@ -489,8 +510,8 @@ extension PBPopupPresentationStyle {
       
       let height = vc.popupBar.popupBarHeight
 
-      vc.popupBar.frame = CGRect(x: 0.0, y: 0.0, width: vc.view.bounds.size.width, height: height)
-      
+      vc.popupBar.frame = CGRect(x: 0.0, y: 0.0, width: vc.bottomBar.bounds.size.width, height: height)
+
       self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
       
       vc.view.insertSubview(self.popupBarView, belowSubview: vc.bottomBar)
@@ -506,7 +527,9 @@ extension PBPopupPresentationStyle {
          
          self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
 
-         _LNPopupSupportFixInsetsForViewController(vc, true, height)
+         if self.wantsAdditionalSafeAreaInset {
+             _LNPopupSupportFixInsetsForViewController(vc, true, height)
+         }
       }) { (success) in
          previousState = self.popupPresentationState
          self.popupPresentationState = .closed
@@ -543,7 +566,9 @@ extension PBPopupPresentationStyle {
       UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveLinear, .layoutSubviews], animations: {
          self.popupBarView.frame = contentFrame
          self.popupBarView.alpha = 0.0
-         _LNPopupSupportFixInsetsForViewController(vc, animated ? true : false, -height)
+         if self.wantsAdditionalSafeAreaInset {
+             _LNPopupSupportFixInsetsForViewController(vc, animated ? true : false, -height)
+         }
       }) { (success) in
          previousState = self.popupPresentationState
          self.popupPresentationState = .hidden
@@ -664,18 +689,57 @@ extension PBPopupPresentationStyle {
    
    // MARK: - Frames
    
+   internal func statusBarOrientation(for view: UIView) -> UIInterfaceOrientation {
+      var statusBarOrientation: UIInterfaceOrientation = .unknown
+      #if !targetEnvironment(macCatalyst)
+      if #available(iOS 13.0, *) {
+         statusBarOrientation = view.window?.windowScene?.interfaceOrientation ?? .unknown
+      } else {
+         statusBarOrientation = UIApplication.shared.statusBarOrientation
+      }
+      #endif
+      
+      return statusBarOrientation
+   }
+   
+   internal func statusBarFrame(for view: UIView) -> CGRect {
+      var statusBarFrame: CGRect = .zero
+      #if !targetEnvironment(macCatalyst)
+      if #available(iOS 13.0, *) {
+         statusBarFrame = view.window?.windowScene?.statusBarManager?.statusBarFrame ?? .zero
+      } else {
+         statusBarFrame = UIApplication.shared.statusBarFrame
+      }
+      #endif
+      
+      return statusBarFrame
+   }
+   
+   internal func statusBarHeight(for view: UIView) -> CGFloat {
+      var statusBarHeight: CGFloat = 0
+      #if !targetEnvironment(macCatalyst)
+      if #available(iOS 13.0, *) {
+         statusBarHeight = view.window?.windowScene?.statusBarManager?.statusBarFrame.size.height ?? 0.0
+      } else {
+         statusBarHeight = UIApplication.shared.statusBarFrame.size.height
+      }
+      #endif
+      
+      return statusBarHeight
+   }
+   
    internal func popupBarViewFrameForPopupStateHidden() -> CGRect {
       let vc = self.containerViewController!
       
       var frame = self.popupBarViewFrameForPopupStateClosed()
-
+      
       frame.origin.y += vc.popupBar.popupBarHeight
       frame.size.height = 0.0
       
       PBLog("\(frame)")
       return frame
    }
-
+   
    internal func popupBarViewFrameForPopupStateClosed() -> CGRect {
       let vc = self.containerViewController!
       
@@ -689,9 +753,9 @@ extension PBPopupPresentationStyle {
       if self.bottomBarHeight == 0.0 {
          height += insets.bottom
       }
-
-      let frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
       
+      let frame = CGRect(x: defaultFrame.origin.x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: defaultFrame.size.width, height: height)
+
       PBLog("\(frame)")
       return frame
    }

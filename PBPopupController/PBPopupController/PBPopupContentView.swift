@@ -201,8 +201,9 @@ The view where is embedded the popupContentViewController's view for presentatio
             }
             
             if windowTopSafeAreaInset == 0 {
+                let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
                 if self.popupPresentationStyle == .fullScreen {
-                    self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : UIApplication.shared.statusBarFrame.size.height
+                    self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : statusBarHeight
                 }
             }
 
@@ -220,7 +221,7 @@ The view where is embedded the popupContentViewController's view for presentatio
             if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
                 self.setNeedsUpdateConstraints()
                 
-                 UIView.animate(withDuration: UIApplication.shared.statusBarOrientationAnimationDuration, delay: 0.0, usingSpringWithDamping: 0.001, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
+                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
                  self.layoutIfNeeded()
                  }, completion: nil)
             }

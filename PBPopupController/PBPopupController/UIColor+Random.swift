@@ -11,8 +11,8 @@ import UIKit
 /**
  A UIColor's extension that provides random colors.
  */
-public extension UIColor {
-
+public extension UIColor
+{
     @objc class func PBRandomDarkColor() -> UIColor? {
         let hue: CGFloat = CGFloat(arc4random() % 256) / 256
         let saturation: CGFloat = 0.5

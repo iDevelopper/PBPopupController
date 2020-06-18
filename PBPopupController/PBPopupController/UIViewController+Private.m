@@ -6,7 +6,6 @@
 //  Copyright © 2018 Patrick BODET. All rights reserved.
 //
 
-//#import "EasyAnimation.h"
 #import "PBPopupController.h"
 #import <PBPopupController/PBPopupController-Swift.h>
 
@@ -25,16 +24,16 @@ static NSString *const upCoOvBase64 = @"X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRm9y
     });
 }
 
-static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom) API_AVAILABLE(ios(11.0))
+static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets) API_AVAILABLE(ios(11.0))
 {
-    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class])
+    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || [controller isKindOfClass:UISplitViewController.class])
     {
         [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop) {
-            _LNPopupSupportFixInsetsForViewController_modern(obj, NO, 0);
             
             UIEdgeInsets oldInsets = obj.additionalSafeAreaInsets;
             UIEdgeInsets insets = oldInsets;
-            insets.bottom += additionalSafeAreaInsetsBottom;
+            insets.top += additionalSafeAreaInsets.top;
+            insets.bottom += additionalSafeAreaInsets.bottom;
             if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
             {
                 obj.additionalSafeAreaInsets = insets;
@@ -45,7 +44,8 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
     {
         UIEdgeInsets oldInsets = controller.additionalSafeAreaInsets;
         UIEdgeInsets insets = oldInsets;
-        insets.bottom += additionalSafeAreaInsetsBottom;
+        insets.top += additionalSafeAreaInsets.top;
+        insets.bottom += additionalSafeAreaInsets.bottom;
         if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
         {
             controller.additionalSafeAreaInsets = insets;
@@ -76,12 +76,6 @@ static inline void _LNPopupSupportFixInsetsForViewController_legacy(UIViewContro
         _LNPopupSupportFixInsetsForViewController_legacy(obj, NO, 0);
     }];
     
-    if (@available(iOS 11.0, *)) {
-        UIEdgeInsets insets = controller.additionalSafeAreaInsets;
-        insets.bottom += additionalSafeAreaInsetsBottom;
-        controller.additionalSafeAreaInsets = insets;
-    }
-    
     if (layout)
     {
         [controller.view setNeedsUpdateConstraints];
@@ -90,15 +84,15 @@ static inline void _LNPopupSupportFixInsetsForViewController_legacy(UIViewContro
     }
 }
 
-void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom)
+void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets)
 {
     if (@available(iOS 11.0, *))
     {
-        _LNPopupSupportFixInsetsForViewController_modern(controller, layout, additionalSafeAreaInsetsBottom);
+        _LNPopupSupportFixInsetsForViewController_modern(controller, layout, additionalSafeAreaInsets);
     }
     else
     {
-        _LNPopupSupportFixInsetsForViewController_legacy(controller, layout, additionalSafeAreaInsetsBottom);
+        _LNPopupSupportFixInsetsForViewController_legacy(controller, layout, additionalSafeAreaInsets.bottom);
     }
 }
 
@@ -117,6 +111,17 @@ void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOO
     
     self.popupBar.tintColor = self.bottomBar.tintColor;
     
+    if ([self isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *nc = (UINavigationController *)self;
+        self.popupBar.tintColor = nc.navigationBar.tintColor;
+    }
+    
+    // Split view controller detail OS Bug
+    if ([self.parentViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *nc = (UINavigationController *)self.parentViewController;
+        self.popupBar.tintColor = nc.navigationBar.tintColor;
+    }
+
     if ([self.bottomBar respondsToSelector:@selector(barTintColor)])
     {
         [self.popupBar setBarTintColor:[(id)self.bottomBar barTintColor]];
@@ -136,7 +141,7 @@ NSString *_PBPopupDecodeBase64String(NSString* base64String)
 
 @end
 
-@implementation UITabBarController (Support)
+@implementation UITabBarController (Private)
 
 + (void)load
 {
@@ -148,7 +153,7 @@ NSString *_PBPopupDecodeBase64String(NSString* base64String)
 
 @end
 
-@implementation UINavigationController (Support)
+@implementation UINavigationController (Private)
 
 + (void)load
 {
@@ -159,4 +164,18 @@ NSString *_PBPopupDecodeBase64String(NSString* base64String)
 }
 
 @end
+
+/*
+@implementation UISplitViewController (Private)
+
++ (void)load
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [UISplitViewController svc_swizzle];
+    });
+}
+
+@end
+*/
 

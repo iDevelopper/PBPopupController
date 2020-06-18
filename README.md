@@ -53,7 +53,7 @@ pod 'PBPopupController'
 
 ## Requirements
 
-* iOS 9.3 or later.
+* iOS 11 or later.
 * ARC memory management.
 
 ## Features
@@ -66,7 +66,9 @@ pod 'PBPopupController'
 * Data source methods for asking custom popup bar' labels.
 * Full Right-To-Left support.
 * Accessibility support.
-* iOS 13 support.
+* iOS 13 dark mode support.
+* macOS Catalyst support.
+* iPad look and feel support.
 
 ## Basic API Description
 
@@ -154,7 +156,7 @@ You can find [the docs here](http://iDevelopper.github.io/PBPopupController/). D
 
 A Special Thank to [Leo Natan](https://github.com/LeoNatan).
 
-This code was inspired on her excellent framework [LNPopupController](https://github.com/LeoNatan/LNPopupController).
+This code was inspired on his excellent framework [LNPopupController](https://github.com/LeoNatan/LNPopupController).
 
 ## Author
 

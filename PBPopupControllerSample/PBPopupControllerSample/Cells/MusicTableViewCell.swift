@@ -8,8 +8,8 @@
 
 import UIKit
 
-class MusicTableViewCell: UITableViewCell {
-	
+class MusicTableViewCell: UITableViewCell
+{
     @IBOutlet weak var albumArtImageView: UIImageView!
     @IBOutlet weak var songNameLabel: UILabel!
     @IBOutlet weak var albumNameLabel: UILabel!

@@ -14,7 +14,7 @@
     <a title="UIViewController Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController Docs</a> (87% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.0.0 Docs</a> (86% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarBorderViewStyle.html">PBPopupBarBorderViewStyle</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a>
               </li>
@@ -147,7 +150,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -178,7 +181,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">bottomBar</span><span class="p">:</span> <span class="kt">UIView</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">bottomBar</span><span class="p">:</span> <span class="kt">UIView</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -215,7 +218,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -236,6 +239,11 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>Returns the container (presenting) view controller for the popup bar, and for the presented view controller (popupContentViewController). May be <code>UIViewController</code>, <code>UINavigationController</code>, <code>UITabBarController</code> or a custom container view controller. (read-only).</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Extensions/UIViewController.html#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)additionalSafeAreaInsetsBottomForContainer">additionalSafeAreaInsetsBottomForContainer</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -243,7 +251,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupContainerViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupContainerViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -271,7 +279,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -304,7 +312,35 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupContentView</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupContentView.html">PBPopupContentView</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupContentView</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupContentView.html">PBPopupContentView</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)additionalSafeAreaInsetsBottomForContainer"></a>
+                    <a name="//apple_ref/swift/Property/additionalSafeAreaInsetsBottomForContainer" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)additionalSafeAreaInsetsBottomForContainer">additionalSafeAreaInsetsBottomForContainer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Custom insets that you specify to modify the container view controller&rsquo;s safe area (usefull for a custom container). Use this property to adjust the safe area bottom edge inset value of this view controller&rsquo;s views by the specified amount.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">var</span> <span class="nv">additionalSafeAreaInsetsBottomForContainer</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -316,7 +352,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                     <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:openPopup:animated:completion:"></a>
                     <a name="//apple_ref/swift/Method/presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:openPopup:animated:completion:">presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)</a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:openPopup:animated:completion:">presentPopupBar(withPopupContentViewController:<wbr>openPopup:<wbr>animated:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -410,7 +446,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                     <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:animated:completion:"></a>
                     <a name="//apple_ref/swift/Method/presentPopupBar(withPopupContentViewController:animated:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:animated:completion:">presentPopupBar(withPopupContentViewController:animated:completion:)</a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:animated:completion:">presentPopupBar(withPopupContentViewController:<wbr>animated:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -492,7 +528,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                     <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)dismissPopupBarWithAnimated:completion:"></a>
                     <a name="//apple_ref/swift/Method/dismissPopupBar(animated:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)dismissPopupBarWithAnimated:completion:">dismissPopupBar(animated:completion:)</a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)dismissPopupBarWithAnimated:completion:">dismissPopupBar(animated:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -551,7 +587,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                     <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)openPopupWithAnimated:completion:"></a>
                     <a name="//apple_ref/swift/Method/openPopup(animated:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)openPopupWithAnimated:completion:">openPopup(animated:completion:)</a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)openPopupWithAnimated:completion:">openPopup(animated:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -610,7 +646,7 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                     <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)closePopupWithAnimated:completion:"></a>
                     <a name="//apple_ref/swift/Method/closePopup(animated:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)closePopupWithAnimated:completion:">closePopup(animated:completion:)</a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)closePopupWithAnimated:completion:">closePopup(animated:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -703,8 +739,8 @@ If the popup bar&rsquo;s <code>inheritsVisualStyleFromBottomBar</code> property 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2019-09-02)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2020-06-18)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

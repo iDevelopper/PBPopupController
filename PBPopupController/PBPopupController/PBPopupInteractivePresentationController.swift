@@ -14,25 +14,28 @@ protocol PBPopupInteractivePresentationDelegate : class {
 }
 
 internal class PBPopupInteractivePresentationController: UIPercentDrivenInteractiveTransition {
-    
     private var isPresenting: Bool!
     
     // Set by own when scroll view is at the top (see contentOffset), also when view is not a scroll view.
     private var isDismissing: Bool!
     
-    private var view: UIView!
-    
+    private weak var view: UIView!
+    private weak var popupController: PBPopupController!
+
     // Set by popupController when didOpen.
     internal var contentOffset: CGPoint!
     
     internal var gesture: UIPanGestureRecognizer!
-    private weak var popupController: PBPopupController!
     
+    private var animator: UIViewPropertyAnimator!
+
     private var progress: CGFloat = 0
     private var location: CGFloat = 0
     private var shouldComplete = false
     
-    weak var delegate: PBPopupInteractivePresentationDelegate?
+    var transitionContext: UIViewControllerContextTransitioning!
+    
+    internal weak var delegate: PBPopupInteractivePresentationDelegate?
     
     private var presentationController: PBPopupPresentationController! {
         return popupController.popupPresentationController
@@ -53,28 +56,19 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         }
         self.isPresenting = presenting
         self.isDismissing = false
-        self.completionCurve = .linear
+    }
+    
+    deinit {
+        PBLog("deinit \(self)")
+    }
+    
+    override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
+        self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
     }
     
     override var completionSpeed: CGFloat {
         get {
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 10 {
-                return 1.0
-            }
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 13 {
-                if self.isPresenting {
-                    return (self.shouldComplete ? 1.5 : 1.0) + self.percentComplete * self.duration
-                }
-                else {
-                    if percentComplete < 0.6 {
-                        return (self.shouldComplete ? 1.5 : 1.0) + self.percentComplete * self.duration
-                    }
-                    else {
-                        return 1 - self.percentComplete * self.duration
-                    }
-                }
-            }
-            return (self.shouldComplete ? 1.5 : 1.0) + self.percentComplete * self.duration
+            return 1
         }
         set {
             super.completionSpeed = newValue
@@ -82,24 +76,23 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     }
     
     @objc private func handlePanGesture(gesture: UIPanGestureRecognizer) {
+        guard let vc = self.popupController.containerViewController else { return }
+                
         let translation = gesture.translation(in: gesture.view?.superview)
         let availableHeight: CGFloat = self._popupContainerViewAvailableHeight()
-        
+
         if !self.isPresenting {
-            if self.view is UIScrollView && (self.view as! UIScrollView).contentOffset.y < self.contentOffset.y {
-                if !self.isDismissing {
-                    self.isDismissing = true
-                    self.delegate?.dismissInteractive()
-                    gesture.setTranslation(.zero, in: gesture.view?.superview)
+            if let scrollView = self.view as? UIScrollView {
+                if scrollView.contentOffset.y <= self.contentOffset.y {
+                    if !self.isDismissing {
+                        self.isDismissing = true
+                        self.delegate?.dismissInteractive()
+                        gesture.setTranslation(.zero, in: gesture.view?.superview)
+                    }
                 }
             }
         }
         
-        if self.isPresenting || self.isDismissing {
-            self.progress = translation.y / availableHeight
-            self.location = abs(gesture.location(in: gesture.view?.superview).y)
-        }
-
         switch gesture.state {
         case .began:
             self.progress = 0.0
@@ -109,7 +102,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             if self.isPresenting {
                 self.delegate?.presentInteractive()
             }
-            
             else {
                 if !self.isDismissing {
                     if !(self.view is UIScrollView) {
@@ -118,175 +110,117 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     }
                 }
             }
-            
+            self.location = vc.popupContentView.frame.minY + translation.y
+
         case .changed:
             if self.isDismissing && (self.view is UIScrollView) {
                 let scrollView = self.view as! UIScrollView
                 scrollView.contentOffset = self.contentOffset
             }
             
-            let vc = self.popupController.containerViewController!
-            
-            self.shouldComplete = self.progress > 0.3
-            
-            if self.shouldComplete && !self.isPresenting {
-                let mv = ProcessInfo.processInfo.operatingSystemVersion.majorVersion
-                if mv == 11 || mv == 12 {
-                    self.progress = 0.3 + (self.progress - 0.3) * 0.5
-                }
-                else if mv <= 10 {
-                    gesture.state = .ended
-                }
-            }
+            self.progress = translation.y / availableHeight
             
             if self.isPresenting {
                 let alpha = (0.30 - self.progress) / 0.30
-                self.presentationController?.popupBarForPresentation?.alpha = alpha
+                self.presentationController.popupBarForPresentation?.alpha = alpha
                 vc.popupContentView.popupCloseButton?.alpha = (self.progress - 0.30) / 0.70
             }
             
-            if self.isPresenting && (self.progress >= 100 || self.progress <= 0) {
-                    self.progress = self.progress >= 100 ? 100 : 0
-            }
-            
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 13 || self.isPresenting {
-                let barHeight = self.popupController.bottomBarHeight + vc.insetsForBottomBar().bottom
-                let barPosition = vc.view.frame.size.height - barHeight + (barHeight * (self.isPresenting ? progress : 1 - progress))
-                vc._setBottomBarPosition(barPosition)
-            }
-            
-            if self.isPresenting || self.isDismissing {
-                self.update(self.progress)
+            if (self.progress >= 1 || self.progress <= 0) {
+                self.progress = self.progress >= 1 ? 1 : 0
             }
 
-            self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location)
-            
+            if let animator = self.animator {
+                animator.fractionComplete = self.progress
+                self.update(self.progress)
+            }
+            self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location + translation.y)
+
         case .cancelled:
             self.isDismissing = false
             self.cancel()
-            
+            if let animator = self.animator {
+                animator.stopAnimation(false)
+            }
+
         case .ended:
+            guard let animator = self.animator else { return }
+            
             self.isDismissing = false
 
-            if self.isPresenting {
-                if (self.progress + (gesture.velocity(in: nil).y / availableHeight)) > 0.3 {
-                    self.shouldComplete = true
-                }
-            }
-            let vc = self.popupController.containerViewController!
-
+            self.shouldComplete = self.completionPosition() == .end
+            
             if self.shouldComplete {
                 if self.isPresenting {
-                    // finish()
-                    UIView.animate(withDuration: TimeInterval(duration - (duration * percentComplete)), delay: 0.0, options: .curveLinear, animations: {
-                        vc._animateBottomBarToHidden(true)
-                    })
-                
-                    self.presentationController?.popupBarForPresentation?.alpha = 0.0
+                    animator.addAnimations {
+                        vc.popupContentView.popupCloseButton?.alpha = 1.0
+                    }
+                    animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
+                    
+                    self.presentationController.popupBarForPresentation?.alpha = 0.0
                     self.popupController.popupPresentationState = .opening
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: .closed)
                     self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
                 }
                 else {
-                    print("completion speed: \(self.completionSpeed)")
-                    print("duration: \(self.duration)")
-                    print("percent complete: \(self.percentComplete)")
-                    print("progress: \(self.progress)")
-                    print("animation duration: \(TimeInterval((duration - (duration * percentComplete)) / completionSpeed))")
-                    print("animation duration: \(TimeInterval(duration - (duration * percentComplete)))")
-                    
-                    
-                    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 9 {
-                        let d = TimeInterval(duration / completionSpeed)
-                        print("d: \(d)")
-                        let remaining = d
-                        print("remaining: \(remaining)")
-                        print("PresentedViewController: \(self.presentationController.presentedViewController)")
-                        /*
-                        let coordinator = vc.popupContentViewController.transitionCoordinator
-            
-                        coordinator?.animateAlongsideTransition(in: self.presentationController.containerView, animation: { (context) in
-                            self.presentationController?.animateImageViewInFinalPosition()
-                            vc._animateBottomBarToHidden(false)
-                        }, completion: { (context) in
-                            //
-                        })
-                        */
-                        /*
-                        UIView.transition(with: self.presentationController.containerView!, duration: 2, options: .curveLinear, animations: {
-                            self.presentationController?.animateImageViewInFinalPosition()
-                            vc._animateBottomBarToHidden(false)
-                        }, completion: nil)
-                        */
-                        
-    
-                        if #available(iOS 10.0, *) {
-                            
-                            let animator = UIViewPropertyAnimator(duration: remaining, curve: .linear) {
-                                vc._animateBottomBarToHidden(false)
-                                self.presentationController?.animateImageViewInFinalPosition()
-                            }
-                            
-                            animator.startAnimation()
-                        }
-                    }
-                    //
-                    else {
-                        UIView.transition(with: self.presentationController.containerView!, duration: TimeInterval((duration - (duration * percentComplete)) / completionSpeed), options: .curveLinear, animations: {
-                            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 13 {
-                                vc.popupContentView.frame = self.presentationController.popupContentViewFrameForPopupStateClosed(true)
-                            }
-                            self.presentationController?.animateImageViewInFinalPosition()
-                            vc._animateBottomBarToHidden(false)
-                        }, completion: nil)
-                        /*
-                        UIView.animate(withDuration: TimeInterval((duration - (duration * percentComplete)) / completionSpeed), delay: 0.0, options: [.curveLinear], animations: {
-                            //vc.popupContentView.popupCloseButton?.alpha = 0.0
-                            //self.presentationController?.popupBarForPresentation?.alpha = 1.0
-                            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 13 {
-                                vc.popupContentView.frame = self.presentationController.popupContentViewFrameForPopupStateClosed(true)
-                            }
-                            self.presentationController?.animateImageViewInFinalPosition()
-                            vc._animateBottomBarToHidden(false)
-                        })
-                        */
-                    }
                     self.popupController.popupPresentationState = .closing
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: .open)
+                    
                     self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
+                    self.endInteractiveTransition(with: gesture)
                 }
                 self.finish()
             }
             else {
-                //cancel()
+                self.cancel()
+                animator.isReversed = true
                 if self.isPresenting {
-                    UIView.animate(withDuration: TimeInterval((duration * percentComplete) / completionSpeed), delay: 0.0, options: .curveLinear, animations: {
-                        //self.presentationController?.popupBarForPresentation?.alpha = 1.0
-                        vc._animateBottomBarToHidden(false)
-                    }) { (_) in
-                        //
+                    animator.addAnimations {
+                        self.presentationController.popupBarForPresentation?.alpha = 1.0
                     }
-                    self.cancel()
+                    
+                    animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                 }
                 else {
-                    vc._animateBottomBarToHidden(true)
-                    self.cancel()
-                    if vc.popupContentView.popupPresentationStyle == .deck {
-                        if self.presentationController.traitCollection.verticalSizeClass == .regular {
-                            self.presentationController.backingView.setupCornerRadiusTo(10.0, rect: self.presentationController.backingView.bounds)
-                            vc.popupContentView.updateCornerRadiusTo(10.0, rect: self.presentationController.popupContentViewFrameForPopupStateOpen())
-                        }
+                    animator.addAnimations {
+                        vc.popupContentView.popupCloseButton.setButtonStateStationary()
                     }
+                    animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                 }
             }
             break
+            
         default:
             break
         }
     }
     
-    private func _popupContainerViewAvailableHeight() -> CGFloat {
-        let vc = self.popupController.containerViewController!
+    private func endInteractiveTransition(with gesture: UIPanGestureRecognizer) {
+        self.presentationController.continueDismissalTransitionWithTimingParameters(nil, durationFactor: 0.5)
+    }
+    
+    private func completionPosition() -> UIViewAnimatingPosition
+    {
+        guard let vc = self.popupController.containerViewController else { return .current}
+        let velocity = self.gesture.velocity(in: gesture.view?.superview).vector
+        let isFlick = (velocity.magnitude > vc.popupContentView.popupCompletionFlickMagnitude)
+        let isFlickDown = isFlick && (velocity.dy > 0.0)
+        let isFlickUp = isFlick && (velocity.dy < 0.0)
+        
+        if (self.isPresenting == true && isFlickUp) || (self.isPresenting == false && isFlickDown) {
+            return .end
+        } else if (self.isPresenting == true && isFlickDown) || (self.isPresenting == false && isFlickUp) {
+            return .start
+        } else if self.animator.fractionComplete > vc.popupContentView.popupCompletionThreshold {
+            return .end
+        } else {
+            return .start
+        }
+    }
+    
+    private func _popupContainerViewAvailableHeight() -> CGFloat
+    {
+        guard let vc = self.popupController.containerViewController else { return 0.0 }
         var availableHeight = vc.view.frame.size.height - vc.popupBar.frame.size.height - (vc.bottomBar.isHidden ? 0.0 : vc.bottomBar.frame.size.height)
         if vc.popupContentView.popupPresentationStyle == .custom {
             availableHeight = vc.popupContentView.popupContentSize.height - vc.popupBar.frame.size.height - (vc.bottomBar.isHidden ? 0.0 : vc.bottomBar.frame.size.height)
@@ -298,8 +232,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     }
 }
 
-extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate {
-    
+extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
+{
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if self.popupController.delegate?.popupControllerPanGestureShouldBegin?(self.popupController, state: self.popupController.popupPresentationState) == false
         {
@@ -307,11 +241,11 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate 
         }
         
         let gesture = gestureRecognizer as! UIPanGestureRecognizer
-        if self.isPresenting && (gesture.direction == .down || gesture.direction == .left || gesture.direction == .right)
+        if self.isPresenting && gesture.direction != .up
         {
             return false
         }
-        if !self.isPresenting && !(self.view is UIScrollView) && (gesture.direction == .up || gesture.direction == .left || gesture.direction == .right)
+        if !self.isPresenting && !(self.view is UIScrollView) && gesture.direction != .down
         {
             return false
         }
@@ -319,12 +253,16 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate 
     }
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if NSStringFromClass(type(of: otherGestureRecognizer.view!).self).contains("DropShadow") {
+            otherGestureRecognizer.state = UIGestureRecognizer.State.failed
+            return true
+        }
         return true
     }
 }
 
-internal extension UIPanGestureRecognizer {
-    
+private extension UIPanGestureRecognizer
+{
     enum PanDirection: Int {
         case up, down, left, right
         var isVertical: Bool { return [.up, .down].contains(self) }
@@ -344,8 +282,8 @@ internal extension UIPanGestureRecognizer {
     }
 }
 
-private extension UIScrollView {
-    
+private extension UIScrollView
+{
     var isAtTop: Bool {
         return contentOffset.y <= verticalOffsetForTop
     }
@@ -368,8 +306,8 @@ private extension UIScrollView {
     }
 }
 
-private extension UIScrollView {
-    
+private extension UIScrollView
+{
     var scrolledToTop: Bool {
         let topEdge = 0 - contentInset.top
         return contentOffset.y <= topEdge

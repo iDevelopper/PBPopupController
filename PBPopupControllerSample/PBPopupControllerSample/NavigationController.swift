@@ -20,7 +20,6 @@ class NavigationController: UINavigationController {
                 navigationController.topViewController?.title = splitViewController.title
             }
         }
-        
         else if let tabBarController = self.tabBarController {
             self.topViewController?.title = tabBarController.title
             

@@ -37,6 +37,12 @@ class CustomPopupBarViewController: UIViewController {
         #endif
     }
     
+    deinit {
+        PBLog("deinit \(self)")
+    }
+    
+    // MARK: - Actions
+    
     @IBAction func playPause(_ sender: Any) {
         PBLog("Popup Bar playPause")
     }

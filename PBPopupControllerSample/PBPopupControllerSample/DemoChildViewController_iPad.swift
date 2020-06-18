@@ -1,17 +1,17 @@
 //
-//  DemoCollectionViewController.swift
+//  DemoChildViewController_iPad.swift
 //  PBPopupControllerSample
 //
-//  Created by Patrick BODET on 13/11/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Created by Patrick BODET on 10/02/2020.
+//  Copyright © 2020 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 
 private let reuseIdentifier = "musicCollectionViewCell"
 
-class DemoCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+class DemoChildViewController_iPad: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+    
     fileprivate let sectionInsets = UIEdgeInsets(top: 20.0, left: 20.0, bottom: 20.0, right: 20.0)
     
     fileprivate var itemsPerRow: CGFloat {
@@ -27,13 +27,24 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         if statusBarOrientation == .portrait || statusBarOrientation == .portraitUpsideDown {return 2}
         return 4
     }
-
-    weak var firstVC: FirstTableViewController!
+    
+    weak var containerController: DemoContainerController_iPad!
+    
+    var images = [UIImage]()
+    var titles = [String]()
+    var subtitles = [String]()
 
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        for idx in 1...self.collectionView(collectionView, numberOfItemsInSection: 0) {
+            let imageName = String(format: "Cover%02d", idx)
+            images += [UIImage(named: imageName)!]
+            titles += [LoremIpsum.title]
+            subtitles += [LoremIpsum.sentence]
+        }
         
         if #available(iOS 13.0, *) {
             #if compiler(>=5.1)
@@ -48,10 +59,24 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         if #available(iOS 11.0, *) {
             self.collectionView.contentInsetAdjustmentBehavior = .always
         }
+        
+        let home = UIBarButtonItem(title: "Home", style: .plain, target: self, action: #selector(dismiss(_:)))
+        self.navigationItem.rightBarButtonItem = home
+
+        if let container = self.containerController {
+            self.title = container.title
+            container.popupBar.image = self.images[0]
+            container.popupBar.title = self.titles[0]
+            container.popupBar.subtitle = self.subtitles[0]
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        
+        let insets = UIEdgeInsets.init(top: 0, left: 0, bottom: 64, right: 0)
+        self.collectionView.contentInset = insets
+        self.collectionView.scrollIndicatorInsets = insets
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,7 +85,8 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         self.collectionView.reloadData()
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
+    {
         super.viewWillTransition(to: size, with: coordinator)
         
         coordinator.animate(alongsideTransition: { (context) in
@@ -73,11 +99,14 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     deinit {
         PBLog("deinit \(self)")
     }
-    
+
     // MARK: - Navigation
 
     @IBAction func dismiss(_ sender: Any) {
-        self.firstVC.dismiss(sender)
+        if let container = self.containerController {
+            container.dismissPopup()
+            self.performSegue(withIdentifier: "unwindToHome", sender: self)
+        }
     }
 
     // MARK: - UICollectionViewDataSource
@@ -87,15 +116,15 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.firstVC.images.count
+        return 22
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MusicCollectionViewCell
     
-        cell.imageView.image = self.firstVC.images[indexPath.row]
-        cell.title.text = self.firstVC.titles[indexPath.row]
-        cell.subtitle.text = self.firstVC.subtitles[indexPath.row]
+        cell.imageView.image = self.images[indexPath.row]
+        cell.title.text = self.titles[indexPath.row]
+        cell.subtitle.text = self.subtitles[indexPath.row]
         
         #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
@@ -138,26 +167,17 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         return sectionInsets.left
     }
 
-    // MARK: - UICollectionViewDelegate
+    // MARK: UICollectionViewDelegate
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath) as! MusicCollectionViewCell
         
-        if let firstVC = self.firstVC {
-            firstVC.containerVC.popupBar.image = cell.imageView.image
-            firstVC.containerVC.popupBar.title = cell.title.text
-            firstVC.containerVC.popupBar.subtitle = cell.subtitle.text
-            if let popupContentVC = firstVC.popupContentVC {
-                popupContentVC.albumArtImage = cell.imageView.image!
-                popupContentVC.songTitle = cell.title.text!
-                popupContentVC.albumTitle = cell.subtitle.text!
-            }
-            if let popupContentTVC = firstVC.popupContentTVC {
-                popupContentTVC.albumArtImage = cell.imageView.image!
-                popupContentTVC.songTitle = cell.title.text!
-                popupContentTVC.albumTitle = cell.subtitle.text!
-            }
-            firstVC.presentPopupBar(self)
+        if let container = self.containerController {
+            container.popupBar.image = cell.imageView.image
+            container.popupBar.title = cell.title.text
+            container.popupBar.subtitle = cell.subtitle.text
+            
+            container.presentPopup()
         }
     }
 }

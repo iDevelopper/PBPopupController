@@ -14,7 +14,7 @@
     <a title="PBPopupContentView Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController Docs</a> (87% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.0.0 Docs</a> (86% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
           <li class="nav-group-name">
             <a href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/PBPopupBarBorderViewStyle.html">PBPopupBarBorderViewStyle</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a>
               </li>
@@ -125,9 +128,11 @@
               <div class="task-name-container">
                 <a name="/Public%20Properties"></a>
                 <a name="//apple_ref/swift/Section/Public Properties" class="dashAnchor"></a>
-                <a href="#/Public%20Properties">
-                  <h3 class="section-name">Public Properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Public%20Properties"></a>
+                  <h3 class="section-name"><p>Public Properties</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -151,7 +156,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupEffectView</span><span class="p">:</span> <span class="kt">UIVisualEffectView</span><span class="o">!</span></code></pre>
+<span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupEffectView</span><span class="p">:</span> <span class="kt">UIVisualEffectView</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -173,7 +178,7 @@
                       <div class="abstract">
                         <p>The popup content view presentation style.</p>
 
-<p>Default presentation style: fullScreen for iOS 9 and above, otherwise deck.</p>
+<p>Default presentation style: deck, was fullScreen for iOS 9 and above, otherwise deck.</p>
 
                       </div>
                       <div class="declaration">
@@ -219,6 +224,90 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupDismissalDuration"></a>
+                    <a name="//apple_ref/swift/Property/popupDismissalDuration" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupDismissalDuration">popupDismissalDuration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The popup content view dismissal duration when dismissing from open to closed state.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupDismissalDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCompletionThreshold"></a>
+                    <a name="//apple_ref/swift/Property/popupCompletionThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCompletionThreshold">popupCompletionThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The threshold value used to open or close the popup content view when dragging.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCompletionThreshold</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCompletionFlickMagnitude"></a>
+                    <a name="//apple_ref/swift/Property/popupCompletionFlickMagnitude" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCompletionFlickMagnitude">popupCompletionFlickMagnitude</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The flick magnitude value used to open or close the popup content view when dragging.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCompletionFlickMagnitude</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupContentSize"></a>
                     <a name="//apple_ref/swift/Property/popupContentSize" class="dashAnchor"></a>
                     <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupContentSize">popupContentSize</a>
@@ -238,6 +327,62 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupContentSize</span><span class="p">:</span> <span class="kt">CGSize</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCanDismissOnPassthroughViews"></a>
+                    <a name="//apple_ref/swift/Property/popupCanDismissOnPassthroughViews" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupCanDismissOnPassthroughViews">popupCanDismissOnPassthroughViews</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, the popup content view can be dismissed when user interact outside the bounds.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCanDismissOnPassthroughViews</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupIgnoreDropShadowView"></a>
+                    <a name="//apple_ref/swift/Property/popupIgnoreDropShadowView" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)popupIgnoreDropShadowView">popupIgnoreDropShadowView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, tells the popup content view presentation to ignore the form sheet presentation by default.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupIgnoreDropShadowView</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -508,9 +653,11 @@
               <div class="task-name-container">
                 <a name="/Private%20Properties"></a>
                 <a name="//apple_ref/swift/Section/Private Properties" class="dashAnchor"></a>
-                <a href="#/Private%20Properties">
-                  <h3 class="section-name">Private Properties</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Private%20Properties"></a>
+                  <h3 class="section-name"><p>Private Properties</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -547,9 +694,11 @@
               <div class="task-name-container">
                 <a name="/Init"></a>
                 <a name="//apple_ref/swift/Section/Init" class="dashAnchor"></a>
-                <a href="#/Init">
-                  <h3 class="section-name">Init</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Init"></a>
+                  <h3 class="section-name"><p>Init</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -557,7 +706,7 @@
                     <code>
                     <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(im)initWithFrame:"></a>
                     <a name="//apple_ref/swift/Method/init(frame:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(im)initWithFrame:">init(frame:)</a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(im)initWithFrame:">init(frame:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -611,8 +760,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2019-09-02)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.10.0</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2020-06-18)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

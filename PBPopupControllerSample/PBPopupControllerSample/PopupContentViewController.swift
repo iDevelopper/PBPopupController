@@ -13,18 +13,13 @@ class PopupContentViewController: UIViewController {
     
     weak var firstVC: FirstTableViewController!
 
-    var closeButton: PBPopupCloseButton!
-    
     var isPlaying: Bool = false
     
     @IBOutlet weak var imageModule: UIView! {
         didSet {
-            if let firstVC = self.firstVC {
-                if let popupContentView = firstVC.containerVC.popupContentView {
-                    popupContentView.popupImageModule = imageModule
-                }
+            if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupImageModule = imageModule
             }
-            
             imageModule.layer.backgroundColor = UIColor.clear.cgColor
             imageModule.layer.shadowOpacity = 0.0
         }
@@ -33,62 +28,57 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var imageModuleLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageModuleTrailingConstraint: NSLayoutConstraint!
 
-    @IBOutlet weak var albumArtImageView: UIImageView! {
+    var albumArtImage: UIImage = UIImage() {
         didSet {
-            if let firstVC = self.firstVC {
-                if let popupContentView = firstVC.containerVC.popupContentView {
-                    popupContentView.popupImageView = albumArtImageView
+            if isViewLoaded {
+                self.albumArtImageView.image = albumArtImage
+                if let containerVC = self.popupContainerViewController, !self.firstVC.isPopupContentTableView {
+                    containerVC.popupContentView.popupImageView = albumArtImageView
                 }
             }
-            // DemoChildViewController
-            else if let containerVC = self.popupContainerViewController {
-                containerVC.popupContentView.popupImageView = albumArtImageView
-            }
-            
+        }
+    }
+    
+    @IBOutlet weak var albumArtImageView: UIImageView! {
+        didSet {
             albumArtImageView.layer.cornerRadius = 10
             albumArtImageView.layer.masksToBounds = true
         }
     }
     
-    var albumArtImage: UIImage? {
-        get {
-            return self.albumArtImageView.image
-        }
-        set (newValue) {
-            self.albumArtImageView.image = newValue
-        }
-    }
-    
     @IBOutlet weak var topModule: UIView! {
         didSet {
-            if let firstVC = self.firstVC {
-                if let popupContentView = firstVC.containerVC.popupContentView {
-                    popupContentView.popupTopModule = self.topModule
-                }
+            if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupTopModule = topModule
             }
         }
     }
     @IBOutlet weak var bottomModule: UIView! {
         didSet {
-            if let firstVC = self.firstVC {
-                if let popupContentView = firstVC.containerVC.popupContentView {
-                    popupContentView.popupBottomModule = bottomModule
-                }
+            if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupBottomModule = bottomModule
             }
         }
     }
+    
     @IBOutlet weak var bottomModuleTopConstraint: NSLayoutConstraint! {
         didSet {
-            if let firstVC = self.firstVC {
-                if let popupContentView = firstVC.containerVC.popupContentView {
-                    popupContentView.popupBottomModuleTopConstraint = bottomModuleTopConstraint
-                }
+            if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupBottomModuleTopConstraint = bottomModuleTopConstraint
             }
         }
     }
     
     @IBOutlet weak var progressView: UIProgressView!
 
+    var songTitle: String = "" {
+        didSet {
+            if isViewLoaded {
+                songNameLabel.text = songTitle
+            }
+        }
+    }
+    
     @IBOutlet weak var songNameLabel: MarqueeLabel! {
         didSet {
             songNameLabel.animationDelay = 2
@@ -100,6 +90,15 @@ class PopupContentViewController: UIViewController {
             #endif
         }
     }
+
+    var albumTitle: String = "" {
+        didSet {
+            if isViewLoaded {
+                albumNameLabel.text = albumTitle
+            }
+        }
+    }
+    
     @IBOutlet weak var albumNameLabel: MarqueeLabel! {
         didSet {
             albumNameLabel.textColor = UIColor.red
@@ -162,6 +161,13 @@ class PopupContentViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.albumArtImageView.image = self.albumArtImage
+        self.songNameLabel.text = self.songTitle
+        self.albumNameLabel.text = self.albumTitle
+        if let containerVC = self.popupContainerViewController {
+            containerVC.popupContentView.popupImageView = albumArtImageView
+        }
+
         #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
@@ -176,22 +182,6 @@ class PopupContentViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         PBLog("viewWillAppear")
         super.viewWillAppear(animated)
-    
-        if let firstVC = self.firstVC {
-            if let popupBar = firstVC.containerVC.popupBar {
-                self.albumArtImage = popupBar.image
-                self.songNameLabel.text = popupBar.title
-                self.albumNameLabel.text = popupBar.subtitle
-            }
-        }
-        // DemoChildViewController
-        else if let containerVC = self.popupContainerViewController {
-            if let popupBar = containerVC.popupBar {
-                self.albumArtImage = popupBar.image
-                self.songNameLabel.text = popupBar.title
-                self.albumNameLabel.text = popupBar.subtitle
-            }
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -224,8 +214,8 @@ class PopupContentViewController: UIViewController {
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        guard let firstVC = self.firstVC else {return .lightContent}
-        guard let popupContentView = firstVC.containerVC.popupContentView else {return .default}
+        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let popupContentView = containerVC.popupContentView else {return .default}
         
         if popupContentView.popupPresentationStyle != .deck {
             return .default
@@ -243,7 +233,6 @@ class PopupContentViewController: UIViewController {
     
     deinit {
         PBLog("deinit \(self)")
-        self.closeButton = nil
     }
     
     // MARK: - Setups
@@ -298,11 +287,13 @@ class PopupContentViewController: UIViewController {
     @IBAction func playPauseAction(_ sender: Any?) {
         PBLog("playPauseAction")
         self.isPlaying = !self.isPlaying
+        if let firstVC = self.firstVC {
+            firstVC.isPlaying = self.isPlaying
+        }
         self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
-
-        guard let firstVC = self.firstVC else {return}
         
-        guard let popupBar = firstVC.containerVC.popupBar else {return}
+        guard let containerVC = self.popupContainerViewController else {return}
+        guard let popupBar = containerVC.popupBar else {return}
         if popupBar.popupBarStyle == .prominent {
             popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         }
@@ -324,11 +315,11 @@ class PopupContentViewController: UIViewController {
         
         firstVC.prevAction(self)
         
-        guard let popupBar = firstVC.containerVC.popupBar else {return}
-        
-        self.albumArtImage = popupBar.image
-        self.songNameLabel.text = popupBar.title
-        self.albumNameLabel.text = popupBar.subtitle
+        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+
+        self.albumArtImage = popupBar.image!
+        self.songTitle = popupBar.title!
+        self.albumTitle = popupBar.subtitle!
     }
     
     @IBAction func nextAction(_ sender: Any) {
@@ -338,18 +329,16 @@ class PopupContentViewController: UIViewController {
         
         firstVC.nextAction(self)
         
-        guard let popupBar = firstVC.containerVC.popupBar else {return}
-        
-        self.albumArtImage = popupBar.image
-        self.songNameLabel.text = popupBar.title
-        self.albumNameLabel.text = popupBar.subtitle
+        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+
+        self.albumArtImage = popupBar.image!
+        self.songTitle = popupBar.title!
+        self.albumTitle = popupBar.subtitle!
     }
     
     @objc func tick() {
-        guard let firstVC = self.firstVC else {return}
-        
-        guard let popupBar = firstVC.containerVC.popupBar else {return}
-        
+        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+
         popupBar.progress += 0.002
         popupBar.accessibilityProgressLabel = NSLocalizedString("Playback Progress", comment: "")
         

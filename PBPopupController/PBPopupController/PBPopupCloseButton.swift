@@ -14,14 +14,17 @@ import UIKit
  Use the most appropriate close button style for the current operating system version. Uses chevron button style for iOS 10 and above, otherwise round button.
  */
 @objc public enum PBPopupCloseButtonStyle : Int {
+    
     /**
      Chevron close button style.
      */
     case chevron
+    
     /**
      Round close button style.
      */
     case round
+    
     /**
      No close button.
      */
@@ -31,16 +34,12 @@ import UIKit
      Default style: Chevron button style for iOS 10 and above, otherwise round button.
      */
     public static let `default`: PBPopupCloseButtonStyle = {
-        #if !targetEnvironment(macCatalyst)
-        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
-            return .round
-        }
-        #endif
         return .chevron
     }()
 }
 
-extension PBPopupCloseButtonStyle {
+extension PBPopupCloseButtonStyle
+{
     /**
      An array of human readable strings for the close button styles.
      */
@@ -224,7 +223,7 @@ extension PBPopupCloseButtonStyle {
         }
         return CGSize(width: 42.0, height: 15.0)
     }
-    
+
     // MARK: - Public Methods
     
     @objc public func setButtonStateStationary() {

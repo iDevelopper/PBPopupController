@@ -9,19 +9,65 @@
 import UIKit
 
 class DemoViewController: UIViewController {
-
-    var tableView: UITableView!
+    
+    @IBOutlet weak var containerView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        if self.navigationController == nil {
+            self.presentationController?.delegate = self
+        }
         if let firstVC = self.storyboard?.instantiateViewController(withIdentifier: "FirstTableViewController") as? FirstTableViewController {
             addChild(firstVC)
-            let tableView = firstVC.view as! UITableView
-            tableView.dataSource = firstVC
-            tableView.delegate = firstVC
-            self.view.addSubview(firstVC.view)
+            firstVC.view.frame = self.containerView.bounds
+            self.containerView.addSubview(firstVC.view)
             firstVC.didMove(toParent: self)
+
+            self.view.backgroundColor = firstVC.view.backgroundColor
         }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+    }
+    
+    deinit {
+        PBLog("deinit \(self)")
+    }
+}
+
+extension DemoViewController: UIAdaptivePresentationControllerDelegate
+{
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        print("presentationControllerShouldDismiss: \(presentationController.frameOfPresentedViewInContainerView)")
+        return true
+    }
+    
+    func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
+        print("presentationControllerWillDismiss")
+    }
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        print("presentationControllerDidDismiss: \(presentationController.frameOfPresentedViewInContainerView)")
+        if let firstVC = self.children[0] as? FirstTableViewController {
+            firstVC.dismiss(self)
+        }
+    }
+    
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        print("presentationControllerDidAttemptToDismiss: \(presentationController.frameOfPresentedViewInContainerView)")
+    }
+}
+
+extension DemoViewController: UINavigationControllerDelegate
+{
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if operation == .pop {
+            if let firstVC = self.children[0] as? FirstTableViewController {
+                firstVC.dismiss(self)
+            }
+        }
+        return nil
     }
 }

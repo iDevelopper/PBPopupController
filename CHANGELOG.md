@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.0.0
+
+Version 3.0.0: Completely revisited.
+Dropping support for iOS 9, 10.
+Adding support for macOS Catalyst.
+
 ## 2.1.1
 
 Fix toolbar layout issue.

@@ -11,12 +11,11 @@ import Foundation
 let debug: Bool = true
 
 /**
-Logs an message to the Apple System Log facility.
+Logs a message to the Apple System Log facility.
  */
 public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: String = #file, function: String = #function, _ line: Int = #line)
 {
     #if DEBUG
-    
     if debug {
         let value = object()
         let stringRepresentation: String

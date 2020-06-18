@@ -8,7 +8,8 @@
 
 import UIKit
 
-class MusicCollectionViewCell: UICollectionViewCell {
+class MusicCollectionViewCell: UICollectionViewCell
+{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!

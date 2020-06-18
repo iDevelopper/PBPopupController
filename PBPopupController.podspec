@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "2.1.1"
+    s.version      = "3.0.0"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
 
     s.description  = <<-DESC
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
     s.author             = { "iDevelopper" => "patrick.bodet4@wanadoo.fr" }
 
     s.platform     = :ios
-    s.ios.deployment_target = '9.3'
+    s.ios.deployment_target = '11.0'
 
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 

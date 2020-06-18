@@ -38,16 +38,12 @@ import ObjectiveC
      Default style: prominent style for iOS 10 and above, otherwise compact.
      */
     public static let `default`: PBPopupBarStyle = {
-        #if !targetEnvironment(macCatalyst)
-        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
-            return .compact
-        }
-        #endif
         return .prominent
     }()
 }
 
-extension PBPopupBarStyle {
+extension PBPopupBarStyle
+{
     /**
      An array of human readable strings for the popup bar styles.
      */
@@ -78,10 +74,12 @@ extension PBPopupBarStyle {
      Progress view on bottom.
      */
     case bottom
+    
     /**
      Progress view on top.
      */
     case top
+    
     /**
      No progress view.
      */
@@ -91,16 +89,12 @@ extension PBPopupBarStyle {
      Default style: none for iOS 10 and above, otherwise bottom.
      */
     public static let `default`: PBPopupBarProgressViewStyle = {
-        #if !targetEnvironment(macCatalyst)
-        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10) {
-            return .bottom
-        }
-        #endif
         return .none
     }()
 }
 
-extension PBPopupBarProgressViewStyle {
+extension PBPopupBarProgressViewStyle
+{
     /**
      An array of human readable strings for the progress view styles.
      */
@@ -120,15 +114,64 @@ extension PBPopupBarProgressViewStyle {
     }
 }
 
+/**
+ Available styles for the border view.
+ */
+@objc public enum PBPopupBarBorderViewStyle : Int {
+    
+    /**
+     Border view on left.
+     */
+    case left
+    
+    /**
+     Border view on right.
+     */
+    case right
+    
+    /**
+     No border view.
+     */
+    case none
+    
+    /**
+     Default style: none.
+     */
+    public static let `default`: PBPopupBarBorderViewStyle = {
+        return .none
+    }()
+}
+
+extension PBPopupBarBorderViewStyle
+{
+    /**
+     An array of human readable strings for the border view styles.
+     */
+    public static let strings = ["left", "right", "none"]
+    
+    private func string() -> NSString {
+        return PBPopupBarBorderViewStyle.strings[self.rawValue] as NSString
+    }
+    
+    /**
+     Return an human readable description for the progress view style.
+     */
+    public var description:NSString {
+        get {
+            return string()
+        }
+    }
+}
+
 // _UITAMICAdaptorView
 private let itemClass11: AnyClass? = NSClassFromString(_PBPopupDecodeBase64String(base64String: "X1VJVEFNSUNBZGFwdG9yVmlldw==")!)
 // _UIToolbarNavigationButton
 private let itemClass10: AnyClass? = NSClassFromString(_PBPopupDecodeBase64String(base64String: "X1VJVG9vbGJhck5hdmlnYXRpb25CdXR0b24=")!)
 
-internal let PBPopupBarHeightCompact: CGFloat = 48.0//40.0
-internal let PBPopupBarHeightProminent: CGFloat = 64.0
+internal let PBPopupBarHeightCompact: CGFloat = 48.0
+internal let PBPopupBarHeightProminent: CGFloat = 64.5
 internal let PBPopupBarImageHeightProminent: CGFloat = 48.0
-internal let PBPopupBarImageHeightCompact: CGFloat = 40.0//32.0
+internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
 
 // MARK: - Public Protocols
 
@@ -136,6 +179,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0//32.0
  The data source providing custom labels instances to the popup bar so they can be used instead of the default provided ones.
 */
 @objc public protocol PBPopupBarDataSource: NSObjectProtocol {
+    
     /**
      Returns a UIlabel subclass object to be used by the popup bar instead of the default title label (for example a MarqueeLabel instance).
     
@@ -150,7 +194,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0//32.0
      
      - Parameter popupBar: The popup bar object asking for a label.
      
-     - returns: A UIlabel object to be used instead of the default one.
+     - returns: A `UIlabel` object to be used instead of the default one.
      */
     @objc optional func subtitleLabel(for popupBar: PBPopupBar) -> UILabel?
 }
@@ -280,11 +324,12 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             if self.popupController.popupPresentationState != .hidden && oldValue != popupBarStyle {
                 self.popupController.popupPresentationState = .hidden
-                let vc = self.popupController.containerViewController!
-                if self.popupController.wantsAdditionalSafeAreaInset {
-                    _LNPopupSupportFixInsetsForViewController(vc, false,  oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height)! : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact)
+                if let vc = self.popupController.containerViewController {
+                    let height = oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height ?? 0) : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact
+                        let additionalInsets = UIEdgeInsets(top: self.popupController.wantsAdditionalSafeAreaInsetTop ? height : 0, left: 0, bottom: self.popupController.wantsAdditionalSafeAreaInsetBottom ? height : 0, right: 0)
+                        _LNPopupSupportFixInsetsForViewController(vc, false, additionalInsets)
+                    self.popupController._presentPopupBarAnimated(false)
                 }
-                self.popupController._presentPopupBarAnimated(true)
             }
         }
     }
@@ -305,20 +350,13 @@ A set of methods used by the delegate to respond, with a preview view controller
             #else
             if #available(iOS 13.0, *) {
                 self.backgroundView.backgroundColor = nil
-                self.safeAreaBackgroundView.backgroundColor = nil
             }
             else {
                 if newValue == .black {
                     self.backgroundView.backgroundColor = UIColor.clear
-                    if #available(iOS 11.0, *) {
-                        self.safeAreaBackgroundView.backgroundColor = UIColor.clear
-                    }
                 }
                 else {
                     self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
-                    if #available(iOS 11.0, *) {
-                        self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
-                    }
                 }
             }
             #endif
@@ -348,7 +386,6 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.backgroundView.effect = UIBlurEffect(style: newValue)
             if #available(iOS 11.0, *) {
                 self.safeAreaToolbar?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-                self.safeAreaBackgroundView?.effect = UIBlurEffect(style: newValue)
             }
         }
     }
@@ -364,17 +401,10 @@ A set of methods used by the delegate to respond, with a preview view controller
             if self.toolbar.isTranslucent != newValue {
                 self.toolbar.isTranslucent = newValue
                 self.backgroundView.isHidden = (newValue == false)
-                if #available(iOS 11.0, *) {
-                    self.safeAreaToolbar?.isTranslucent = newValue
-                    self.safeAreaBackgroundView?.isHidden = (newValue == false)
-                }
+                self.safeAreaToolbar?.isTranslucent = newValue
                 if self.inheritsVisualStyleFromBottomBar == true {
                     self.backgroundView.effect = nil
                     self.backgroundView.isHidden = true
-                    if #available(iOS 11.0, *) {
-                        self.safeAreaBackgroundView?.effect = nil
-                        self.safeAreaBackgroundView?.isHidden = true
-                    }
                 }
             }
         }
@@ -453,7 +483,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     /**
      The view providing a shadow' layer to the popup bar image view.
      
-     - Note: Read-only, but its properties can be set. For example for no shadow, use `popupBar.shadowImageView.layer.shadowOpacity = 0`.
+     - Note: Read-only, but its properties can be set. For example for no shadow, use `popupBar.shadowImageView.shadowOpacity = 0`.
      */
     @objc public private(set) var shadowImageView: PBPopupRoundShadowImageView!
     
@@ -465,8 +495,6 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc public var title: String? {
         didSet {
             self.titleLabel.isHidden = title == nil
-            self.layoutIfNeeded()
-            
             self.configureTitleLabels()
             self.configureAccessibility()
         }
@@ -479,8 +507,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var titleTextAttributes: [NSAttributedString.Key: Any]? {
         didSet {
-            self.layoutIfNeeded()
-            
             self.configureTitleLabels()
         }
     }
@@ -493,8 +519,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc public var subtitle: String? {
         didSet {
             self.subtitleLabel.isHidden = subtitle == nil
-            self.layoutIfNeeded()
-            
+
             self.configureTitleLabels()
             self.configureAccessibility()
         }
@@ -507,8 +532,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var subtitleTextAttributes: [NSAttributedString.Key: Any]? {
         didSet {
-            self.layoutIfNeeded()
-            
             self.configureTitleLabels()
         }
     }
@@ -546,8 +569,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc override public var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
-            self.layoutIfNeeded()
-            
             self.toolbar.semanticContentAttribute = semanticContentAttribute
             
             self.layoutToolbarItems()
@@ -560,8 +581,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var leftBarButtonItems: [UIBarButtonItem]? {
         didSet {
-            self.layoutIfNeeded()
-
             self.layoutToolbarItems()
             self.configureTitleLabels()
         }
@@ -572,8 +591,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var rightBarButtonItems: [UIBarButtonItem]? {
         didSet {
-            self.layoutIfNeeded()
-            
             self.layoutToolbarItems()
             self.configureTitleLabels()
         }
@@ -586,8 +603,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var barButtonItemsSemanticContentAttribute: UISemanticContentAttribute = .playback {
         didSet {
-            self.layoutIfNeeded()
-
             self.layoutToolbarItems()
             self.configureTitleLabels()
         }
@@ -598,8 +613,6 @@ A set of methods used by the delegate to respond, with a preview view controller
      */
     @objc public var progressViewStyle: PBPopupBarProgressViewStyle = .default {
         didSet {
-            self.layoutIfNeeded()
-            
             self.layoutProgressView()
         }
     }
@@ -619,6 +632,15 @@ A set of methods used by the delegate to respond, with a preview view controller
     }
     
     /**
+     The popup bar's border view style.
+     */
+    @objc public var borderViewStyle: PBPopupBarBorderViewStyle = .default {
+        didSet {
+            self.layoutBorderView()
+        }
+    }
+    
+    /**
      The accessibility label of the progress, in a localized string.
      */
     @objc public var accessibilityProgressLabel: String?
@@ -630,7 +652,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     
     // MARK: - Private Properties
     
-    @objc weak internal var popupController: PBPopupController!
+    internal weak var popupController: PBPopupController!
     
     internal var ignoreLayoutDuringTransition: Bool = false
     
@@ -646,9 +668,8 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var backgroundView: UIVisualEffectView!
     
     private var toolbar: PBPopupToolbar!
-    
-    private var safeAreaBackgroundView: PBPopupSafeAreaBackgroundView!
-    
+    private var toolbarBottomConstraint: NSLayoutConstraint!
+
     private var safeAreaBackgroundViewHeightConstraint: NSLayoutConstraint?
     
     private var safeAreaToolbar: UIToolbar!
@@ -692,7 +713,11 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc dynamic internal var highlightView: PBPopupBarHighlightView!
 
     // Border view for iPad when the popup bar is the neighbour of another object
-    @objc dynamic internal var borderView: UIView!
+    @objc dynamic internal var borderView: PBPopupBarBorderView!
+
+    private var borderViewVerticalConstraints: [NSLayoutConstraint]!
+    private var borderViewHorizontalConstraints: [NSLayoutConstraint]!
+
 
     // MARK: - Private Init
     
@@ -708,11 +733,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         self.autoresizingMask = []
         
-        #if !targetEnvironment(macCatalyst)
-        let effect = UIBlurEffect(style: ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 10 ? .extraLight : self.backgroundStyle)
-        #else
         let effect = UIBlurEffect(style: self.backgroundStyle)
-        #endif
         self.backgroundView = UIVisualEffectView(effect: effect)
         self.backgroundView.clipsToBounds = false
         self.backgroundView.autoresizingMask = []
@@ -726,31 +747,16 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.addSubview(self.backgroundView)
         
         #if !targetEnvironment(macCatalyst)
-        if #available(iOS 11.0, *) {
-            self.safeAreaBackgroundView = PBPopupSafeAreaBackgroundView(effect: effect)
-            self.safeAreaBackgroundView.autoresizesSubviews = true
-            self.safeAreaBackgroundView.clipsToBounds = false
-            self.safeAreaBackgroundView.autoresizingMask = []
-            self.safeAreaBackgroundView.isUserInteractionEnabled = false
-            if #available(iOS 13.0, *) {
-                self.safeAreaBackgroundView.backgroundColor = nil
-            }
-            else {
-                self.safeAreaBackgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
-            }
-            self.addSubview(self.safeAreaBackgroundView)
-            
-            self.safeAreaToolbar = UIToolbar()
-            self.safeAreaToolbar.autoresizingMask = []
-            self.safeAreaToolbar.isTranslucent = true
-            
-            self.safeAreaToolbar.setBackgroundImage(UIImage(), forToolbarPosition: .bottom, barMetrics: .default)
-            self.safeAreaToolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
-            
-            self.safeAreaToolbar.clipsToBounds = false
-
-            self.safeAreaBackgroundView.contentView.addSubview(safeAreaToolbar)
-        }
+        self.safeAreaToolbar = UIToolbar()
+        self.safeAreaToolbar.autoresizingMask = []
+        self.safeAreaToolbar.isTranslucent = true
+        
+        self.safeAreaToolbar.setBackgroundImage(UIImage(), forToolbarPosition: .bottom, barMetrics: .default)
+        self.safeAreaToolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
+        
+        self.safeAreaToolbar.clipsToBounds = false
+        
+        self.addSubview(self.safeAreaToolbar)
         #endif
         
         self.toolbar = PBPopupToolbar(frame: self.bounds)
@@ -795,7 +801,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.imageView.layer.cornerRadius = 3.0
         self.imageView.layer.masksToBounds = true
         
-        self.shadowImageView = PBPopupRoundShadowImageView(frame: self.imageView.bounds)
+        self.shadowImageView = PBPopupRoundShadowImageView(frame: self.bounds)
         self.shadowImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.shadowImageView.backgroundColor = UIColor.clear
         self.shadowImageView.shadowColor = UIColor.black
@@ -813,38 +819,23 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.titlesView.accessibilityLabel = NSLocalizedString("Popup bar", comment: "")
         self.titlesView.autoresizingMask = []
         self.titlesView.isUserInteractionEnabled = false
-        self.titlesView.clipsToBounds = true
         
         self.toolbar.addSubview(self.titlesView)
         
         self.titleLabel = UILabel()
         self.titleLabel.isAccessibilityElement = true
-        /*
-        self.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        if #available(iOS 10.0, *) {
-            self.titleLabel.adjustsFontForContentSizeCategory = true
-        }
-        */
         self.titleLabel.backgroundColor = UIColor.clear
-        
-        //self.titlesView.addSubview(self.titleLabel)
         self.titleLabel.isHidden = true
         self.titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        
         self.titlesView.addArrangedSubview(self.titleLabel)
 
         self.subtitleLabel = UILabel()
         self.subtitleLabel.isAccessibilityElement = true
-        /*
-        self.subtitleLabel.font = UIFont.preferredFont(forTextStyle: .body)
-        if #available(iOS 10.0, *) {
-            self.subtitleLabel.adjustsFontForContentSizeCategory = true
-        }
-        */
         self.subtitleLabel.backgroundColor = UIColor.clear
-        
-        //self.titlesView.addSubview(self.subtitleLabel)
         self.subtitleLabel.isHidden = true
         self.subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
+        
         self.titlesView.addArrangedSubview(self.subtitleLabel)
 
         self.progressView = PBPopupBarProgressView(progressViewStyle: .default)
@@ -861,8 +852,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.highlightView.alpha = 0.0
         self.addSubview(self.highlightView)
         
-        self.borderView = UIView()
-        self.borderView.autoresizingMask = []
+        self.borderView = PBPopupBarBorderView()
         self.borderView.backgroundColor = UIColor.lightGray
         
         self.addSubview(borderView)
@@ -873,9 +863,14 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.semanticContentAttribute = .unspecified
         
         self.clipsToBounds = false // Important for shadow line.
+
+        NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: .main) { [weak self] notification in
+            self?.configureTitleLabels()
+        }
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self, name: UIContentSizeCategory.didChangeNotification, object: nil)
         PBLog("deinit \(self)")
     }
     
@@ -904,11 +899,8 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         
         UIView.performWithoutAnimation({() -> Void in
-            
-            self.frame.size.width = popupBarView.frame.width
-            
-            self.frame.size.height = self.popupBarHeight
-            
+            self.frame.size = popupBarView.frame.size
+
             self.layoutToolbar()
             self.toolbar.layoutIfNeeded()
 
@@ -917,7 +909,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             if popupBarStyle == .custom {self.layoutCustomPopupBarView()}
         })
     }
-    
+
     // MARK: - Private Methods
     
     internal func setHighlighted(_ highlighted: Bool, animated: Bool) {
@@ -939,7 +931,6 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.bringSubviewToFront(self.highlightView)
         }
         self.backgroundView.isHidden = hidden
-        self.safeAreaBackgroundView?.isHidden = hidden
         self.toolbar.isHidden = hidden
         self.safeAreaToolbar?.isHidden = hidden
         self.titlesView.isHidden = hidden
@@ -968,13 +959,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.layoutSafeAreaBackgroundView()
         #endif
         
-        self.layoutToolbar()
-        
         self.layoutImageView()
-        
+                
         self.layoutTitlesView()
-        
-        //self.layoutTitleLabels()
         
         self.layoutProgressView()
         
@@ -987,36 +974,19 @@ A set of methods used by the delegate to respond, with a preview view controller
     }
     
     private func layoutSafeAreaBackgroundView() {
-        if #available(iOS 11.0, *) {
-            if self.safeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints == true {
-                self.safeAreaBackgroundView.translatesAutoresizingMaskIntoConstraints = false
-                self.safeAreaBackgroundView.preservesSuperviewLayoutMargins = false
-                self.safeAreaBackgroundView.topAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
-                self.safeAreaBackgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-                self.safeAreaBackgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
-            }
-            if let heightConstraint = self.safeAreaBackgroundViewHeightConstraint {
-                heightConstraint.constant = self.safeBottom()
-            }
-            else {
-                self.safeAreaBackgroundViewHeightConstraint = self.safeAreaBackgroundView.heightAnchor.constraint(equalToConstant: self.safeBottom())
-            }
-            self.safeAreaBackgroundViewHeightConstraint?.isActive = true
-            
-            if PBPopupBarShowColors == true {
-                self.safeAreaToolbar.setBackgroundImage(nil, forToolbarPosition: .bottom, barMetrics: .default)
-                self.safeAreaToolbar.setShadowImage(nil, forToolbarPosition: .topAttached)
-                self.safeAreaToolbar.barTintColor = UIColor.blue
-            }
-            
-            if self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints == true {
-                self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints = false
-                self.safeAreaToolbar.preservesSuperviewLayoutMargins = false
-                self.safeAreaToolbar.topAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.topAnchor, constant: 0.0).isActive = true
-                self.safeAreaToolbar.leftAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.leftAnchor, constant: 0.0).isActive = true
-                self.safeAreaToolbar.rightAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.rightAnchor, constant: 0.0).isActive = true
-                self.safeAreaToolbar.bottomAnchor.constraint(equalTo: self.safeAreaBackgroundView.contentView.bottomAnchor, constant: 0.0).isActive = true
-            }
+        if PBPopupBarShowColors == true {
+            self.safeAreaToolbar.setBackgroundImage(nil, forToolbarPosition: .bottom, barMetrics: .default)
+            self.safeAreaToolbar.setShadowImage(nil, forToolbarPosition: .topAttached)
+            self.safeAreaToolbar.barTintColor = UIColor.blue
+        }
+        
+        if self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints == true {
+            self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints = false
+            self.safeAreaToolbar.preservesSuperviewLayoutMargins = false
+            self.safeAreaToolbar.topAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
+            self.safeAreaToolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+            self.safeAreaToolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+            self.safeAreaToolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
         }
     }
     
@@ -1038,13 +1008,21 @@ A set of methods used by the delegate to respond, with a preview view controller
     private func layoutToolbar() {
         if self.toolbar.translatesAutoresizingMaskIntoConstraints == true {
             self.toolbar.translatesAutoresizingMaskIntoConstraints = false
-            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
+            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.5).isActive = true
             self.toolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-            self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
             self.toolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
         }
+        if let bottomBar = self.popupController.containerViewController.bottomBar {
+            if let bottomConstraint = self.toolbarBottomConstraint {
+                bottomConstraint.constant = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0
+            }
+            else {
+                self.toolbarBottomConstraint = self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0)
+            }
+            self.toolbarBottomConstraint.isActive = true
+        }
     }
-    
+
     private func layoutImageView() {
         let safeLeading = self.safeLeading()
         let height = self.popupBarHeight
@@ -1100,6 +1078,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
         
         self.imageView.isHidden = (self.image == nil || self.popupBarStyle == .compact)
+
         self.imageView.layoutIfNeeded()
     }
     
@@ -1198,7 +1177,6 @@ A set of methods used by the delegate to respond, with a preview view controller
     }
     
     private func configureTitleLabels() {
-        
         if self.askForLabels {
             self.askForLabels = false
             if let titleLabel = self.dataSource?.titleLabel?(for: self) {
@@ -1213,7 +1191,6 @@ A set of methods used by the delegate to respond, with a preview view controller
                 if PBPopupBarShowColors == true {
                     self.titleLabel.backgroundColor = UIColor.magenta
                 }
-                //self.titlesView.addSubview(self.titleLabel)
                 self.titlesView.addArrangedSubview(self.titleLabel)
             }
             
@@ -1229,7 +1206,6 @@ A set of methods used by the delegate to respond, with a preview view controller
                 if PBPopupBarShowColors == true {
                     self.subtitleLabel.backgroundColor = UIColor.cyan
                 }
-                //self.titlesView.addSubview(self.subtitleLabel)
                 self.titlesView.addArrangedSubview(self.subtitleLabel)
             }
         }
@@ -1295,103 +1271,6 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
     }
     
-    private func layoutTitleLabels() {
-        let height = self.popupBarHeight
-        let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
-        
-        if PBPopupBarShowColors == true {
-            self.titleLabel.backgroundColor = UIColor.magenta
-        }
-        
-        if self.titleLabel.translatesAutoresizingMaskIntoConstraints == true {
-            self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            self.titleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
-            self.titleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
-        }
-        
-        if self.subtitle == nil {
-            if self.titleLabelCenterConstraint == nil {
-                self.titleLabelCenterConstraint = self.titleLabel.centerYAnchor.constraint(equalTo: self.titlesView.centerYAnchor, constant: 0)
-                self.titleLabelCenterConstraint.isActive = true
-            }
-            else {
-                if let topConstraint = self.titleLabelTopConstraint {
-                    NSLayoutConstraint.deactivate([topConstraint])
-                }
-                self.titleLabelCenterConstraint.isActive = true
-            }
-        }
-        else {
-            if let centerConstraint = self.titleLabelCenterConstraint {
-                NSLayoutConstraint.deactivate([centerConstraint])
-            }
-            if let topConstraint = self.titleLabelTopConstraint {
-                topConstraint.constant = (height - imageHeight) / 2
-            }
-            else {
-                self.titleLabelTopConstraint = self.titleLabel.topAnchor.constraint(equalTo: self.titlesView.topAnchor, constant: (height - imageHeight) / 2)
-            }
-            self.titleLabelTopConstraint.isActive = true
-        }
-        
-        if PBPopupBarShowColors == true {
-            self.subtitleLabel.backgroundColor = UIColor.cyan
-        }
-        
-        if self.subtitleLabel.translatesAutoresizingMaskIntoConstraints == true {
-            self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-            self.subtitleLabel.leftAnchor.constraint(equalTo: self.titlesView.leftAnchor, constant: 0.0).isActive = true
-            self.subtitleLabel.rightAnchor.constraint(equalTo: self.titlesView.rightAnchor, constant: 0.0).isActive = true
-        }
-        
-        if self.title == nil {
-            if self.subtitleLabelCenterConstraint == nil {
-                self.subtitleLabelCenterConstraint = self.subtitleLabel.centerYAnchor.constraint(equalTo: self.titlesView.centerYAnchor, constant: 0)
-                self.subtitleLabelCenterConstraint.isActive = true
-            }
-            else {
-                if let bottomConstraint = self.subtitleLabelBottomConstraint {
-                    NSLayoutConstraint.deactivate([bottomConstraint])
-                }
-                self.subtitleLabelCenterConstraint.isActive = true
-            }
-        }
-        else {
-            if let centerConstraint = self.subtitleLabelCenterConstraint {
-                NSLayoutConstraint.deactivate([centerConstraint])
-            }
-            if let bottomConstraint = self.subtitleLabelBottomConstraint {
-                bottomConstraint.constant = -(height - imageHeight) / 2
-            }
-            else {
-                self.subtitleLabelBottomConstraint = self.subtitleLabel.bottomAnchor.constraint(equalTo: self.titlesView.bottomAnchor, constant: -(height - imageHeight) / 2)
-            }
-            self.subtitleLabelBottomConstraint.isActive = true
-        }
-        
-        if self.title != nil && self.subtitle != nil {
-            let fullHeight = self.titleLabel.font.lineHeight + self.subtitleLabel.font.lineHeight
-            
-            if let heightConstraint = self.titleLabelHeightConstraint {
-                heightConstraint.constant = imageHeight * (self.titleLabel.font.lineHeight / fullHeight)
-            }
-            else {
-                self.titleLabelHeightConstraint = self.titleLabel.heightAnchor.constraint(equalToConstant: imageHeight * (self.titleLabel.font.lineHeight / fullHeight))
-            }
-            self.titleLabelHeightConstraint.isActive = true
-            
-            if let heightConstraint = self.subtitleLabelHeightConstraint {
-                heightConstraint.constant = imageHeight * (self.subtitleLabel.font.lineHeight / fullHeight)
-            }
-            else {
-                self.subtitleLabelHeightConstraint = self.subtitleLabel.heightAnchor.constraint(equalToConstant: imageHeight * (self.subtitleLabel.font.lineHeight / fullHeight))
-            }
-            self.subtitleLabelHeightConstraint.isActive = true
-        }
-    }
-
     private func layoutToolbarItems() {
         let barItemsLayoutDirection = UIView.userInterfaceLayoutDirection(for: self.barButtonItemsSemanticContentAttribute)
         let layoutDirection = UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute)
@@ -1412,7 +1291,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             }
         }
         self.toolbar.layoutIfNeeded()
-        self.layoutSubviews()
+        self.setNeedsLayout()
     }
     
     private func layoutProgressView() {
@@ -1431,17 +1310,16 @@ A set of methods used by the delegate to respond, with a preview view controller
         } else {
             self.progressViewVerticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:[view(1.5)]|", options: [], metrics: nil, views: views)
         }
-        self.addConstraints(progressViewVerticalConstraints)
+        NSLayoutConstraint.activate(self.progressViewVerticalConstraints)
         
         if let horizontalConstraints = self.progressViewHorizontalConstraints {
             NSLayoutConstraint.deactivate(horizontalConstraints)
         }
         self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views)
-        self.addConstraints(progressViewHorizontalConstraints)
+        NSLayoutConstraint.activate(self.progressViewHorizontalConstraints)
     }
 
     private func layoutHighlightView() {
-        
         if self.highlightView.translatesAutoresizingMaskIntoConstraints == true {
             self.highlightView.translatesAutoresizingMaskIntoConstraints = false
             
@@ -1451,21 +1329,36 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.highlightView.rightAnchor.constraint(equalTo: (self.superview?.rightAnchor)!, constant: 0.0).isActive = true
         }
     }
-    
-    private func layoutBorderView() {
 
-        if self.borderView.translatesAutoresizingMaskIntoConstraints == true {
-            self.borderView.translatesAutoresizingMaskIntoConstraints = false
-            
-            self.borderView.topAnchor.constraint(equalTo: (self.superview?.topAnchor)!, constant: self.imageView.frame.minY).isActive = true
-            self.borderView.leftAnchor.constraint(equalTo: (self.superview?.leftAnchor)!, constant: 0.0).isActive = true
-            self.borderView.widthAnchor.constraint(equalToConstant: 1.0).isActive = true
-            self.borderView.heightAnchor.constraint(equalToConstant: self.imageView.frame.height).isActive = true
-        }
-    }
-    
-    private func getMostLeftAndRightItemsXPositions() -> [CGFloat] {
+    private func layoutBorderView() {
+        self.borderView.isHidden = self.borderViewStyle == .none
         
+        self.borderView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let views: [String: UIView] = ["view": (self.borderView)!, "imageView": (self.imageView)]
+        let height = self.popupBarHeight
+        let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
+        let metrics = ["verticalPadding": (height - imageHeight) / 2]
+
+        if let horizontalConstraints = self.borderViewHorizontalConstraints {
+            NSLayoutConstraint.deactivate(horizontalConstraints)
+        }
+        
+        if self.borderViewStyle == .left {
+            self.borderViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view(1)]", options: [], metrics: nil, views: views)
+        } else {
+            self.borderViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:[view(1)]|", options: [], metrics: nil, views: views)
+        }
+        NSLayoutConstraint.activate(self.borderViewHorizontalConstraints)
+        
+        if let verticalConstraints = self.borderViewVerticalConstraints {
+            NSLayoutConstraint.deactivate(verticalConstraints)
+        }
+        self.borderViewVerticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|-verticalPadding-[view]-verticalPadding-|", options: [], metrics: metrics, views: views)
+        NSLayoutConstraint.activate(self.borderViewVerticalConstraints)
+    }
+
+    private func getMostLeftAndRightItemsXPositions() -> [CGFloat] {
         var left: CGFloat = 0.0
         var right: CGFloat = 0.0
         
@@ -1575,20 +1468,18 @@ A set of methods used by the delegate to respond, with a preview view controller
                 }
             }
         }
-        
         return [left, right]
     }
 }
 
-extension PBPopupBar {
-    
+extension PBPopupBar
+{
     // MARK: - Helpers
     
     internal func safeLeading() -> CGFloat {
         var safeLeading: CGFloat = 0.0
         if #available(iOS 11.0, *) {
-            guard (self.window != nil) else { return 0.0 }
-            safeLeading = max((self.window?.safeAreaInsets.left)!, safeLeading)
+            safeLeading = max(self.safeAreaInsets.left, safeLeading)
         }
         return safeLeading
     }
@@ -1614,22 +1505,11 @@ extension PBPopupBar {
 
 // MARK: - Custom views
 
-extension PBPopupBar {
+extension PBPopupBar
+{
     /**
      Custom views For Debug View Hierarchy Names
      */
-    /*
-    internal class PBPopupBarTitlesView: UIView {
-        override init(frame: CGRect) {
-            super.init(frame: frame)
-        }
-        
-        required init(coder aDecoder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-    }
-    */
-    
     internal class PBPopupBarTitlesView: UIStackView {
         override init(frame: CGRect) {
             super.init(frame: frame)
@@ -1662,6 +1542,16 @@ extension PBPopupBar {
         }
     }
     
+    internal class PBPopupBarBorderView: UIView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
     internal class PBPopupSafeAreaBackgroundView: UIVisualEffectView {
         override init(effect: UIVisualEffect?) {
             super.init(effect: effect)
@@ -1672,13 +1562,22 @@ extension PBPopupBar {
         }
     }
 }
-
-
-extension NSLayoutConstraint {
+/*
+extension NSLayoutConstraint
+{
     class func reportAmbiguity (_ v:UIView?) {
         var v = v
         if v == nil {
-            v = UIApplication.shared.keyWindow
+            #if targetEnvironment(macCatalyst)
+            v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+            #else
+            if #available(iOS 13.0, *) {
+                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+            }
+            else {
+                v = UIApplication.shared.keyWindow
+            }
+            #endif
         }
         for vv in v!.subviews {
             print("\(vv) \(vv.hasAmbiguousLayout)")
@@ -1690,7 +1589,16 @@ extension NSLayoutConstraint {
     class func listConstraints (_ v:UIView?) {
         var v = v
         if v == nil {
-            v = UIApplication.shared.keyWindow
+            #if targetEnvironment(macCatalyst)
+            v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+            #else
+            if #available(iOS 13.0, *) {
+                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+            }
+            else {
+                v = UIApplication.shared.keyWindow
+            }
+            #endif
         }
         for vv in v!.subviews {
             let arr1 = vv.constraintsAffectingLayout(for:.horizontal)
@@ -1703,4 +1611,4 @@ extension NSLayoutConstraint {
         }
     }
 }
-
+*/

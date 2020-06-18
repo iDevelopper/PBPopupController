@@ -22,7 +22,7 @@ internal class PBPopupToolbar: UIToolbar {
         
         return rv
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         

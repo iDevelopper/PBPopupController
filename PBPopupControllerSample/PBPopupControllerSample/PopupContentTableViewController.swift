@@ -11,32 +11,38 @@ import PBPopupController
 
 class PopupContentTableViewController: UITableViewController {
 
-    var popupContentVC: PopupContentViewController!
-    
-    weak var firstVC: FirstTableViewController! {
+    weak var firstVC: FirstTableViewController!
+
+    var albumArtImage: UIImage = UIImage() {
         didSet {
-            images = firstVC.images
-            titles = firstVC.titles
-            subtitles = firstVC.subtitles
+            if isViewLoaded {
+                let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
+                cell.albumArtImageView.image = albumArtImage
+                if let containerVC = self.popupContainerViewController {
+                    containerVC.popupContentView.popupImageView = cell.albumArtImageView
+                }
+            }
         }
     }
 
-    var playerView: UIView!
-
-    var closeButton: PBPopupCloseButton!
-    
-    var images: [UIImage]
-    var titles: [String]
-    var subtitles: [String]
-    
-    required init?(coder aDecoder: NSCoder) {
-        images = []
-        titles = []
-        subtitles = []
-        
-        super.init(coder:aDecoder)
+    var songTitle: String = "" {
+        didSet {
+            if isViewLoaded {
+                let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
+                cell.songNameLabel.text = songTitle
+            }
+        }
     }
-    
+
+    var albumTitle: String = "" {
+        didSet {
+            if isViewLoaded {
+                let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
+                cell.albumNameLabel.text = albumTitle
+            }
+        }
+    }
+
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -52,44 +58,22 @@ class PopupContentTableViewController: UITableViewController {
         
         if #available(iOS 11.0, *) {
             self.tableView.insetsContentViewsToSafeArea = true
+            self.tableView.contentInsetAdjustmentBehavior = .never
         }
-    
-        /*
-        for idx in 1...self.tableView(tableView, numberOfRowsInSection: 1) {
-            let imageName = String(format: "Cover%02d", idx)
-            images += [UIImage(named: imageName)!]
-            titles += [LoremIpsum.title]
-            subtitles += [LoremIpsum.sentence]
-        }
-        */
-        
-        self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-        self.popupContentVC.modalPresentationStyle = .custom
-        self.popupContentVC.firstVC = self.firstVC
-        self.playerView = self.popupContentVC?.view
-        
-        // Test in case of UIModalPresentationStyle == .fullScreen (not presented by popupController, not .custom)
-        //if self.popupContainerViewController != nil {
-            if let popupContentView = self.popupContainerViewController.popupContentView {
-                popupContentView.popupImageModule = popupContentVC.imageModule
-                popupContentView.popupImageView = popupContentVC.albumArtImageView
-                popupContentView.popupTopModule = popupContentVC.topModule
-                popupContentView.popupBottomModule = popupContentVC.bottomModule
-                popupContentView.popupBottomModuleTopConstraint = popupContentVC.bottomModuleTopConstraint
-            }
-        //}
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if self.popupContainerViewController != nil {
-            self.popupContentVC.albumArtImage = self.popupContainerViewController.popupBar.image
-            self.popupContentVC.songNameLabel.text = self.popupContainerViewController.popupBar.title
-            self.popupContentVC.albumNameLabel.text = self.popupContainerViewController.popupBar.subtitle
-        
-            self.tableView.reloadData()
-        }
+        self.tableView.reloadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
     }
     
     override func viewWillLayoutSubviews() {
@@ -98,6 +82,13 @@ class PopupContentTableViewController: UITableViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        if #available(iOS 11.0, *) {
+            #if !targetEnvironment(macCatalyst)
+            let insets = UIEdgeInsets.init(top: 0, left: 0, bottom: self.view.safeAreaInsets.bottom, right: 0)
+            tableView.contentInset = insets
+            tableView.scrollIndicatorInsets = insets
+            #endif
+        }
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
@@ -145,18 +136,16 @@ class PopupContentTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "playerTableViewCell", for: indexPath) as! PlayerTableViewCell
 
-            // Configure the cell...
-            cell.contentView.addSubview(self.playerView)
-            cell.contentView.bringSubviewToFront(cell.closeButton)
-            cell.closeButton.setImage(nil, for: .normal)
-            if self.popupContainerViewController != nil {
-                self.popupContainerViewController.popupContentView.popupCloseButton = cell.closeButton
+            cell.albumArtImageView.image = self.albumArtImage
+            cell.songNameLabel.text = self.songTitle
+            cell.albumNameLabel.text = self.albumTitle
+            if let containerVC = self.popupContainerViewController {
+                containerVC.popupContentView.popupImageView = cell.albumArtImageView
             }
-            cell.closeButton.removeTarget(nil, action: nil, for: .touchUpInside)
-            cell.closeButton.addTarget(self, action: #selector(closePopupContent), for: .touchUpInside)
 
             cell.selectionStyle = .none
             
@@ -167,9 +156,9 @@ class PopupContentTableViewController: UITableViewController {
         
         if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "musicTableViewCell", for: indexPath) as! MusicTableViewCell
-            cell.albumArtImageView.image = images[indexPath.row]
-            cell.songNameLabel.text = titles[indexPath.row]
-            cell.albumNameLabel.text = subtitles[indexPath.row]
+            cell.albumArtImageView.image = self.firstVC.images[indexPath.row]
+            cell.songNameLabel.text = self.firstVC.titles[indexPath.row]
+            cell.albumNameLabel.text = self.firstVC.subtitles[indexPath.row]
             
             #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
@@ -197,30 +186,31 @@ class PopupContentTableViewController: UITableViewController {
     
     // MARK: - Table view delegate
     
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
-        if indexPath.section == 0 {
-            self.popupContentVC.songNameLabel.restartLabel()
-            self.popupContentVC.albumNameLabel.restartLabel()
-        }
-    }
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         if indexPath.section == 1 {
-            //let musicCell = tableView.cellForRow(at: indexPath) as! MusicTableViewCell
             
             if self.popupContainerViewController != nil, let popupBar = self.popupContainerViewController.popupBar {
-                self.popupContentVC.albumArtImage = self.images[indexPath.row]
-                self.popupContentVC.songNameLabel.text = self.titles[indexPath.row]
-                self.popupContentVC.albumNameLabel.text = self.subtitles[indexPath.row]
-                popupBar.image = self.images[indexPath.row]
-                popupBar.title = self.titles[indexPath.row]
-                popupBar.subtitle = self.subtitles[indexPath.row]
+                popupBar.image = self.firstVC.images[indexPath.row]
+                popupBar.title = self.firstVC.titles[indexPath.row]
+                popupBar.subtitle = self.firstVC.subtitles[indexPath.row]
+                                
                 DispatchQueue.main.async {
-                    self.tableView.scrollToRow(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .top, animated: true)
+                    self.tableView.scrollToRow(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .top, animated: false)
+                    self.albumArtImage = self.firstVC.images[indexPath.row]
+                    self.songTitle = self.firstVC.titles[indexPath.row]
+                    self.albumTitle = self.firstVC.subtitles[indexPath.row]
                 }
             }
+        }
+    }
+
+    // MARK: - Scroll view delegate
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let contentOffset = scrollView.contentOffset
+        if self.popupContainerViewController != nil, let popupContentView = self.popupContainerViewController.popupContentView, let popupCloseButton = popupContentView.popupCloseButton {
+            popupCloseButton.isHidden = contentOffset.y <= 0 ? false : true
         }
     }
 }

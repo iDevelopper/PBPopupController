@@ -55,7 +55,6 @@ internal class PBChevronView: UIView {
     }
     
     func _commonInit() {
-        
         self.color = UIColor.lightGray
         
         self.leftView = UIView(frame: CGRect.zero)

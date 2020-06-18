@@ -25,6 +25,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         } else {
             self.window?.tintColor = UIColor.red
         }
+        let font = UIFont.boldSystemFont(ofSize: UIFont.buttonFontSize)
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         return true
     }
 

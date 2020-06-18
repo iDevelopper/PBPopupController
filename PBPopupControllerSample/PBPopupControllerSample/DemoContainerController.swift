@@ -9,128 +9,84 @@
 import UIKit
 import PBPopupController
 
-public extension UIViewController {
+class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupControllerDataSource {
     
-    var containerController: DemoContainerController? {
-        var current: UIViewController? = parent
-        
-        repeat {
-            if current is DemoContainerController { return current as? DemoContainerController }
-            current = current?.parent
-        } while current != nil
-        
-        return nil
-    }
-}
-
-public class DemoContainerController: UIViewController {
+    let useConstraintsForBottomBar: Bool = false
+    var constraintsForBottomBar: [NSLayoutConstraint]!
     
-    let useConstraintsForBottomBar: Bool = true
-    let useSafeAreaLayoutGuideForChild: Bool = true
-
     @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var bottomBarView: UIView!
-    @IBOutlet weak var buttonsStackView: UIStackView!
+    @IBOutlet weak var bottomBarView: UIToolbar!
     
-    var viewControllers: [UIViewController?]! {
-        didSet {
-            for controller in viewControllers {
-                if controller != nil {
-                    addChild(controller!)
-                }
-            }
-        }
-    }
-
+    var viewControllers = [UIViewController?]()
     var selectedIndex: Int = 0
     var currentChildVC: UIViewController!
     
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
         
-        bottomBarView.backgroundColor = UIColor.init(hue: 0.5, saturation: 0.5, brightness: 0.5, alpha: 0.25)
-        
-        self.viewControllers = [UIViewController]()
-        
-        buttonsStackView.alignment = .fill
-        buttonsStackView.distribution = .fillEqually
-        buttonsStackView.spacing = 0
-        
-        for button in (self.buttonsStackView?.arrangedSubviews)! {
-            (button as! UIButton).addTarget(self, action: #selector(self.tabButtonAction(button:)), for: .touchUpInside)
-        }
-        
-        let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
-            childVC1?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            childVC1?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
-        } else {
-            childVC1?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
-        
-        let childVC2 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
-            childVC2?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            childVC2?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
-        } else {
-            childVC2?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
-        childVC2?.title = "ChildVC2"
-        let nc = UINavigationController(rootViewController: childVC2!)
-        nc.view.backgroundColor = childVC2?.view.backgroundColor
+        self.additionalSafeAreaInsetsBottomForContainer = self.frameForBottomBar().height
 
-        let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "ChildViewController") as? DemoChildViewController
-        if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
-            childVC3?.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            childVC3?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
-        } else {
-            childVC3?.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
-
-        self.viewControllers = [childVC1, nc, childVC3]
+        self.bottomBarView.delegate = self
         
+        if let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
+            if #available(iOS 13.0, *) {
+                #if compiler(>=5.1)
+                childVC1.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+                #else
+                childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+                #endif
+            } else {
+                childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            }
+            self.viewControllers.append(childVC1)
+        }
+        
+        if let childVC2 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
+            if #available(iOS 13.0, *) {
+                #if compiler(>=5.1)
+                childVC2.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+                #else
+                childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+                #endif
+            } else {
+                childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            }
+            self.viewControllers.append(childVC2)
+        }
+        if let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
+            if #available(iOS 13.0, *) {
+                #if compiler(>=5.1)
+                childVC3.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
+                #else
+                childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+                #endif
+            } else {
+                childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
+            }
+            self.viewControllers.append(childVC3)
+        }
+        for controller in self.viewControllers {
+            if let child = controller as? DemoChildViewController  {
+                addChild(child)
+            }
+        }
         self.selectedIndex = 0
         
         self.presentChild()
     }
-    
-    @IBAction func dismiss(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToHome", sender: self)
-    }
-    
-    @objc func tabButtonAction(button: UIButton) {
-        if let index = self.buttonsStackView.arrangedSubviews.firstIndex(of: button) {
-            if index != self.selectedIndex {
-                self.selectedIndex = index
-                self.presentChild()
-            }
-        }
-    }
-    
-    func presentChild() {
-        if let childVC = self.viewControllers[selectedIndex] {
-            self.containerView.addSubview(childVC.view)
-            childVC.didMove(toParent: self)
-            self.currentChildVC?.willMove(toParent: nil)
-            self.currentChildVC?.view.removeFromSuperview()
-            self.currentChildVC = childVC
-            
-            self.view.backgroundColor = currentChildVC.view.backgroundColor
-            
-            self.setupConstraintsForChildController()
-        }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
 
-    override public func viewWillLayoutSubviews() {
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewWillLayoutSubviews() {
+        if let constraints = self.constraintsForBottomBar {
+            NSLayoutConstraint.deactivate(constraints)
+        }
         super.viewWillLayoutSubviews()
         
         if useConstraintsForBottomBar == true {
@@ -139,72 +95,100 @@ public class DemoContainerController: UIViewController {
         else {
             self.setupFrameForBottomBar()
         }
-        self.setupConstraintsForButtonsStackView()
-        self.setupConstraintsForContainerView()
+    }
+
+    deinit {
+        PBLog("deinit \(self)")
     }
     
-    func setupConstraintsForContainerView() {
-        self.containerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.containerView.topAnchor.constraint(equalTo:(self.view.topAnchor)),
-            self.containerView.leftAnchor.constraint(equalTo: (self.view.leftAnchor)),
-            self.containerView.rightAnchor.constraint(equalTo: (self.view.rightAnchor)),
-            self.containerView.bottomAnchor.constraint(equalTo: (self.bottomBarView.topAnchor))
-            ])
+    // MARK: - Navigation
+    
+    @IBAction func dismiss(_ sender: Any) {
+        self.performSegue(withIdentifier: "unwindToHome", sender: self)
     }
+    
+    @IBAction func itemSelected(_ sender: UIBarButtonItem) {
+        if sender.tag != self.selectedIndex {
+            self.selectedIndex = sender.tag
+            self.presentChild()
+        }
+    }
+
+    func presentChild() {
+        if let childVC = self.viewControllers[selectedIndex] {
+            self.currentChildVC?.willMove(toParent: nil)
+            childVC.view.frame = self.containerView.bounds
+            self.containerView.addSubview(childVC.view)
+            childVC.didMove(toParent: self)
+            self.currentChildVC?.view.removeFromSuperview()
+            self.currentChildVC = childVC
+            
+            self.view.backgroundColor = currentChildVC.view.backgroundColor
+            self.containerView.backgroundColor = self.view.backgroundColor
+        }
+    }
+
+    // MARK: - Frames
     
     func setupConstraintsForBottomBar() {
-        var height: CGFloat = 50
+        var insets: UIEdgeInsets = .zero
         if #available(iOS 11.0, *) {
-            height += self.view.superview?.safeAreaInsets.bottom ?? 0.0
+            insets = self.view.superview?.safeAreaInsets ?? .zero
         }
-        NSLayoutConstraint.deactivate(self.bottomBarView.constraints)
         self.bottomBarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.bottomBarView.leadingAnchor.constraint(equalTo: (self.view.leadingAnchor)),
-            self.bottomBarView.trailingAnchor.constraint(equalTo: (self.view.trailingAnchor)),
-            self.bottomBarView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.bottomBarView.heightAnchor.constraint(equalToConstant: height)
-            ])
-    }
-    
-    func setupConstraintsForButtonsStackView() {
-        self.buttonsStackView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.buttonsStackView.topAnchor.constraint(equalTo: self.bottomBarView.topAnchor),
-            self.buttonsStackView.leadingAnchor.constraint(equalTo: self.bottomBarView.leadingAnchor, constant: 0),
-            self.buttonsStackView.trailingAnchor.constraint(equalTo: self.bottomBarView.trailingAnchor, constant: 0),
-            self.buttonsStackView.heightAnchor.constraint(equalToConstant: 50)
-            ])
-    }
-    
-    func setupConstraintsForChildController() {
-        currentChildVC.view.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 11.0, *) {
-            self.currentChildVC.view.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-            self.currentChildVC.view.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
-            self.currentChildVC.view.topAnchor.constraint(equalTo: self.containerView.topAnchor).isActive = true
-            if useSafeAreaLayoutGuideForChild == true {
-                let guide = self.view.safeAreaLayoutGuide
-                self.currentChildVC.view.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -50).isActive = true
-            }
-            else {
-                self.currentChildVC.view.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor).isActive = true
-            }
-        } else {
-            // Fallback on earlier versions
-            self.currentChildVC.view.leadingAnchor.constraint(equalTo: self.containerView.leadingAnchor).isActive = true
-            self.currentChildVC.view.trailingAnchor.constraint(equalTo: self.containerView.trailingAnchor).isActive = true
-            self.currentChildVC.view.topAnchor.constraint(equalTo: self.containerView.topAnchor).isActive = true
-            self.currentChildVC.view.bottomAnchor.constraint(equalTo: self.containerView.bottomAnchor).isActive = true
-        }
+        self.constraintsForBottomBar = [
+            self.bottomBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            self.bottomBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            self.bottomBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
+        ]
+        NSLayoutConstraint.activate(self.constraintsForBottomBar)
     }
     
     func setupFrameForBottomBar() {
-        var height: CGFloat = 50
+        var frame = self.frameForBottomBar()
+        frame.origin.y -= self.insetsForBottomBar().bottom
+        self.bottomBarView.frame = frame
+    }
+    
+    func frameForBottomBar() -> CGRect {
+        var height: CGFloat = 0
         if #available(iOS 11.0, *) {
-            height += self.view.superview?.safeAreaInsets.bottom ?? 0.0
+            height = self.bottomBarView.frame.height
         }
-        self.bottomBarView.frame = CGRect(x: 0, y: self.view.bounds.height - height, width: self.view.bounds.width, height: height)
+        else {
+            height = self.bottomBarView.sizeThatFits(.zero).height
+        }
+        let frame = CGRect(x: 0, y: self.view.bounds.height - height/* - insets.bottom*/, width: self.view.bounds.width, height: height)
+        //PBLog(frame, error: true)
+        return frame
+    }
+    
+    func insetsForBottomBar() -> UIEdgeInsets {
+        var insets: UIEdgeInsets = .zero
+        if #available(iOS 11.0, *) {
+            insets = self.view.superview?.safeAreaInsets ?? .zero
+        }
+        //PBLog(insets.bottom, error: true)
+        return insets
+    }
+    
+    // MARK: - UIToolbar delegate
+    
+    public func position(for bar: UIBarPositioning) -> UIBarPosition {
+        return .bottom
+    }
+    
+    // MARK: - PBPopupController dataSource
+    
+    func bottomBarView(for popupController: PBPopupController) -> UIView? {
+        return self.bottomBarView
+    }
+    
+    func popupController(_ popupController: PBPopupController, defaultFrameFor bottomBarView: UIView) -> CGRect {
+        return self.frameForBottomBar()
+    }
+    
+    func popupController(_ popupController: PBPopupController, insetsFor bottomBarView: UIView) -> UIEdgeInsets {
+        return self.insetsForBottomBar()
     }
 }

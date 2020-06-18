@@ -79,15 +79,12 @@ import UIKit
     // MARK: - Private Methods
     
     private func layoutView() {
-        
-        // set the shadow of the view's layer
         layer.backgroundColor = UIColor.clear.cgColor
         layer.shadowColor = shadowColor.cgColor
         layer.shadowOffset = shadowOffset
         layer.shadowOpacity = Float(shadowOpacity)
         layer.shadowRadius = shadowRadius
         
-        // set the cornerRadius of the containerView's layer
         imageView.layer.cornerRadius = cornerRadius
         imageView.layer.masksToBounds = true
         

@@ -25,8 +25,8 @@ private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
 //showBarWithTransition:
 private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
 
-public extension UIViewController {
-
+public extension UIViewController
+{
     internal struct AssociatedKeys {
         static var popupBar: PBPopupBar?
         static var bottomBar: UIView?
@@ -35,6 +35,7 @@ public extension UIViewController {
         static var popupContentViewController: UIViewController?
         static var popupContentView: PBPopupContentView?
         static var isTabBarHiddenDuringTransition = "isTabBarHiddenDuringTransition"
+        static var additionalSafeAreaInsetsBottomForContainer = "additionalSafeAreaInsetsBottomForContainer"
     }
     
     internal var isTabBarHiddenDuringTransition: Bool! {
@@ -54,7 +55,7 @@ public extension UIViewController {
      
      - SeeAlso: `PBPopupBar`.
      */
-    @objc internal(set) var popupBar: PBPopupBar! {
+    @objc internal(set) weak var popupBar: PBPopupBar! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
@@ -82,7 +83,7 @@ public extension UIViewController {
      A default implementation is provided for `UIViewController`, `UINavigationController` and `UITabBarController`.
      The default implmentation for `UIViewController` returns an invisible `UIView` instance, docked to the bottom of the screen. For `UINavigationController`, the toolbar is returned. For `UITabBarController`, the tab bar is returned.
      */
-    @objc internal(set) var bottomBar: UIView! {
+    @objc internal(set) weak var bottomBar: UIView! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) as? UIView
@@ -112,7 +113,7 @@ public extension UIViewController {
         - `PBPopupController.delegate`.
         - `PBPopupController.popupPresentationState`.
      */
-    @objc internal(set) var popupController: PBPopupController! {
+    @objc internal(set) weak var popupController: PBPopupController! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupController) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupController) as? PBPopupController
@@ -136,8 +137,10 @@ public extension UIViewController {
     
     /**
      Returns the container (presenting) view controller for the popup bar, and for the presented view controller (popupContentViewController). May be `UIViewController`, `UINavigationController`, `UITabBarController` or a custom container view controller. (read-only).
+
+     - SeeAlso: `additionalSafeAreaInsetsBottomForContainer`.
      */
-    @objc internal(set) var popupContainerViewController: UIViewController! {
+    @objc internal(set) weak var popupContainerViewController: UIViewController! {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController
         }
@@ -157,7 +160,7 @@ public extension UIViewController {
     /**
      Returns the popup content view controller of the container. If there is no popup bar presentation, the property will be `nil`. (read-only).
      */
-    @objc internal(set) var popupContentViewController: UIViewController! {
+    @objc internal(set) weak var popupContentViewController: UIViewController! {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.popupContentViewController) as? UIViewController
         }
@@ -181,7 +184,7 @@ public extension UIViewController {
 
      - SeeAlso: `PBPopupContentView`.
      */
-    @objc internal(set) var popupContentView: PBPopupContentView! {
+    @objc internal(set) weak var popupContentView: PBPopupContentView! {
         get {
             if objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) != nil {
                 return objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) as? PBPopupContentView
@@ -202,6 +205,22 @@ public extension UIViewController {
             }
         }
     }
+
+    /**
+    Custom insets that you specify to modify the container view controller's safe area (usefull for a custom container). Use this property to adjust the safe area bottom edge inset value of this view controller's views by the specified amount.
+     */
+    @objc var additionalSafeAreaInsetsBottomForContainer: CGFloat {
+        get {
+            if let height = objc_getAssociatedObject(self, &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer) as? NSNumber {
+                return CGFloat(height.floatValue)
+            }
+            return 0
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer, NSNumber(value: Float(newValue)), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
 
     /**
      Presents an interactive popup bar in the container's view hierarchy and optionally opens the popup in the same animation. The popup bar is attached to the container's bottom bar (see `popupContainerViewController`).
@@ -326,8 +345,8 @@ public extension UIViewController {
     }
 }
 
-public extension UIViewController {
-    
+public extension UIViewController
+{
     internal func getSubviewsOfView(view: UIView) -> [UIView] {
         var subviewArray = [UIView]()
         for subview in view.subviews {

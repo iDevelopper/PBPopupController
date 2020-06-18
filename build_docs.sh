@@ -12,7 +12,6 @@ jazzy \
     --sdk iphonesimulator \
     --xcodebuild-arguments -scheme,'PBPopupController' \
     --module 'PBPopupController' \
-    --exclude 'PBPopupController/EasyAnimation/*' \
     --framework-root . \
     --readme README.md \
     --output docs/

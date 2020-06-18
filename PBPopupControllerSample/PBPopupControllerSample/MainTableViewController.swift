@@ -10,9 +10,11 @@ import UIKit
 
 class MainTableViewController: UITableViewController {
     
-    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller", "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container"]
-    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "SplitViewController", "SplitViewController", "SplitViewController", "ContainerController"]
+    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller", "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container iPad"]
+    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad"]
 
+    var presentationStyle: UIModalPresentationStyle!
+    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -22,12 +24,29 @@ class MainTableViewController: UITableViewController {
             #if compiler(>=5.1)
             self.tableView.backgroundColor = UIColor.systemBackground
             #endif
+            
+            self.presentationStyle = .fullScreen
+            let presentation = UIBarButtonItem(title: "Page Sheet", style: .plain, target: self, action: #selector(presentationChanged(_:)))
+            self.navigationItem.rightBarButtonItem = presentation
         }
+        self.tableView.tableFooterView = UIView()
     }
 
     // MARK: - Navigation
     
-    @IBAction func unwindToHome(segue: UIStoryboardSegue) {}
+    @IBAction func unwindToHome(_ unwindSegue: UIStoryboardSegue) {
+        let sourceViewController = unwindSegue.source
+        print("\(self) \(#function) \(sourceViewController)")
+        let destinationViewController = unwindSegue.destination
+        print("\(self) \(#function) \(destinationViewController)")
+    }
+
+    @IBAction func presentationChanged(_ sender: Any) {
+        if let presentation = sender as? UIBarButtonItem {
+            self.presentationStyle = self.presentationStyle == .fullScreen ? .pageSheet : .fullScreen
+            presentation.title = self.presentationStyle == .fullScreen ? "Page Sheet" : "Full Screen"
+        }
+    }
     
     // MARK: - Table view data source
 
@@ -50,24 +69,58 @@ class MainTableViewController: UITableViewController {
     
 
     // MARK: - Table view delegate
+
+    @available(iOS 13.0, *)
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        //
+        return UIContextMenuConfiguration(identifier: "Preview" as NSCopying, previewProvider: { () -> UIViewController? in
+            let vc = self.viewControllerForIndexPath(indexPath)
+            return vc
+        }, actionProvider: nil)
+    }
     
+    @available(iOS 13.0, *)
+    override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        if let vc = animator.previewViewController {
+            vc.modalPresentationStyle = .fullScreen
+            #if compiler(>=5.1)
+            vc.isModalInPresentation = true
+            #endif
+            
+            animator.addCompletion {
+                self.present(vc, animated: true, completion: nil)
+            }
+        }
+    }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if indexPath.row == 8 {
-            let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
-            vc.title = items[indexPath.row]
+        if let vc = self.viewControllerForIndexPath(indexPath) {
             vc.modalPresentationStyle = .fullScreen
             #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
+                vc.modalPresentationStyle = self.presentationStyle
                 vc.isModalInPresentation = true
             }
             #endif
-            self.present(vc, animated: true) {
-                //
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+
+    func viewControllerForIndexPath(_ indexPath: IndexPath) -> UIViewController? {
+        if indexPath.row == 9 {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
+                vc.title = items[indexPath.row]
+                return vc
             }
         }
-        
+        else if indexPath.row == 8 {
+            let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
+            vc.title = items[indexPath.row]
+            return vc
+        }
         else if let vc = self.storyboard?.instantiateViewController(withIdentifier: self.identifiers[indexPath.row]) {
             if vc is UISplitViewController {
                 let svc = vc as! SplitViewController
@@ -89,17 +142,8 @@ class MainTableViewController: UITableViewController {
                 }
             }
             vc.title = items[indexPath.row]
-            
-            vc.modalPresentationStyle = .fullScreen
-            #if compiler(>=5.1)
-            if #available(iOS 13.0, *) {
-                vc.isModalInPresentation = true
-            }
-            #endif
-            
-            self.present(vc, animated: true) {
-                //
-            }
+            return vc
         }
+        return nil
     }
 }

@@ -23,29 +23,54 @@ The view where is embedded the popupContentViewController's view for presentatio
     /**
      The popup content view presentation style.
      
-     Default presentation style: fullScreen for iOS 9 and above, otherwise deck.
+     Default presentation style: deck, was fullScreen for iOS 9 and above, otherwise deck.
      */
     @objc public var popupPresentationStyle = PBPopupPresentationStyle.default
     
     /**
      The popup content view presentation duration when presenting from closed to open state, or dismissing.
      */
-    @objc public var popupPresentationDuration: TimeInterval = 0.6
+    @objc public var popupPresentationDuration: TimeInterval = 0.5
+    
+    /**
+     The popup content view dismissal duration when dismissing from open to closed state.
+     */
+    @objc public var popupDismissalDuration: TimeInterval = 0.6
+    
+    /**
+     The threshold value used to open or close the popup content view when dragging.
+     */
+    @objc public var popupCompletionThreshold: CGFloat = 0.3
+    
+    /**
+     The flick magnitude value used to open or close the popup content view when dragging.
+     */
+    @objc public var popupCompletionFlickMagnitude: CGFloat = 1200
     
     /**
      The popup content view size when popupPresentationStyle is set to custom.
      */
     @objc public var popupContentSize: CGSize {
         get {
-            let size = CGSize(width: self.popupController.containerViewController.view.bounds.width * self.size.width, height: self.popupController.containerViewController.view.bounds.height * self.size.height)
+            let size = CGSize(width: UIScreen.main.bounds.width * self.size.width, height: UIScreen.main.bounds.height * self.size.height)
             return size
         }
         set {
-            self.size = CGSize(width: (newValue.width / self.popupController.containerViewController.view.bounds.width), height: (newValue.height / self.popupController.containerViewController.view.bounds.height))
+            self.size = CGSize(width: (newValue.width / UIScreen.main.bounds.width), height: (newValue.height / UIScreen.main.bounds.height))
         }
     }
     
     /**
+     If `true`, the popup content view can be dismissed when user interact outside the bounds.
+     */
+    @objc public var popupCanDismissOnPassthroughViews: Bool = true
+    
+    /**
+     If `true`, tells the popup content view presentation to ignore the form sheet presentation by default.
+     */
+    @objc public var popupIgnoreDropShadowView: Bool = true
+    
+/**
     The view containing the top subviews (i.e. labels, image view, etc...) of the popup content view controller (optional but needed if bottom module is used). Used to animate the popup presentation. This view will be used for correctly positioning the bottom module during presentation animation.
      */
     @objc public var popupTopModule: UIView?
@@ -118,6 +143,9 @@ The view where is embedded the popupContentViewController's view for presentatio
     
     internal var contentView: UIView {
         get {
+            if self.popupEffectView == nil {
+                return self
+            }
             if self.popupEffectView.superview == nil {
                 return self
             }
@@ -133,7 +161,11 @@ The view where is embedded the popupContentViewController's view for presentatio
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        
         self.setupEffectView()
+        if #available(iOS 13.0, *) {
+            self.layer.cornerCurve = .continuous
+        }
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -147,18 +179,20 @@ The view where is embedded the popupContentViewController's view for presentatio
     override public func layoutSubviews() {
         super.layoutSubviews()
 
-        self.popupEffectView.frame = self.bounds
+        if let popupEffectView = self.popupEffectView {
+            popupEffectView.frame = self.bounds
+        }
     }
     
     // MARK: - private Methods
     
     private func setupEffectView() {
         let effect = UIBlurEffect(style: .light)
-
+        
         self.popupEffectView = PBPopupEffectView(effect: effect)
         self.popupEffectView.frame = self.bounds
         self.popupEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-
+        
         self.addSubview(self.popupEffectView)
     }
 
@@ -176,7 +210,7 @@ The view where is embedded the popupContentViewController's view for presentatio
             self.popupCloseButton.setContentHuggingPriority(.required, for: .horizontal)
             self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .vertical)
             self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-            self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? /*12*/12 : 8)
+            self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? 12 : 8)
             if self.popupCloseButtonStyle == .round {
                 popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12)
             } else {
@@ -189,24 +223,14 @@ The view where is embedded the popupContentViewController's view for presentatio
     internal func updatePopupCloseButtonPosition()
     {
         if self.popupCloseButtonStyle != .none {
-            
             let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
-            self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? /*12*/12 : 8
-            var windowTopSafeAreaInset: CGFloat = 0
-            if #available(iOS 11.0, *) {
-                windowTopSafeAreaInset += (self.window?.safeAreaInsets.top)!
-            }
+            self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
+            let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
+            let dropShadowView =  self.popupController.popupPresentationController?.dropShadowViewFor(self.popupController.containerViewController.view)
             if self.popupPresentationStyle == .fullScreen {
-                self.popupCloseButtonTopConstraint.constant += windowTopSafeAreaInset
+                self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (dropShadowView == nil ? statusBarHeight : 0.0)
             }
             
-            if windowTopSafeAreaInset == 0 {
-                let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
-                if self.popupPresentationStyle == .fullScreen {
-                    self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : statusBarHeight
-                }
-            }
-
             let hitTest = self.popupController.containerViewController.popupContentViewController.view.hitTest(CGPoint(x: 12, y: popupCloseButtonTopConstraint.constant), with: nil)
             let possibleBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar
             if possibleBar != nil {
@@ -222,8 +246,8 @@ The view where is embedded the popupContentViewController's view for presentatio
                 self.setNeedsUpdateConstraints()
                 
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
-                 self.layoutIfNeeded()
-                 }, completion: nil)
+                    self.layoutIfNeeded()
+                }, completion: nil)
             }
         }
     }
@@ -243,7 +267,8 @@ The view where is embedded the popupContentViewController's view for presentatio
     }
 }
 
-extension PBPopupContentView {
+extension PBPopupContentView
+{
 /**
  Custom views For Debug View Hierarchy Names
  */

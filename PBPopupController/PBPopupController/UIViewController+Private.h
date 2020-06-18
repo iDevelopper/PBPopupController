@@ -13,7 +13,7 @@
 
 @interface UIViewController (Private)
 
-void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, CGFloat additionalSafeAreaInsetsBottom);
+void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets);
 
 - (void)_configurePopupBarFromBottomBar;
 

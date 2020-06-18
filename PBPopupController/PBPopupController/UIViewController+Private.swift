@@ -25,7 +25,8 @@ private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
 //showBarWithTransition:
 private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
 
-public extension UITabBarController {
+public extension UITabBarController
+{
     private static let swizzleImplementation: Void = {
         let instance = UITabBarController.self()
         
@@ -103,49 +104,47 @@ public extension UITabBarController {
         self._sBWT(t: t, iE: iE)
         
         if (t > 0) {
-            let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
-            if (rv != nil) {
+            if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
                 if popupController.popupPresentationState != .hidden {
-                    var duration: TimeInterval = 0.35
-                    if let coordinator = self.selectedViewController?.transitionCoordinator {
-                        duration = coordinator.transitionDuration
-                    }
-                    
-                    UIView.animate(withDuration: duration) {
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                    }
-                    
                     self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
+                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                        rv.layoutIfNeeded()
                     }, completion: { (_ context) in
                         if context.isCancelled {
                             self.isTabBarHiddenDuringTransition = true
                             UIView.animate(withDuration: 0.15) {
                                 self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                                rv.layoutIfNeeded()
                             }
                         }
+                        self.bottomBar.isHidden = context.isCancelled ? true : false
                     })
                 }
-                self.bottomBar.isHidden = false
             }
         }
     }
 
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
-        if #available(iOS 12.0, *) {
+        if #available(iOS 11.0, *) {
             for obj in viewControllers {
-                _LNPopupSupportFixInsetsForViewController(obj, false, self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0)
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+                _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
             }
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
 }
 
-internal extension UITabBarController {
+internal extension UITabBarController
+{
     @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
         let height = self.tabBar.frame.height
         if height > 0.0 {
             if hidden == false {
-                self.tabBar.frame.origin.y = self.view.bounds.height - height
+                var frame = tabBar.frame
+                frame.origin.y = self.view.bounds.height - height
+                self.tabBar.center = frame.center
+                //self.tabBar.frame.origin.y = self.view.bounds.height - height
             }
             else {
                 self.tabBar.frame.origin.y = self.view.bounds.height
@@ -162,6 +161,9 @@ internal extension UITabBarController {
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets {
         if #available(iOS 11.0, *) {
+            if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
+                return bottomBarInsets
+            }
             return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         } else {
             return UIEdgeInsets.zero
@@ -180,7 +182,8 @@ internal extension UITabBarController {
     }
 }
 
-public extension UINavigationController {
+public extension UINavigationController
+{
     private static let swizzleImplementation: Void = {
         let instance = UINavigationController.self()
         
@@ -211,7 +214,6 @@ public extension UINavigationController {
         }
     }()
     
-    
     /**
      :nodoc:
      */
@@ -221,19 +223,18 @@ public extension UINavigationController {
 
     //_setToolbarHidden:edge:duration:
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat) {
-        
-        let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
-        if (rv != nil) {
+        if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
             if popupController.popupPresentationState != .hidden {
                 self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
                 
                 self._sTH(h: h, e: e, d: d)
-                
+                self.bottomBar.isHidden = h
+
                 if let coordinator = self.transitionCoordinator {
                     coordinator.animate(alongsideTransition: { (_ context) in
                         self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                        rv.layoutIfNeeded()
                     }) { (_ context) in
-                        //
                     }
                 }
             }
@@ -246,25 +247,39 @@ public extension UINavigationController {
         }
     }
 
-    @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool) {
-        if #available(iOS 12.0, *) {
-            _LNPopupSupportFixInsetsForViewController(viewController, false, self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0)
+    @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool)
+    {
+        if #available(iOS 11.0, *) {
+            if let svc = self.parent as? UISplitViewController {
+                if let vc = svc.viewControllers.first, let rv = objc_getAssociatedObject(vc, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
+                    let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: rv.popupBarHeight, right: 0)
+                    _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+                }
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: svc.additionalSafeAreaInsets.bottom, right: 0)
+                _LNPopupSupportFixInsetsForViewController(svc, false, additionalInsets)
+            }
+            else {
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+            }
         }
         self.pb_pushViewController(viewController, animated: animated)
     }
     
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
     {
-        if #available(iOS 12.0, *) {
+        if #available(iOS 11.0, *) {
             for obj in viewControllers {
-                _LNPopupSupportFixInsetsForViewController(obj, false, self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0)
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+                _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
             }
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
 }
 
-internal extension UINavigationController {
+internal extension UINavigationController
+{
     @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
         var height = self.toolbar.frame.height
         if let tabBarController = self.tabBarController {
@@ -308,8 +323,8 @@ internal extension UINavigationController {
     @objc override func defaultFrameForBottomBar() -> CGRect {
         var toolBarFrame = self.toolbar.frame
         
-        toolBarFrame.origin = CGPoint(x: toolBarFrame.origin.x, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
-        
+        toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
+
         if let tabBarController = self.tabBarController {
             let tabBarFrame = tabBarController.defaultFrameForBottomBar()
             toolBarFrame.origin.y -= tabBarController.isTabBarHiddenDuringTransition ? 0.0 : tabBarFrame.height
@@ -319,7 +334,8 @@ internal extension UINavigationController {
     }
 }
 
-public extension UIViewController {
+public extension UIViewController
+{
     private static let swizzleImplementation: Void = {
         let instance = UIViewController.self()
         
@@ -365,18 +381,6 @@ public extension UIViewController {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
-        originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
-        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewDidLayoutSubviews))
-        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            method_exchangeImplementations(originalMethod, swizzledMethod)
-        }
-        /*
-        originalMethod = class_getInstanceMethod(aClass, #selector(willTransition(to:with:)))
-        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_willTransition(to:with:)))
-        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            method_exchangeImplementations(originalMethod, swizzledMethod)
-        }
-        */
         originalMethod = class_getInstanceMethod(aClass, #selector(viewWillTransition(to:with:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewWillTransition(to:with:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -389,32 +393,26 @@ public extension UIViewController {
      */
     @objc static func vc_swizzle() {
         _ = self.swizzleImplementation
-        
-        #if !targetEnvironment(macCatalyst)
-        if (ProcessInfo.processInfo.operatingSystemVersion.majorVersion <= 10) {
-            EasyAnimation.enable()
-        }
-        #endif
     }
     
     //_setContentOverlayInsets:
     @objc private func _sCoOvIns(insets: UIEdgeInsets) {
-        let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
-        if rv != nil {
-            if !(rv!.isHidden) && self.popupController.popupPresentationState != .dismissing {
-                var newInsets = insets
-                newInsets.bottom += (rv?.frame.size.height)!
+        var newInsets = insets
+        newInsets.bottom += self.additionalSafeAreaInsetsBottomForContainer
+        if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
+            if !(rv.isHidden) && self.popupController.popupPresentationState != .dismissing {
+                newInsets.bottom += rv.frame.height
                 self._sCoOvIns(insets:newInsets)
             }
             else {
-                self._sCoOvIns(insets:insets)
+                self._sCoOvIns(insets:newInsets)
             }
         }
         else {
-            self._sCoOvIns(insets:insets)
+            self._sCoOvIns(insets:newInsets)
         }
     }
-    
+
     //_updateContentOverlayInsetsFromParentIfNecessary
     @objc private func _uCOIFPIN() {
         self._uCOIFPIN()
@@ -426,34 +424,44 @@ public extension UIViewController {
         return rv
     }
 
-    @objc private func pb_addChild(_ viewController: UIViewController) {
-        if #available(iOS 12.0, *) {
-            _LNPopupSupportFixInsetsForViewController(viewController, false, self.additionalSafeAreaInsets.bottom)
-        }
+    @objc private func pb_addChild(_ viewController: UIViewController)
+    {
         self.pb_addChild(viewController)
-    }
-    
-    @objc private func pb_viewDidLayoutSubviews() {
-        self.pb_viewDidLayoutSubviews()
-        /*
-        if self.popupContentViewController != nil {
-            //self is the container
-            if self.popupController.popupPresentationState == .presenting || self.popupController.popupPresentationState == .opening || self.popupController.popupPresentationState == .closing { return }
-            
-            let coordinator = _PBPopupTransitionCoordinator(containerView: self.view)
-            
-            self.viewWillTransition(to: self.view.frame.size, with: coordinator)
+
+        if self.additionalSafeAreaInsetsBottomForContainer > 0 {
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsetsBottomForContainer, right: 0)
+            if #available(iOS 11.0, *) {
+                if self.additionalSafeAreaInsets.bottom == 0 {
+                    _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
+                }
+            }
+            else {
+                _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
+            }
         }
-        */
+
+        if #available(iOS 11.0, *) {
+            if let svc = self as? UISplitViewController {
+                if let vc1 = svc.viewControllers.first, let rv = objc_getAssociatedObject(vc1, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
+                    if let vc2 = svc.viewControllers.last {
+                        let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -rv.popupBarHeight, right: 0)
+                        _LNPopupSupportFixInsetsForViewController(vc2, false, additionalInsets)
+}
+                }
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: svc.additionalSafeAreaInsets.bottom, right: 0)
+                _LNPopupSupportFixInsetsForViewController(svc, false, additionalInsets)
+            }
+            else {
+                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsets.bottom, right: 0)
+                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+            }
+        }
     }
     
     private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator) {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-            // self is the container
             if self.popupController.popupPresentationState != .dismissing {
-                //UIView.animate(withDuration: 0.15) {
-                    self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
-                //}
+                self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
             }
             if self.popupController.popupPresentationState == .closed {
                 self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
@@ -468,7 +476,6 @@ public extension UIViewController {
     }
 
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        
         self.pb_viewWillTransition(to: size, with: coordinator)
         if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
@@ -491,11 +498,11 @@ public extension UIViewController {
         objc_setAssociatedObject(self, &AssociatedKeys.popupBar, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &AssociatedKeys.popupController, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &AssociatedKeys.popupContainerViewController, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        objc_removeAssociatedObjects(self)
     }
 }
 
-internal extension UIViewController {
+internal extension UIViewController
+{
     @objc func _animateBottomBarToHidden( _ hidden: Bool) {
         let height = self.popupController.bottomBarHeight
         
@@ -522,12 +529,11 @@ internal extension UIViewController {
         var insets: UIEdgeInsets = .zero
         if #available(iOS 11.0, *) {
             insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
-            if self.popupController.dataSource?.bottomBarView?(for: self.popupController) != nil {
-                if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
-                    insets = bottomBarInsets
-                }
+        }
+        if self.popupController.dataSource?.bottomBarView?(for: self.popupController) != nil {
+            if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
+                insets = bottomBarInsets
             }
-            
         }
         return insets
     }
@@ -536,8 +542,7 @@ internal extension UIViewController {
         var bottomBarFrame = CGRect(x: 0.0, y: self.view.bounds.size.height, width: self.view.bounds.size.width, height: 0.0)
         if let bottomBarView = self.popupController.dataSource?.bottomBarView?(for: self.popupController) {
             if let defaultFrame = self.popupController.dataSource?.popupController?(self.popupController, defaultFrameFor: self.bottomBar) {
-                bottomBarFrame = defaultFrame
-                return bottomBarFrame
+                return defaultFrame
             }
             else {
                 bottomBarFrame = bottomBarView.frame
@@ -547,74 +552,3 @@ internal extension UIViewController {
         return bottomBarFrame
     }
 }
-/*
-internal class _PBPopupTransitionCoordinator: NSObject, UIViewControllerTransitionCoordinator {
-    
-    internal var isAnimated: Bool = false
-    
-    internal var presentationStyle: UIModalPresentationStyle = .none
-    
-    internal var initiallyInteractive: Bool = false
-    
-    internal var isInterruptible: Bool = false
-    
-    internal var isInteractive: Bool = false
-    
-    internal var isCancelled: Bool = false
-    
-    internal var transitionDuration: TimeInterval = 0.0
-    
-    internal var percentComplete: CGFloat = 1.0
-    
-    internal var completionVelocity: CGFloat = 1.0
-    
-    internal var completionCurve: UIView.AnimationCurve = .easeInOut
-    
-    internal func viewController(forKey key: UITransitionContextViewControllerKey) -> UIViewController?
-    {
-        return nil
-    }
-    
-    internal func view(forKey key: UITransitionContextViewKey) -> UIView?
-    {
-        return nil
-    }
-    
-    internal var containerView: UIView
-    
-    internal var targetTransform: CGAffineTransform = .identity
-    
-    internal init(containerView: UIView)
-    {
-        self.containerView = containerView
-    }
-    
-    required internal init?(coder aDecoder: NSCoder)
-    {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    internal func animate(alongsideTransition animation: ((UIViewControllerTransitionCoordinatorContext) -> Void)?, completion: ((UIViewControllerTransitionCoordinatorContext) -> Void)? = nil) -> Bool
-    {
-        
-        animation?(self)
-        
-        completion?(self)
-        
-        return true
-    }
-    
-    internal func animateAlongsideTransition(in view: UIView?, animation: ((UIViewControllerTransitionCoordinatorContext) -> Void)?, completion: ((UIViewControllerTransitionCoordinatorContext) -> Void)? = nil) -> Bool
-    {
-        return self.animate(alongsideTransition: animation, completion: completion)
-    }
-    
-    internal func notifyWhenInteractionEnds(_ handler: @escaping (UIViewControllerTransitionCoordinatorContext) -> Void)
-    {
-    }
-    
-    internal func notifyWhenInteractionChanges(_ handler: @escaping (UIViewControllerTransitionCoordinatorContext) -> Void)
-    {
-    }
-}
-*/

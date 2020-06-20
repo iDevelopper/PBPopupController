@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "3.0.0"
+    s.version      = "3.0.1"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
 
     s.description  = <<-DESC
@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
     s.source_files  = "PBPopupController/**/*.{swift,h,m}"
     # s.exclude_files = "PBPopupController/CGMathSwift"
 
-    s.swift_version = '5.0'
+    s.swift_version = '5.2'
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 

@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.0.1
+
+Improve rotation when popup content is open.
+
 ## 3.0.0
 
 Version 3.0.0: Completely revisited.

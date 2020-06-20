@@ -253,6 +253,7 @@ internal class PBPopupPresentationController: UIPresentationController {
         }
         
         if self.popupPresentationStyle == .deck {
+            self.backingView = nil
             self.setupBackingView()
             self.animateBackingViewToDeck(true, animated: false)
         }
@@ -508,16 +509,15 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 if self.popupPresentationStyle == .deck {
                     if self.traitCollection.verticalSizeClass == .compact {
                         self.blackView.frame = self.popupBlackViewFrame()
-                        self.blackView.removeFromSuperview()
+                        self.blackView.isHidden = true
                     }
                     else {
                         UIView.performWithoutAnimation {
                             self.containerView?.insertSubview(self.blackView, at: 0)
                             self.blackView.frame = self.popupBlackViewFrame()
-                            self.backingView?.removeFromSuperview()
-                            self.backingView = nil
                             self.setupBackingView()
                             self.animateBackingViewToDeck(true, animated: false)
+                            self.blackView.isHidden = false
                         }
                     }
                 }

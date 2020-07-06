@@ -53,7 +53,7 @@ internal class PBPopupPresentationController: UIPresentationController {
         #if targetEnvironment(macCatalyst)
         return 10.0
         #else
-        if let _ = self.dropShadowViewFor(self.presentingVC.view) {
+        if self.dropShadowViewFor(self.presentingVC.view) != nil {
             return 0.0
         }
         return UIDevice.current.userInterfaceIdiom == .pad ? 10.0 : 10.0
@@ -61,13 +61,11 @@ internal class PBPopupPresentationController: UIPresentationController {
     }
     
     private var statusBarFrame: CGRect {
-        guard let containerView = self.containerView else { return .zero }
         var frame = self.popupController.statusBarFrame(for: self.popupController.containerViewController.view)
         if presentedViewController.prefersStatusBarHidden {
             frame.size.height = 0.0
         }
-        let frameInWindow = presentingVC.view.convert(presentingVC.view.bounds, to: containerView.window)
-        if frameInWindow.minY > 0 {
+        if self.dropShadowViewFor(self.presentingVC.view) != nil {
             frame.size.height = 0.0
         }
         return frame
@@ -177,6 +175,11 @@ internal class PBPopupPresentationController: UIPresentationController {
 
         containerView.frame = self.presentingVC.view.frame
         if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+            // TODO: Fix container view frame if split view in dropShadowView
+            //var frame = dropShadowView.frame
+            //frame.origin.x += self.presentingVC.view.frame.minX
+            //frame.size.width = self.presentingVC.view.frame.width
+            //containerView.frame = frame
             containerView.frame = dropShadowView.frame
         }
         
@@ -190,8 +193,8 @@ internal class PBPopupPresentationController: UIPresentationController {
             if self.traitCollection.verticalSizeClass == .regular {
                 self.blackView.frame = self.popupBlackViewFrame()
                 containerView.addSubview(self.blackView)
+                self.setupBackingView()
             }
-            self.setupBackingView()
         }
         
         self.popupContentView.contentView.addSubview(presentedView)
@@ -253,6 +256,7 @@ internal class PBPopupPresentationController: UIPresentationController {
         }
         
         if self.popupPresentationStyle == .deck {
+            self.backingView?.removeFromSuperview()
             self.backingView = nil
             self.setupBackingView()
             self.animateBackingViewToDeck(true, animated: false)
@@ -507,19 +511,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                     self.containerView?.frame = dropShadowView.frame
                 }
                 if self.popupPresentationStyle == .deck {
-                    if self.traitCollection.verticalSizeClass == .compact {
-                        self.blackView.frame = self.popupBlackViewFrame()
-                        self.blackView.isHidden = true
-                    }
-                    else {
-                        UIView.performWithoutAnimation {
-                            self.containerView?.insertSubview(self.blackView, at: 0)
-                            self.blackView.frame = self.popupBlackViewFrame()
-                            self.setupBackingView()
-                            self.animateBackingViewToDeck(true, animated: false)
-                            self.blackView.isHidden = false
-                        }
-                    }
+                    self.blackView.frame = self.popupBlackViewFrame()
+                    self.blackView.isHidden = self.traitCollection.verticalSizeClass == .compact ? true : false
                 }
                 self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
@@ -691,13 +684,31 @@ extension PBPopupPresentationController
             return
         }
         if self.traitCollection.verticalSizeClass == .regular && self.backingView == nil {
-            self.dimmerView.removeFromSuperview()
-            self.backingView?.removeFromSuperview()
+            // FIXME: Fix temporarily iOS 14 beta bug if the presenting VC contains a translucent navigation controller
+            var isTranslucent: Bool = true
+            if #available(iOS 14.0, *) {
+                if let tbc = self.presentingVC as? UITabBarController, let nc = tbc.selectedViewController as? UINavigationController {
+                    isTranslucent = nc.navigationBar.isTranslucent
+                    nc.navigationBar.isTranslucent = false
+                }
+                else if let nc = self.presentingVC as? UINavigationController {
+                    isTranslucent = nc.navigationBar.isTranslucent
+                    nc.navigationBar.isTranslucent = false
+                }
+                if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
+                    if let navigationBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar {
+                        isTranslucent = navigationBar.isTranslucent
+                        navigationBar.isTranslucent = false
+                    }
+                }
+            }
+            //
             
             let isHidden = self.popupBarView.isHidden
             self.popupBarView.isHidden = true
             let alpha = self.popupBarView.alpha
             self.popupBarView.alpha = 0.0
+            
             
             let imageRect = self.blackView.bounds
             
@@ -710,6 +721,22 @@ extension PBPopupPresentationController
             self.popupBarView.isHidden = isHidden
             self.popupBarView.alpha = alpha
 
+            // FIXME: Fix temporarily iOS 14 beta bug if the presenting VC contains a translucent navigation controller
+            if #available(iOS 14.0, *) {
+                if let tbc = self.presentingVC as? UITabBarController, let nc = tbc.selectedViewController as? UINavigationController {
+                    nc.navigationBar.isTranslucent = isTranslucent
+                }
+                else if let nc = self.presentingVC as? UINavigationController {
+                    nc.navigationBar.isTranslucent = isTranslucent
+                }
+                if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
+                    if let navigationBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar {
+                        navigationBar.isTranslucent = isTranslucent
+                    }
+                }
+            }
+            //
+            
             self.backingView.frame = imageRect
             self.backingView.frame.origin.x = 0
             
@@ -936,4 +963,17 @@ extension PBPopupPresentationController
         DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
     }
 
+    private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView? {
+        if view?.classForCoder == aClass {
+            return view
+        }
+        var superview: UIView? = view?.superview
+        while superview != nil {
+            if superview?.classForCoder == aClass {
+                return superview
+            }
+            superview = superview?.superview
+        }
+        return nil
+    }
 }

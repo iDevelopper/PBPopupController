@@ -136,14 +136,15 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             }
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location + translation.y)
 
+        /*
         case .cancelled:
             self.isDismissing = false
             self.cancel()
             if let animator = self.animator {
                 animator.stopAnimation(false)
             }
-
-        case .ended:
+        */
+        case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
             self.isDismissing = false

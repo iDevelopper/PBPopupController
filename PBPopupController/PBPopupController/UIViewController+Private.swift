@@ -240,10 +240,15 @@ public extension UINavigationController
             }
             else {
                 self._sTH(h: h, e: e, d: d)
+                // TODO: Hide bottomBar
+                //self.bottomBar.isHidden = h
+                //rv.layoutIfNeeded()
             }
         }
         else {
             self._sTH(h: h, e: e, d: d)
+            // TODO: Hide bottomBar
+            //self.bottomBar.isHidden = h
         }
     }
 

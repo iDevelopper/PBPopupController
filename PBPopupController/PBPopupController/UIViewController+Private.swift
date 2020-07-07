@@ -237,18 +237,22 @@ public extension UINavigationController
                     }) { (_ context) in
                     }
                 }
+                else {
+                    UIView.animate(withDuration: 0.15) {
+                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                        rv.layoutIfNeeded()
+                    }
+                }
             }
             else {
                 self._sTH(h: h, e: e, d: d)
-                // TODO: Hide bottomBar
-                //self.bottomBar.isHidden = h
-                //rv.layoutIfNeeded()
+                self.bottomBar.isHidden = h
+                rv.layoutIfNeeded()
             }
         }
         else {
             self._sTH(h: h, e: e, d: d)
-            // TODO: Hide bottomBar
-            //self.bottomBar.isHidden = h
+            self.bottomBar.isHidden = h
         }
     }
 

@@ -1487,6 +1487,9 @@ extension PBPopupBar
     internal func safeBottom() -> CGFloat {
         var safeBottom: CGFloat = 0.0
         if #available(iOS 11.0, *) {
+            if self.popupController.dropShadowViewFor(self.popupController.containerViewController.view) != nil {
+                return 0.0
+            }
             guard (self.window != nil) else { return 0.0 }
             safeBottom = max((self.window?.safeAreaInsets.bottom)!, safeBottom)
         }

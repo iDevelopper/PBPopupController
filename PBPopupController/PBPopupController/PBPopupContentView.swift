@@ -226,7 +226,7 @@ The view where is embedded the popupContentViewController's view for presentatio
             let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
-            let dropShadowView =  self.popupController.popupPresentationController?.dropShadowViewFor(self.popupController.containerViewController.view)
+            let dropShadowView =  self.popupController.dropShadowViewFor(self.popupController.containerViewController.view)
             if self.popupPresentationStyle == .fullScreen {
                 self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (dropShadowView == nil ? statusBarHeight : 0.0)
             }

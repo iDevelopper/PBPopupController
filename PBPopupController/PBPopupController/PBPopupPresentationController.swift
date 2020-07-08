@@ -28,25 +28,8 @@ internal class PBPopupPresentationController: UIPresentationController {
         return popupController.containerViewController.popupContentView
     }
     
-    internal func dropShadowViewFor(_ view: UIView) -> UIView? {
-        if self.presentingVC.popupContentView.popupIgnoreDropShadowView {
-            return nil
-        }
-        var inputView: UIView? = view
-        while inputView != nil {
-            guard let view = inputView else { continue }
-            inputView = view.superview
-            if inputView == nil {
-                return nil
-            }
-            if NSStringFromClass(type(of: inputView!).self).contains("DropShadow") {
-                return inputView
-            }
-            if NSStringFromClass(type(of: inputView!).self).contains("PopoverView") {
-                return inputView
-            }
-        }
-        return nil
+    private func dropShadowViewFor(_ view: UIView) -> UIView? {
+        return popupController.dropShadowViewFor(view)
     }
 
     private var popupContentViewTopInset: CGFloat {
@@ -175,12 +158,10 @@ internal class PBPopupPresentationController: UIPresentationController {
 
         containerView.frame = self.presentingVC.view.frame
         if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-            // TODO: Fix container view frame if split view in dropShadowView
-            //var frame = dropShadowView.frame
-            //frame.origin.x += self.presentingVC.view.frame.minX
-            //frame.size.width = self.presentingVC.view.frame.width
-            //containerView.frame = frame
-            containerView.frame = dropShadowView.frame
+            var frame = dropShadowView.frame
+            frame.origin.x += self.presentingVC.view.frame.minX
+            frame.size.width = self.presentingVC.view.frame.width
+            containerView.frame = frame
         }
         
         self.touchForwardingView = PBTouchForwardingView(frame: containerView.bounds)
@@ -695,7 +676,7 @@ extension PBPopupPresentationController
                     isTranslucent = nc.navigationBar.isTranslucent
                     nc.navigationBar.isTranslucent = false
                 }
-                if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
+                else if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
                     if let navigationBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar {
                         isTranslucent = navigationBar.isTranslucent
                         navigationBar.isTranslucent = false
@@ -729,7 +710,7 @@ extension PBPopupPresentationController
                 else if let nc = self.presentingVC as? UINavigationController {
                     nc.navigationBar.isTranslucent = isTranslucent
                 }
-                if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
+                else if let hitTest = self.presentingVC.view.hitTest(CGPoint(x: 10, y: self.statusBarFrame.height), with: nil) {
                     if let navigationBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar {
                         navigationBar.isTranslucent = isTranslucent
                     }

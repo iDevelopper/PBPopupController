@@ -74,8 +74,7 @@ public extension UITabBarController
         self._hBWT(t: t, iE: iE)
         
         if (t > 0) {
-            let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
-            if (rv != nil) {
+            if let _ = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
                 if popupController.popupPresentationState != .hidden {
                     var duration: TimeInterval = 0.35
                     if let coordinator = self.selectedViewController?.transitionCoordinator {
@@ -84,6 +83,9 @@ public extension UITabBarController
                     var insets: UIEdgeInsets = .zero
                     if #available(iOS 11.0, *) {
                         insets = self.view.window?.safeAreaInsets ?? .zero
+                        if self.popupController.dropShadowViewFor(self.view) != nil {
+                            insets = UIEdgeInsets.zero
+                        }
                     }
                     
                     UIView.animate(withDuration: duration) {
@@ -323,6 +325,9 @@ internal extension UINavigationController
             if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
                 return tabBarController.insetsForBottomBar()
             }
+            if self.popupController.dropShadowViewFor(self.view) != nil {
+                return UIEdgeInsets.zero
+            }
             return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         } else {
             return UIEdgeInsets.zero
@@ -537,6 +542,9 @@ internal extension UIViewController
     @objc func insetsForBottomBar() -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
         if #available(iOS 11.0, *) {
+            if self.popupController.dropShadowViewFor(self.view) != nil {
+                return UIEdgeInsets.zero
+            }
             insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         }
         if self.popupController.dataSource?.bottomBarView?(for: self.popupController) != nil {

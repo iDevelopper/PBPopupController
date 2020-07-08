@@ -399,6 +399,30 @@ extension PBPopupPresentationStyle
     
     private weak var previewingContext: UIViewControllerPreviewing?
     
+   internal func dropShadowViewFor(_ view: UIView) -> UIView? {
+      guard let vc = self.containerViewController else {
+          return nil
+      }
+       if vc.popupContentView.popupIgnoreDropShadowView {
+           return nil
+       }
+       var inputView: UIView? = view
+       while inputView != nil {
+           guard let view = inputView else { continue }
+           inputView = view.superview
+           if inputView == nil {
+               return nil
+           }
+           if NSStringFromClass(type(of: inputView!).self).contains("DropShadow") {
+               return inputView
+           }
+           if NSStringFromClass(type(of: inputView!).self).contains("PopoverView") {
+               return inputView
+           }
+       }
+       return nil
+   }
+
     // MARK: - Init
     
     internal init(containerViewController controller: UIViewController)
@@ -810,7 +834,7 @@ extension PBPopupController: UIViewControllerTransitioningDelegate
     public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         
         self.popupPresentationController = PBPopupPresentationController(presentedViewController: presented, presenting: self.containerViewController!)
-        if (self.popupPresentationController?.dropShadowViewFor(self.containerViewController!.view)) != nil {
+         if (self.dropShadowViewFor(self.containerViewController!.view)) != nil {
             presented.modalPresentationCapturesStatusBarAppearance = false
         }
         return self.popupPresentationController

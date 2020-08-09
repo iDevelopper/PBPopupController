@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 14/04/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -425,11 +425,11 @@ extension PBPopupPresentationStyle
 
     // MARK: - Init
     
-    internal init(containerViewController controller: UIViewController)
-    {
-        self.popupPresentationState = .hidden
-        self.containerViewController = controller
-    }
+   internal init(containerViewController controller: UIViewController)
+   {
+      self.popupPresentationState = .hidden
+      self.containerViewController = controller
+   }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -650,36 +650,36 @@ extension PBPopupPresentationStyle
         self._closePopupAnimated(true)
     }
     
-    internal func _openPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil) {
-        guard let vc = self.containerViewController else {
-            completionBlock?()
-            return
-        }
-        if vc.popupContentViewController == nil {
-            completionBlock?()
-            return
-        }
-        
-        delay(0.1) {
-            if self.popupPresentationState == .closed {
-                self.popupPresentationState = .opening
-                self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .closed)
-                self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
-                self.disableInteractiveTransitioning = true
-                vc.present(vc.popupContentViewController, animated: true) {
-                    if vc.popupContentViewController.view is UIScrollView {
-                        let scrollView = vc.popupContentViewController.view as! UIScrollView
-                        self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                    }
-                    self.popupPresentationState = .open
-                    self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .opening)
-                    self.disableInteractiveTransitioning = false
-                    self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
-                    completionBlock?()
-                }
+   internal func _openPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil) {
+      guard let vc = self.containerViewController else {
+         completionBlock?()
+         return
+      }
+      if vc.popupContentViewController == nil {
+         completionBlock?()
+         return
+      }
+      
+      delay(0.1) {
+         if self.popupPresentationState == .closed {
+            self.popupPresentationState = .opening
+            self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .closed)
+            self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
+            self.disableInteractiveTransitioning = true
+            vc.present(vc.popupContentViewController, animated: true) {
+               if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+                  self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
+               }
+               //}
+               self.popupPresentationState = .open
+               self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .opening)
+               self.disableInteractiveTransitioning = false
+               self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
+               completionBlock?()
             }
-        }
-    }
+         }
+      }
+   }
     
     internal func _closePopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil) {
         guard let vc = self.containerViewController else {
@@ -704,10 +704,10 @@ extension PBPopupPresentationStyle
                 self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .closing)
                 self.disableInteractiveTransitioning = false
                 self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
-                if vc.popupContentViewController.view is UIScrollView {
-                    let scrollView = vc.popupContentViewController.view as! UIScrollView
-                    self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                }
+               if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+                  self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
+               }
+                //}
                 completionBlock?()
             }
         }
@@ -778,28 +778,28 @@ extension PBPopupPresentationStyle
         return frame
     }
     
-    internal func popupBarViewFrameForPopupStateClosed() -> CGRect {
-        guard let vc = self.containerViewController else { return .zero }
-        
-        let defaultFrame = vc.defaultFrameForBottomBar()
-        
-        let insets = vc.insetsForBottomBar()
-        
-        var height = vc.popupBar.popupBarHeight
-        
-        // Unsafe Area
-        if self.bottomBarHeight == 0.0 {
-            height += insets.bottom
-        }
-        
-        var frame = CGRect(x: defaultFrame.origin.x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: defaultFrame.size.width, height: height)
-        if vc is UINavigationController || vc is UITabBarController {
-            frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
-        }
-        
-        PBLog("\(frame)")
-        return frame
-    }
+   internal func popupBarViewFrameForPopupStateClosed() -> CGRect {
+      guard let vc = self.containerViewController else { return .zero }
+      
+      let defaultFrame = vc.defaultFrameForBottomBar()
+      
+      let insets = vc.insetsForBottomBar()
+      
+      var height = vc.popupBar.popupBarHeight
+      
+      // Unsafe Area
+      if self.bottomBarHeight == 0.0 {
+         height += insets.bottom
+      }
+      
+      var frame = CGRect(x: defaultFrame.origin.x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: defaultFrame.size.width, height: height)
+      if vc is UINavigationController || vc is UITabBarController {
+         frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
+      }
+      
+      PBLog("\(frame)")
+      return frame
+   }
 }
 
 // MARK: - Custom Animations delegate
@@ -833,8 +833,8 @@ extension PBPopupController: UIViewControllerTransitioningDelegate
      */
     public func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         
-        self.popupPresentationController = PBPopupPresentationController(presentedViewController: presented, presenting: self.containerViewController!)
-         if (self.dropShadowViewFor(self.containerViewController!.view)) != nil {
+        self.popupPresentationController = PBPopupPresentationController(presentedViewController: presented, presenting: self.containerViewController)
+         if (self.dropShadowViewFor(self.containerViewController.view)) != nil {
             presented.modalPresentationCapturesStatusBarAppearance = false
         }
         return self.popupPresentationController
@@ -861,39 +861,38 @@ extension PBPopupController: UIViewControllerTransitioningDelegate
 
 extension PBPopupController: PBPopupInteractivePresentationDelegate
 {
-    internal func presentInteractive() {
-        if let vc = self.containerViewController {
-            vc.popupBar.setHighlighted(true, animated: false)
-            vc.present(vc.popupContentViewController, animated: true) {
-                vc.popupBar.setHighlighted(false, animated: false)
-                if self.popupPresentationState == .opening {
-                    self.popupPresentationState = .open
-                    if vc.popupContentViewController.view is UIScrollView {
-                        let scrollView = vc.popupContentViewController.view as! UIScrollView
-                        self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                    }
-                    self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .opening)
-                    self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
-                }
+   internal func presentInteractive() {
+      if let vc = self.containerViewController {
+         vc.popupBar.setHighlighted(true, animated: false)
+         vc.present(vc.popupContentViewController, animated: true) {
+            vc.popupBar.setHighlighted(false, animated: false)
+            if self.popupPresentationState == .opening {
+               self.popupPresentationState = .open
+               if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+                  self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
+               }
+               //}
+               self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .opening)
+               self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
             }
-        }
-    }
+         }
+      }
+   }
     
-    internal func dismissInteractive() {
-        if let vc = self.containerViewController {
-            vc.popupContentViewController.setNeedsStatusBarAppearanceUpdate()
-            vc.dismiss(animated: true) {
-                if self.popupPresentationState == .closing {
-                    self.popupPresentationState = .closed
-                    self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
-                    if vc.popupContentViewController.view is UIScrollView {
-                        let scrollView = vc.popupContentViewController.view as! UIScrollView
-                        self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                    }
-                }
+   internal func dismissInteractive() {
+      if let vc = self.containerViewController {
+         vc.popupContentViewController.dismiss(animated: true) {
+            if self.popupPresentationState == .closing {
+               self.popupPresentationState = .closed
+               self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
+               if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+                  self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
+               }
+               //}
             }
-        }
-    }
+         }
+      }
+   }
 }
 
 // MARK: - UIViewControllerPreviewingDelegate

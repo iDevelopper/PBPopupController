@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.1.0
+
+Improvements.
+iOS 14 support.
+Updated example.
+
 ## 3.0.1
 
 Improve rotation when popup content is open.

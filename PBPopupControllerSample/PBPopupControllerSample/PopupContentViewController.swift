@@ -28,7 +28,7 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var imageModuleLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageModuleTrailingConstraint: NSLayoutConstraint!
 
-    var albumArtImage: UIImage = UIImage() {
+    var albumArtImage: UIImage!/* = UIImage()*/ {
         didSet {
             if isViewLoaded {
                 self.albumArtImageView.image = albumArtImage
@@ -71,7 +71,7 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var progressView: UIProgressView!
 
-    var songTitle: String = "" {
+    var songTitle: String!/* = ""*/ {
         didSet {
             if isViewLoaded {
                 songNameLabel.text = songTitle
@@ -91,7 +91,7 @@ class PopupContentViewController: UIViewController {
         }
     }
 
-    var albumTitle: String = "" {
+    var albumTitle: String!/* = ""*/ {
         didSet {
             if isViewLoaded {
                 albumNameLabel.text = albumTitle
@@ -156,6 +156,18 @@ class PopupContentViewController: UIViewController {
     
     var timer: Timer?
     
+    // MARK: - Status bar
+    
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let popupContentView = containerVC.popupContentView else {return .default}
+        
+        if popupContentView.popupPresentationStyle != .deck {
+            return .default
+        }
+        return .lightContent
+    }
+
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -213,16 +225,6 @@ class PopupContentViewController: UIViewController {
         #endif
     }
     
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        guard let containerVC = self.popupContainerViewController else {return.default}
-        guard let popupContentView = containerVC.popupContentView else {return .default}
-        
-        if popupContentView.popupPresentationStyle != .deck {
-            return .default
-        }
-        return .lightContent
-    }
-
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
     }

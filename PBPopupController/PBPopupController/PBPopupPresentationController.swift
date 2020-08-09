@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 13/07/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -494,6 +494,11 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 if self.popupPresentationStyle == .deck {
                     self.blackView.frame = self.popupBlackViewFrame()
                     self.blackView.isHidden = self.traitCollection.verticalSizeClass == .compact ? true : false
+                    if self.backingView == nil {
+                        self.containerView?.insertSubview(self.blackView, at: 0)
+                        self.setupBackingView()
+                        self.animateBackingViewToDeck(true, animated: false)
+                    }
                 }
                 self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
@@ -666,6 +671,7 @@ extension PBPopupPresentationController
         }
         if self.traitCollection.verticalSizeClass == .regular && self.backingView == nil {
             // FIXME: Fix temporarily iOS 14 beta bug if the presenting VC contains a translucent navigation controller
+            /*
             var isTranslucent: Bool = true
             if #available(iOS 14.0, *) {
                 if let tbc = self.presentingVC as? UITabBarController, let nc = tbc.selectedViewController as? UINavigationController {
@@ -683,6 +689,7 @@ extension PBPopupPresentationController
                     }
                 }
             }
+            */
             //
             
             let isHidden = self.popupBarView.isHidden
@@ -690,19 +697,23 @@ extension PBPopupPresentationController
             let alpha = self.popupBarView.alpha
             self.popupBarView.alpha = 0.0
             
-            
             let imageRect = self.blackView.bounds
             
             //for debug
             //let image = presentingVC.view.makeSnapshot(from: imageRect)
             
-            self.backingView = self.presentingVC.view.resizableSnapshotView(from: imageRect, afterScreenUpdates: true, withCapInsets: .zero)
+            var snapshotView = self.presentingVC.view!
+            if let nc = self.presentingVC.navigationController {
+                snapshotView = nc.view
+            }
+            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: true, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
             self.popupBarView.isHidden = isHidden
             self.popupBarView.alpha = alpha
 
             // FIXME: Fix temporarily iOS 14 beta bug if the presenting VC contains a translucent navigation controller
+            /*
             if #available(iOS 14.0, *) {
                 if let tbc = self.presentingVC as? UITabBarController, let nc = tbc.selectedViewController as? UINavigationController {
                     nc.navigationBar.isTranslucent = isTranslucent
@@ -716,6 +727,7 @@ extension PBPopupPresentationController
                     }
                 }
             }
+            */
             //
             
             self.backingView.frame = imageRect
@@ -833,10 +845,7 @@ extension PBPopupPresentationController
             imageViewForPresentation.cornerRadius = 3.0
         }
         else {
-            var openFrame = imageView.convert(imageView.bounds, to: presentedViewController.view)
-            if #available(iOS 11.0, *) {
-                openFrame.origin.x += presentedView.safeAreaInsets.left
-            }
+            let openFrame = imageView.convert(imageView.bounds, to: presentedView)
             imageViewForPresentation.frame = openFrame
             imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
             imageViewForPresentation.isHidden = false
@@ -858,11 +867,7 @@ extension PBPopupPresentationController
         guard let imageView = self.popupContentView.popupImageView else { return }
         
         if self.isPresenting {
-            var openFrame = imageView.convert(imageView.bounds, to: presentedViewController.view)
-            
-            if #available(iOS 11.0, *) {
-                openFrame.origin.x += presentedView.safeAreaInsets.left
-            }
+            let openFrame = imageView.convert(imageView.bounds, to: presentedView)
             imageViewForPresentation.frame = openFrame
             imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
         }

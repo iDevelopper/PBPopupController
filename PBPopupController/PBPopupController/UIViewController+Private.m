@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 28/03/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 #import "PBPopupController.h"
@@ -26,14 +26,22 @@ static NSString *const upCoOvBase64 = @"X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRm9y
 
 static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets) API_AVAILABLE(ios(11.0))
 {
-    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || [controller isKindOfClass:UISplitViewController.class])
+    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || [controller isKindOfClass:UISplitViewController.class] || controller.childViewControllers.count > 0)
     {
         [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop) {
-            
+            if ([obj isKindOfClass:[UINavigationController class]]) {
+                _LNPopupSupportFixInsetsForViewController_modern(obj, layout, additionalSafeAreaInsets);
+                return;
+            }
             UIEdgeInsets oldInsets = obj.additionalSafeAreaInsets;
             UIEdgeInsets insets = oldInsets;
-            insets.top += additionalSafeAreaInsets.top;
-            insets.bottom += additionalSafeAreaInsets.bottom;
+            if (oldInsets.top == 0 || additionalSafeAreaInsets.top < 0) {
+                insets.top += additionalSafeAreaInsets.top;
+                
+            }
+            if (oldInsets.bottom < additionalSafeAreaInsets.bottom + controller.additionalSafeAreaInsetsBottomForContainer || additionalSafeAreaInsets.bottom < 0) {
+                insets.bottom += (additionalSafeAreaInsets.bottom + (additionalSafeAreaInsets.bottom == 0 ? controller.additionalSafeAreaInsetsBottomForContainer : 0));
+            }
             if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
             {
                 obj.additionalSafeAreaInsets = insets;
@@ -44,8 +52,13 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
     {
         UIEdgeInsets oldInsets = controller.additionalSafeAreaInsets;
         UIEdgeInsets insets = oldInsets;
-        insets.top += additionalSafeAreaInsets.top;
-        insets.bottom += additionalSafeAreaInsets.bottom;
+        if (oldInsets.top == 0 || additionalSafeAreaInsets.top < 0) {
+            insets.top += additionalSafeAreaInsets.top;
+        }
+        if (oldInsets.bottom == 0 || additionalSafeAreaInsets.bottom < 0) {
+            insets.bottom += additionalSafeAreaInsets.bottom;
+            
+        }
         if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
         {
             controller.additionalSafeAreaInsets = insets;

@@ -118,9 +118,7 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     
     func popupController(_ popupController: PBPopupController, insetsFor bottomBarView: UIView) -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            insets = self.view.superview?.safeAreaInsets ?? .zero
-        }
+        insets = self.view.superview?.safeAreaInsets ?? .zero
         //PBLog(insets.bottom, error: true)
         return insets
     }

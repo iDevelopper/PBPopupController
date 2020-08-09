@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 01/07/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -32,9 +32,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     private var progress: CGFloat = 0
     private var location: CGFloat = 0
     private var shouldComplete = false
-    
-    var transitionContext: UIViewControllerContextTransitioning!
-    
+        
     internal weak var delegate: PBPopupInteractivePresentationDelegate?
     
     private var presentationController: PBPopupPresentationController! {
@@ -113,8 +111,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             self.location = vc.popupContentView.frame.minY + translation.y
 
         case .changed:
-            if self.isDismissing && (self.view is UIScrollView) {
-                let scrollView = self.view as! UIScrollView
+            if self.isDismissing, let scrollView = self.view as? UIScrollView {
                 scrollView.contentOffset = self.contentOffset
             }
             
@@ -147,8 +144,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
-            self.isDismissing = false
-
             self.shouldComplete = self.completionPosition() == .end
             
             if self.shouldComplete {
@@ -179,16 +174,23 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     animator.addAnimations {
                         self.presentationController.popupBarForPresentation?.alpha = 1.0
                     }
-                    
                     animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                 }
                 else {
-                    animator.addAnimations {
-                        vc.popupContentView.popupCloseButton.setButtonStateStationary()
+                    if self.isDismissing {
+                        animator.addAnimations {
+                            vc.popupContentView.popupCloseButton?.setButtonStateStationary()
+                        }
+                        if let scrollView = self.view as? UIScrollView {
+                            animator.addCompletion { (_) in
+                                scrollView.contentOffset = self.contentOffset
+                            }
+                        }
+                        animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                     }
-                    animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                 }
             }
+            self.isDismissing = false
             break
             
         default:
@@ -208,9 +210,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         let isFlickDown = isFlick && (velocity.dy > 0.0)
         let isFlickUp = isFlick && (velocity.dy < 0.0)
         
-        if (self.isPresenting == true && isFlickUp) || (self.isPresenting == false && isFlickDown) {
+        if (self.isPresenting == true && isFlickUp) || (self.isDismissing && isFlickDown) {
             return .end
-        } else if (self.isPresenting == true && isFlickDown) || (self.isPresenting == false && isFlickUp) {
+        } else if (self.isPresenting == true && isFlickDown) || (self.isDismissing && isFlickUp) {
             return .start
         } else if self.animator.fractionComplete > vc.popupContentView.popupCompletionThreshold {
             return .end
@@ -226,9 +228,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         if vc.popupContentView.popupPresentationStyle == .custom {
             availableHeight = vc.popupContentView.popupContentSize.height - vc.popupBar.frame.size.height - (vc.bottomBar.isHidden ? 0.0 : vc.bottomBar.frame.size.height)
         }
-        if #available(iOS 11.0, *) {
-            availableHeight -= vc.insetsForBottomBar().bottom
-        }
+        availableHeight -= vc.insetsForBottomBar().bottom
+        
         return (self.popupController.popupPresentationState == .open ? availableHeight : -availableHeight)
     }
 }

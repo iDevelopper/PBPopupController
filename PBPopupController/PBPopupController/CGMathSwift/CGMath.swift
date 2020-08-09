@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 29/03/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 //  From Emilio Peláez on 11/10/16.
 //  https://github.com/EmilioPelaez/CGMathSwift//

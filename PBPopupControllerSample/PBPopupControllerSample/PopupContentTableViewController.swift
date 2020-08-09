@@ -13,7 +13,7 @@ class PopupContentTableViewController: UITableViewController {
 
     weak var firstVC: FirstTableViewController!
 
-    var albumArtImage: UIImage = UIImage() {
+    var albumArtImage: UIImage!/* = UIImage()*/ {
         didSet {
             if isViewLoaded {
                 let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
@@ -25,7 +25,7 @@ class PopupContentTableViewController: UITableViewController {
         }
     }
 
-    var songTitle: String = "" {
+    var songTitle: String!/* = ""*/ {
         didSet {
             if isViewLoaded {
                 let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
@@ -34,7 +34,7 @@ class PopupContentTableViewController: UITableViewController {
         }
     }
 
-    var albumTitle: String = "" {
+    var albumTitle: String!/* = ""*/ {
         didSet {
             if isViewLoaded {
                 let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
@@ -55,11 +55,8 @@ class PopupContentTableViewController: UITableViewController {
             self.tableView.backgroundColor = UIColor.secondarySystemBackground
         }
         #endif
-        
-        if #available(iOS 11.0, *) {
-            self.tableView.insetsContentViewsToSafeArea = true
-            self.tableView.contentInsetAdjustmentBehavior = .never
-        }
+        self.tableView.insetsContentViewsToSafeArea = true
+        self.tableView.contentInsetAdjustmentBehavior = .never
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,13 +79,12 @@ class PopupContentTableViewController: UITableViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if #available(iOS 11.0, *) {
-            #if !targetEnvironment(macCatalyst)
-            let insets = UIEdgeInsets.init(top: 0, left: 0, bottom: self.view.safeAreaInsets.bottom, right: 0)
-            tableView.contentInset = insets
-            tableView.scrollIndicatorInsets = insets
-            #endif
-        }
+        
+        #if !targetEnvironment(macCatalyst)
+        let insets = UIEdgeInsets.init(top: 0, left: 0, bottom: self.view.safeAreaInsets.bottom, right: 0)
+        tableView.contentInset = insets
+        tableView.scrollIndicatorInsets = insets
+        #endif
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {

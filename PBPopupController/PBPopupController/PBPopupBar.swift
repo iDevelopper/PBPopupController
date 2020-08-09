@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 29/03/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -384,9 +384,7 @@ A set of methods used by the delegate to respond, with a preview view controller
         set {
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
             self.backgroundView.effect = UIBlurEffect(style: newValue)
-            if #available(iOS 11.0, *) {
-                self.safeAreaToolbar?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-            }
+            self.safeAreaToolbar?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         }
     }
     
@@ -421,10 +419,8 @@ A set of methods used by the delegate to respond, with a preview view controller
             if self.toolbar.backgroundColor != newValue {
                 self.toolbar.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
                 self.toolbar.backgroundColor = newValue
-                if #available(iOS 11.0, *) {
-                    self.safeAreaToolbar?.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
-                    self.safeAreaToolbar?.backgroundColor = newValue
-                }
+                self.safeAreaToolbar?.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
+                self.safeAreaToolbar?.backgroundColor = newValue
             }
         }
     }
@@ -441,10 +437,8 @@ A set of methods used by the delegate to respond, with a preview view controller
             if self.toolbar.barTintColor != newValue {
                 self.toolbar.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
                 self.toolbar.barTintColor = newValue
-                if #available(iOS 11.0, *) {
-                    self.safeAreaToolbar?.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
-                    self.safeAreaToolbar?.barTintColor = newValue
-                }
+                self.safeAreaToolbar?.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
+                self.safeAreaToolbar?.barTintColor = newValue
             }
         }
     }
@@ -1025,6 +1019,7 @@ A set of methods used by the delegate to respond, with a preview view controller
 
     private func layoutImageView() {
         let safeLeading = self.safeLeading()
+        let safeTrailing = self.safeTrailing()
         let height = self.popupBarHeight
         let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
         
@@ -1052,10 +1047,10 @@ A set of methods used by the delegate to respond, with a preview view controller
             }
             else {
                 if let rightConstraint = self.imageViewRightConstraint {
-                    rightConstraint.constant = -(16.0 + safeLeading)
+                    rightConstraint.constant = -(16.0 + safeLeading + safeTrailing)
                 }
                 else {
-                    self.imageViewRightConstraint = self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading))
+                    self.imageViewRightConstraint = self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing))
                 }
                 self.imageViewRightConstraint.isActive = true
             }
@@ -1093,11 +1088,18 @@ A set of methods used by the delegate to respond, with a preview view controller
         if right < 0.0 {right = 0.0}
         
         if left == 0.0 && right == 0.0 {
-            left = 16 + (self.image != nil ? (self.imageView.frame.origin.x + self.imageView.frame.size.width) : 0.0)
-            right = 16
+            if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
+                left = 16 + (self.image != nil ? (self.imageView.frame.origin.x + self.imageView.frame.size.width) : 0.0)
+                right = 16
+            }
+            else {
+                right = self.frame.size.width - (self.image != nil ? (self.imageView.frame.origin.x) : 0.0) + 16
+                left = 16
+            }
         }
         else {
             let safeLeading = self.safeLeading()
+            let safeTrailing = self.safeTrailing()
             
             if self.popupBarStyle == .prominent || self.popupBarStyle == .custom {
                 if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
@@ -1106,7 +1108,7 @@ A set of methods used by the delegate to respond, with a preview view controller
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
                 else {
-                    right = self.image == nil ? 16.0 + safeLeading : self.imageView.frame.size.width + 2 * 16.0 + safeLeading
+                    right = self.image == nil ? 16.0 + safeLeading + safeTrailing : self.imageView.frame.size.width + 2 * 16.0 + safeLeading + safeTrailing
                 }
             }
             else {
@@ -1115,13 +1117,7 @@ A set of methods used by the delegate to respond, with a preview view controller
                 }
                 left += safeLeading
                 if left > right {right = self.toolbar.frame.size.width}
-                if #available(iOS 11.0, *) {
                     right = self.toolbar.frame.size.width - right - safeLeading
-                }
-                else {
-                    right = self.toolbar.frame.size.width - right - safeLeading
-                }
-                //if right > left {right = 0}
             }
         }
         
@@ -1232,10 +1228,8 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         var font: UIFont
         font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 18 : 14, weight: .regular)
-        if #available(iOS 11.0, *) {
-            font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-            self.titleLabel.adjustsFontForContentSizeCategory = true
-        }
+        font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+        self.titleLabel.adjustsFontForContentSizeCategory = true
         
         let defaultTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: font]
         
@@ -1252,10 +1246,9 @@ A set of methods used by the delegate to respond, with a preview view controller
         }
 
         font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 14 : 11/*12*/, weight: .regular)
-        if #available(iOS 11.0, *) {
-            font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-            self.subtitleLabel.adjustsFontForContentSizeCategory = true
-        }
+        font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+        self.subtitleLabel.adjustsFontForContentSizeCategory = true
+        
         let defaultSubTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: font]
         
         if (self.subtitleTextAttributes != nil) {
@@ -1478,21 +1471,25 @@ extension PBPopupBar
     
     internal func safeLeading() -> CGFloat {
         var safeLeading: CGFloat = 0.0
-        if #available(iOS 11.0, *) {
-            safeLeading = max(self.safeAreaInsets.left, safeLeading)
-        }
+        safeLeading = max(self.safeAreaInsets.left, safeLeading)
         return safeLeading
+    }
+    
+    internal func safeTrailing() -> CGFloat {
+        var safeTrailing: CGFloat = 0.0
+        safeTrailing = max(self.safeAreaInsets.right, safeTrailing)
+        return safeTrailing
     }
     
     internal func safeBottom() -> CGFloat {
         var safeBottom: CGFloat = 0.0
-        if #available(iOS 11.0, *) {
-            if self.popupController.dropShadowViewFor(self.popupController.containerViewController.view) != nil {
+        if let dropShadowView = self.popupController.dropShadowViewFor(self.popupController.containerViewController.view) {
+            if dropShadowView.frame.minX > 0 {
                 return 0.0
             }
-            guard (self.window != nil) else { return 0.0 }
-            safeBottom = max((self.window?.safeAreaInsets.bottom)!, safeBottom)
         }
+        guard (self.window != nil) else { return 0.0 }
+        safeBottom = max((self.window?.safeAreaInsets.bottom)!, safeBottom)
         return safeBottom
     }
     

@@ -132,9 +132,8 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     
     func setupConstraintsForBottomBar() {
         var insets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            insets = self.view.superview?.safeAreaInsets ?? .zero
-        }
+        insets = self.view.superview?.safeAreaInsets ?? .zero
+        
         self.bottomBarView.translatesAutoresizingMaskIntoConstraints = false
         self.constraintsForBottomBar = [
             self.bottomBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -152,12 +151,8 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     
     func frameForBottomBar() -> CGRect {
         var height: CGFloat = 0
-        if #available(iOS 11.0, *) {
-            height = self.bottomBarView.frame.height
-        }
-        else {
-            height = self.bottomBarView.sizeThatFits(.zero).height
-        }
+        height = self.bottomBarView.frame.height
+        
         let frame = CGRect(x: 0, y: self.view.bounds.height - height/* - insets.bottom*/, width: self.view.bounds.width, height: height)
         //PBLog(frame, error: true)
         return frame
@@ -165,9 +160,7 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     
     func insetsForBottomBar() -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            insets = self.view.superview?.safeAreaInsets ?? .zero
-        }
+        insets = self.view.superview?.safeAreaInsets ?? .zero
         //PBLog(insets.bottom, error: true)
         return insets
     }

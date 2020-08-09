@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 16/03/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -354,27 +354,6 @@ public extension UIViewController
             subviewArray.append(subview)
         }
         return subviewArray
-    }
-    
-    internal func topViewControllerForRoot(_ rootViewController: UIViewController?) -> UIViewController? {
-        guard let rootViewController = rootViewController else {
-            return nil
-        }
-        
-        guard let presented = rootViewController.presentedViewController else {
-            return rootViewController
-        }
-        
-        switch presented {
-        case let navigationController as UINavigationController:
-            return navigationController
-            
-        case let tabBarController as UITabBarController:
-            return topViewControllerForRoot(tabBarController.selectedViewController)
-            
-        default:
-            return topViewControllerForRoot(presented)
-        }
     }
 }
 

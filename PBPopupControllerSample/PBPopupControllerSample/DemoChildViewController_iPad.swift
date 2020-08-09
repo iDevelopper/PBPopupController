@@ -56,9 +56,7 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
             self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
         
-        if #available(iOS 11.0, *) {
-            self.collectionView.contentInsetAdjustmentBehavior = .always
-        }
+        self.collectionView.contentInsetAdjustmentBehavior = .always
         
         let home = UIBarButtonItem(title: "Home", style: .plain, target: self, action: #selector(dismiss(_:)))
         self.navigationItem.rightBarButtonItem = home

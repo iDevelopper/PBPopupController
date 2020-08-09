@@ -34,13 +34,17 @@ class DemoTableViewController: UITableViewController {
     
         self.tableView.tableFooterView = UIView()
         
+        /*
         self.tableView.tableHeaderView = nil
         if (self.navigationController == nil) {
             self.tableView.tableHeaderView = self.headerView
         }
+        */
         
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 80.0
+        
+        self.navigationItem.largeTitleDisplayMode = .automatic
     }
 
     override func viewDidLayoutSubviews() {
@@ -49,6 +53,11 @@ class DemoTableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        self.tableView.tableHeaderView = nil
+        if (self.navigationController == nil) {
+            self.tableView.tableHeaderView = self.headerView
+        }
         
         self.tableView.reloadData()
     }

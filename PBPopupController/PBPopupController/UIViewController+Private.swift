@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 15/04/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -24,6 +24,8 @@ private let sTHedBase64 = "X3NldFRvb2xiYXJIaWRkZW46ZWRnZTpkdXJhdGlvbjo="
 private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
 //showBarWithTransition:
 private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
+//_viewSafeAreaInsetsFromScene
+private let vSAIFSBase64 = "X3ZpZXdTYWZlQXJlYUluc2V0c0Zyb21TY2VuZQ=="
 
 public extension UITabBarController
 {
@@ -81,13 +83,12 @@ public extension UITabBarController
                         duration = coordinator.transitionDuration
                     }
                     var insets: UIEdgeInsets = .zero
-                    if #available(iOS 11.0, *) {
-                        insets = self.view.window?.safeAreaInsets ?? .zero
-                        if self.popupController.dropShadowViewFor(self.view) != nil {
+                    insets = self.view.window?.safeAreaInsets ?? .zero
+                    if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
+                        if dropShadowView.frame.minX > 0 {
                             insets = UIEdgeInsets.zero
                         }
                     }
-                    
                     UIView.animate(withDuration: duration) {
                         self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
                         self.popupController.popupBarView.frame.origin.y -= insets.bottom
@@ -127,11 +128,9 @@ public extension UITabBarController
     }
 
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
-        if #available(iOS 11.0, *) {
-            for obj in viewControllers {
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-                _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
-            }
+        for obj in viewControllers {
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+            _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
@@ -162,14 +161,10 @@ internal extension UITabBarController
     }
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets {
-        if #available(iOS 11.0, *) {
-            if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
-                return bottomBarInsets
-            }
-            return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
-        } else {
-            return UIEdgeInsets.zero
+        if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
+            return bottomBarInsets
         }
+        return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
     @objc override func defaultFrameForBottomBar() -> CGRect {
@@ -260,30 +255,18 @@ public extension UINavigationController
 
     @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool)
     {
-        if #available(iOS 11.0, *) {
-            if let svc = self.parent as? UISplitViewController {
-                if let vc = svc.viewControllers.first, let rv = objc_getAssociatedObject(vc, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
-                    let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: rv.popupBarHeight, right: 0)
-                    _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
-                }
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: svc.additionalSafeAreaInsets.bottom, right: 0)
-                _LNPopupSupportFixInsetsForViewController(svc, false, additionalInsets)
-            }
-            else {
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
-            }
+        if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+            _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
         }
         self.pb_pushViewController(viewController, animated: animated)
     }
     
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
     {
-        if #available(iOS 11.0, *) {
-            for obj in viewControllers {
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-                _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
-            }
+        for obj in viewControllers {
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+            _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
@@ -321,23 +304,22 @@ internal extension UINavigationController
     }
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets {
-        if #available(iOS 11.0, *) {
-            if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
-                return tabBarController.insetsForBottomBar()
-            }
-            if self.popupController.dropShadowViewFor(self.view) != nil {
+        if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
+            return tabBarController.insetsForBottomBar()
+        }
+        if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
+            if dropShadowView.frame.minX > 0 {
                 return UIEdgeInsets.zero
             }
-            return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
-        } else {
-            return UIEdgeInsets.zero
         }
+        return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
     @objc override func defaultFrameForBottomBar() -> CGRect {
         var toolBarFrame = self.toolbar.frame
         
         toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
+        toolBarFrame.size.height = self.isToolbarHidden ? 0.0 : toolBarFrame.size.height
 
         if let tabBarController = self.tabBarController {
             let tabBarFrame = tabBarController.defaultFrameForBottomBar()
@@ -379,6 +361,15 @@ public extension UIViewController
                 method_exchangeImplementations(originalMethod, swizzledMethod)
             }
         }
+        //_viewSafeAreaInsetsFromScene
+        var selName = _PBPopupDecodeBase64String(base64String: vSAIFSBase64)!
+        var selector = NSSelectorFromString(selName)
+        originalMethod = class_getInstanceMethod(aClass, selector)
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_vSAIFS))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+
         #else
         var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
         var selector = NSSelectorFromString(selName)
@@ -432,42 +423,57 @@ public extension UIViewController
         self._uCOIFPIN()
     }
     
+    //_viewSafeAreaInsetsFromScene
+    @objc private func _vSAIFS() -> UIEdgeInsets {
+        if self.popupContainerViewController != nil {
+            if #available(iOS 14.0, *) {
+                if let splitViewController = self.popupContainerViewController.splitViewController, splitViewController.viewControllers.firstIndex(of: self.popupContainerViewController) == 0 {
+                    return self.popupContainerViewController.view.safeAreaInsets
+                }
+                return self.popupContainerViewController.view.superview?.safeAreaInsets ?? .zero
+            }
+            else {
+                return self.popupContainerViewController.view.superview?.safeAreaInsets ?? .zero
+            }
+        }
+        let insets = self._vSAIFS()
+        return insets
+    }
+    
     internal func pb_popupController() -> PBPopupController! {
         let rv = PBPopupController(containerViewController: self)
         self.popupController = rv
+        if objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) == nil {
+            self.popupContentView = rv.pb_popupContentView()
+        }
         return rv
     }
 
     @objc private func pb_addChild(_ viewController: UIViewController)
     {
         self.pb_addChild(viewController)
-
+        
         if self.additionalSafeAreaInsetsBottomForContainer > 0 {
-            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsetsBottomForContainer, right: 0)
-            if #available(iOS 11.0, *) {
-                if self.additionalSafeAreaInsets.bottom == 0 {
-                    _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
-                }
-            }
-            else {
-                _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
-            }
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
         }
-
-        if #available(iOS 11.0, *) {
-            if let svc = self as? UISplitViewController {
-                if let vc1 = svc.viewControllers.first, let rv = objc_getAssociatedObject(vc1, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
-                    if let vc2 = svc.viewControllers.last {
-                        let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -rv.popupBarHeight, right: 0)
-                        _LNPopupSupportFixInsetsForViewController(vc2, false, additionalInsets)
-}
+        
+        if let svc = self as? UISplitViewController {
+            if let vc1 = svc.children.first, let rv = objc_getAssociatedObject(vc1, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
+                var additionalInsets: UIEdgeInsets
+                if let nc = vc1 as? UINavigationController {
+                    additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -nc.topViewController!.additionalSafeAreaInsets.bottom, right: 0)
                 }
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: svc.additionalSafeAreaInsets.bottom, right: 0)
-                _LNPopupSupportFixInsetsForViewController(svc, false, additionalInsets)
+                else {
+                    additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -viewController.additionalSafeAreaInsets.bottom, right: 0)
+                }
+                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
             }
             else {
-                let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsets.bottom, right: 0)
-                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+                if let vc1 = svc.children.first {
+                    let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: vc1.additionalSafeAreaInsets.bottom, right: 0)
+                        _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+                }
             }
         }
     }
@@ -541,12 +547,12 @@ internal extension UIViewController
     
     @objc func insetsForBottomBar() -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            if self.popupController.dropShadowViewFor(self.view) != nil {
+        if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
+            if dropShadowView.frame.minX > 0 {
                 return UIEdgeInsets.zero
             }
-            insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         }
+        insets = self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
         if self.popupController.dataSource?.bottomBarView?(for: self.popupController) != nil {
             if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
                 insets = bottomBarInsets

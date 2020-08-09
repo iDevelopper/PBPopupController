@@ -82,6 +82,11 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             popupContentController.albumArtImage = customYTBar.imageView.image!
             popupContentController.songTitle = customYTBar.titleLabel.text!
             popupContentController.albumTitle = customYTBar.subtitleLabel.text!
+            if #available(iOS 14.0, *) {
+                if containerVC.modalPresentationStyle == .pageSheet {
+                    containerVC.popupContentView.popupPresentationStyle = .fullScreen
+                }
+            }
             DispatchQueue.main.async {
                 containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
                     PBLog("Custom Popup Bar Presented")
@@ -96,12 +101,18 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.image = UIImage(named: "Cover22")
             containerVC.popupBar.title = LoremIpsum.title
+            containerVC.popupBar.subtitle = LoremIpsum.sentence
             containerVC.popupBar.shadowImageView.shadowOpacity = 0
             //containerVC.popupContentView.popupEffectView.effect = nil
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
             popupContentController.albumArtImage = UIImage(named: "Cover22")!
             popupContentController.songTitle = containerVC.popupBar.title!
-            
+            if #available(iOS 14.0, *) {
+                if containerVC.modalPresentationStyle == .pageSheet {
+                    containerVC.popupContentView.popupPresentationStyle = .fullScreen
+                }
+            }
+
             DispatchQueue.main.async {
                 containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
                     PBLog("Popup Bar Presented")

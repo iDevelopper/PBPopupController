@@ -90,6 +90,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        if let containerVC = self.containerVC, let popupContentView = containerVC.popupContentView {
+            popupContentView.popupContentSize = CGSize(width: self.containerVC.view.bounds.width, height: self.containerVC.view.bounds.height * 0.85)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -119,6 +123,19 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     // MARK: - Navigation
     
     @IBAction func pushNext(_ sender: Any) {
+        if let splitVC = self.splitViewController as? SplitViewController {
+            if self.traitCollection.horizontalSizeClass == .compact {
+                if let detailVC = splitVC.detailVC {
+                    if #available(iOS 14.0, *) {
+                        splitVC.show(detailVC, sender: self)
+                    }
+                    else {
+                        splitVC.showDetailViewController(detailVC, sender: self)
+                    }
+                }
+                return
+            }
+        }
         if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as? DemoViewController {
             nextVC.hidesBottomBarWhenPushed = true
             if let navigationController = self.navigationController as? NavigationController {
@@ -155,33 +172,33 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func setupContainerVC() {
         if let splitViewController = self.splitViewController as? SplitViewController {
-            if self.containerVC != nil {
-                return
-            }
-            if splitViewController.globalIsContainer == true {
-                self.containerVC = splitViewController
+            if let containerVC = splitViewController.containerVC {
+                self.containerVC = containerVC
             }
             else {
-                if splitViewController.masterIsContainer == true {
+                if splitViewController.globalIsContainer == true {
+                    self.containerVC = splitViewController
+                }
+                else if splitViewController.masterIsContainer == true {
                     self.containerVC = splitViewController.viewControllers.first
                 }
                 else {
                     self.containerVC = splitViewController.viewControllers.last
                 }
+                if let nc = splitViewController.viewControllers.first as? UINavigationController {
+                    nc.topViewController?.title = splitViewController.globalIsContainer ? "Split View Controller (Global)": splitViewController.masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
+                }
+                splitViewController.containerVC = self.containerVC
+                splitViewController.detailVC = splitViewController.viewControllers.last
             }
-            if let nc = splitViewController.viewControllers.last as? UINavigationController, let detailVC = nc.topViewController as? DemoTableViewController {
-                detailVC.firstVC = self
-                detailVC.title = "DemoTableViewController"
-            }
+            self.containerVC.popupContentView.popupPresentationStyle = .fullScreen
         }
-        
         else if let tabBarController = self.tabBarController {
             self.containerVC = tabBarController
             if let navigationController = self.navigationController {
                 navigationController.isToolbarHidden = true
             }
         }
-            
         else if let navigationController = self.navigationController as? NavigationController {
             navigationController.isToolbarHidden = true
             if navigationController.toolbarIsShown {
@@ -197,6 +214,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         else {
             self.containerVC = self
+        }
+        if #available(iOS 14.0, *) {
+            if self.containerVC.modalPresentationStyle == .pageSheet {
+                self.containerVC.popupContentView.popupPresentationStyle = .fullScreen
+            }
         }
     }
     
@@ -228,9 +250,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
             if let popupContentView = self.containerVC.popupContentView {
                 popupContentView.popupPresentationDuration = 0.4
-                popupContentView.popupContentSize = CGSize(width: self.view.bounds.width, height: self.view.bounds.height * 0.80)
                 popupContentView.popupCanDismissOnPassthroughViews = true
-                popupContentView.popupIgnoreDropShadowView = false
             }
             self.tableView.reloadData()
         }
@@ -782,21 +802,13 @@ extension FirstTableViewController {
             cell.albumNameLabel.text = subtitles[indexPath.row]
             cell.selectionStyle = .default
 
-            if #available(iOS 11.0, *) {
-                var font = UIFont.systemFont(ofSize: 17, weight: .regular)
-                cell.songNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-                cell.songNameLabel.adjustsFontForContentSizeCategory = true
-                
-                font = UIFont.systemFont(ofSize: 13, weight: .regular)
-                cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-                cell.albumNameLabel.adjustsFontForContentSizeCategory = true
-            }
-            else {
-                cell.songNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
-                cell.albumNameLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
-                cell.songNameLabel.adjustsFontForContentSizeCategory = true
-                cell.albumNameLabel.adjustsFontForContentSizeCategory = true
-            }
+            var font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell.songNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            cell.songNameLabel.adjustsFontForContentSizeCategory = true
+            
+            font = UIFont.systemFont(ofSize: 13, weight: .regular)
+            cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            cell.albumNameLabel.adjustsFontForContentSizeCategory = true
             
             if #available(iOS 13.0, *) {
                 #if compiler(>=5.1)
@@ -966,9 +978,7 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             }
             else {
                 #if !targetEnvironment(macCatalyst)
-                if #available(iOS 11.0, *) {
-                    popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
-                }
+                popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
                 #else
                 popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
                 #endif
@@ -1152,10 +1162,8 @@ extension FirstTableViewController {
             return .zero
         }
         var insets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            if let vc = self.tabBarController?.selectedViewController {
-                insets = vc.view.window?.safeAreaInsets ?? .zero
-            }
+        if let vc = self.tabBarController?.selectedViewController {
+            insets = vc.view.window?.safeAreaInsets ?? .zero
         }
         return UIEdgeInsets(top: 0, left: 0, bottom: self.containerVC.view.frame.height - insets.top - self.containerVC.bottomBar.frame.height - self.containerVC.popupBar.frame.height, right: 0)
     }

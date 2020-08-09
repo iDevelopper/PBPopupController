@@ -44,10 +44,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         } else {
             self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
-        
-        if #available(iOS 11.0, *) {
-            self.collectionView.contentInsetAdjustmentBehavior = .always
-        }
+        self.collectionView.contentInsetAdjustmentBehavior = .always
     }
     
     override func viewDidLayoutSubviews() {
@@ -87,7 +84,10 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.firstVC.images.count
+        if let firstVC = self.firstVC {
+            return firstVC.images.count
+        }
+        return 0
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

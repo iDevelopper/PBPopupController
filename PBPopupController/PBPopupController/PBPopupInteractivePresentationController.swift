@@ -166,6 +166,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.endInteractiveTransition(with: gesture)
                 }
                 self.finish()
+                // FIXME: iOS 14 bug fix
+                self.presentationController.presentingVC.setNeedsStatusBarAppearanceUpdate()
             }
             else {
                 self.cancel()

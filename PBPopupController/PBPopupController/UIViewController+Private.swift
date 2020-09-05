@@ -443,9 +443,6 @@ public extension UIViewController
     internal func pb_popupController() -> PBPopupController! {
         let rv = PBPopupController(containerViewController: self)
         self.popupController = rv
-        if objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) == nil {
-            self.popupContentView = rv.pb_popupContentView()
-        }
         return rv
     }
 

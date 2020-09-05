@@ -492,22 +492,22 @@ extension PBPopupPresentationStyle
         return rv
     }
     
-    internal func pb_popupContentView() -> PBPopupContentView! {
-        let rv = PBPopupContentView()
-        rv.autoresizingMask = []
-        
-        rv.clipsToBounds = true
-        
-        rv.popupController = self
-        
-        rv.preservesSuperviewLayoutMargins = true // default: false
-        rv.contentView.preservesSuperviewLayoutMargins = true  // default: false
-        rv.layer.masksToBounds = true
-        
-        self.containerViewController.popupContentView = rv
-        
-        return rv
-    }
+   internal func pb_popupContentView() -> PBPopupContentView! {
+      let rv = PBPopupContentView()
+      rv.autoresizingMask = []
+      
+      rv.clipsToBounds = true
+      
+      rv.preservesSuperviewLayoutMargins = true // default: false
+      rv.contentView.preservesSuperviewLayoutMargins = true  // default: false
+      rv.layer.masksToBounds = true
+      
+      self.containerViewController.popupContentView = rv
+      
+      rv.popupController = self
+      
+      return rv
+   }
     
     // MARK: - Popup Bar Animation
     

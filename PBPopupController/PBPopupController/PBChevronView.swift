@@ -27,13 +27,7 @@ internal class PBChevronView: UIView {
             self.setState(state, animated: false)
         }
     }
-    var color: UIColor = UIColor.lightGray {
-        didSet {
-            guard self.leftView != nil else { return }
-            self.leftView.backgroundColor = color
-            self.rightView.backgroundColor = color
-        }
-    }
+    
     var width: CGFloat = 5.5 {
         didSet {
             self.setNeedsLayout()
@@ -41,9 +35,11 @@ internal class PBChevronView: UIView {
     }
     var animationDuration: TimeInterval = 0.0
     
+    var effectView: UIVisualEffectView!
+    
     private var leftView: UIView!
     private var rightView: UIView!
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self._commonInit()
@@ -55,30 +51,21 @@ internal class PBChevronView: UIView {
     }
     
     func _commonInit() {
-        self.color = UIColor.lightGray
-        
-        self.leftView = UIView(frame: CGRect.zero)
-        self.leftView.backgroundColor = color
-        self.rightView = UIView(frame: CGRect.zero)
-        self.rightView.backgroundColor = color
-        
-        addSubview(self.leftView)
-        addSubview(self.rightView)
-        
+        self.tintColor = nil
         self.width = _PBChevronDefaultWidth
         self.animationDuration = _PBChevronDefaultAnimationDuration
         self.isUserInteractionEnabled = false
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        if leftView == nil {
+        if self.leftView == nil {
             self.leftView = UIView(frame: CGRect.zero)
-            self.leftView.backgroundColor = color
+            self.leftView.backgroundColor = self.tintColor
             self.rightView = UIView(frame: CGRect.zero)
-            self.rightView.backgroundColor = color
-            addSubview(self.leftView)
-            addSubview(self.rightView)
+            self.rightView.backgroundColor = self.tintColor
+            self.addSubview(self.leftView)
+            self.addSubview(self.rightView)
         }
         var leftFrame: CGRect
         var rightFrame: CGRect
@@ -97,6 +84,14 @@ internal class PBChevronView: UIView {
         self.rightView.center = CGPoint(x: rightFrame.midX, y: bounds.midY)
         self.leftView.layer.cornerRadius = width / 2.0
         self.rightView.layer.cornerRadius = width / 2.0
+    }
+    
+    override func tintColorDidChange() {
+        guard self.leftView != nil else {
+            return
+        }
+        self.leftView.backgroundColor = self.tintColor
+        self.rightView.backgroundColor = self.tintColor
     }
     
     func setState(_ state: PBChevronViewState, animated: Bool) {

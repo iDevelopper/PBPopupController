@@ -9,15 +9,22 @@
 import UIKit
 
 /**
-The view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect.
+ The view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect.
  */
 @objc public class PBPopupContentView: UIView {
     
     // MARK: - Public Properties
     
     /**
+     The popup close button. (read-only).
+     
+     The popup content view controller can place the popup close button within its own view hierarchy, instead of the system-defined placement.
+     */
+    @objc public internal(set) var popupCloseButton: PBPopupCloseButton!
+    
+    /**
      The visual effect view behind the popup content view (read-only, but its effect can be set to nil).
-    */
+     */
     @objc public internal(set) var popupEffectView: UIVisualEffectView!
     
     /**
@@ -70,13 +77,13 @@ The view where is embedded the popupContentViewController's view for presentatio
      */
     @objc public var popupIgnoreDropShadowView: Bool = false
     
-/**
-    The view containing the top subviews (i.e. labels, image view, etc...) of the popup content view controller (optional but needed if bottom module is used). Used to animate the popup presentation. This view will be used for correctly positioning the bottom module during presentation animation.
+    /**
+     The view containing the top subviews (i.e. labels, image view, etc...) of the popup content view controller (optional but needed if bottom module is used). Used to animate the popup presentation. This view will be used for correctly positioning the bottom module during presentation animation.
      */
     @objc public var popupTopModule: UIView?
     
     /**
-    The image view's container view of the popup content view controller (optional). Useful for shadows. Used to animate the popup presentation.
+     The image view's container view of the popup content view controller (optional). Useful for shadows. Used to animate the popup presentation.
      */
     @objc public var popupImageModule: UIView?
     
@@ -84,7 +91,7 @@ The view where is embedded the popupContentViewController's view for presentatio
      The image view of the popup content view controller (optional). Used to animate the popup presentation.
      */
     @objc public var popupImageView: UIImageView?
-
+    
     /**
      The view containing the controls subviews (i.e. playback buttons, volume slider, progress view, etc...) of the popup content view controller (optional). Used to animate the popup presentation. This view will be animated so as to be positioned under the image that grows.
      */
@@ -106,12 +113,12 @@ The view where is embedded the popupContentViewController's view for presentatio
      Required if popupBottomModule is provided. This is the top constraint against the popupTopModule view.
      */
     @objc public var popupBottomModuleTopConstraint: NSLayoutConstraint?
-
+    
     /**
      The popup close button style.
      
      - SeeAldo: `PBPopupCloseButtonStyle`.
-    */
+     */
     @objc public var popupCloseButtonStyle: PBPopupCloseButtonStyle = .default {
         didSet {
             if oldValue != popupCloseButtonStyle {
@@ -133,11 +140,9 @@ The view where is embedded the popupContentViewController's view for presentatio
         }
     }
     
-    @objc public var popupCloseButton: PBPopupCloseButton!
-    
     // The size of the popup content view (see popupContentSize).
     internal var size: CGSize! = .zero
-
+    
     private var popupCloseButtonTopConstraint: NSLayoutConstraint!
     private var popupCloseButtonHorizontalConstraint: NSLayoutConstraint!
     
@@ -178,7 +183,7 @@ The view where is embedded the popupContentViewController's view for presentatio
     
     override public func layoutSubviews() {
         super.layoutSubviews()
-
+        
         if let popupEffectView = self.popupEffectView {
             popupEffectView.frame = self.bounds
         }
@@ -195,38 +200,47 @@ The view where is embedded the popupContentViewController's view for presentatio
         
         self.addSubview(self.popupEffectView)
     }
-
+    
+    private func setupPopupCloseButtonTintColor() {
+        if self.popupCloseButtonStyle == .round {
+            if #available(iOS 13, *) {
+                self.popupCloseButton.tintColor = UIColor.label
+            }
+            else {
+                self.popupCloseButton.tintColor = UIColor.lightGray
+            }
+        }
+        else {
+            if #available(iOS 13, *) {
+                self.popupCloseButton.tintColor = UIColor.systemGray2
+            }
+            else {
+                self.popupCloseButton.tintColor = UIColor.lightGray
+            }
+        }
+    }
+    
     private func setupPopupCloseButton()
     {
         self.popupCloseButton?.removeFromSuperview()
         self.popupCloseButton = nil
         if self.popupCloseButtonStyle != .none {
             self.popupCloseButton = PBPopupCloseButton(style: popupCloseButtonStyle)
-            self.popupCloseButton.alpha = 0.0
+            self.setupPopupCloseButtonTintColor()
             self.popupCloseButton.addTarget(self.popupController, action: #selector(PBPopupController.closePopupContent), for: .touchUpInside)
             self.addSubview(self.popupCloseButton)
             self.popupCloseButton.translatesAutoresizingMaskIntoConstraints = false
+            
             self.popupCloseButton.setContentHuggingPriority(.required, for: .vertical)
             self.popupCloseButton.setContentHuggingPriority(.required, for: .horizontal)
             self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .vertical)
             self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-            self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? 12 : 8)
             
-            // FIXME: Fix for split view controller
-            if let vc = self.popupController.containerViewController, let contentVC = vc.popupContentViewController, contentVC.view.superview != nil {
-                if self.popupCloseButtonStyle == .round {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.leadingAnchor, constant: 12)
-                } else {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.centerXAnchor)
-                }
-            }
-            //
-            else {
-                if self.popupCloseButtonStyle == .round {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12)
-                } else {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0)
-                }
+            self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? 12 : 8)
+            if self.popupCloseButtonStyle == .round {
+                self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12)
+            } else {
+                self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0)
             }
             NSLayoutConstraint.activate([popupCloseButtonTopConstraint, popupCloseButtonHorizontalConstraint])
         }
@@ -234,11 +248,13 @@ The view where is embedded the popupContentViewController's view for presentatio
     
     internal func updatePopupCloseButtonPosition()
     {
-        // FIXME: Fix for split view controller
-        if #available(iOS 14.0, *) {
-            self.setupPopupCloseButton()
+        if self.popupCloseButton.superview != self {
+            let size = self.popupCloseButton.sizeThatFits(.zero)
+            self.popupCloseButton.translatesAutoresizingMaskIntoConstraints = true
+            self.popupCloseButton.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+            return
         }
-        //
+        
         if self.popupCloseButtonStyle != .none {
             let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
@@ -255,16 +271,32 @@ The view where is embedded the popupContentViewController's view for presentatio
                     self.popupCloseButtonTopConstraint.constant += possibleBar!.bounds.height
                 }
                 else {
-                    self.popupCloseButtonTopConstraint.constant += 6.0
+                    self.popupCloseButtonTopConstraint.constant = possibleBar!.center.y - self.popupCloseButton.frame.height / 2
                 }
             }
-            
+            // FIXME: Fix for split view controller
+            if let vc = self.popupController.containerViewController, let contentVC = vc.popupContentViewController, contentVC.view.superview != nil {
+                NSLayoutConstraint.deactivate([self.popupCloseButtonHorizontalConstraint])
+                if self.popupCloseButtonStyle == .round {
+                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.leadingAnchor, constant: 12)
+                } else {
+                    if possibleBar != nil {
+                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: possibleBar!.layoutMarginsGuide.centerXAnchor)
+                    }
+                    else {
+                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.centerXAnchor)
+                    }
+                }
+                NSLayoutConstraint.activate([popupCloseButtonHorizontalConstraint])
+            }
+            //
             if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
                 self.setNeedsUpdateConstraints()
                 
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
                     self.layoutIfNeeded()
                 }, completion: nil)
+                
             }
         }
     }
@@ -282,13 +314,25 @@ The view where is embedded the popupContentViewController's view for presentatio
         }
         return nil
     }
+    
+    /**
+     :nodoc:
+     */
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let view = super.hitTest(point, with: event)
+        let frame = self.popupCloseButton.convert(self.popupCloseButton.bounds, to: self)
+        if frame.insetBy(dx: -20, dy: -20).contains(point) {
+            return self.popupCloseButton
+        }
+        return view
+    }
 }
 
 extension PBPopupContentView
 {
-/**
- Custom views For Debug View Hierarchy Names
- */
+    /**
+     Custom views For Debug View Hierarchy Names
+     */
     internal class PBPopupEffectView: UIVisualEffectView {
         internal override init(effect: UIVisualEffect?) {
             super.init(effect: effect)

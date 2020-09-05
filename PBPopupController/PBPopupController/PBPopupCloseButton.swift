@@ -81,7 +81,7 @@ extension PBPopupCloseButtonStyle
      - Note: Although this property is read-only, its own properties are read/write. Use these properties to configure the appearance and behavior of the button’s background view.
      */
     @objc public private(set) var backgroundView: UIVisualEffectView?
-
+    
     // MARK: - Private Properties
     
     private var effectView: UIVisualEffectView!
@@ -119,7 +119,7 @@ extension PBPopupCloseButtonStyle
         
         self.commonSetup()
     }
-
+    
     private func commonSetup() {
         if self.style == .round {
             self.setupForRoundButton()
@@ -129,13 +129,19 @@ extension PBPopupCloseButtonStyle
         accessibilityLabel = NSLocalizedString("Close", comment: "")
         accessibilityHint = NSLocalizedString("Double tap to close popup content", comment: "")
     }
-
+    
     private func setupForRoundButton() {
-        self.effectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        self.effectView!.isUserInteractionEnabled = false
-        self.addSubview(self.effectView!)
-
-
+        var blurStyle: UIBlurEffect.Style;
+        if #available(iOS 13, *) {
+            blurStyle = .systemChromeMaterial
+        }
+        else {
+            blurStyle = .extraLight
+        }
+        self.effectView = UIVisualEffectView(effect: UIBlurEffect(style: blurStyle))
+        self.effectView.isUserInteractionEnabled = false
+        self.addSubview(self.effectView)
+        
         let highlightEffectView = UIVisualEffectView(effect: UIVibrancyEffect(blurEffect: self.effectView.effect as! UIBlurEffect))
         highlightEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
@@ -144,26 +150,34 @@ extension PBPopupCloseButtonStyle
         self.highlightView.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
         self.highlightView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.highlightView.alpha = 0.0
+        
         highlightEffectView.contentView.addSubview(self.highlightView)
-        self.effectView!.contentView.addSubview(highlightEffectView)
-
-        let image = UIImage(named: "DismissChevron", in: Bundle(for: self.classForCoder), compatibleWith: nil)
-        self.setImage(image, for: .normal)
-
+        self.effectView.contentView.addSubview(highlightEffectView)
+        
         self.addTarget(self, action: #selector(didTouchDown(_:)), for: .touchDown)
         self.addTarget(self, action: #selector(didTouchDragExit(_:)), for: .touchDragExit)
         self.addTarget(self, action: #selector(didTouchDragEnter(_:)), for: .touchDragEnter)
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpInside)
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpOutside)
         self.addTarget(self, action: #selector(didTouchCancel(_:)), for: .touchCancel)
-
-        self.layer.shadowColor = UIColor.black.cgColor
-        self.layer.shadowOpacity = 0.1
-        self.layer.shadowRadius = 3.0
-        self.layer.shadowOffset = CGSize(width: 0, height: 0)
-        self.layer.masksToBounds = false
         
-        self.setTitleColor(UIColor.black, for: .normal)
+        //self.layer.shadowColor = UIColor.black.cgColor
+        //self.layer.shadowOpacity = 0.1
+        //self.layer.shadowRadius = 3.0
+        //self.layer.shadowOffset = CGSize(width: 0, height: 0)
+        //self.layer.masksToBounds = false
+        
+        self.setTitleColor(self.tintColor, for: .normal)
+        
+        if #available(iOS 13.0, *) {
+            let configuration = UIImage.SymbolConfiguration(pointSize: 15, weight: .heavy, scale: .small)
+            let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
+            self.setImage(image, for: .normal)
+        }
+        else {
+            let image = UIImage(named: "DismissChevron", in: Bundle(for: self.classForCoder), compatibleWith: nil)
+            self.setImage(image, for: .normal)
+        }
     }
     
     private func setupForChevronButton() {
@@ -200,14 +214,20 @@ extension PBPopupCloseButtonStyle
         
         if let effectView = self.effectView {
             self.sendSubviewToBack(effectView)
-            let minSideSize: CGFloat = min(self.bounds.size.width, self.bounds.size.height)
             effectView.frame = self.bounds
-            let maskLayer = CAShapeLayer()
-            maskLayer.rasterizationScale = UIScreen.main.nativeScale
-            maskLayer.shouldRasterize = true
-            let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
-            maskLayer.path = path
-            effectView.layer.mask = maskLayer
+            
+            let minSideSize: CGFloat = min(self.bounds.size.width, self.bounds.size.height)
+            
+            //let maskLayer = CAShapeLayer()
+            //maskLayer.rasterizationScale = UIScreen.main.nativeScale
+            //maskLayer.shouldRasterize = true
+            //let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
+            //maskLayer.path = path
+            //effectView.layer.mask = maskLayer
+            
+            effectView.clipsToBounds = true
+            effectView.layer.cornerRadius = minSideSize / 2
+            
             var imageFrame: CGRect? = self.imageView?.frame
             imageFrame?.origin.y += 0.5
             self.imageView?.frame = imageFrame ?? CGRect.zero
@@ -223,7 +243,14 @@ extension PBPopupCloseButtonStyle
         }
         return CGSize(width: 42.0, height: 15.0)
     }
-
+    
+    /**
+     :nodoc:
+     */
+    public override func tintColorDidChange() {
+        self.setTitleColor(self.tintColor, for: .normal)
+    }
+    
     // MARK: - Public Methods
     
     @objc public func setButtonStateStationary() {

@@ -29,10 +29,6 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
     if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || [controller isKindOfClass:UISplitViewController.class] || controller.childViewControllers.count > 0)
     {
         [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop) {
-            if ([obj isKindOfClass:[UINavigationController class]]) {
-                _LNPopupSupportFixInsetsForViewController_modern(obj, layout, additionalSafeAreaInsets);
-                return;
-            }
             UIEdgeInsets oldInsets = obj.additionalSafeAreaInsets;
             UIEdgeInsets insets = oldInsets;
             if (oldInsets.top == 0 || additionalSafeAreaInsets.top < 0) {
@@ -42,7 +38,7 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
             if (oldInsets.bottom < additionalSafeAreaInsets.bottom + controller.additionalSafeAreaInsetsBottomForContainer || additionalSafeAreaInsets.bottom < 0) {
                 insets.bottom += (additionalSafeAreaInsets.bottom + (additionalSafeAreaInsets.bottom == 0 ? controller.additionalSafeAreaInsetsBottomForContainer : 0));
             }
-            if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
+            if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO && insets.bottom >= 0)
             {
                 obj.additionalSafeAreaInsets = insets;
             }

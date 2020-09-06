@@ -18,3 +18,9 @@ void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOO
 - (void)_configurePopupBarFromBottomBar;
 
 @end
+
+@interface UINavigationController (Private)
+
+- (void)pb_viewDidLayoutSubviews;
+
+@end

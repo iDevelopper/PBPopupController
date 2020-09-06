@@ -201,6 +201,12 @@ public extension UINavigationController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
+        originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewDidLayoutSubviews))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            //method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
         //_setToolbarHidden:edge:duration:
         var selName = _PBPopupDecodeBase64String(base64String: sTHedBase64)!
         var selector = NSSelectorFromString(selName)
@@ -280,14 +286,19 @@ internal extension UINavigationController
             height += tabBarController.defaultFrameForBottomBar().height
         }
         
-        let insets = self.insetsForBottomBar()
+        // FIXME: iOS 14 beta 6 bug (frame animation fails)
+        //let insets = self.insetsForBottomBar()
 
         if height > 0.0 {
             if hidden == false {
-                self.toolbar.frame.origin.y = self.view.bounds.height - height - insets.bottom
+                //self.toolbar.frame.origin.y = self.view.bounds.height - height - insets.bottom
+                self.toolbar.transform = .identity
             }
             else {
-                self.toolbar.frame.origin.y = self.view.bounds.height
+                //self.toolbar.frame.origin.y = self.view.bounds.height
+                let fromY = self.toolbar.frame.minY
+                let toY = self.view.bounds.height
+                self.toolbar.transform = self.toolbar.transform.translatedBy(x: 0, y: toY - fromY)
             }
             
             if let tabBarController = self.tabBarController {
@@ -523,14 +534,19 @@ internal extension UIViewController
     @objc func _animateBottomBarToHidden( _ hidden: Bool) {
         let height = self.popupController.bottomBarHeight
         
-        let insets = self.insetsForBottomBar()
+        // FIXME: iOS 14 beta 6 bug (toolbar frame animation fails)
+        //let insets = self.insetsForBottomBar()
         
         if height > 0.0 {
             if hidden == false {
-                self.bottomBar.frame.origin.y = self.view.bounds.height - height - insets.bottom
+                //self.bottomBar.frame.origin.y = self.view.bounds.height - height - insets.bottom
+                self.bottomBar.transform = .identity
             }
             else {
-                self.bottomBar.frame.origin.y = self.view.bounds.height
+                //self.bottomBar.frame.origin.y = self.view.bounds.height
+                let fromY = self.bottomBar.frame.minY
+                let toY = self.view.bounds.height
+                self.bottomBar.transform = self.bottomBar.transform.translatedBy(x: 0, y: toY - fromY)
             }
         }
     }

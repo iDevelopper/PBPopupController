@@ -172,6 +172,15 @@ NSString *_PBPopupDecodeBase64String(NSString* base64String)
     });
 }
 
+- (void)pb_viewDidLayoutSubviews
+{
+    struct objc_super superInfo = {
+        self,
+        [UIViewController class]
+    };
+    void (*super_call)(struct objc_super*, SEL) = (void (*)(struct objc_super*, SEL))objc_msgSendSuper;
+    super_call(&superInfo, @selector(viewDidLayoutSubviews));
+}
 @end
 
 /*

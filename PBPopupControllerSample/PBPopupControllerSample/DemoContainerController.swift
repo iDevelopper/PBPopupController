@@ -13,6 +13,7 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     
     let useConstraintsForBottomBar: Bool = false
     var constraintsForBottomBar: [NSLayoutConstraint]!
+    var isFrameSetted: Bool = false
     
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var bottomBarView: UIToolbar!
@@ -93,7 +94,10 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
             self.setupConstraintsForBottomBar()
         }
         else {
-            self.setupFrameForBottomBar()
+            if !self.isFrameSetted {
+                self.setupFrameForBottomBar()
+                self.isFrameSetted.toggle()
+            }
         }
     }
 

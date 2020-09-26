@@ -380,7 +380,6 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-
         #else
         var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
         var selector = NSSelectorFromString(selName)
@@ -436,16 +435,20 @@ public extension UIViewController
     
     //_viewSafeAreaInsetsFromScene
     @objc private func _vSAIFS() -> UIEdgeInsets {
-        if self.popupContainerViewController != nil {
-            if #available(iOS 14.0, *) {
-                if let splitViewController = self.popupContainerViewController.splitViewController, splitViewController.viewControllers.firstIndex(of: self.popupContainerViewController) == 0 {
-                    return self.popupContainerViewController.view.safeAreaInsets
+        if let vc = self.popupContainerViewController {
+            var insets = self.popupContainerViewController._vSAIFS()
+            let containerInsets = self.popupContainerViewController.view.safeAreaInsets
+            if let svc = vc.splitViewController, containerInsets.left > 0 {
+                if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
+                    insets.left = containerInsets.left
                 }
-                return self.popupContainerViewController.view.superview?.safeAreaInsets ?? .zero
             }
-            else {
-                return self.popupContainerViewController.view.superview?.safeAreaInsets ?? .zero
+            let additionalInsets = _PBPopupSafeAreaInsets(self.popupContainerViewController)
+            var finalInsets = UIEdgeInsets(top: insets.top, left: insets.left, bottom: min(insets.bottom, additionalInsets.bottom), right: insets.right)
+            if self is UINavigationController {
+                finalInsets.top = 0
             }
+            return finalInsets
         }
         let insets = self._vSAIFS()
         return insets
@@ -462,7 +465,7 @@ public extension UIViewController
         self.pb_addChild(viewController)
         
         if self.additionalSafeAreaInsetsBottomForContainer > 0 {
-            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsetsBottomForContainer, right: 0)
             _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
         }
         

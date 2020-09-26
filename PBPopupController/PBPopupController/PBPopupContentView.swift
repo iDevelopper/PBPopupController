@@ -237,12 +237,7 @@ import UIKit
             self.popupCloseButton.setContentCompressionResistancePriority(.required, for: .horizontal)
             
             self.popupCloseButtonTopConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: self.topAnchor, constant: self.popupCloseButtonStyle == .round ? 12 : 8)
-            if self.popupCloseButtonStyle == .round {
-                self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 12)
-            } else {
-                self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0)
-            }
-            NSLayoutConstraint.activate([popupCloseButtonTopConstraint, popupCloseButtonHorizontalConstraint])
+            NSLayoutConstraint.activate([popupCloseButtonTopConstraint])
         }
     }
     
@@ -274,29 +269,22 @@ import UIKit
                     self.popupCloseButtonTopConstraint.constant = possibleBar!.center.y - self.popupCloseButton.frame.height / 2
                 }
             }
-            // FIXME: Fix for split view controller
-            if let vc = self.popupController.containerViewController, let contentVC = vc.popupContentViewController, contentVC.view.superview != nil {
-                NSLayoutConstraint.deactivate([self.popupCloseButtonHorizontalConstraint])
+            
+            if let vc = self.popupController.containerViewController.popupContentViewController {
                 if self.popupCloseButtonStyle == .round {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.leadingAnchor, constant: 12)
+                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor, constant: 12)
                 } else {
-                    if possibleBar != nil {
-                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: possibleBar!.layoutMarginsGuide.centerXAnchor)
-                    }
-                    else {
-                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: contentVC.view.layoutMarginsGuide.centerXAnchor)
-                    }
+                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
                 }
                 NSLayoutConstraint.activate([popupCloseButtonHorizontalConstraint])
             }
-            //
+            
             if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
                 self.setNeedsUpdateConstraints()
                 
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
                     self.layoutIfNeeded()
                 }, completion: nil)
-                
             }
         }
     }

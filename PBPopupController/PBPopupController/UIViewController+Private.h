@@ -13,6 +13,8 @@
 
 @interface UIViewController (Private)
 
+UIEdgeInsets _PBPopupSafeAreaInsets(id self);
+
 void _LNPopupSupportFixInsetsForViewController(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets);
 
 - (void)_configurePopupBarFromBottomBar;

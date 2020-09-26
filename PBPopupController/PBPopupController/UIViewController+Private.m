@@ -14,6 +14,8 @@
 //_updateContentOverlayInsetsForSelfAndChildren
 static NSString *const upCoOvBase64 = @"X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRm9yU2VsZkFuZENoaWxkcmVu";
 
+static const void* LNPopupAdditionalSafeAreaInsets = &LNPopupAdditionalSafeAreaInsets;
+
 @implementation UIViewController (Private)
 
 + (void)load
@@ -24,40 +26,51 @@ static NSString *const upCoOvBase64 = @"X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRm9y
     });
 }
 
+void _PBSetPopupSafeAreaInsets(id self, UIEdgeInsets additionalSafeAreaInsets)
+{
+    objc_setAssociatedObject(self, LNPopupAdditionalSafeAreaInsets, [NSValue valueWithUIEdgeInsets:additionalSafeAreaInsets], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+UIEdgeInsets _PBPopupSafeAreaInsets(id self)
+{
+    return [objc_getAssociatedObject(self, LNPopupAdditionalSafeAreaInsets) UIEdgeInsetsValue];
+}
+
 static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewController* controller, BOOL layout, UIEdgeInsets additionalSafeAreaInsets) API_AVAILABLE(ios(11.0))
 {
-    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || [controller isKindOfClass:UISplitViewController.class] || controller.childViewControllers.count > 0)
+    if([controller isKindOfClass:UITabBarController.class] || [controller isKindOfClass:UINavigationController.class] || (controller.childViewControllers.count > 0 && ![controller isKindOfClass:UISplitViewController.class]))
     {
-        [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop) {
-            UIEdgeInsets oldInsets = obj.additionalSafeAreaInsets;
+        [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop)
+         {
+            UIEdgeInsets oldInsets = _PBPopupSafeAreaInsets(controller);
             UIEdgeInsets insets = oldInsets;
-            if (oldInsets.top == 0 || additionalSafeAreaInsets.top < 0) {
+            if (oldInsets.top != additionalSafeAreaInsets.top) {
                 insets.top += additionalSafeAreaInsets.top;
-                
             }
-            if (oldInsets.bottom < additionalSafeAreaInsets.bottom + controller.additionalSafeAreaInsetsBottomForContainer || additionalSafeAreaInsets.bottom < 0) {
-                insets.bottom += (additionalSafeAreaInsets.bottom + (additionalSafeAreaInsets.bottom == 0 ? controller.additionalSafeAreaInsetsBottomForContainer : 0));
+            if (oldInsets.bottom != additionalSafeAreaInsets.bottom) {
+                insets.bottom += additionalSafeAreaInsets.bottom;
             }
-            if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO && insets.bottom >= 0)
+            if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
             {
                 obj.additionalSafeAreaInsets = insets;
+                _PBSetPopupSafeAreaInsets(controller, insets);
             }
         }];
     }
     else
     {
-        UIEdgeInsets oldInsets = controller.additionalSafeAreaInsets;
+        UIEdgeInsets oldInsets = _PBPopupSafeAreaInsets(controller);
         UIEdgeInsets insets = oldInsets;
-        if (oldInsets.top == 0 || additionalSafeAreaInsets.top < 0) {
+        if (oldInsets.top != additionalSafeAreaInsets.top) {
             insets.top += additionalSafeAreaInsets.top;
         }
-        if (oldInsets.bottom == 0 || additionalSafeAreaInsets.bottom < 0) {
+        if (oldInsets.bottom != additionalSafeAreaInsets.bottom) {
             insets.bottom += additionalSafeAreaInsets.bottom;
-            
         }
         if (UIEdgeInsetsEqualToEdgeInsets(oldInsets, insets) == NO)
         {
             controller.additionalSafeAreaInsets = insets;
+            _PBSetPopupSafeAreaInsets(controller, insets);
         }
     }
     

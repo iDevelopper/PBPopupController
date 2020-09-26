@@ -62,8 +62,10 @@ internal class PBChevronView: UIView {
         if self.leftView == nil {
             self.leftView = UIView(frame: CGRect.zero)
             self.leftView.backgroundColor = self.tintColor
+            self.leftView.isUserInteractionEnabled = false
             self.rightView = UIView(frame: CGRect.zero)
             self.rightView.backgroundColor = self.tintColor
+            self.rightView.isUserInteractionEnabled = false
             self.addSubview(self.leftView)
             self.addSubview(self.rightView)
         }

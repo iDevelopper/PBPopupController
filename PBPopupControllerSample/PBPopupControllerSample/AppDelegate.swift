@@ -13,6 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var rootViewController: UIViewController!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -70,3 +71,45 @@ extension AppDelegate {
     }
 }
 
+extension AppDelegate {
+    func replaceRootViewControllerWith(controller: UIViewController) {
+        var rootVC:UIViewController? = nil
+        if #available(iOS 13.0, *) {
+            for window in UIApplication.shared.windows {
+                if window.isKeyWindow {
+                    rootVC = window.rootViewController
+                    window.rootViewController = controller
+                }
+            }
+        } else {
+            rootVC = self.window?.rootViewController
+            self.window?.rootViewController = controller
+        }
+        if let nc = rootVC as? UINavigationController, let _ = nc.topViewController as? MainTableViewController {
+            self.rootViewController = rootVC
+        }
+    }
+    
+    func getRootViewController() -> UIViewController! {
+        var rootVC:UIViewController? = nil
+        if #available(iOS 13.0, *) {
+            for window in UIApplication.shared.windows {
+                if window.isKeyWindow {
+                    rootVC = window.rootViewController
+                }
+            }
+        } else {
+            rootVC = self.window?.rootViewController
+        }
+        return rootVC
+    }
+    
+    func restoreInitialRootViewControllerIfNeeded() {
+        guard let rootViewController = self.rootViewController else {
+            return
+        }
+        if let rootVC = self.getRootViewController(), rootVC != rootViewController {
+            self.replaceRootViewControllerWith(controller: rootViewController)
+        }
+    }
+}

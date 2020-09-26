@@ -15,6 +15,15 @@ class PopupContentViewController: UIViewController {
 
     var isPlaying: Bool = false
     
+    var backgroundView: UIImageView! {
+        didSet {
+            backgroundView.contentMode = .scaleAspectFill
+            backgroundView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+    }
+    
+    var visualEffectView: UIVisualEffectView!
+    
     @IBOutlet weak var imageModule: UIView! {
         didSet {
             if let containerVC = self.popupContainerViewController {
@@ -218,6 +227,7 @@ class PopupContentViewController: UIViewController {
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+        
         #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
@@ -227,6 +237,57 @@ class PopupContentViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+
+        // Let's add a vibrancy effect to the popup close button.
+        
+        if self.visualEffectView != nil {
+            return
+        }
+        guard let backgroundView = self.backgroundView else { return }
+        
+        backgroundView.frame = self.view.bounds
+        self.view.insertSubview(backgroundView, at: 0)
+
+        backgroundView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0).isActive = true
+        backgroundView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        backgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+        backgroundView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        
+        var blurEffect: UIBlurEffect!
+        
+        if #available(iOS 13.0, *) {
+            #if compiler(>=5.1)
+            blurEffect = UIBlurEffect(style: .systemMaterial)
+            #else
+            blurEffect = UIBlurEffect(style: .extraLight)
+            #endif
+        }
+        else {
+            blurEffect = UIBlurEffect(style: .extraLight)
+        }
+
+        self.visualEffectView = UIVisualEffectView(effect: blurEffect)
+        self.view.insertSubview(self.visualEffectView, at: 1)
+        self.visualEffectView.translatesAutoresizingMaskIntoConstraints = false
+        self.visualEffectView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 0).isActive = true
+        self.visualEffectView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        self.visualEffectView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+        self.visualEffectView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+
+        guard let containerVC = self.popupContainerViewController else { return }
+        
+        let vibEffect = UIVibrancyEffect(blurEffect: self.visualEffectView.effect as! UIBlurEffect)
+        let vibrancyEffectView = UIVisualEffectView(effect: vibEffect)
+        vibrancyEffectView.contentView.addSubview(containerVC.popupContentView.popupCloseButton)
+        self.visualEffectView.contentView.addSubview(vibrancyEffectView)
+        let size = containerVC.popupContentView.popupCloseButton.sizeThatFits(.zero)
+        
+        vibrancyEffectView.translatesAutoresizingMaskIntoConstraints = false
+        vibrancyEffectView.topAnchor.constraint(equalTo: self.visualEffectView.topAnchor, constant: 20).isActive = true
+        vibrancyEffectView.centerXAnchor.constraint(equalTo: self.visualEffectView.centerXAnchor, constant: 0).isActive = true
+        vibrancyEffectView.widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        vibrancyEffectView.heightAnchor.constraint(equalToConstant: size.height).isActive = true
     }
     
     override func viewDidLayoutSubviews() {

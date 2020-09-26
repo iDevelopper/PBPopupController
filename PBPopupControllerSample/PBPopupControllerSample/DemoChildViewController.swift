@@ -40,6 +40,9 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
     @IBAction func dismiss(_ sender: Any) {
         self.dismissPopup()
         self.performSegue(withIdentifier: "unwindToHome", sender: self)
+
+        let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.restoreInitialRootViewControllerIfNeeded()
     }
     
     // MARK: - Actions

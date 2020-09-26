@@ -28,4 +28,15 @@ class NavigationController: UINavigationController {
             self.topViewController?.title = self.title
         }
     }
+    
+    // MARK: - Status bar
+    
+    /*
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        if popupContentView.popupPresentationStyle != .deck {
+            return .default
+        }
+        return .lightContent
+    }
+    */
 }

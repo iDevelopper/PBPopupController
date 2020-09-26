@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3205F6A1250B4D82006EBC9F /* DemoViewControllerNoChild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3205F6A0250B4D81006EBC9F /* DemoViewControllerNoChild.swift */; };
 		32080BC82087130E0017FECD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32080BC72087130E0017FECD /* AppDelegate.swift */; };
 		32080BCD2087130E0017FECD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32080BCB2087130E0017FECD /* Main.storyboard */; };
 		32080BCF2087130F0017FECD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 32080BCE2087130F0017FECD /* Assets.xcassets */; };
@@ -74,6 +75,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3205F6A0250B4D81006EBC9F /* DemoViewControllerNoChild.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoViewControllerNoChild.swift; sourceTree = "<group>"; };
 		32080BC42087130E0017FECD /* PBPopupControllerSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PBPopupControllerSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		32080BC72087130E0017FECD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		32080BCC2087130E0017FECD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				32E52FE620DA787400A6A11E /* MainTableViewController.swift */,
 				32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */,
 				3268B822219C2E0E00AC66EF /* DemoViewController.swift */,
+				3205F6A0250B4D81006EBC9F /* DemoViewControllerNoChild.swift */,
 				32080BD9208714190017FECD /* PopupContentViewController.swift */,
 				324639772196DB590036E3B3 /* PopupContentTableViewController.swift */,
 				32080C572089C20E0017FECD /* DemoTableViewController.swift */,
@@ -361,6 +364,7 @@
 				3246397A2197F96D0036E3B3 /* PlayerTableViewCell.swift in Sources */,
 				32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */,
 				32560E7623F13B6000586DB1 /* DemoChildViewController_iPad.swift in Sources */,
+				3205F6A1250B4D82006EBC9F /* DemoViewControllerNoChild.swift in Sources */,
 				32E0EC2F217EED03009C3DA9 /* ButtonTableViewCell.swift in Sources */,
 				32080C582089C20E0017FECD /* DemoTableViewController.swift in Sources */,
 				32E52FE720DA787400A6A11E /* MainTableViewController.swift in Sources */,

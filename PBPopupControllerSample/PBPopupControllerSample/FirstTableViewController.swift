@@ -126,14 +126,16 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         if let splitVC = self.splitViewController as? SplitViewController {
             if self.traitCollection.horizontalSizeClass == .compact {
                 if let detailVC = splitVC.detailVC {
-                    if #available(iOS 14.0, *) {
-                        splitVC.show(detailVC, sender: self)
-                    }
-                    else {
-                        splitVC.showDetailViewController(detailVC, sender: self)
+                    if detailVC != self.navigationController {
+                        if #available(iOS 14.0, *) {
+                            splitVC.show(detailVC, sender: self)
+                        }
+                        else {
+                            splitVC.showDetailViewController(detailVC, sender: self)
+                        }
+                        return
                     }
                 }
-                return
             }
         }
         if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as? DemoViewController {
@@ -166,6 +168,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             
             self.performSegue(withIdentifier: "unwindToHome", sender: sender)
         }
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.restoreInitialRootViewControllerIfNeeded()
     }
     
     // MARK: - Setups
@@ -541,6 +545,17 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     // MARK: - Popup Bar Actions
     
     @IBAction func presentPopupBar(_ sender: Any) {
+        // Detail: UISplitiewController -> UINavigationController -> UINavigationController -> Demo -> First
+        //if let nc = self.navigationController, nc.splitViewController != nil, nc != self.containerVC {
+        //    return
+        //}
+        if #available(iOS 14.0, *) {
+            if let svc = self.splitViewController, svc.isCollapsed {
+                if let containerVC = self.containerVC, !(containerVC is UISplitViewController), let nc = self.navigationController, nc != containerVC {
+                    return
+                }
+            }
+        }
         self.commonSetup()
         self.setupPopupBar()
         self.setupCustomPopupBar()
@@ -622,6 +637,7 @@ extension FirstTableViewController {
         return result
     }
     
+    #if !targetEnvironment(macCatalyst)
     override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
         let result = super.canPerformUnwindSegueAction(action, from: fromViewController, withSender: sender)
         
@@ -635,6 +651,7 @@ extension FirstTableViewController {
         
         return result
     }
+    #endif
     
     override func dismiss(animated: Bool, completion: (() -> Void)?) {
         print("\(self) \(#function)")
@@ -881,7 +898,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
         #if targetEnvironment(macCatalyst)
         if let tabBarController = self.tabBarController, self.navigationController == nil {
             if tabBarController.modalPresentationStyle == .fullScreen {
-                return false
+                // TODO: false?
+                return true
             }
             return true
         }
@@ -974,13 +992,16 @@ extension FirstTableViewController: PBPopupControllerDelegate {
                 popupContentViewController.view.alpha = 1 - alpha
                 #else
                 popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
+                popupContentViewController.view.alpha = 1 - alpha
                 #endif
             }
             else {
                 #if !targetEnvironment(macCatalyst)
                 popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
+                popupContentViewController.view.alpha = 1 - alpha
                 #else
                 popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
+                popupContentViewController.view.alpha = 1 - alpha
                 #endif
             }
         }

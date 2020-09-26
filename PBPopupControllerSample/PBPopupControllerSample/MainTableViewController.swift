@@ -10,8 +10,8 @@ import UIKit
 
 class MainTableViewController: UITableViewController {
     
-    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller", "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container iPad"]
-    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad"]
+    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller (With Child)", "View Controller (Without Child)" , "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container (iPad Only)"]
+    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad"]
 
     var presentationStyle: UIModalPresentationStyle!
     
@@ -105,32 +105,41 @@ class MainTableViewController: UITableViewController {
             }
             #endif
             self.present(vc, animated: true, completion: nil)
+            //for internal tests (comment the line above)
+            //let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+            //appDelegate.replaceRootViewControllerWith(controller: vc)
+            //vc.popupContentView.popupIgnoreDropShadowView = true
         }
     }
 
     func viewControllerForIndexPath(_ indexPath: IndexPath) -> UIViewController? {
-        if indexPath.row == 9 {
+        if indexPath.row == 10 {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
                 vc.title = items[indexPath.row]
                 return vc
             }
         }
-        else if indexPath.row == 8 {
+        else if indexPath.row == 9 {
             let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
             vc.title = items[indexPath.row]
+            return vc
+        }
+        else if indexPath.row == 5 {
+            let vc = DemoViewControllerNoChild()
+            vc.view.backgroundColor = .white
             return vc
         }
         else if let vc = self.storyboard?.instantiateViewController(withIdentifier: self.identifiers[indexPath.row]) {
             if vc is UISplitViewController {
                 let svc = vc as! SplitViewController
-                if indexPath.row == 5 { // master
+                if indexPath.row == 6 { // master
                     svc.masterIsContainer = true
                 }
-                if indexPath.row == 6 { // detail
+                if indexPath.row == 7 { // detail
                     svc.masterIsContainer = false
                 }
-                if indexPath.row == 7 { // global
+                if indexPath.row == 8 { // global
                     svc.globalIsContainer = true
                 }
             }

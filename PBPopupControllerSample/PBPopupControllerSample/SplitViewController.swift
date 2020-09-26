@@ -19,18 +19,20 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     override func awakeFromNib() {
         super.awakeFromNib()
         self.delegate = self
-        preferredDisplayMode = .allVisible
-        if #available(iOS 14.0, *) {
-            preferredSplitBehavior = .tile
-        }
+        self.preferredDisplayMode = .allVisible
+        self.preferredPrimaryColumnWidthFraction = 0.4
         #if targetEnvironment(macCatalyst)
             self.primaryBackgroundStyle = .sidebar
+        #else
+        if #available(iOS 14.0, *) {
+            self.preferredSplitBehavior = .tile
+        }
         #endif
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         if #available(iOS 14.0, *) {
             if self.viewControllers.count > 1 {
                 if let vc1 = viewControllers[0] as? UINavigationController, let vc2 = viewControllers[1] as? UINavigationController {
@@ -56,4 +58,11 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         }
         return globalIsContainer ? true: masterIsContainer ? true : false
     }
+    
+    #if !targetEnvironment(macCatalyst)
+    @available(iOS 14.0, *)
+    func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+        return globalIsContainer ? .primary: masterIsContainer ? .primary : .secondary
+    }
+    #endif
 }

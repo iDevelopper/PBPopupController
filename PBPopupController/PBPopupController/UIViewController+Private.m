@@ -42,7 +42,7 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
     {
         [controller.childViewControllers enumerateObjectsUsingBlock:^(__kindof UIViewController * __nonnull obj, NSUInteger idx, BOOL * __nonnull stop)
          {
-            UIEdgeInsets oldInsets = _PBPopupSafeAreaInsets(controller);
+            UIEdgeInsets oldInsets = _PBPopupSafeAreaInsets(obj);
             UIEdgeInsets insets = oldInsets;
             if (oldInsets.top != additionalSafeAreaInsets.top) {
                 insets.top += additionalSafeAreaInsets.top;
@@ -54,6 +54,7 @@ static inline void _LNPopupSupportFixInsetsForViewController_modern(UIViewContro
             {
                 obj.additionalSafeAreaInsets = insets;
                 _PBSetPopupSafeAreaInsets(controller, insets);
+                _PBSetPopupSafeAreaInsets(obj, insets);
             }
         }];
     }

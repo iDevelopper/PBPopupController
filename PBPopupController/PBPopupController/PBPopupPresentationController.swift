@@ -633,13 +633,18 @@ extension PBPopupPresentationController
                 self.backingView.layer.cornerCurve = .continuous
             }
             var cornerRadius: CGFloat = 0.0
+            var cornerRadiusForClose: CGFloat = 0.0
+            
             let popupIgnoreDropShadowView = self.popupContentView.popupIgnoreDropShadowView
             self.popupContentView.popupIgnoreDropShadowView = false
             if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
                 if #available(iOS 13.0, *) {
                     self.backingView.layer.cornerCurve = dropShadowView.layer.cornerCurve
                 }
-                cornerRadius = dropShadowView.layer.cornerRadius
+                if open == false {
+                    cornerRadius = dropShadowView.layer.cornerRadius
+                    cornerRadiusForClose = dropShadowView.layer.cornerRadius
+                }
             }
             self.popupContentView.popupIgnoreDropShadowView = popupIgnoreDropShadowView
             
@@ -651,10 +656,10 @@ extension PBPopupPresentationController
                 #endif
             }
             if !animated {
-                self.backingView.setupCornerRadiusTo(open ? cornerRadius : 0.0, rect: self.backingView.bounds)
+                self.backingView.setupCornerRadiusTo(open ? cornerRadius : cornerRadiusForClose, rect: self.backingView.bounds)
             }
             else {
-                self.backingView.updateCornerRadiusTo(open ? cornerRadius : 0.0, rect: self.backingView.bounds)
+                self.backingView.updateCornerRadiusTo(open ? cornerRadius : cornerRadiusForClose, rect: self.backingView.bounds)
             }
         }
     }

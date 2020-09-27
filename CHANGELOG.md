@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.2.1
+
+Fixes backing view corner radius issue.
+Fixes additional safe area bug.
+
 ## 3.2.0
 
 More layout Improvements.

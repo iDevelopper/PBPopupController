@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.2.0
+
+More layout Improvements.
+iOS 14 support improvements.
+Demo project updates.
+
 ## 3.1.0
 
 Improvements.

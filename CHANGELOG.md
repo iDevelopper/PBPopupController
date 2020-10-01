@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.2.2
+
+Do not override user interface style.
+
 ## 3.2.1
 
 Fixes backing view corner radius issue.

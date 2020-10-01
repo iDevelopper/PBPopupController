@@ -22,11 +22,13 @@ Once the popup bar is configured (see the properties in the `PBPopupBar` class) 
 
 Once the popup bar is presented with a popup content view controller, the user can swipe or tap the popup bar at any point to present the content view controller. After finishing, the user dismisses this view controller by either swiping or tapping the popup close button porvided by the system.
  
+Popup close buttons styles are labeled `chevron` for modern style chevron close button and `round` for iOS 9-style close buttons.
+
 You can also present and dismiss the popup content view controller programmatically.
 
-The popup bar has a `prominent` style for iOS 10 and below and a `compact` style for iOS 9. You can change these default values.
+The popup bar has a `prominent` style based on the modern Music app look and feel and below and a `compact` style for iOS 9-style look and feel.. You can change these default values.
 
-The presentation options provided by the framework are listed in the `PBPopupPresentationStyle` enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style is `fullScreen` by default and for iOS 10 and below, the style is `deck`. You can change these default values. The `custom` option allows you to present the controller on a part of the screen.
+The presentation options provided by the framework are listed in the `PBPopupPresentationStyle` enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style was `fullScreen` by default and for iOS 10 and below, the style was `deck`. The default is `deck`. You can change these default values. The `custom` option allows you to present the controller on a part of the screen.
 
 ## Adding to Your Project
 

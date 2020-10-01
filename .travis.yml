@@ -1,5 +1,5 @@
 os: osx
-osx_image: xcode10.2
+osx_image: xcode12
 language: objective-c
 env:
 global:
@@ -7,4 +7,4 @@ global:
 - LANG=en_US.UTF-8
 script:
 - xcodebuild -showsdks
-- xcodebuild -project PBPopupController/PBPopupController.xcodeproj -scheme "PBPopupController" -sdk "iphonesimulator12.0"
+- xcodebuild -project PBPopupController/PBPopupController.xcodeproj -scheme "PBPopupController" -sdk "iphonesimulator14.0"

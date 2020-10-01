@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.2.3
+
+Update travis.
+Documentation updates.
+
 ## 3.2.2
 
 Do not override user interface style.

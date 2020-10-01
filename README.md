@@ -14,7 +14,7 @@ PBPopupController is a framework for presenting bars and view controllers as pop
 
 ## Overview
 
-PBPopupController allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.
+`PBPopupController` allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.
 
 Each view controller can present a popup bar, docked to a bottom view. For `UITabBarController` subclasses, the default is the tab bar. For `UINavigationController` subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.
 
@@ -127,7 +127,7 @@ pod 'PBPopupController'
 etc...
 
 
-* PBPopupBar DataSource methods for providing label instances (such as MarqueeLabel):
+* `PBPopupBar` dataSource methods for providing label instances (such as MarqueeLabel):
 ```Swift
     lazy var label: MarqueeLabel = {
         let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
@@ -166,7 +166,7 @@ iDevelopper, patrick.bodet4@wanadoo.fr
 
 ## License
 
-PBPopupController is available under the MIT license, see the [LICENSE](https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE) file for more information.
+`PBPopupController` is available under the MIT license, see the [LICENSE](https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE) file for more information.
 
 Please tell me when you use this controller in your project!
 

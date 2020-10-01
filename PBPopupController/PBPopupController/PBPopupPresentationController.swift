@@ -456,12 +456,10 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         if #available(iOS 13.0, *) {
             guard previousTraitCollection != nil, let backingView = self.backingView else { return }
             if self.traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-                self.presentingVC.overrideUserInterfaceStyle = self.traitCollection.userInterfaceStyle
                 backingView.removeFromSuperview()
                 self.backingView = nil
                 self.setupBackingView()
                 self.animateBackingViewToDeck(true, animated: false)
-                self.presentingVC.overrideUserInterfaceStyle = .unspecified
             }
         }
     }

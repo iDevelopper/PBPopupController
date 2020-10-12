@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.3.0
+
+SwiftUI Support.
+
 ## 3.2.3
 
 Update travis.

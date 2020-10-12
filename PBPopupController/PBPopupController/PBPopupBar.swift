@@ -674,6 +674,31 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var imageViewWidthConstraint: NSLayoutConstraint!
     private var imageViewHeightConstraint: NSLayoutConstraint!
     
+    private var imageController: UIViewController?
+    
+    internal var swiftImageController: UIViewController? {
+        set {
+            if let imageController = imageController {
+                imageController.view.removeFromSuperview()
+            }
+            imageController = newValue
+            if let imageController = imageController {
+                self.imageView.addSubview(imageController.view)
+                imageController.view.translatesAutoresizingMaskIntoConstraints = false
+                imageController.view.topAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 0.0).isActive = true
+                imageController.view.leftAnchor.constraint(equalTo: self.imageView.leftAnchor, constant: 0.0).isActive = true
+                imageController.view.rightAnchor.constraint(equalTo: self.imageView.rightAnchor, constant: 0.0).isActive = true
+                imageController.view.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 0.0).isActive = true
+                
+                self.layoutImageView()
+                self.layoutTitlesView()
+            }
+        }
+        get {
+            return imageController
+        }
+    }
+
     // The container view for titleLabel and subtitleLabel
     @objc dynamic private var titlesView: PBPopupBarTitlesView!
 
@@ -684,14 +709,14 @@ A set of methods used by the delegate to respond, with a preview view controller
     private var askForLabels: Bool = false
     
     // The label containing the title text
-    private var titleLabel: UILabel!
+    internal var titleLabel: UILabel!
     
     private var titleLabelCenterConstraint: NSLayoutConstraint!
     private var titleLabelTopConstraint: NSLayoutConstraint!
     private var titleLabelHeightConstraint: NSLayoutConstraint!
     
     // The label containing the subtitle text
-    private var subtitleLabel: UILabel!
+    internal var subtitleLabel: UILabel!
     
     private var subtitleLabelCenterConstraint: NSLayoutConstraint!
     private var subtitleLabelBottomConstraint: NSLayoutConstraint!
@@ -1072,7 +1097,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             self.imageViewHeightConstraint.isActive = true
         }
         
-        self.imageView.isHidden = (self.image == nil || self.popupBarStyle == .compact)
+        self.imageView.isHidden = ((self.image == nil && self.imageController == nil) || self.popupBarStyle == .compact)
 
         self.imageView.layoutIfNeeded()
     }
@@ -1087,13 +1112,15 @@ A set of methods used by the delegate to respond, with a preview view controller
         
         if right < 0.0 {right = 0.0}
         
+        let hasImage: Bool = self.image != nil || self.imageController != nil
+        
         if left == 0.0 && right == 0.0 {
             if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
-                left = 16 + (self.image != nil ? (self.imageView.frame.origin.x + self.imageView.frame.size.width) : 0.0)
+                left = 16 + (hasImage ? (self.imageView.frame.origin.x + self.imageView.frame.size.width) : 0.0)
                 right = 16
             }
             else {
-                right = self.frame.size.width - (self.image != nil ? (self.imageView.frame.origin.x) : 0.0) + 16
+                right = self.frame.size.width - (hasImage ? (self.imageView.frame.origin.x) : 0.0) + 16
                 left = 16
             }
         }
@@ -1103,12 +1130,11 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             if self.popupBarStyle == .prominent || self.popupBarStyle == .custom {
                 if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
-                    
-                    left = self.image == nil ? 16.0 + safeLeading : 16 + safeLeading + PBPopupBarImageHeightProminent + 16.0
+                    left = hasImage ? 16 + safeLeading + PBPopupBarImageHeightProminent + 16.0 : 16.0 + safeLeading
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
                 else {
-                    right = self.image == nil ? 16.0 + safeLeading + safeTrailing : self.imageView.frame.size.width + 2 * 16.0 + safeLeading + safeTrailing
+                    right = hasImage ? self.imageView.frame.size.width + 2 * 16.0 + safeLeading + safeTrailing : 16.0 + safeLeading + safeTrailing
                 }
             }
             else {
@@ -1187,7 +1213,7 @@ A set of methods used by the delegate to respond, with a preview view controller
                 if PBPopupBarShowColors == true {
                     self.titleLabel.backgroundColor = UIColor.magenta
                 }
-                self.titlesView.addArrangedSubview(self.titleLabel)
+                self.titlesView.insertArrangedSubview(self.titleLabel, at: 0)
             }
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
@@ -1438,6 +1464,9 @@ A set of methods used by the delegate to respond, with a preview view controller
                                 right += subview.frame.origin.x
                             }
                         }
+                        if NSStringFromClass(type(of: rightItemView).self).contains("HostingView") {
+                            right -= 16
+                        }
                     }
                 }
                 else {
@@ -1456,6 +1485,9 @@ A set of methods used by the delegate to respond, with a preview view controller
                             if let subview = rightItemView.subviews[0] as UIView?, subview.classForCoder == itemClass10 {
                                 left += -subview.frame.origin.x
                             }
+                        }
+                        if NSStringFromClass(type(of: rightItemView).self).contains("HostingView") {
+                            left += 16
                         }
                     }
                 }

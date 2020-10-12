@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import SwiftUI
 
 class MainTableViewController: UITableViewController {
     
-    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller (With Child)", "View Controller (Without Child)" , "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container (iPad Only)"]
-    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad"]
+    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller (With Child)", "View Controller (Without Child)" , "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container (iPad Only)", "SwiftUI Demo"]
+    let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad", "SwiftUIDemo"]
 
     var presentationStyle: UIModalPresentationStyle!
     
@@ -113,6 +114,15 @@ class MainTableViewController: UITableViewController {
     }
 
     func viewControllerForIndexPath(_ indexPath: IndexPath) -> UIViewController? {
+        if indexPath.row == 11 {
+            if #available(iOS 14.0, *) {
+                let contentView = SceneSelection {
+                    self.dismiss(animated: true, completion: nil)
+                }
+                let vc = UIHostingController(rootView: contentView)
+                return vc
+            }
+        }
         if indexPath.row == 10 {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])

@@ -33,6 +33,14 @@
 		32C0B675216C71BC00E0AC2B /* Custom.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32C0B673216C71BC00E0AC2B /* Custom.storyboard */; };
 		32C0B67B216C82C100E0AC2B /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C0B67A216C82C100E0AC2B /* MusicTableViewCell.swift */; };
 		32C0B67F216C886200E0AC2B /* LoremIpsum.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C0B67D216C886200E0AC2B /* LoremIpsum.m */; };
+		32DB35BD2534977F0099EB80 /* SceneSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B52534977F0099EB80 /* SceneSelection.swift */; };
+		32DB35BE2534977F0099EB80 /* ConstraintsDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B62534977F0099EB80 /* ConstraintsDemoView.swift */; };
+		32DB35BF2534977F0099EB80 /* NavDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B72534977F0099EB80 /* NavDemoView.swift */; };
+		32DB35C02534977F0099EB80 /* CustomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B82534977F0099EB80 /* CustomBarView.swift */; };
+		32DB35C12534977F0099EB80 /* PBUIKitPopupContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B92534977F0099EB80 /* PBUIKitPopupContentController.swift */; };
+		32DB35C22534977F0099EB80 /* TabNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BA2534977F0099EB80 /* TabNavView.swift */; };
+		32DB35C32534977F0099EB80 /* ViewDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BB2534977F0099EB80 /* ViewDemoView.swift */; };
+		32DB35C42534977F0099EB80 /* TabDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BC2534977F0099EB80 /* TabDemoView.swift */; };
 		32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */; };
 		32E0EC2D217DF78D009C3DA9 /* SegmentedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2C217DF78D009C3DA9 /* SegmentedTableViewCell.swift */; };
 		32E0EC2F217EED03009C3DA9 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2E217EED03009C3DA9 /* ButtonTableViewCell.swift */; };
@@ -120,6 +128,14 @@
 		32C0B67D216C886200E0AC2B /* LoremIpsum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoremIpsum.m; sourceTree = "<group>"; };
 		32C0B67E216C886200E0AC2B /* LoremIpsum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoremIpsum.h; sourceTree = "<group>"; };
 		32C0B686216C8D0900E0AC2B /* PBPopupControllerSample-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PBPopupControllerSample-Bridging-Header.h"; path = "PBPopupControllerSample/PBPopupControllerSample-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
+		32DB35B52534977F0099EB80 /* SceneSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneSelection.swift; sourceTree = "<group>"; };
+		32DB35B62534977F0099EB80 /* ConstraintsDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstraintsDemoView.swift; sourceTree = "<group>"; };
+		32DB35B72534977F0099EB80 /* NavDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavDemoView.swift; sourceTree = "<group>"; };
+		32DB35B82534977F0099EB80 /* CustomBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomBarView.swift; sourceTree = "<group>"; };
+		32DB35B92534977F0099EB80 /* PBUIKitPopupContentController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBUIKitPopupContentController.swift; sourceTree = "<group>"; };
+		32DB35BA2534977F0099EB80 /* TabNavView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabNavView.swift; sourceTree = "<group>"; };
+		32DB35BB2534977F0099EB80 /* ViewDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewDemoView.swift; sourceTree = "<group>"; };
+		32DB35BC2534977F0099EB80 /* TabDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabDemoView.swift; sourceTree = "<group>"; };
 		32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTableViewController.swift; sourceTree = "<group>"; };
 		32E0EC2C217DF78D009C3DA9 /* SegmentedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedTableViewCell.swift; sourceTree = "<group>"; };
 		32E0EC2E217EED03009C3DA9 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTableViewCell.swift; sourceTree = "<group>"; };
@@ -169,6 +185,7 @@
 				3268B820219C0E1700AC66EF /* Cells */,
 				32080BC72087130E0017FECD /* AppDelegate.swift */,
 				32C0160623268D31004DDDF1 /* SceneDelegate.swift */,
+				32DB35B3253496720099EB80 /* SwiftUI Demo Scenes */,
 				328BDCD520DCDDB200682698 /* NavigationController.swift */,
 				323E309B2194A42A00CB8150 /* SplitViewController.swift */,
 				32E52FE620DA787400A6A11E /* MainTableViewController.swift */,
@@ -258,6 +275,21 @@
 				3229ECC321D4A9E500E6CC75 /* LICENSE.md */,
 			);
 			path = LoremIpsum;
+			sourceTree = "<group>";
+		};
+		32DB35B3253496720099EB80 /* SwiftUI Demo Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				32DB35B62534977F0099EB80 /* ConstraintsDemoView.swift */,
+				32DB35B82534977F0099EB80 /* CustomBarView.swift */,
+				32DB35B72534977F0099EB80 /* NavDemoView.swift */,
+				32DB35B92534977F0099EB80 /* PBUIKitPopupContentController.swift */,
+				32DB35B52534977F0099EB80 /* SceneSelection.swift */,
+				32DB35BC2534977F0099EB80 /* TabDemoView.swift */,
+				32DB35BA2534977F0099EB80 /* TabNavView.swift */,
+				32DB35BB2534977F0099EB80 /* ViewDemoView.swift */,
+			);
+			path = "SwiftUI Demo Scenes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -355,16 +387,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				32C0B67F216C886200E0AC2B /* LoremIpsum.m in Sources */,
+				32DB35C02534977F0099EB80 /* CustomBarView.swift in Sources */,
 				32080BDC2087141A0017FECD /* PopupContentViewController.swift in Sources */,
+				32DB35C42534977F0099EB80 /* TabDemoView.swift in Sources */,
+				32DB35BE2534977F0099EB80 /* ConstraintsDemoView.swift in Sources */,
 				3257A60E219B0B1C00A0B3CD /* MusicCollectionViewCell.swift in Sources */,
 				32E0EC2D217DF78D009C3DA9 /* SegmentedTableViewCell.swift in Sources */,
 				32080BC82087130E0017FECD /* AppDelegate.swift in Sources */,
 				32C0B672216C6A2100E0AC2B /* DemoChildViewController.swift in Sources */,
 				32C0160823268D31004DDDF1 /* SceneDelegate.swift in Sources */,
+				32DB35C12534977F0099EB80 /* PBUIKitPopupContentController.swift in Sources */,
 				3246397A2197F96D0036E3B3 /* PlayerTableViewCell.swift in Sources */,
 				32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */,
 				32560E7623F13B6000586DB1 /* DemoChildViewController_iPad.swift in Sources */,
+				32DB35C32534977F0099EB80 /* ViewDemoView.swift in Sources */,
 				3205F6A1250B4D82006EBC9F /* DemoViewControllerNoChild.swift in Sources */,
+				32DB35C22534977F0099EB80 /* TabNavView.swift in Sources */,
 				32E0EC2F217EED03009C3DA9 /* ButtonTableViewCell.swift in Sources */,
 				32080C582089C20E0017FECD /* DemoTableViewController.swift in Sources */,
 				32E52FE720DA787400A6A11E /* MainTableViewController.swift in Sources */,
@@ -376,7 +414,9 @@
 				324639782196DB5A0036E3B3 /* PopupContentTableViewController.swift in Sources */,
 				3257A60C219AEA4F00A0B3CD /* DemoCollectionViewController.swift in Sources */,
 				326ECE2E21CFCEDD0022AD43 /* MarqueeLabel.swift in Sources */,
+				32DB35BF2534977F0099EB80 /* NavDemoView.swift in Sources */,
 				3268B823219C2E0E00AC66EF /* DemoViewController.swift in Sources */,
+				32DB35BD2534977F0099EB80 /* SceneSelection.swift in Sources */,
 				32C0B670216C614B00E0AC2B /* DemoContainerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

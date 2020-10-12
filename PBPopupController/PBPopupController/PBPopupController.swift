@@ -793,7 +793,7 @@ extension PBPopupPresentationStyle
       var height = vc.popupBar.popupBarHeight
       
       // Unsafe Area
-      if self.bottomBarHeight == 0.0 {
+      if self.bottomBarHeight == 0.0, vc.popupBar.popupBarStyle != .custom {
          height += insets.bottom
       }
       

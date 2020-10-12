@@ -445,9 +445,7 @@ public extension UIViewController
             }
             let additionalInsets = _PBPopupSafeAreaInsets(self.popupContainerViewController)
             var finalInsets = UIEdgeInsets(top: insets.top, left: insets.left, bottom: min(insets.bottom, additionalInsets.bottom), right: insets.right)
-            if self is UINavigationController {
-                finalInsets.top = 0
-            }
+            finalInsets.top = 0
             return finalInsets
         }
         let insets = self._vSAIFS()

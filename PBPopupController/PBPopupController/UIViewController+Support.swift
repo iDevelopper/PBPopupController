@@ -272,6 +272,10 @@ public extension UIViewController
         if controller == nil {
             NSException.raise(NSExceptionName.internalInconsistencyException, format: "Content view controller cannot be nil.", arguments: getVaList([]))
         }
+        if self.popupContentView.window == nil {
+            self.popupContentView.addSubview(controller.view)
+            self.popupContentView.sendSubviewToBack(controller.view)
+        }
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
         

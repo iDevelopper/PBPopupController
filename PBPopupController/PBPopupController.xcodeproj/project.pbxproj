@@ -28,6 +28,16 @@
 		32B1E211209ABC2D00143DA6 /* UIColor+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32B1E210209ABC2D00143DA6 /* UIColor+Random.swift */; };
 		32BA2A9D20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BA2A9C20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift */; };
 		32C045B921A7DD840028DB85 /* PBPopupPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325626DE20FC74AC008739D6 /* PBPopupPresentationController.swift */; };
+		32DB35A8253495140099EB80 /* PBPopupEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB359E253495130099EB80 /* PBPopupEnvironment.swift */; };
+		32DB35A9253495140099EB80 /* PBPopupPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB359F253495130099EB80 /* PBPopupPreferences.swift */; };
+		32DB35AA253495140099EB80 /* PBPopupViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A0253495130099EB80 /* PBPopupViewWrapper.swift */; };
+		32DB35AB253495140099EB80 /* PBPopupUICustomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A1253495130099EB80 /* PBPopupUICustomBarViewController.swift */; };
+		32DB35AC253495140099EB80 /* PBPopupProxyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A2253495140099EB80 /* PBPopupProxyViewController.swift */; };
+		32DB35AD253495140099EB80 /* UIViewControllerPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A3253495140099EB80 /* UIViewControllerPreview.swift */; };
+		32DB35AE253495140099EB80 /* PBPopupUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A4253495140099EB80 /* PBPopupUI.swift */; };
+		32DB35AF253495140099EB80 /* UIViewPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A5253495140099EB80 /* UIViewPreview.swift */; };
+		32DB35B0253495140099EB80 /* PBPopupState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A6253495140099EB80 /* PBPopupState.swift */; };
+		32DB35B1253495140099EB80 /* PBPopupUIContentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35A7253495140099EB80 /* PBPopupUIContentController.swift */; };
 		32E1F39D21AFCEEB009A1DF1 /* UIView+CornerRadius.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E1F39C21AFCEEB009A1DF1 /* UIView+CornerRadius.swift */; };
 		32E52FE520DA1A2A00A6A11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 32E52FE420DA1A2A00A6A11E /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -56,6 +66,16 @@
 		32AD7596217A3A6D002FFE17 /* PBPopupContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBPopupContentView.swift; sourceTree = "<group>"; };
 		32B1E210209ABC2D00143DA6 /* UIColor+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Random.swift"; sourceTree = "<group>"; };
 		32BA2A9C20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBPopupInteractivePresentationController.swift; sourceTree = "<group>"; };
+		32DB359E253495130099EB80 /* PBPopupEnvironment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupEnvironment.swift; sourceTree = "<group>"; };
+		32DB359F253495130099EB80 /* PBPopupPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupPreferences.swift; sourceTree = "<group>"; };
+		32DB35A0253495130099EB80 /* PBPopupViewWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupViewWrapper.swift; sourceTree = "<group>"; };
+		32DB35A1253495130099EB80 /* PBPopupUICustomBarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupUICustomBarViewController.swift; sourceTree = "<group>"; };
+		32DB35A2253495140099EB80 /* PBPopupProxyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupProxyViewController.swift; sourceTree = "<group>"; };
+		32DB35A3253495140099EB80 /* UIViewControllerPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewControllerPreview.swift; sourceTree = "<group>"; };
+		32DB35A4253495140099EB80 /* PBPopupUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupUI.swift; sourceTree = "<group>"; };
+		32DB35A5253495140099EB80 /* UIViewPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIViewPreview.swift; sourceTree = "<group>"; };
+		32DB35A6253495140099EB80 /* PBPopupState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupState.swift; sourceTree = "<group>"; };
+		32DB35A7253495140099EB80 /* PBPopupUIContentController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PBPopupUIContentController.swift; sourceTree = "<group>"; };
 		32E1F39C21AFCEEB009A1DF1 /* UIView+CornerRadius.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+CornerRadius.swift"; sourceTree = "<group>"; };
 		32E52FE420DA1A2A00A6A11E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -91,6 +111,7 @@
 		32080BEB208715920017FECD /* PBPopupController */ = {
 			isa = PBXGroup;
 			children = (
+				32DB359D253494B30099EB80 /* SwiftUIWrapper */,
 				328BDCD720DE099E00682698 /* CGMathSwift */,
 				32559939209063AC009047FB /* PBChevronView.swift */,
 				3255993D2091BE00009047FB /* PBPopupCloseButton.swift */,
@@ -132,6 +153,23 @@
 				323416E6246286450086E85A /* CGRect.swift */,
 			);
 			path = CGMathSwift;
+			sourceTree = "<group>";
+		};
+		32DB359D253494B30099EB80 /* SwiftUIWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				32DB359E253495130099EB80 /* PBPopupEnvironment.swift */,
+				32DB359F253495130099EB80 /* PBPopupPreferences.swift */,
+				32DB35A2253495140099EB80 /* PBPopupProxyViewController.swift */,
+				32DB35A6253495140099EB80 /* PBPopupState.swift */,
+				32DB35A4253495140099EB80 /* PBPopupUI.swift */,
+				32DB35A7253495140099EB80 /* PBPopupUIContentController.swift */,
+				32DB35A1253495130099EB80 /* PBPopupUICustomBarViewController.swift */,
+				32DB35A0253495130099EB80 /* PBPopupViewWrapper.swift */,
+				32DB35A3253495140099EB80 /* UIViewControllerPreview.swift */,
+				32DB35A5253495140099EB80 /* UIViewPreview.swift */,
+			);
+			path = SwiftUIWrapper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,25 +255,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				328BDCE420DE09C300682698 /* CGMath.swift in Sources */,
+				32DB35AD253495140099EB80 /* UIViewControllerPreview.swift in Sources */,
 				326DB7FE21A1733200E28986 /* PBPopupRoundShadowImageView.swift in Sources */,
 				32BA2A9D20E88A3F00226FEE /* PBPopupInteractivePresentationController.swift in Sources */,
 				3255993A209063AC009047FB /* PBChevronView.swift in Sources */,
 				32C045B921A7DD840028DB85 /* PBPopupPresentationController.swift in Sources */,
+				32DB35B1253495140099EB80 /* PBPopupUIContentController.swift in Sources */,
 				3202B69621CCC8C900201B6F /* PBPopupToolbar.swift in Sources */,
 				32080C02208716140017FECD /* UIViewController+Private.swift in Sources */,
+				32DB35AA253495140099EB80 /* PBPopupViewWrapper.swift in Sources */,
+				32DB35A9253495140099EB80 /* PBPopupPreferences.swift in Sources */,
 				323416E424619EFE0086E85A /* CGVector.swift in Sources */,
 				32080C03208716140017FECD /* PBPopupController.swift in Sources */,
 				326ECE2621CF80580022AD43 /* PBPopupLogs.swift in Sources */,
 				32080C0B20871C230017FECD /* UIViewController+Private.m in Sources */,
+				32DB35B0253495140099EB80 /* PBPopupState.swift in Sources */,
 				32AD7597217A3A6D002FFE17 /* PBPopupContentView.swift in Sources */,
 				326ECE2821CF8CBD0022AD43 /* PBPopupBar.swift in Sources */,
 				325E5557209D9B8A0055E09F /* UIView+Snapshot.swift in Sources */,
 				32E1F39D21AFCEEB009A1DF1 /* UIView+CornerRadius.swift in Sources */,
+				32DB35AE253495140099EB80 /* PBPopupUI.swift in Sources */,
 				323416E7246286460086E85A /* CGPoint.swift in Sources */,
 				32B1E211209ABC2D00143DA6 /* UIColor+Random.swift in Sources */,
+				32DB35AC253495140099EB80 /* PBPopupProxyViewController.swift in Sources */,
 				32080C00208716140017FECD /* UIViewController+Support.swift in Sources */,
+				32DB35AB253495140099EB80 /* PBPopupUICustomBarViewController.swift in Sources */,
 				3255993E2091BE00009047FB /* PBPopupCloseButton.swift in Sources */,
+				32DB35AF253495140099EB80 /* UIViewPreview.swift in Sources */,
 				323416E8246286460086E85A /* CGRect.swift in Sources */,
+				32DB35A8253495140099EB80 /* PBPopupEnvironment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

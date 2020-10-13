@@ -281,7 +281,8 @@ internal class PBPopupPresentationController: UIPresentationController {
         self.touchForwardingView.removeFromSuperview()
         self.touchForwardingView = nil
         self.presentedView?.removeFromSuperview()
-        self.popupContentView.removeFromSuperview()
+        // Do not remove popupContentView from superview (SwiftUI)
+        // self.popupContentView.removeFromSuperview()
         self.contextData = nil
     }
 }

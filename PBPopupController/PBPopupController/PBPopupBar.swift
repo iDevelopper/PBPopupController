@@ -685,7 +685,7 @@ A set of methods used by the delegate to respond, with a preview view controller
             if let imageController = imageController {
                 self.imageView.addSubview(imageController.view)
                 imageController.view.translatesAutoresizingMaskIntoConstraints = false
-                imageController.view.topAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 0.0).isActive = true
+                imageController.view.topAnchor.constraint(equalTo: self.imageView.topAnchor, constant: 0.0).isActive = true
                 imageController.view.leftAnchor.constraint(equalTo: self.imageView.leftAnchor, constant: 0.0).isActive = true
                 imageController.view.rightAnchor.constraint(equalTo: self.imageView.rightAnchor, constant: 0.0).isActive = true
                 imageController.view.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 0.0).isActive = true

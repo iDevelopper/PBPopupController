@@ -160,12 +160,14 @@ extension PBPopupCloseButtonStyle
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpInside)
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpOutside)
         self.addTarget(self, action: #selector(didTouchCancel(_:)), for: .touchCancel)
-        
-        //self.layer.shadowColor = UIColor.black.cgColor
-        //self.layer.shadowOpacity = 0.1
-        //self.layer.shadowRadius = 3.0
-        //self.layer.shadowOffset = CGSize(width: 0, height: 0)
-        //self.layer.masksToBounds = false
+    
+        //
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOpacity = 0.15
+        self.layer.shadowRadius = 4.0
+        self.layer.shadowOffset = CGSize(width: 0, height: 0)
+        self.layer.masksToBounds = false
+        //
         
         self.setTitleColor(self.tintColor, for: .normal)
         
@@ -175,15 +177,19 @@ extension PBPopupCloseButtonStyle
             self.setImage(image, for: .normal)
         }
         else {
-            let image = UIImage(named: "DismissChevron", in: Bundle(for: self.classForCoder), compatibleWith: nil)
-            self.setImage(image, for: .normal)
+            chevronView = PBChevronView(frame: CGRect(x: 4, y: 4.5, width: 16, height: 16))
+            chevronView.width = 3.0
+            chevronView.state = .up
+            if let aView = chevronView {
+                addSubview(aView)
+            }
         }
     }
     
     private func setupForChevronButton() {
         chevronView = PBChevronView(frame: CGRect(x: 0, y: 0, width: 42, height: 15))
         chevronView.width = 5.5
-        chevronView.setState(.up, animated: false)
+        chevronView.state = .up
         if let aView = chevronView {
             addSubview(aView)
         }
@@ -218,19 +224,23 @@ extension PBPopupCloseButtonStyle
             
             let minSideSize: CGFloat = min(self.bounds.size.width, self.bounds.size.height)
             
-            //let maskLayer = CAShapeLayer()
-            //maskLayer.rasterizationScale = UIScreen.main.nativeScale
-            //maskLayer.shouldRasterize = true
-            //let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
-            //maskLayer.path = path
-            //effectView.layer.mask = maskLayer
+            /*
+            let maskLayer = CAShapeLayer()
+            maskLayer.rasterizationScale = UIScreen.main.nativeScale
+            maskLayer.shouldRasterize = true
+            let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
+            maskLayer.path = path
+            effectView.layer.mask = maskLayer
+            */
             
             effectView.clipsToBounds = true
             effectView.layer.cornerRadius = minSideSize / 2
             
-            var imageFrame: CGRect? = self.imageView?.frame
-            imageFrame?.origin.y += 0.5
-            self.imageView?.frame = imageFrame ?? CGRect.zero
+            if let imageView = self.imageView {
+                var imageFrame = imageView.frame
+                imageFrame.origin.y += 0.5
+                imageView.frame = imageFrame
+            }
         }
     }
     
@@ -257,14 +267,14 @@ extension PBPopupCloseButtonStyle
         if self.style == .round {
             return
         }
-        self.chevronView.setState(.up, animated: false)
+        self.chevronView.state = .up
     }
     
     @objc public func setButtonStateTransitioning() {
         if self.style == .round {
             return
         }
-        self.chevronView.setState(.flat, animated: false)
+        self.chevronView.state = .flat
     }
     
     // MARK: - Actions

@@ -215,6 +215,17 @@ extension PBPopupPresentationStyle
     */
    @objc optional func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController)
    
+    /**
+     Called just before the popup content view is about to be closed with the popup close button.
+     
+     - Parameter popupController:             The popup controller object.
+     - Parameter popupContentViewController:  The popup content view controller object.
+
+     - Returns:
+     `false` if you want the close button action to be ignored, `true` otherwise.
+     */
+    @objc optional func popupController(_ popupController: PBPopupController, shouldClose popupContentViewController: UIViewController) -> Bool
+    
    /**
     Called just before the popup content view is about to be closed.
     
@@ -425,11 +436,17 @@ extension PBPopupPresentationStyle
    
    // MARK: - Init
    
-   internal init(containerViewController controller: UIViewController)
-   {
-      self.popupPresentationState = .hidden
-      self.containerViewController = controller
-   }
+    internal init(containerViewController controller: UIViewController)
+    {
+        DispatchQueue.once {
+            UIViewController.vc_swizzle()
+            UITabBarController.tbc_swizzle()
+            UINavigationController.nc_swizzle()
+        }
+        
+        self.popupPresentationState = .hidden
+        self.containerViewController = controller
+    }
    
    required init?(coder aDecoder: NSCoder) {
       fatalError("init(coder:) has not been implemented")
@@ -556,7 +573,7 @@ extension PBPopupPresentationStyle
          if self.wantsAdditionalSafeAreaInsetTop {
             additionalInsets.top += height
          }
-         _LNPopupSupportFixInsetsForViewController(vc, true, additionalInsets)
+        PBPopupFixInsetsForViewController(vc, true, additionalInsets)
       }) { (success) in
          previousState = self.popupPresentationState
          self.popupPresentationState = .closed
@@ -597,7 +614,7 @@ extension PBPopupPresentationStyle
          if self.wantsAdditionalSafeAreaInsetTop {
             additionalInsets.top -= height
          }
-         _LNPopupSupportFixInsetsForViewController(vc, true, additionalInsets)
+        PBPopupFixInsetsForViewController(vc, true, additionalInsets)
       }) { (success) in
          previousState = self.popupPresentationState
          self.popupPresentationState = .hidden
@@ -651,9 +668,15 @@ extension PBPopupPresentationStyle
       }
    }
    
-   @objc internal func closePopupContent() {
-      self._closePopupAnimated(true)
-   }
+    @objc internal func closePopupContent() {
+        guard let vc = self.containerViewController else {
+            return
+        }
+        if self.delegate?.popupController?(self, shouldClose: vc.popupContentViewController) == false {
+            return
+        }
+        self._closePopupAnimated(true)
+    }
    
    internal func _openPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil) {
       guard let vc = self.containerViewController else {

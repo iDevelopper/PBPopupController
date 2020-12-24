@@ -274,7 +274,12 @@ import UIKit
                 if self.popupCloseButtonStyle == .round {
                     self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor, constant: 12)
                 } else {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
+                    if #available(iOS 13, *) {
+                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
+                    }
+                    else {
+                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: self.safeAreaInsets.left)
+                    }
                 }
                 NSLayoutConstraint.activate([popupCloseButtonHorizontalConstraint])
             }

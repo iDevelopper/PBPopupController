@@ -86,6 +86,7 @@ internal class PBChevronView: UIView {
         self.rightView.center = CGPoint(x: rightFrame.midX, y: bounds.midY)
         self.leftView.layer.cornerRadius = width / 2.0
         self.rightView.layer.cornerRadius = width / 2.0
+        self.setState(state, animated: false)
     }
     
     override func tintColorDidChange() {
@@ -96,16 +97,10 @@ internal class PBChevronView: UIView {
         self.rightView.backgroundColor = self.tintColor
     }
     
-    func setState(_ state: PBChevronViewState, animated: Bool) {
-        if self.state == state {
-            return
-        }
-        
+    private func setState(_ state: PBChevronViewState, animated: Bool) {
         if self.leftView == nil {
             return
         }
-        
-        self.state = state
         
         let angle: CGFloat = self.bounds.size.height / self.bounds.size.width * _PBChevronAngleCoefficient
         

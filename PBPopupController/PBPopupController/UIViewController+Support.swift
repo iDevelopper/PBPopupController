@@ -36,6 +36,7 @@ public extension UIViewController
         static var popupContentView: PBPopupContentView?
         static var isTabBarHiddenDuringTransition = "isTabBarHiddenDuringTransition"
         static var additionalSafeAreaInsetsBottomForContainer = "additionalSafeAreaInsetsBottomForContainer"
+        static var popupAdditionalSafeAreaInsets = "popupAdditionalSafeAreaInsets"
     }
     
     internal var isTabBarHiddenDuringTransition: Bool! {
@@ -221,6 +222,18 @@ public extension UIViewController
         }
     }
     
+    @objc internal var popupAdditionalSafeAreaInsets: UIEdgeInsets {
+        get {
+            if let insets = objc_getAssociatedObject(self, &AssociatedKeys.popupAdditionalSafeAreaInsets) as? NSValue {
+                return insets.uiEdgeInsetsValue
+            }
+            return UIEdgeInsets.zero
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.popupAdditionalSafeAreaInsets, NSValue(uiEdgeInsets: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
 
     /**
      Presents an interactive popup bar in the container's view hierarchy and optionally opens the popup in the same animation. The popup bar is attached to the container's bottom bar (see `popupContainerViewController`).
@@ -272,14 +285,15 @@ public extension UIViewController
         if controller == nil {
             NSException.raise(NSExceptionName.internalInconsistencyException, format: "Content view controller cannot be nil.", arguments: getVaList([]))
         }
-        if self.popupContentView.window == nil {
-            self.popupContentView.addSubview(controller.view)
-            self.popupContentView.sendSubviewToBack(controller.view)
-        }
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
         
-        self._configurePopupBarFromBottomBar()
+       if self.popupContentView.window == nil {
+            self.popupContentView.addSubview(controller.view)
+            self.popupContentView.sendSubviewToBack(controller.view)
+        }
+        
+        self.configurePopupBarFromBottomBar()
         
         self.popupController._presentPopupBarAnimated(animated) {
             completion?()

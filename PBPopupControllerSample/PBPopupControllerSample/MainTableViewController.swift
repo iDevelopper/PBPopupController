@@ -122,6 +122,7 @@ class MainTableViewController: UITableViewController {
                 let vc = UIHostingController(rootView: contentView)
                 return vc
             }
+            return nil
         }
         if indexPath.row == 10 {
             if UIDevice.current.userInterfaceIdiom == .pad {

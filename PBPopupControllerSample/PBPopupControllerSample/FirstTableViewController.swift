@@ -898,8 +898,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
         #if targetEnvironment(macCatalyst)
         if let tabBarController = self.tabBarController, self.navigationController == nil {
             if tabBarController.modalPresentationStyle == .fullScreen {
-                // TODO: false?
-                return true
+                return false
+                //return true
             }
             return true
         }

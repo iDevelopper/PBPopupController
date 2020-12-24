@@ -130,7 +130,7 @@ public extension UITabBarController
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
+            PBPopupFixInsetsForViewController(obj, false, additionalInsets)
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
@@ -177,6 +177,17 @@ internal extension UITabBarController
 
         return bottomBarFrame
     }
+    
+    @objc override func configurePopupBarFromBottomBar() {
+        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
+            return
+        }
+        self.popupBar.barStyle = self.tabBar.barStyle
+        self.popupBar.tintColor = self.tabBar.tintColor
+        self.popupBar.barTintColor = self.tabBar.barTintColor
+        self.popupBar.backgroundColor = self.tabBar.backgroundColor
+        self.popupBar.isTranslucent = self.tabBar.isTranslucent
+    }
 }
 
 public extension UINavigationController
@@ -199,12 +210,6 @@ public extension UINavigationController
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_setViewControllers(_ :animated:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
-        }
-        
-        originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
-        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewDidLayoutSubviews))
-        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            //method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
         //_setToolbarHidden:edge:duration:
@@ -263,7 +268,7 @@ public extension UINavigationController
     {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+            PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
         }
         self.pb_pushViewController(viewController, animated: animated)
     }
@@ -272,7 +277,7 @@ public extension UINavigationController
     {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            _LNPopupSupportFixInsetsForViewController(obj, false, additionalInsets)
+            PBPopupFixInsetsForViewController(obj, false, additionalInsets)
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
@@ -338,6 +343,17 @@ internal extension UINavigationController
         }
         
         return toolBarFrame
+    }
+
+    @objc override func configurePopupBarFromBottomBar() {
+        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
+            return
+        }
+        self.popupBar.barStyle = self.toolbar.barStyle
+        self.popupBar.tintColor = self.toolbar.tintColor
+        self.popupBar.barTintColor = self.toolbar.barTintColor
+        self.popupBar.backgroundColor = self.toolbar.backgroundColor
+        self.popupBar.isTranslucent = self.toolbar.isTranslucent
     }
 }
 
@@ -443,7 +459,7 @@ public extension UIViewController
                     insets.left = containerInsets.left
                 }
             }
-            let additionalInsets = _PBPopupSafeAreaInsets(self.popupContainerViewController)
+            let additionalInsets = vc.popupAdditionalSafeAreaInsets
             var finalInsets = UIEdgeInsets(top: insets.top, left: insets.left, bottom: min(insets.bottom, additionalInsets.bottom), right: insets.right)
             finalInsets.top = 0
             return finalInsets
@@ -464,7 +480,7 @@ public extension UIViewController
         
         if self.additionalSafeAreaInsetsBottomForContainer > 0 {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.additionalSafeAreaInsetsBottomForContainer, right: 0)
-            _LNPopupSupportFixInsetsForViewController(self, false, additionalInsets)
+            PBPopupFixInsetsForViewController(self, false, additionalInsets)
         }
         
         if let svc = self as? UISplitViewController {
@@ -476,12 +492,12 @@ public extension UIViewController
                 else {
                     additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -viewController.additionalSafeAreaInsets.bottom, right: 0)
                 }
-                _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+                PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
             }
             else {
                 if let vc1 = svc.children.first {
                     let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: vc1.additionalSafeAreaInsets.bottom, right: 0)
-                        _LNPopupSupportFixInsetsForViewController(viewController, false, additionalInsets)
+                    PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
                 }
             }
         }
@@ -587,5 +603,75 @@ internal extension UIViewController
         }
         bottomBarFrame.origin = CGPoint(x: bottomBarFrame.origin.x, y: self.view.bounds.height - (self.bottomBar.isHidden ? 0.0 : bottomBarFrame.size.height))
         return bottomBarFrame
+    }
+
+    @objc func configurePopupBarFromBottomBar() {
+        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
+            return
+        }
+        self.popupBar.tintColor = self.view.tintColor
+        self.popupBar.backgroundColor = self.view.backgroundColor
+    }
+}
+
+@inline(__always) func PBPopupFixInsetsForViewController(_ controller: UIViewController, _ layout: Bool, _ additionalSafeAreaInsets: UIEdgeInsets) {
+    if (controller is UITabBarController) || (controller is UINavigationController) || (controller.children.count > 0 && !(controller is UISplitViewController)) {
+        for (_, obj) in controller.children.enumerated() {
+            let oldInsets = obj.popupAdditionalSafeAreaInsets
+            var insets = oldInsets
+            if oldInsets.top != additionalSafeAreaInsets.top {
+                insets.top += additionalSafeAreaInsets.top
+            }
+            if oldInsets.bottom != additionalSafeAreaInsets.bottom {
+                insets.bottom += additionalSafeAreaInsets.bottom
+            }
+            if oldInsets != insets {
+                obj.additionalSafeAreaInsets = insets
+                controller.popupAdditionalSafeAreaInsets = insets
+                obj.popupAdditionalSafeAreaInsets = insets
+            }
+        }
+    } else {
+        let oldInsets = controller.popupAdditionalSafeAreaInsets
+        var insets = oldInsets
+        if oldInsets.top != additionalSafeAreaInsets.top {
+            insets.top += additionalSafeAreaInsets.top
+        }
+        if oldInsets.bottom != additionalSafeAreaInsets.bottom {
+            insets.bottom += additionalSafeAreaInsets.bottom
+        }
+        if oldInsets != insets {
+            controller.additionalSafeAreaInsets = insets;
+            controller.popupAdditionalSafeAreaInsets = insets;
+        }
+    }
+    if (layout)
+    {
+        controller.view.setNeedsUpdateConstraints()
+        controller.view.setNeedsLayout()
+        controller.view.layoutIfNeeded()
+    }
+}
+
+internal extension DispatchQueue {
+    private static var _onceTracker = [String]()
+    class func once(file: String = #file, function: String = #function, line: Int = #line, block:()->Void) {
+        let token = file + ":" + function + ":" + String(line)
+        once(token: token, block: block)
+    }
+    /**
+     Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
+     only execute the code once even in the presence of multithreaded calls.
+     - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
+     - parameter block: Block to execute once
+     */
+    class func once(token: String, block:()->Void) {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        if _onceTracker.contains(token) {
+            return
+        }
+        _onceTracker.append(token)
+        block()
     }
 }

@@ -9,7 +9,7 @@
 //  https://github.com/EmilioPelaez/CGMathSwift//
 //
 
-import Foundation
+import CoreGraphics
 
 internal func lerp(start: CGFloat, end: CGFloat, progress: CGFloat) -> CGFloat {
     return (1 - progress) * start + progress * end

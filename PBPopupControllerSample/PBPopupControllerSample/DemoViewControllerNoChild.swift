@@ -31,7 +31,7 @@ class DemoViewControllerNoChild: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.popupBar.image = UIImage(named: "Cover22")
+        self.popupBar.image = UIImage(named: String(format: "Cover%02d", Int.random(in: 1...23)))
         self.popupBar.title = LoremIpsum.title
         self.popupBar.subtitle = LoremIpsum.sentence
         let item = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))

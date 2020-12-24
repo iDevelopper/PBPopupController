@@ -291,7 +291,7 @@ A set of methods used by the delegate to respond, with a preview view controller
     @objc public var inheritsVisualStyleFromBottomBar: Bool = true {
         didSet {
             if inheritsVisualStyleFromBottomBar == true {
-                self.popupController.containerViewController._configurePopupBarFromBottomBar()
+                self.popupController.containerViewController.configurePopupBarFromBottomBar()
             }
         }
     }
@@ -327,7 +327,7 @@ A set of methods used by the delegate to respond, with a preview view controller
                 if let vc = self.popupController.containerViewController {
                     let height = oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height ?? 0) : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact
                         let additionalInsets = UIEdgeInsets(top: self.popupController.wantsAdditionalSafeAreaInsetTop ? height : 0, left: 0, bottom: self.popupController.wantsAdditionalSafeAreaInsetBottom ? height : 0, right: 0)
-                        _LNPopupSupportFixInsetsForViewController(vc, false, additionalInsets)
+                    PBPopupFixInsetsForViewController(vc, false, additionalInsets)
                     self.popupController._presentPopupBarAnimated(false)
                 }
             }
@@ -902,7 +902,7 @@ A set of methods used by the delegate to respond, with a preview view controller
      - SeeAlso: `PBPopupBar.inheritsVisualStyleFromBottomBar`.
      */
     @objc public func updatePopupBarAppearance() {
-        self.popupController.containerViewController._configurePopupBarFromBottomBar()
+        self.popupController.containerViewController.configurePopupBarFromBottomBar()
     }
     
     /**

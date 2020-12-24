@@ -160,7 +160,9 @@ internal class PBPopupPresentationController: UIPresentationController {
         
         containerView.frame = self.frameForContainerView()
         
-        self.touchForwardingView = PBTouchForwardingView(frame: containerView.bounds)
+        var frame = containerView.bounds
+        frame.size.height -= self.popupBarView.frame.height
+        self.touchForwardingView = PBTouchForwardingView(frame: frame)
         self.touchForwardingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.touchForwardingView.passthroughViews = [self.presentingVC.view]
         self.touchForwardingView.popupController = self.popupController
@@ -512,6 +514,7 @@ extension PBPopupPresentationController
             frame.origin.x += self.presentingVC.view.frame.minX
             frame.size.width = self.presentingVC.view.frame.width
         }
+        frame.size.height -= self.popupBarView.frame.height
         return frame
     }
     

@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/iDevelopper/PBPopupController.svg?branch=master)](https://travis-ci.org/iDevelopper/PBPopupController)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/PBPopupController.svg?style=flat)](http://cocoapods.org/pods/PBPopupController)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://swift.org/package-manager/)
+[![Mac Catalyst compatible](https://img.shields.io/badge/Catalyst-compatible-brightgreen.svg)](https://developer.apple.com/documentation/xcode/creating_a_mac_version_of_your_ipad_app/)
 [![License](https://img.shields.io/cocoapods/l/PBPopupController.svg?style=flat)](https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE)
 [![Platform](https://img.shields.io/cocoapods/p/PBPopupController.svg?style=flat)](http://cocoapods.org/pods/PBPopupController)
 [![Swift Version](https://img.shields.io/badge/language-swift%205.0-brightgreen.svg)](https://developer.apple.com/swift) 
@@ -30,7 +32,11 @@ The popup bar has a `prominent` style based on the modern Music app look and fee
 
 The presentation options provided by the framework are listed in the `PBPopupPresentationStyle` enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style was `fullScreen` by default and for iOS 10 and below, the style was `deck`. The default is `deck`. You can change these default values. The `custom` option allows you to present the controller on a part of the screen.
 
-## Adding to Your Project
+## Installation
+
+### Swift Package Manager
+
+`PBPopupController` supports SPM versions 5.1.0 and above. To use SPM, you should use Xcode 11 or above to open your project. Click `File` -> `Swift Packages` -> `Add Package Dependency`, enter `https://github.com/iDevelopper/PBPopupController`. Select the version you’d like to use.
 
 ### Carthage
 

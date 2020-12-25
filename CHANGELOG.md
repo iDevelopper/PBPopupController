@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.4.0
+
+SwiftPM Support.
+
 ## 3.3.0
 
 SwiftUI Support.

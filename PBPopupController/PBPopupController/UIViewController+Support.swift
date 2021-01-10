@@ -288,11 +288,6 @@ public extension UIViewController
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
         
-       if self.popupContentView.window == nil {
-            self.popupContentView.addSubview(controller.view)
-            self.popupContentView.sendSubviewToBack(controller.view)
-        }
-        
         self.configurePopupBarFromBottomBar()
         
         self.popupController._presentPopupBarAnimated(animated) {

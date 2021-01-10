@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.4.1
+
+Fix issue #12.
+Change the default value for popupContentView.popupIgnoreDropShadowView to true.
+
 ## 3.4.0
 
 SwiftPM Support.

@@ -37,6 +37,7 @@ class DemoViewControllerNoChild: UIViewController {
         let item = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))
         self.popupBar.rightBarButtonItems = [item]
         self.popupContentView.popupCloseButtonStyle = .chevron
+        self.popupContentView.popupIgnoreDropShadowView = false
         //self.popupContentView.popupCloseButton.tintColor = .black
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)

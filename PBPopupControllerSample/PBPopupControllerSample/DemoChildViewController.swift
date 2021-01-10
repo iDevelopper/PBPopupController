@@ -79,6 +79,7 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             containerVC.popupBar.title = customYTBar.titleLabel.text
             containerVC.popupBar.subtitle = customYTBar.subtitleLabel.text
             containerVC.popupContentView.popupCloseButtonStyle = .round
+            containerVC.popupContentView.popupIgnoreDropShadowView = false
             //containerVC.popupContentView.popupPresentationStyle = .fullScreen
             //containerVC.popupContentView.popupEffectView.effect = nil
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
@@ -107,6 +108,7 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             containerVC.popupBar.subtitle = LoremIpsum.sentence
             containerVC.popupBar.shadowImageView.shadowOpacity = 0
             //containerVC.popupContentView.popupEffectView.effect = nil
+            containerVC.popupContentView.popupIgnoreDropShadowView = false
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
             popupContentController.albumArtImage = UIImage(named: "Cover22")!
             popupContentController.songTitle = containerVC.popupBar.title!

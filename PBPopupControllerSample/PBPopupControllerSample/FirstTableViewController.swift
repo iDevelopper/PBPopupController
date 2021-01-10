@@ -253,6 +253,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             #endif
 
             if let popupContentView = self.containerVC.popupContentView {
+                popupContentView.popupIgnoreDropShadowView = false
                 popupContentView.popupPresentationDuration = 0.4
                 popupContentView.popupCanDismissOnPassthroughViews = true
             }

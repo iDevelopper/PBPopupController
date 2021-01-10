@@ -54,6 +54,7 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
         self.popupController.wantsAdditionalSafeAreaInsetBottom = false
         self.popupController.dataSource = self
         self.popupContentView.popupPresentationStyle = .custom
+        self.popupContentView.popupIgnoreDropShadowView = false
         self.popupBar.inheritsVisualStyleFromBottomBar = false
         self.popupBar.barStyle = self.tabBar.barStyle
         self.popupBar.barTintColor = self.tabBar.barTintColor

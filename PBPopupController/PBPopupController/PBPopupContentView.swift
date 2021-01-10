@@ -75,7 +75,7 @@ import UIKit
     /**
      If `true`, tells the popup content view presentation to ignore the form sheet presentation by default.
      */
-    @objc public var popupIgnoreDropShadowView: Bool = false
+    @objc public var popupIgnoreDropShadowView: Bool = true
     
     /**
      The view containing the top subviews (i.e. labels, image view, etc...) of the popup content view controller (optional but needed if bottom module is used). Used to animate the popup presentation. This view will be used for correctly positioning the bottom module during presentation animation.

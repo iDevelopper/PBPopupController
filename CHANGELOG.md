@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.4.2
+
+Fix popup bar highlightView background color according user interface style.
+Do not snapshot the backing view when enter in background.
+
 ## 3.4.1
 
 Fix issue #12.
@@ -12,7 +17,7 @@ SwiftPM Support.
 
 ## 3.3.0
 
-SwiftUI Support.
+SwiftUI Support (WIP).
 
 ## 3.2.3
 

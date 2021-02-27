@@ -868,6 +868,11 @@ A set of methods used by the delegate to respond, with a preview view controller
         self.highlightView.autoresizingMask = []
         self.highlightView.isUserInteractionEnabled = false
         self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        if #available(iOS 13.0, *) {
+            if self.traitCollection.userInterfaceStyle == .dark/* || self.overrideUserInterfaceStyle == .dark*/ {
+                self.highlightView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            }
+        }
         self.highlightView.alpha = 0.0
         self.addSubview(self.highlightView)
         
@@ -927,6 +932,13 @@ A set of methods used by the delegate to respond, with a preview view controller
             
             if popupBarStyle == .custom {self.layoutCustomPopupBarView()}
         })
+    }
+
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if #available(iOS 13.0, *) {
+            let style = self.traitCollection.userInterfaceStyle
+            self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.1) : UIColor.white.withAlphaComponent(0.1)
+        }
     }
 
     // MARK: - Private Methods

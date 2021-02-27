@@ -735,7 +735,6 @@ extension PBPopupPresentationStyle
             if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
             }
-            //}
             completionBlock?()
          }
       }

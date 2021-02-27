@@ -16,7 +16,9 @@ internal class PBPopupPresentationController: UIPresentationController {
         return popupController.popupPresentationState
     }
     
-    internal var backingView: UIView!
+    private var backingView: UIView!
+    
+    private var shouldUpdateBackingView: Bool = true
     
     internal var popupPresentationStyle = PBPopupPresentationStyle.deck
     internal var isPresenting = false
@@ -206,6 +208,14 @@ internal class PBPopupPresentationController: UIPresentationController {
         }
         else {
             self.blackView.alpha = 1.0
+            NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        }
+    }
+    
+    @objc func didEnterBackground(_ sender: Any) {
+        self.shouldUpdateBackingView = false
+        delay(2) {
+            self.shouldUpdateBackingView = true
         }
     }
     
@@ -277,14 +287,14 @@ internal class PBPopupPresentationController: UIPresentationController {
     private func _cleanup() {
         if self.popupPresentationStyle == .deck {
             self.backingView?.removeFromSuperview()
+            self.backingView = nil
             self.blackView.removeFromSuperview()
             self.dimmerView.removeFromSuperview()
         }
         self.touchForwardingView.removeFromSuperview()
         self.touchForwardingView = nil
         self.presentedView?.removeFromSuperview()
-        // Do not remove popupContentView from superview (SwiftUI)
-        // self.popupContentView.removeFromSuperview()
+        self.popupContentView.removeFromSuperview()
         self.contextData = nil
     }
 }
@@ -457,7 +467,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
-            guard previousTraitCollection != nil, let backingView = self.backingView else { return }
+            guard previousTraitCollection != nil, let backingView = self.backingView, self.shouldUpdateBackingView == true else { return }
             if self.traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
                 backingView.removeFromSuperview()
                 self.backingView = nil
@@ -466,7 +476,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             }
         }
     }
-    
+
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
@@ -688,7 +698,7 @@ extension PBPopupPresentationController
                         self.popupContentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
                     }
                 }
-                    self.popupContentView.layer.cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
+                self.popupContentView.layer.cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
             }
         }
         else {

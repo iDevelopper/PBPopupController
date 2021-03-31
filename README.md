@@ -131,7 +131,6 @@ pod 'PBPopupController'
     }
 ```
 * Status Bar:
-
 Since iOSS 13, the staus bar is not animated correctly:
 
 You can set the properties:

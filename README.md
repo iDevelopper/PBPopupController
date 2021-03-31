@@ -130,6 +130,29 @@ pod 'PBPopupController'
         PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
     }
 ```
+* Status Bar:
+
+Since iOSS 13, the staus bar is not animated correctly:
+
+You can set the properties:
+
+- `popupPreferredStatusBarStyle` for the status bar style of the popup content view controller,
+- `containerPreferredStatusBarStyle` for the container view controller.
+
+When you override the  `preferredStatusBarStyle` variable in your popup content view controller, return container.popupController.popupStatusBarStyle:
+
+```Swift
+override public var preferredStatusBarStyle: UIStatusBarStyle {
+    guard let containerVC = self.popupContainerViewController else {return.default}
+    guard let popupContentView = containerVC.popupContentView else {return .default}
+    
+    if popupContentView.popupPresentationStyle != .deck {
+        return .default
+    }
+    return containerVC.popupController.popupStatusBarStyle
+}
+```
+
 etc...
 
 

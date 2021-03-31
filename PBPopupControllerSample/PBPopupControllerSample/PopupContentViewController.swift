@@ -174,7 +174,7 @@ class PopupContentViewController: UIViewController {
         if popupContentView.popupPresentationStyle != .deck {
             return .default
         }
-        return .lightContent
+        return containerVC.popupController.popupStatusBarStyle
     }
 
     // MARK: - View lifecycle

@@ -88,13 +88,13 @@ class PopupContentTableViewController: UITableViewController {
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if self.modalPresentationStyle == .fullScreen {
+        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let popupContentView = containerVC.popupContentView else {return .default}
+        
+        if popupContentView.popupPresentationStyle != .deck {
             return .default
         }
-        if self.popupContainerViewController.popupContentView.popupPresentationStyle != .deck {
-            return .default
-        }
-        return .lightContent
+        return containerVC.popupController.popupStatusBarStyle
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

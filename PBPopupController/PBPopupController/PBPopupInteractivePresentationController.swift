@@ -3,12 +3,12 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 01/07/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 
-protocol PBPopupInteractivePresentationDelegate : class {
+protocol PBPopupInteractivePresentationDelegate : AnyObject {
     func presentInteractive()
     func dismissInteractive()
 }
@@ -21,18 +21,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     private weak var view: UIView!
     private weak var popupController: PBPopupController!
-
+    
     // Set by popupController when didOpen.
     internal var contentOffset: CGPoint!
     
     internal var gesture: UIPanGestureRecognizer!
     
     private var animator: UIViewPropertyAnimator!
-
+    
     private var progress: CGFloat = 0
     private var location: CGFloat = 0
     private var shouldComplete = false
-        
+    
     internal weak var delegate: PBPopupInteractivePresentationDelegate?
     
     private var presentationController: PBPopupPresentationController! {
@@ -75,10 +75,10 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     @objc private func handlePanGesture(gesture: UIPanGestureRecognizer) {
         guard let vc = self.popupController.containerViewController else { return }
-                
+        
         let translation = gesture.translation(in: gesture.view?.superview)
         let availableHeight: CGFloat = self._popupContainerViewAvailableHeight()
-
+        
         if !self.isPresenting {
             if let scrollView = self.view as? UIScrollView {
                 if scrollView.contentOffset.y <= self.contentOffset.y {
@@ -109,7 +109,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 }
             }
             self.location = vc.popupContentView.frame.minY + translation.y
-
+            
         case .changed:
             if self.isDismissing, let scrollView = self.view as? UIScrollView {
                 scrollView.contentOffset = self.contentOffset
@@ -126,21 +126,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             if (self.progress >= 1 || self.progress <= 0) {
                 self.progress = self.progress >= 1 ? 1 : 0
             }
-
+            
             if let animator = self.animator {
                 animator.fractionComplete = self.progress
                 self.update(self.progress)
             }
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location + translation.y)
-
-        /*
-        case .cancelled:
-            self.isDismissing = false
-            self.cancel()
-            if let animator = self.animator {
-                animator.stopAnimation(false)
-            }
-        */
+            
         case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
@@ -166,8 +158,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.endInteractiveTransition(with: gesture)
                 }
                 self.finish()
-                // FIXME: iOS 14 bug fix
-                self.presentationController.presentingVC.setNeedsStatusBarAppearanceUpdate()
             }
             else {
                 self.cancel()

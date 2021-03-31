@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 13/07/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -162,8 +162,7 @@ internal class PBPopupPresentationController: UIPresentationController {
         
         containerView.frame = self.frameForContainerView()
         
-        var frame = containerView.bounds
-        frame.size.height -= self.popupBarView.frame.height
+        let frame = containerView.bounds
         self.touchForwardingView = PBTouchForwardingView(frame: frame)
         self.touchForwardingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.touchForwardingView.passthroughViews = [self.presentingVC.view]
@@ -476,7 +475,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             }
         }
     }
-
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
@@ -494,7 +493,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 self.containerView?.frame = self.frameForContainerView()
                 self.blackView.frame = self.popupBlackViewFrame()
                 self.blackView.isHidden = self.isCompactOrPhoneInLandscape() ? true : false
-
+                
                 if self.traitCollection.verticalSizeClass == .regular, let backingView = self.backingView {
                     backingView.removeFromSuperview()
                     self.backingView = nil
@@ -524,7 +523,6 @@ extension PBPopupPresentationController
             frame.origin.x += self.presentingVC.view.frame.minX
             frame.size.width = self.presentingVC.view.frame.width
         }
-        frame.size.height -= self.popupBarView.frame.height
         return frame
     }
     
@@ -578,6 +576,7 @@ extension PBPopupPresentationController
         frame.origin.x = 0
         frame.origin.y = 0
         frame.size.height = self.popupContentViewFrameForPopupStateOpen().height
+        frame.size.width = self.popupContentViewFrameForPopupStateOpen().width
         PBLog("\(frame)")
         return frame
     }
@@ -591,13 +590,49 @@ extension PBPopupPresentationController
         frame.origin = .zero
         return frame
     }
-    
+    /*
+     internal func popupContentViewFrameForPopupStateOpen() -> CGRect {
+     guard let containerView = self.containerView else { return .zero }
+     
+     var y: CGFloat = 0.0
+     
+     let height = self.presentingVC.view.bounds.height
+     
+     #if targetEnvironment(macCatalyst)
+     if self.popupPresentationStyle == .fullScreen {
+     //y = self.statusBarFrame.height
+     }
+     #endif
+     
+     if self.popupPresentationStyle == .deck && self.traitCollection.verticalSizeClass == .regular && self.presentingVC.splitViewController == nil {
+     y = self.statusBarFrame.height + self.popupContentViewTopInset
+     }
+     else if self.popupPresentationStyle == .custom {
+     y = height - self.popupContentView.popupContentSize.height
+     }
+     
+     var frame = CGRect(x: self.presentingVC.defaultFrameForBottomBar().origin.x, y: y, width: self.presentingVC.defaultFrameForBottomBar().size.width, height: height - y)
+     
+     if self.presentingVC is UINavigationController || self.presentingVC is UITabBarController {
+     frame = CGRect(x: 0.0, y: y, width: containerView.bounds.width, height: height - y)
+     
+     if #available(iOS 14, *), UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
+     let x = self.presentingVC.view.safeAreaInsets.left
+     frame = CGRect(x: x, y: y, width: containerView.bounds.width - x, height: height - y)
+     }
+     }
+     PBLog("\(frame)")
+     return frame
+     }
+     */
     internal func popupContentViewFrameForPopupStateOpen() -> CGRect {
         guard let containerView = self.containerView else { return .zero }
         
+        var x: CGFloat = self.presentingVC.defaultFrameForBottomBar().origin.x
         var y: CGFloat = 0.0
         
-        let height = self.presentingVC.view.bounds.height
+        var width = self.presentingVC.defaultFrameForBottomBar().size.width
+        var height = self.presentingVC.view.bounds.height
         
         #if targetEnvironment(macCatalyst)
         if self.popupPresentationStyle == .fullScreen {
@@ -607,13 +642,20 @@ extension PBPopupPresentationController
         
         if self.popupPresentationStyle == .deck && self.traitCollection.verticalSizeClass == .regular && self.presentingVC.splitViewController == nil {
             y = self.statusBarFrame.height + self.popupContentViewTopInset
+            width = self.presentingVC.defaultFrameForBottomBar().size.width
         }
         else if self.popupPresentationStyle == .custom {
+            if self.popupContentView.popupContentSize.width > 0 {
+                width = self.presentingVC.view.bounds.width
+                x = width - self.popupContentView.popupContentSize.width
+                width = width - x
+            }
             y = height - self.popupContentView.popupContentSize.height
+            height = height - y
         }
         
-        var frame = CGRect(x: self.presentingVC.defaultFrameForBottomBar().origin.x, y: y, width: self.presentingVC.defaultFrameForBottomBar().size.width, height: height - y)
-
+        var frame = CGRect(x: x, y: y, width: width, height: height)
+        
         if self.presentingVC is UINavigationController || self.presentingVC is UITabBarController {
             frame = CGRect(x: 0.0, y: y, width: containerView.bounds.width, height: height - y)
             
@@ -738,7 +780,7 @@ extension PBPopupPresentationController
     private func setupBackingView()
     {
         if self.popupPresentationStyle == .custom { return }
-
+        
         if self.presentingVC.splitViewController != nil { return }
         
         if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
@@ -756,7 +798,7 @@ extension PBPopupPresentationController
             self.popupBarView.isHidden = true
             let alpha = self.popupBarView.alpha
             self.popupBarView.alpha = 0.0
-                        
+            
             self.blackView.frame = self.popupBlackViewFrame()
             
             var imageRect = self.blackView.bounds
@@ -800,9 +842,9 @@ extension PBPopupPresentationController
     private func animateBackingViewToDeck( _ deck: Bool, animated: Bool)
     {
         if self.popupPresentationStyle == .custom { return }
-
+        
         if self.presentingVC.splitViewController != nil { return }
-
+        
         if self.traitCollection.verticalSizeClass == .regular {
             if deck == true {
                 self.dimmerView.alpha = 0.2
@@ -848,9 +890,11 @@ extension PBPopupPresentationController
         }
         
         var rect = self.popupBarView.frame
-        rect.origin.x = self.popupContentViewFrameForPopupStateOpen().minX
-        rect.size.width = self.popupContentViewFrameForPopupStateOpen().width
-
+        if self.presentingVC.splitViewController != nil {
+            rect.origin.x = self.popupContentViewFrameForPopupStateOpen().minX
+            rect.size.width = self.popupContentViewFrameForPopupStateOpen().width
+        }
+        
         //for debug
         //let image = self.presentingVC.view.makeSnapshot(from: rect)
         

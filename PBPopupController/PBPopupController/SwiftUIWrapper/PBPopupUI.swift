@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 06/10/2020.
-//  Copyright © 2020 Patrick BODET. All rights reserved.
+//  Copyright © 2020-2021 Patrick BODET. All rights reserved.
 //
 
 import SwiftUI
@@ -25,7 +25,7 @@ public extension View {
     func popupCloseButtonStyle(_ style: PBPopupCloseButtonStyle) -> some View {
         return environment(\.popupCloseButtonStyle, style)
     }
-
+    
     func popupBarStyle(_ style: PBPopupBarStyle) -> some View {
         return environment(\.popupBarStyle, style)
     }
@@ -33,15 +33,15 @@ public extension View {
     func popupBarProgressViewStyle(_ style: PBPopupBarProgressViewStyle) -> some View {
         return environment(\.popupBarProgressViewStyle, style)
     }
-
+    
     func popupBarBorderViewStyle(_ style: PBPopupBarBorderViewStyle) -> some View {
         return environment(\.popupBarBorderViewStyle, style)
     }
-
+    
     func popupPresentationStyle(_ style: PBPopupPresentationStyle) -> some View {
         return environment(\.popupPresentationStyle, style)
     }
-
+    
     func popupPresentationDuration(_ duration: TimeInterval) -> some View {
         return environment(\.popupPresentationDuration, duration)
     }
@@ -49,11 +49,11 @@ public extension View {
     func popupDismissalDuration(_ duration: TimeInterval) -> some View {
         return environment(\.popupDismissalDuration, duration)
     }
-
+    
     func popupCompletionThreshold(_ threshold: CGFloat) -> some View {
         return environment(\.popupCompletionThreshold, threshold)
     }
-
+    
     func popupContentSize(_ size: CGSize) -> some View {
         return environment(\.popupContentSize, size)
     }
@@ -82,7 +82,7 @@ public extension View {
     func popupTitle<S>(verbatim title: S, subtitle: S? = nil) -> some View where S : StringProtocol {
         return popupTitle(verbatim: String(title), subtitle: subtitle == nil ? nil : String(subtitle!))
     }
-
+    
     func popupTitle(verbatim title: String, subtitle: String? = nil) -> some View {
         return self.preference(key: PBPopupTitlePreferenceKey.self, value: PBPopupTitleData(title: title, subtitle: subtitle))
     }
@@ -90,15 +90,15 @@ public extension View {
     func popupLabel(_ label: UILabel? = nil, sublabel: UILabel? = nil) -> some View {
         return self.preference(key: PBPopupLabelPreferenceKey.self, value: PBPopupLabelData(label: label, sublabel: sublabel))
     }
-
+    
     func popupImage(_ image: Image) -> some View {
         return self.preference(key: PBPopupImagePreferenceKey.self, value: image)
     }
-
+    
     func popupProgress(_ progress: Float) -> some View {
         return self.preference(key: PBPopupProgressPreferenceKey.self, value: progress)
     }
-
+    
     func popupBarItems<LeadingContent>(@ViewBuilder leading: () -> LeadingContent) -> some View where LeadingContent: View {
         return self
             .preference(key: PBPopupLeadingBarItemsPreferenceKey.self, value: PBPopupAnyViewWrapper(anyView: AnyView(leading())))

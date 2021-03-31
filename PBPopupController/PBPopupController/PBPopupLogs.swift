@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 23/12/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,7 @@ import Foundation
 let debug: Bool = true
 
 /**
-Logs a message to the Apple System Log facility.
+ Logs a message to the Apple System Log facility.
  */
 public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: String = #file, function: String = #function, _ line: Int = #line)
 {

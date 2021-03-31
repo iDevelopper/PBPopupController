@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 08/10/2020.
-//  Copyright © 2020 Patrick BODET. All rights reserved.
+//  Copyright © 2020-2021 Patrick BODET. All rights reserved.
 //
 
 import SwiftUI
@@ -69,7 +69,7 @@ internal extension EnvironmentValues {
         get { self[PBPopupBarProgressViewStyleKey.self] }
         set { self[PBPopupBarProgressViewStyleKey.self] = newValue }
     }
-
+    
     var popupBarBorderViewStyle: PBPopupBarBorderViewStyle {
         get { self[PBPopupBarBorderViewStyleKey.self] }
         set { self[PBPopupBarBorderViewStyleKey.self] = newValue }
@@ -79,32 +79,32 @@ internal extension EnvironmentValues {
         get { self[PBPopupPresentationStyleKey.self] }
         set { self[PBPopupPresentationStyleKey.self] = newValue }
     }
-
+    
     var popupPresentationDuration: TimeInterval {
         get { self[PBPopupPresentationDurationKey.self] }
         set { self[PBPopupPresentationDurationKey.self] = newValue }
     }
-
+    
     var popupDismissalDuration: TimeInterval {
         get { self[PBPopupDismissalDurationKey.self] }
         set { self[PBPopupDismissalDurationKey.self] = newValue }
     }
-
+    
     var popupCompletionThreshold: CGFloat {
         get { self[PBPopupCompletionThresholdKey.self] }
         set { self[PBPopupCompletionThresholdKey.self] = newValue }
     }
-
+    
     var popupCompletionFlickMagnitude: CGFloat {
         get { self[PBPopupCompletionFlickMagnitudeKey.self] }
         set { self[PBPopupCompletionFlickMagnitudeKey.self] = newValue }
     }
-
+    
     var popupContentSize: CGSize {
         get { self[PBPopupContentSizeKey.self] }
         set { self[PBPopupContentSizeKey.self] = newValue }
     }
-
+    
     var popupBarCustomBarView: PBPopupBarCustomView? {
         get { self[PBPopupBarCustomViewKey.self] }
         set { self[PBPopupBarCustomViewKey.self] = newValue }

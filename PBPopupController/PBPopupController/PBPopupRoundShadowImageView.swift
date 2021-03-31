@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 18/11/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -12,11 +12,11 @@ import UIKit
  A custom view that provide a shadow's layer arround an image view with a corner radius.
  */
 @objc public class PBPopupRoundShadowImageView: UIView {
-
+    
     // MARK: - Public Properties
     
     let imageView = UIImageView()
-
+    
     @objc internal var image: UIImage! {
         didSet {
             imageView.image = image
@@ -47,13 +47,13 @@ import UIKit
             layer.shadowOpacity = Float(shadowOpacity)
         }
     }
-
+    
     @objc public var shadowRadius: CGFloat = 0.0 {
         didSet {
             layer.shadowRadius = shadowRadius
         }
     }
-
+    
     // MARK: - Init
     
     @objc internal override init(frame: CGRect) {

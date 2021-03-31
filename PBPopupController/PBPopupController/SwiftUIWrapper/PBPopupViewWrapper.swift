@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 07/10/2020.
-//  Copyright © 2020 Patrick BODET. All rights reserved.
+//  Copyright © 2020-2021 Patrick BODET. All rights reserved.
 //
 
 import SwiftUI
@@ -20,7 +20,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     private let onDismiss: (() -> Void)?
     private let onOpen: (() -> Void)?
     private let onClose: (() -> Void)?
-
+    
     @Environment(\.popupCloseButtonStyle) var popupCloseButtonStyle: PBPopupCloseButtonStyle
     @Environment(\.popupBarStyle) var popupBarStyle: PBPopupBarStyle
     @Environment(\.popupBarProgressViewStyle) var popupBarProgressViewStyle: PBPopupBarProgressViewStyle
@@ -32,7 +32,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupCompletionFlickMagnitude) var popupCompletionFlickMagnitude: CGFloat
     @Environment(\.popupContentSize) var popupContentSize: CGSize
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
-
+    
     init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen

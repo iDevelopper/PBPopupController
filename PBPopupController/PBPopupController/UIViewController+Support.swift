@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 16/03/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -110,9 +110,9 @@ public extension UIViewController
      The popup controller (read-only).
      
      - SeeAlso:
-        - `PBPopupController.dataSource`.
-        - `PBPopupController.delegate`.
-        - `PBPopupController.popupPresentationState`.
+     - `PBPopupController.dataSource`.
+     - `PBPopupController.delegate`.
+     - `PBPopupController.popupPresentationState`.
      */
     @objc internal(set) weak var popupController: PBPopupController! {
         get {
@@ -138,7 +138,7 @@ public extension UIViewController
     
     /**
      Returns the container (presenting) view controller for the popup bar, and for the presented view controller (popupContentViewController). May be `UIViewController`, `UINavigationController`, `UITabBarController` or a custom container view controller. (read-only).
-
+     
      - SeeAlso: `additionalSafeAreaInsetsBottomForContainer`.
      */
     @objc internal(set) weak var popupContainerViewController: UIViewController! {
@@ -181,8 +181,8 @@ public extension UIViewController
     }
     
     /**
-    Returns the view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect. (read-only).
-
+     Returns the view where is embedded the popupContentViewController's view for presentation. This view has a optional close button and a visual effect view with an optional effect. (read-only).
+     
      - SeeAlso: `PBPopupContentView`.
      */
     @objc internal(set) weak var popupContentView: PBPopupContentView! {
@@ -206,9 +206,9 @@ public extension UIViewController
             }
         }
     }
-
+    
     /**
-    Custom insets that you specify to modify the container view controller's safe area (usefull for a custom container). Use this property to adjust the safe area bottom edge inset value of this view controller's views by the specified amount.
+     Custom insets that you specify to modify the container view controller's safe area (usefull for a custom container). Use this property to adjust the safe area bottom edge inset value of this view controller's views by the specified amount.
      */
     @objc var additionalSafeAreaInsetsBottomForContainer: CGFloat {
         get {
@@ -233,23 +233,23 @@ public extension UIViewController
             objc_setAssociatedObject(self, &AssociatedKeys.popupAdditionalSafeAreaInsets, NSValue(uiEdgeInsets: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-
-
+    
+    
     /**
      Presents an interactive popup bar in the container's view hierarchy and optionally opens the popup in the same animation. The popup bar is attached to the container's bottom bar (see `popupContainerViewController`).
-
+     
      You may call this method multiple times with different controllers, triggering replacement to the popup content view and update to the popup bar, if popup is open or bar presented, respectively.
      
      The provided controller is retained by the system and will be released once a different controller is presented or when the popup bar is dismissed.
-
+     
      - Parameter controller: The presented view controller for popup presentation.
      - Parameter openPopup: Pass `true` to open the popup in the same animation; otherwise, pass `false`.
      - Parameter animated: Pass `true` to animate the presentation; otherwise, pass `false`.
      - Parameter completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      
      - SeeAlso: `PBPopupBar.customPopupBarViewController` for a custom popup bar view controller.
-                `PBPopupController.dataSource` for a custom bottom bar view.
-                `presentPopupBar(withPopupContentViewController:animated:completion:)`.
+     `PBPopupController.dataSource` for a custom bottom bar view.
+     `presentPopupBar(withPopupContentViewController:animated:completion:)`.
      */
     @objc func presentPopupBar(withPopupContentViewController controller: UIViewController!, openPopup: Bool, animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.presentPopupBar(withPopupContentViewController: controller, animated: openPopup ? false : animated) {
@@ -276,8 +276,8 @@ public extension UIViewController
      - Parameter completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      
      - SeeAlso: `PBPopupBar.customPopupBarViewController` for a custom popup bar view controller.
-                `PBPopupController.dataSource` for a custom bottom bar view.
-                `presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)`.
+     `PBPopupController.dataSource` for a custom bottom bar view.
+     `presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)`.
      */
     @objc func presentPopupBar(withPopupContentViewController controller: UIViewController!, animated: Bool, completion: (() -> Swift.Void)? = nil) {
         
@@ -297,10 +297,10 @@ public extension UIViewController
     
     /**
      Dismisses the popup presentation, closing the popup if open and dismissing the popup bar.
-
+     
      - Parameters:
-        - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
-        - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func dismissPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
@@ -322,10 +322,10 @@ public extension UIViewController
     
     /**
      Opens the popup, displaying the content view controller's view.
-
+     
      - Parameters:
-        - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
-        - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func openPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.popupController._openPopupAnimated(animated) {
@@ -335,10 +335,10 @@ public extension UIViewController
     
     /**
      Closes the popup, hiding the content view controller's view.
-
+     
      - Parameters:
-        - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
-        - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func closePopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
         self.popupController._closePopupAnimated(animated) {

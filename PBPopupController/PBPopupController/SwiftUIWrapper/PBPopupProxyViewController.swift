@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 06/10/2020.
-//  Copyright © 2020 Patrick BODET. All rights reserved.
+//  Copyright © 2020-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -19,7 +19,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     var trailingBarItemsController: UIHostingController<AnyView>? = nil
     var leadingBarButtonItem: UIBarButtonItem? = nil
     var trailingBarButtonItem: UIBarButtonItem? = nil
-
+    
     var readyForHandling = false {
         didSet {
             if let waitingStateHandle = waitingStateHandle {
@@ -29,7 +29,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
         }
     }
     var waitingStateHandle: ((Bool) -> Void)?
-
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -58,7 +58,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                 vc.view.widthAnchor.constraint(equalToConstant: size.width),
                 vc.view.heightAnchor.constraint(equalToConstant: size.height),
             ])
-
+            
             barButtonItem!.customView = vc.view
         } else {
             vc = UIHostingController<AnyView>(rootView: view)
@@ -140,7 +140,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
         currentPopupState = state
         
         let popupContentHandler = state.popupContent != nil ? viewHandler(state) : viewControllerHandler(state)
-
+        
         let handler : (Bool) -> Void = { animated in
             if self.target.popupBar.popupBarStyle != .custom {
                 self.target.popupBar.popupBarStyle = self.currentPopupState.popupBarStyle
@@ -175,9 +175,9 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                 popupContentHandler()
                 
                 //DispatchQueue.main.async {
-                    self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated) {
+                self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated) {
                     //
-                    }
+                }
                 //}
             } else {
                 self.target.dismissPopupBar(animated: animated, completion: nil)
@@ -189,7 +189,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             waitingStateHandle = handler
         }
     }
-
+    
     //MARK: PBPopupBarDatasource
     
     func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
@@ -200,13 +200,13 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     
     func popupController(_ popupController: PBPopupController, didPresent popupBar: PBPopupBar) {
         currentPopupState?.isPresented = true
-
+        
         currentPopupState?.onPresent?()
     }
     
     func popupController(_ popupController: PBPopupController, didDismiss popupBar: PBPopupBar) {
         currentPopupState?.isPresented = false
-
+        
         currentPopupState?.onDismiss?()
     }
     

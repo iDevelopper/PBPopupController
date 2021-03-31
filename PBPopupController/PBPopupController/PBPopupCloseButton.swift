@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 26/04/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -160,7 +160,7 @@ extension PBPopupCloseButtonStyle
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpInside)
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpOutside)
         self.addTarget(self, action: #selector(didTouchCancel(_:)), for: .touchCancel)
-    
+        
         //
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.15
@@ -225,13 +225,13 @@ extension PBPopupCloseButtonStyle
             let minSideSize: CGFloat = min(self.bounds.size.width, self.bounds.size.height)
             
             /*
-            let maskLayer = CAShapeLayer()
-            maskLayer.rasterizationScale = UIScreen.main.nativeScale
-            maskLayer.shouldRasterize = true
-            let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
-            maskLayer.path = path
-            effectView.layer.mask = maskLayer
-            */
+             let maskLayer = CAShapeLayer()
+             maskLayer.rasterizationScale = UIScreen.main.nativeScale
+             maskLayer.shouldRasterize = true
+             let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
+             maskLayer.path = path
+             effectView.layer.mask = maskLayer
+             */
             
             effectView.clipsToBounds = true
             effectView.layer.cornerRadius = minSideSize / 2

@@ -3,16 +3,16 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 29/11/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 import Foundation
 
 internal enum PBPopupMaskedCorners : Int {
-   case top
-   case bottom
-   case all
+    case top
+    case bottom
+    case all
 }
 
 internal extension UIView
@@ -49,11 +49,11 @@ internal extension UIView
     }
     
     /*
-    private func bezierWithRadius(rect: CGRect, radius: CGFloat) -> UIBezierPath {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: radius, height: 0))
-        return path
-    }
-    */
+     private func bezierWithRadius(rect: CGRect, radius: CGFloat) -> UIBezierPath {
+     let path = UIBezierPath(roundedRect: rect, byRoundingCorners: [.topLeft, .topRight], cornerRadii: CGSize(width: radius, height: 0))
+     return path
+     }
+     */
     
     private func animatePath(_ path: UIBezierPath) {
         let animation = CABasicAnimation(keyPath: "path")
@@ -115,7 +115,7 @@ extension UIBezierPath
             path.addLine(to: cornerPoint)
             path.addQuadCurve(to: cornerPoint, controlPoint: cornerPoint)
         }
-
+        
         path.close()
         return path
     }

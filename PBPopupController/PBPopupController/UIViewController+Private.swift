@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 15/04/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -99,7 +99,7 @@ public extension UITabBarController
             }
         }
     }
-
+    
     //_showBarWithTransition:isExplicit:
     @objc private func _sBWT(t: Int, iE: Bool) {
         self.isTabBarHiddenDuringTransition = false
@@ -126,7 +126,7 @@ public extension UITabBarController
             }
         }
     }
-
+    
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
@@ -174,7 +174,7 @@ internal extension UITabBarController
         bottomBarFrame.size.height = max(bottomBarFrame.size.height, bottomBarSizeThatFits.height)
         
         bottomBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.size.height - (self.isTabBarHiddenDuringTransition ? 0.0 : bottomBarFrame.size.height))
-
+        
         return bottomBarFrame
     }
     
@@ -228,7 +228,7 @@ public extension UINavigationController
     @objc static func nc_swizzle() {
         _ = self.swizzleImplementation
     }
-
+    
     //_setToolbarHidden:edge:duration:
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat) {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
@@ -237,7 +237,7 @@ public extension UINavigationController
                 
                 self._sTH(h: h, e: e, d: d)
                 self.bottomBar.isHidden = h
-
+                
                 if let coordinator = self.transitionCoordinator {
                     coordinator.animate(alongsideTransition: { (_ context) in
                         self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
@@ -263,7 +263,7 @@ public extension UINavigationController
             self.bottomBar.isHidden = h
         }
     }
-
+    
     @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool)
     {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
@@ -293,7 +293,7 @@ internal extension UINavigationController
         
         // FIXME: iOS 14 beta 6 bug (frame animation fails)
         //let insets = self.insetsForBottomBar()
-
+        
         if height > 0.0 {
             if hidden == false {
                 //self.toolbar.frame.origin.y = self.view.bounds.height - height - insets.bottom
@@ -336,7 +336,7 @@ internal extension UINavigationController
         
         toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
         toolBarFrame.size.height = self.isToolbarHidden ? 0.0 : toolBarFrame.size.height
-
+        
         if let tabBarController = self.tabBarController {
             let tabBarFrame = tabBarController.defaultFrameForBottomBar()
             toolBarFrame.origin.y -= tabBarController.isTabBarHiddenDuringTransition ? 0.0 : tabBarFrame.height
@@ -344,7 +344,7 @@ internal extension UINavigationController
         
         return toolBarFrame
     }
-
+    
     @objc override func configurePopupBarFromBottomBar() {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
@@ -405,7 +405,7 @@ public extension UIViewController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         #endif
-
+        
         originalMethod = class_getInstanceMethod(aClass, #selector(addChild(_:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_addChild(_ :)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -443,7 +443,7 @@ public extension UIViewController
             self._sCoOvIns(insets:newInsets)
         }
     }
-
+    
     //_updateContentOverlayInsetsFromParentIfNecessary
     @objc private func _uCOIFPIN() {
         self._uCOIFPIN()
@@ -473,7 +473,7 @@ public extension UIViewController
         self.popupController = rv
         return rv
     }
-
+    
     @objc private func pb_addChild(_ viewController: UIViewController)
     {
         self.pb_addChild(viewController)
@@ -519,7 +519,7 @@ public extension UIViewController
             rv.layoutIfNeeded()
         }
     }
-
+    
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         self.pb_viewWillTransition(to: size, with: coordinator)
         if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
@@ -604,7 +604,7 @@ internal extension UIViewController
         bottomBarFrame.origin = CGPoint(x: bottomBarFrame.origin.x, y: self.view.bounds.height - (self.bottomBar.isHidden ? 0.0 : bottomBarFrame.size.height))
         return bottomBarFrame
     }
-
+    
     @objc func configurePopupBarFromBottomBar() {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return

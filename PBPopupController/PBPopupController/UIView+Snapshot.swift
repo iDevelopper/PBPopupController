@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 05/05/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -17,7 +17,7 @@ internal extension UIView
         UIGraphicsEndImageContext()
         return image
     }
-
+    
     func makeSnapshot(from rect: CGRect? = nil) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(bounds.size, isOpaque, UIScreen.main.scale)
         
@@ -35,7 +35,7 @@ internal extension UIView
         guard let cgImage = image.cgImage?.cropping(to: scaledRect) else { return nil }
         return UIImage(cgImage: cgImage, scale: scale, orientation: .up)
     }
-
+    
     func snapshot() -> UIImageView {
         return UIImageView(image: asImage())
     }

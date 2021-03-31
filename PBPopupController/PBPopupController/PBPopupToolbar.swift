@@ -3,13 +3,13 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 21/12/2018.
-//  Copyright © 2018-2020 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 
 internal class PBPopupToolbar: UIToolbar {
-
+    
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let rv: UIView? = super.hitTest(point, with: event)
         
@@ -22,7 +22,7 @@ internal class PBPopupToolbar: UIToolbar {
         
         return rv
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         

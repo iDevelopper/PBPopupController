@@ -187,11 +187,14 @@ internal class PBPopupPresentationController: UIPresentationController {
             self.popupContentView.contentView.addSubview(self.imageViewForPresentation!)
         }
         
+        self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
+        
         coordinator.animate(alongsideTransition: { (context) in
             if !context.isInteractive {
                 self.popupBarForPresentation?.alpha = 0.0
             }
             self.popupContentView.updatePopupCloseButtonPosition()
+            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
         })
     }
     
@@ -242,6 +245,9 @@ internal class PBPopupPresentationController: UIPresentationController {
         self.animateBackingViewToDeck(true, animated: false)
         
         self.popupBarForPresentation?.alpha = 0.0
+        
+        self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
+
         coordinator.animate(alongsideTransition: { (context) in
             self.animateBackingViewToDeck(false, animated: true)
             if !context.isInteractive {
@@ -249,6 +255,7 @@ internal class PBPopupPresentationController: UIPresentationController {
                 self.animateImageViewInFinalPosition()
             }
             self.setupCornerRadiusForPopupContentViewAnimated(true, open: false)
+            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
         })
     }
     

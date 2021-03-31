@@ -352,6 +352,25 @@ extension PBPopupPresentationStyle
      */
     @objc public var wantsAdditionalSafeAreaInsetTop: Bool = false
     
+    /**
+     The preferred status bar style for the container view controller.
+     */
+    @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
+        didSet {
+            popupStatusBarStyle = containerPreferredStatusBarStyle
+        }
+    }
+
+    /**
+     The preferred status bar style for the popup content view controller when `popupPresentationStyle` is set to `deck`.
+     */
+    @objc public var popupPreferredStatusBarStyle: UIStatusBarStyle = .lightContent
+    
+    /**
+     The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.
+     */
+    @objc public var popupStatusBarStyle: UIStatusBarStyle = .default
+   
     // MARK: - Private Properties
     
     @objc internal weak var containerViewController: UIViewController!
@@ -900,6 +919,9 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             vc.popupBar.setHighlighted(true, animated: false)
+            // TODO:
+            //self.popupPresentationState = .opening
+            //self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .closed)
             vc.present(vc.popupContentViewController, animated: true) {
                 vc.popupBar.setHighlighted(false, animated: false)
                 if self.popupPresentationState == .opening {
@@ -918,6 +940,9 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
         if let vc = self.containerViewController {
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
+            // TODO:
+            //self.popupPresentationState = .closing
+            //self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: .open)
             vc.popupContentViewController.dismiss(animated: true) {
                 if self.popupPresentationState == .closing {
                     self.popupPresentationState = .closed

@@ -133,6 +133,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             }
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: popupController.popupPresentationState, progress: self.progress, location: self.location + translation.y)
             
+            switch gesture.direction {
+            case .up:
+                self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
+            case .down:
+                self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
+            default:
+                break
+            }
+            UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
+                vc.setNeedsStatusBarAppearanceUpdate()
+            }
+            
         case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
@@ -140,7 +152,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             
             if self.shouldComplete {
                 if self.isPresenting {
+                    self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
                     animator.addAnimations {
+                        vc.setNeedsStatusBarAppearanceUpdate()
                         vc.popupContentView.popupCloseButton?.alpha = 1.0
                     }
                     animator.continueAnimation(withTimingParameters: nil, durationFactor: 0)
@@ -151,6 +165,10 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
                 }
                 else {
+                    self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
+                    animator.addAnimations {
+                        vc.setNeedsStatusBarAppearanceUpdate()
+                    }
                     self.popupController.popupPresentationState = .closing
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: .open)
                     
@@ -163,14 +181,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 self.cancel()
                 animator.isReversed = true
                 if self.isPresenting {
+                    self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
                     animator.addAnimations {
+                        vc.setNeedsStatusBarAppearanceUpdate()
                         self.presentationController.popupBarForPresentation?.alpha = 1.0
                     }
                     animator.continueAnimation(withTimingParameters: nil, durationFactor: 0.0)
                 }
                 else {
+                    self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
                     if self.isDismissing {
                         animator.addAnimations {
+                            vc.setNeedsStatusBarAppearanceUpdate()
                             vc.popupContentView.popupCloseButton?.setButtonStateStationary()
                         }
                         if let scrollView = self.view as? UIScrollView {
@@ -222,7 +244,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         }
         availableHeight -= vc.insetsForBottomBar().bottom
         
-        return (self.popupController.popupPresentationState == .open ? availableHeight : -availableHeight)
+        let state = self.popupController.popupPresentationState
+        return (state == .open || state == .closing ? availableHeight : -availableHeight)
     }
 }
 

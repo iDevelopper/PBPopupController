@@ -14,6 +14,8 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     @IBOutlet weak var tabBar: UIToolbar!
     @IBOutlet weak var bottomDockingView: UIView!
 
+    var isPopupFullScreen: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -33,8 +35,13 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
         super.viewDidLayoutSubviews()
 
         #if !targetEnvironment(macCatalyst)
-        let orientation = self.statusBarOrientation(for: self.view)
-        self.popupContentView.popupContentSize = CGSize(width: -1, height: UIScreen.main.bounds.height * ((orientation == .portrait || orientation == .portraitUpsideDown) ? 2/3 : 9/10))
+        if self.isPopupFullScreen == false {
+            let orientation = self.statusBarOrientation(for: self.view)
+            self.popupContentView.popupContentSize = CGSize(width: -1, height: UIScreen.main.bounds.height * ((orientation == .portrait || orientation == .portraitUpsideDown) ? 2/3 : 9/10))
+        }
+        else {
+            self.popupContentView.popupContentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        }
         #else
         self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 9/10)
         #endif
@@ -48,6 +55,14 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     
     deinit {
         PBLog("deinit \(self)")
+    }
+    
+    @IBAction func customItemTouch(_ sender: UIBarButtonItem) {
+        self.isPopupFullScreen = false
+    }
+    
+    @IBAction func fuulScreenItemTouch(_ sender: UIBarButtonItem) {
+        self.isPopupFullScreen = true
     }
     
     func commonSetup() {

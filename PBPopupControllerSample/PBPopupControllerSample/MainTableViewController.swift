@@ -76,6 +76,9 @@ class MainTableViewController: UITableViewController {
         //
         return UIContextMenuConfiguration(identifier: "Preview" as NSCopying, previewProvider: { () -> UIViewController? in
             let vc = self.viewControllerForIndexPath(indexPath)
+            if indexPath.row == 4 {
+                vc?.loadViewIfNeeded()
+            }
             return vc
         }, actionProvider: nil)
     }

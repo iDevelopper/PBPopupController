@@ -190,7 +190,7 @@ This code was inspired on his excellent framework [LNPopupController](https://gi
 
 ## Author
 
-iDevelopper, patrick.bodet4@wanadoo.fr
+Patrick BODET aka iDevelopper
 
 ## License
 

@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.4.3
+
+Custom popupPresentationStyle width.
+Status bar appearance and animation improvements.
+Documentation updates.
+
 ## 3.4.2
 
 Fix popup bar highlightView background color according user interface style.

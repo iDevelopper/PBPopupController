@@ -17,7 +17,7 @@
     <a title="UIViewController Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.2.2 Docs</a> (87% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.4.2 Docs</a> (79% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right">
           <form role="search" action="../search.json">
@@ -87,6 +87,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/View.html">View</a>
               </li>
             </ul>
           </li>
@@ -213,13 +216,12 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                         <p>The popup controller (read-only).</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
-    <ul>
+    
+</div><ul>
 <li><code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)dataSource">PBPopupController.dataSource</a></code>.</li>
 <li><code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)delegate">PBPopupController.delegate</a></code>.</li>
 <li><code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)popupPresentationState">PBPopupController.popupPresentationState</a></code>.</li>
 </ul>
-
-</div>
 
                       </div>
                       <div class="declaration">
@@ -377,8 +379,8 @@ The default implmentation for <code>UIViewController</code> returns an invisible
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <p><code><a href="../Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">PBPopupBar.customPopupBarViewController</a></code> for a custom popup bar view controller.
-       <code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)dataSource">PBPopupController.dataSource</a></code> for a custom bottom bar view.
-       <code><a href="../Extensions/UIViewController.html#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:animated:completion:">presentPopupBar(withPopupContentViewController:animated:completion:)</a></code>.</p>
+<code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)dataSource">PBPopupController.dataSource</a></code> for a custom bottom bar view.
+<code><a href="../Extensions/UIViewController.html#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:animated:completion:">presentPopupBar(withPopupContentViewController:animated:completion:)</a></code>.</p>
 
 </div>
 
@@ -471,8 +473,8 @@ The default implmentation for <code>UIViewController</code> returns an invisible
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
     <p><code><a href="../Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">PBPopupBar.customPopupBarViewController</a></code> for a custom popup bar view controller.
-       <code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)dataSource">PBPopupController.dataSource</a></code> for a custom bottom bar view.
-       <code><a href="../Extensions/UIViewController.html#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:openPopup:animated:completion:">presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)</a></code>.</p>
+<code><a href="../Classes/PBPopupController.html#/c:@M@PBPopupController@objc(cs)PBPopupController(py)dataSource">PBPopupController.dataSource</a></code> for a custom bottom bar view.
+<code><a href="../Extensions/UIViewController.html#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)presentPopupBarWithPopupContentViewController:openPopup:animated:completion:">presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)</a></code>.</p>
 
 </div>
 
@@ -547,6 +549,11 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                       <div class="abstract">
                         <p>Dismisses the popup presentation, closing the popup if open and dismissing the popup bar.</p>
 
+<ul>
+<li>animated: Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</li>
+<li>completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</li>
+</ul>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -556,37 +563,6 @@ The default implmentation for <code>UIViewController</code> returns an invisible
 <span class="kd">func</span> <span class="nf">dismissPopupBar</span><span class="p">(</span><span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>animated</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -606,6 +582,11 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                       <div class="abstract">
                         <p>Opens the popup, displaying the content view controller&rsquo;s view.</p>
 
+<ul>
+<li>animated: Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</li>
+<li>completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</li>
+</ul>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -615,37 +596,6 @@ The default implmentation for <code>UIViewController</code> returns an invisible
 <span class="kd">func</span> <span class="nf">openPopup</span><span class="p">(</span><span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>animated</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -665,6 +615,11 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                       <div class="abstract">
                         <p>Closes the popup, hiding the content view controller&rsquo;s view.</p>
 
+<ul>
+<li>animated: Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</li>
+<li>completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</li>
+</ul>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -674,37 +629,6 @@ The default implmentation for <code>UIViewController</code> returns an invisible
 <span class="kd">func</span> <span class="nf">closePopup</span><span class="p">(</span><span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>animated</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -748,8 +672,8 @@ If the popup bar&rsquo;s <code>inheritsVisualStyleFromBottomBar</code> property 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2020-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2021 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2021-04-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

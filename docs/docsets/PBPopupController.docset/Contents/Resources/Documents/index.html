@@ -16,7 +16,7 @@
     <a title="PBPopupController  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">PBPopupController 3.2.2 Docs</a> (87% documented)</p>
+        <p><a href="index.html">PBPopupController 3.4.2 Docs</a> (79% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="img/gh.png"/>View on GitHub</a></p>
         <p class="header-right">
           <form role="search" action="search.json">
@@ -87,6 +87,9 @@
               <li class="nav-group-task">
                 <a href="Extensions/UIViewController.html">UIViewController</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Extensions/View.html">View</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -125,6 +128,8 @@
 <p><a href="https://travis-ci.org/iDevelopper/PBPopupController"><img src="https://travis-ci.org/iDevelopper/PBPopupController.svg?branch=master" alt="Build Status"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a>
 <a href="http://cocoapods.org/pods/PBPopupController"><img src="https://img.shields.io/cocoapods/v/PBPopupController.svg?style=flat" alt="Version"></a>
+<a href="https://swift.org/package-manager/"><img src="https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg" alt="SwiftPM compatible"></a>
+<a href="https://developer.apple.com/documentation/xcode/creating_a_mac_version_of_your_ipad_app/"><img src="https://img.shields.io/badge/Catalyst-compatible-brightgreen.svg" alt="Mac Catalyst compatible"></a>
 <a href="https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE"><img src="https://img.shields.io/cocoapods/l/PBPopupController.svg?style=flat" alt="License"></a>
 <a href="http://cocoapods.org/pods/PBPopupController"><img src="https://img.shields.io/cocoapods/p/PBPopupController.svg?style=flat" alt="Platform"></a>
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/language-swift%205.0-brightgreen.svg" alt="Swift Version"></a> </p>
@@ -134,7 +139,7 @@
 <p><img src="https://raw.githubusercontent.com/iDevelopper/PBPopupController/master/PBPopupController/Assets/iTunesArtwork.png" alt="Image"></p>
 <h2 id='overview' class='heading'>Overview</h2>
 
-<p>PBPopupController allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.</p>
+<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.</p>
 
 <p>Each view controller can present a popup bar, docked to a bottom view. For <code>UITabBarController</code> subclasses, the default is the tab bar. For <code>UINavigationController</code> subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.</p>
 
@@ -149,7 +154,10 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 <p>The popup bar has a <code>prominent</code> style based on the modern Music app look and feel and below and a <code>compact</code> style for iOS 9-style look and feel.. You can change these default values.</p>
 
 <p>The presentation options provided by the framework are listed in the <code><a href="Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></code> enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style was <code>fullScreen</code> by default and for iOS 10 and below, the style was <code>deck</code>. The default is <code>deck</code>. You can change these default values. The <code>custom</code> option allows you to present the controller on a part of the screen.</p>
-<h2 id='adding-to-your-project' class='heading'>Adding to Your Project</h2>
+<h2 id='installation' class='heading'>Installation</h2>
+<h3 id='swift-package-manager' class='heading'>Swift Package Manager</h3>
+
+<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> supports SPM versions 5.1.0 and above. To use SPM, you should use Xcode 11 or above to open your project. Click <code>File</code> -&gt; <code>Swift Packages</code> -&gt; <code>Add Package Dependency</code>, enter <code>https://github.com/iDevelopper/PBPopupController</code>. Select the version you’d like to use.</p>
 <h3 id='carthage' class='heading'>Carthage</h3>
 
 <p>Add the following to your Cartfile:</p>
@@ -238,7 +246,7 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 </code></pre>
 
 <p>etc&hellip;</p></li>
-<li><p>PBPopupBar DataSource methods for providing label instances (such as MarqueeLabel):</p>
+<li><p><code><a href="Classes/PBPopupBar.html">PBPopupBar</a></code> dataSource methods for providing label instances (such as MarqueeLabel):</p>
 <pre class="highlight plaintext"><code>lazy var label: MarqueeLabel = {
     let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
     marqueeLabel.leadingBuffer = 0.0
@@ -259,6 +267,25 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 }
 </code></pre></li>
 </ul>
+<h2 id='managing-the-status-bar' class='heading'>Managing the status bar</h2>
+
+<p>Since iOSS 13, the staus bar is not animated correctly by Apple.
+So, you can set the properties:</p>
+
+<p><code>popupPreferredStatusBarStyle</code> for the preferred status bar style of the popup content view controller,
+<code>containerPreferredStatusBarStyle</code> for preferred status bar style of the container view controller.</p>
+
+<p>When you override the <code>preferredStatusBarStyle</code> variable in your popup content view controller, return container.popupController.popupStatusBarStyle:</p>
+<pre class="highlight plaintext"><code>    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let popupContentView = containerVC.popupContentView else {return .default}
+
+        if popupContentView.popupPresentationStyle != .deck {
+            return .default
+        }
+        return containerVC.popupController.popupStatusBarStyle
+    }
+</code></pre>
 <h2 id='api-documentation' class='heading'>API Documentation</h2>
 
 <p>You can find <a href="http://iDevelopper.github.io/PBPopupController/">the docs here</a>. Documentation is generated with <a href="https://github.com/realm/jazzy">jazzy</a> and hosted on <a href="https://pages.github.com">GitHub-Pages</a>.</p>
@@ -269,10 +296,10 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 <p>This code was inspired on his excellent framework <a href="https://github.com/LeoNatan/LNPopupController">LNPopupController</a>.</p>
 <h2 id='author' class='heading'>Author</h2>
 
-<p>iDevelopper, <a href="mailto:patrick.bodet4@wanadoo.fr">patrick.bodet4@wanadoo.fr</a></p>
+<p>Patrick BODET aka iDevelopper</p>
 <h2 id='license' class='heading'>License</h2>
 
-<p>PBPopupController is available under the MIT license, see the <a href="https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE">LICENSE</a> file for more information.</p>
+<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> is available under the MIT license, see the <a href="https://github.com/iDevelopper/PBPopupController/blob/master/LICENSE">LICENSE</a> file for more information.</p>
 
 <p>Please tell me when you use this controller in your project!</p>
 
@@ -283,8 +310,8 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2020-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2021 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2021-04-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

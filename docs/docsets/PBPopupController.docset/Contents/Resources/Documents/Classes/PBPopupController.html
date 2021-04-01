@@ -17,7 +17,7 @@
     <a title="PBPopupController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.2.2 Docs</a> (87% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.4.2 Docs</a> (79% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right">
           <form role="search" action="../search.json">
@@ -87,6 +87,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/View.html">View</a>
               </li>
             </ul>
           </li>
@@ -172,7 +175,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">dataSource</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a></span></code></pre>
+<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">dataSource</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -205,7 +208,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a></span></code></pre>
+<span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -358,13 +361,97 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupController(py)containerPreferredStatusBarStyle"></a>
+                    <a name="//apple_ref/swift/Property/containerPreferredStatusBarStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupController(py)containerPreferredStatusBarStyle">containerPreferredStatusBarStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The preferred status bar style for the container view controller.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">containerPreferredStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupController(py)popupPreferredStatusBarStyle"></a>
+                    <a name="//apple_ref/swift/Property/popupPreferredStatusBarStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupController(py)popupPreferredStatusBarStyle">popupPreferredStatusBarStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The preferred status bar style for the popup content view controller when <code>popupPresentationStyle</code> is set to <code>deck</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupPreferredStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupController(py)popupStatusBarStyle"></a>
+                    <a name="//apple_ref/swift/Property/popupStatusBarStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupController(py)popupStatusBarStyle">popupStatusBarStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2020-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2021 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2021-04-01)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -255,7 +255,7 @@ import UIKit
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
             let dropShadowView =  self.popupController.dropShadowViewFor(self.popupController.containerViewController.view)
-            if self.popupPresentationStyle == .fullScreen {
+            if self.popupPresentationStyle == .fullScreen || (self.popupPresentationStyle == .custom && self.popupContentSize.height == UIScreen.main.bounds.height) {
                 self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (dropShadowView == nil ? statusBarHeight : 0.0)
             }
             

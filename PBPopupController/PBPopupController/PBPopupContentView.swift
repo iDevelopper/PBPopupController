@@ -243,14 +243,16 @@ import UIKit
     
     internal func updatePopupCloseButtonPosition()
     {
-        if self.popupCloseButton.superview != self {
-            let size = self.popupCloseButton.sizeThatFits(.zero)
-            self.popupCloseButton.translatesAutoresizingMaskIntoConstraints = true
-            self.popupCloseButton.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+        guard let popupCloseButton = self.popupCloseButton else { return }
+        
+        if popupCloseButton.superview != self {
+            let size = popupCloseButton.sizeThatFits(.zero)
+            popupCloseButton.translatesAutoresizingMaskIntoConstraints = true
+            popupCloseButton.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
             return
         }
         
-        if self.popupCloseButtonStyle != .none {
+        if popupCloseButtonStyle != .none {
             let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
@@ -259,29 +261,29 @@ import UIKit
                 self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (dropShadowView == nil ? statusBarHeight : 0.0)
             }
             
-            let hitTest = self.popupController.containerViewController.popupContentViewController.view.hitTest(CGPoint(x: 12, y: popupCloseButtonTopConstraint.constant), with: nil)
+            let hitTest = self.popupController.containerViewController.popupContentViewController.view.hitTest(CGPoint(x: 12, y: self.popupCloseButtonTopConstraint.constant), with: nil)
             let possibleBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar
             if possibleBar != nil {
                 if self.popupCloseButtonAutomaticallyUnobstructsTopBars {
                     self.popupCloseButtonTopConstraint.constant += possibleBar!.bounds.height
                 }
                 else {
-                    self.popupCloseButtonTopConstraint.constant = possibleBar!.center.y - self.popupCloseButton.frame.height / 2
+                    self.popupCloseButtonTopConstraint.constant = possibleBar!.center.y - popupCloseButton.frame.height / 2
                 }
             }
             
             if let vc = self.popupController.containerViewController.popupContentViewController {
                 if self.popupCloseButtonStyle == .round {
-                    self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.leadingAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor, constant: 12)
+                    self.popupCloseButtonHorizontalConstraint = popupCloseButton.leadingAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor, constant: 12)
                 } else {
                     if #available(iOS 13, *) {
-                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
+                        self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
                     }
                     else {
-                        self.popupCloseButtonHorizontalConstraint = self.popupCloseButton.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: self.safeAreaInsets.left)
+                        self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: self.safeAreaInsets.left)
                     }
                 }
-                NSLayoutConstraint.activate([popupCloseButtonHorizontalConstraint])
+                NSLayoutConstraint.activate([self.popupCloseButtonHorizontalConstraint])
             }
             
             if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
@@ -313,9 +315,11 @@ import UIKit
      */
     public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let view = super.hitTest(point, with: event)
-        let frame = self.popupCloseButton.convert(self.popupCloseButton.bounds, to: self)
+        
+        guard let popupCloseButton = self.popupCloseButton else { return view }
+        let frame = popupCloseButton.convert(popupCloseButton.bounds, to: self)
         if frame.insetBy(dx: -20, dy: -20).contains(point) {
-            return self.popupCloseButton
+            return popupCloseButton
         }
         return view
     }

@@ -252,6 +252,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
 extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
 {
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        let state = self.popupController.popupPresentationState
+        if state == .closed && gesture.direction == .down { return false }
+        if state == .open && gesture.direction == .up { return false }
+        if gesture.direction == .right || gesture.direction == .left { return false }
+        
         if self.popupController.delegate?.popupControllerPanGestureShouldBegin?(self.popupController, state: self.popupController.popupPresentationState) == false
         {
             return false

@@ -504,8 +504,11 @@ extension PBPopupPresentationStyle
         if self.containerViewController is UITabBarController {
             rv = (self.containerViewController as! UITabBarController).tabBar
         }
-        if self.containerViewController is UINavigationController {
-            rv = (self.containerViewController as! UINavigationController).toolbar
+        if let navigationController = self.containerViewController as? UINavigationController {
+            rv = navigationController.toolbar
+            if navigationController.isToolbarHidden {
+                rv?.isHidden = true
+            }
         }
         if rv == nil {
             if let view = self.dataSource?.bottomBarView?(for: self) {
@@ -673,7 +676,13 @@ extension PBPopupPresentationStyle
             self.popupPresentationInteractiveController.delegate = self
             
             self.popupDismissalInteractiveController = PBPopupInteractivePresentationController()
-            self.popupDismissalInteractiveController.attachToViewController(popupController: self, withView: vc.popupContentViewController.view, presenting: false)
+            if vc.popupContentView.popupContentDraggingView != nil {
+                vc.popupContentView.addSubview(vc.popupContentView.popupContentDraggingView)
+                self.popupDismissalInteractiveController.attachToViewController(popupController: self, withView: vc.popupContentView.popupContentDraggingView, presenting: false)
+            }
+            else {
+                self.popupDismissalInteractiveController.attachToViewController(popupController: self, withView: vc.popupContentView, presenting: false)
+            }
             self.popupDismissalInteractiveController.delegate = self
             
             if let popupVC = vc.popupContentViewController {

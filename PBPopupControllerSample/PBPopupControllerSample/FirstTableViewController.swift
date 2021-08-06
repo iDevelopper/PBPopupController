@@ -256,6 +256,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 popupContentView.popupIgnoreDropShadowView = false
                 popupContentView.popupPresentationDuration = 0.4
                 popupContentView.popupCanDismissOnPassthroughViews = true
+                //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
             }
             self.tableView.reloadData()
         }

@@ -117,7 +117,7 @@ import UIKit
     /**
      The popup close button style.
      
-     - SeeAldo: `PBPopupCloseButtonStyle`.
+     - SeeAlso: `PBPopupCloseButtonStyle`.
      */
     @objc public var popupCloseButtonStyle: PBPopupCloseButtonStyle = .default {
         didSet {
@@ -132,6 +132,14 @@ import UIKit
      */
     @objc public var popupCloseButtonAutomaticallyUnobstructsTopBars: Bool = true
     
+    /**
+     The view to which the popup interaction gesture recognizer should be added to. The default implementation returns the popup content view.
+     
+     - SeeAlso:
+     `PBPopupController.popupContentPanGestureRecognizer`
+     */
+    @objc public var popupContentDraggingView: UIView!
+
     // MARK: - Private Properties
     
     internal weak var popupController: PBPopupController! {

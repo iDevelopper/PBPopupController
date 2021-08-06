@@ -460,8 +460,11 @@ public extension UIViewController
                 }
             }
             let additionalInsets = vc.popupAdditionalSafeAreaInsets
+            
             var finalInsets = UIEdgeInsets(top: insets.top, left: insets.left, bottom: min(insets.bottom, additionalInsets.bottom), right: insets.right)
-            finalInsets.top = 0
+            if vc.popupContentView.popupPresentationStyle == .deck  || vc.popupContentView.popupPresentationStyle == .custom {
+                finalInsets.top = 0
+            }
             return finalInsets
         }
         let insets = self._vSAIFS()

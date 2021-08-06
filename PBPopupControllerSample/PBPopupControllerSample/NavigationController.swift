@@ -28,4 +28,8 @@ class NavigationController: UINavigationController {
             self.topViewController?.title = self.title
         }
     }
+    
+    deinit {
+        print("Deinit: \(self)")
+    }
 }

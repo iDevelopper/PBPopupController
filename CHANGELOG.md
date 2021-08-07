@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## 3.4.5
+
+Adds the ability to add a view to close the controller by swiping down.
+Documentation updates.
+
+## 3.4.4
+
+Fix a crash when popupCloseButtonStyle is set to none## 3.4.4
+
 ## 3.4.3
 
 Custom popupPresentationStyle width.

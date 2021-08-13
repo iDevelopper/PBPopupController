@@ -80,7 +80,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         let availableHeight: CGFloat = self._popupContainerViewAvailableHeight()
         
         if !self.isPresenting {
-            if let scrollView = self.view as? UIScrollView {
+            if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 if scrollView.contentOffset.y <= self.contentOffset.y {
                     if !self.isDismissing {
                         self.isDismissing = true
@@ -102,7 +102,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             }
             else {
                 if !self.isDismissing {
-                    if !(self.view is UIScrollView) {
+                    if !(vc.popupContentViewController.view is UIScrollView) {
                         self.isDismissing = true
                         self.delegate?.dismissInteractive()
                     }
@@ -111,7 +111,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             self.location = vc.popupContentView.frame.minY + translation.y
             
         case .changed:
-            if self.isDismissing, let scrollView = self.view as? UIScrollView {
+            if self.isDismissing, let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 scrollView.contentOffset = self.contentOffset
             }
             
@@ -195,7 +195,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                             vc.setNeedsStatusBarAppearanceUpdate()
                             vc.popupContentView.popupCloseButton?.setButtonStateStationary()
                         }
-                        if let scrollView = self.view as? UIScrollView {
+                        if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+
                             animator.addCompletion { (_) in
                                 scrollView.contentOffset = self.contentOffset
                             }
@@ -267,7 +268,8 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
         {
             return false
         }
-        if !self.isPresenting && !(self.view is UIScrollView) && gesture.direction != .down
+        let vc = self.popupController.containerViewController
+        if !self.isPresenting && !(vc?.popupContentViewController.view is UIScrollView) && gesture.direction != .down
         {
             return false
         }

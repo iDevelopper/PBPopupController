@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.4.6
+
+Fixes a bug introduced in version 3.4.4 when the view of the content view controller is a scroll view.
+Fixes popup bar appearance when the container is a navigation controller.
+Remove unnecessary code.
+
 ## 3.4.5
 
 Adds the ability to add a view to close the controller by swiping down.

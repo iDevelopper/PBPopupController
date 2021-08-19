@@ -8,12 +8,14 @@
 
 import UIKit
 
-protocol PBPopupInteractivePresentationDelegate : AnyObject {
+protocol PBPopupInteractivePresentationDelegate : AnyObject
+{
     func presentInteractive()
     func dismissInteractive()
 }
 
-internal class PBPopupInteractivePresentationController: UIPercentDrivenInteractiveTransition {
+internal class PBPopupInteractivePresentationController: UIPercentDrivenInteractiveTransition
+{
     private var isPresenting: Bool!
     
     // Set by own when scroll view is at the top (see contentOffset), also when view is not a scroll view.
@@ -31,15 +33,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     private var progress: CGFloat = 0
     private var location: CGFloat = 0
+    
     private var shouldComplete = false
     
     internal weak var delegate: PBPopupInteractivePresentationDelegate?
     
-    private var presentationController: PBPopupPresentationController! {
+    private var presentationController: PBPopupPresentationController!
+    {
         return popupController.popupPresentationController
     }
     
-    func attachToViewController(popupController: PBPopupController, withView view: UIView, presenting: Bool) {
+    func attachToViewController(popupController: PBPopupController, withView view: UIView, presenting: Bool)
+    {
         self.popupController = popupController
         self.view = view
         
@@ -56,15 +61,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         self.isDismissing = false
     }
     
-    deinit {
+    deinit
+    {
         PBLog("deinit \(self)")
     }
     
-    override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
+    override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning)
+    {
         self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
     }
     
-    override var completionSpeed: CGFloat {
+    override var completionSpeed: CGFloat
+    {
         get {
             return 1
         }
@@ -73,7 +81,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         }
     }
     
-    @objc private func handlePanGesture(gesture: UIPanGestureRecognizer) {
+    @objc private func handlePanGesture(gesture: UIPanGestureRecognizer)
+    {
         guard let vc = self.popupController.containerViewController else { return }
         
         let translation = gesture.translation(in: gesture.view?.superview)
@@ -213,7 +222,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         }
     }
     
-    private func endInteractiveTransition(with gesture: UIPanGestureRecognizer) {
+    private func endInteractiveTransition(with gesture: UIPanGestureRecognizer)
+    {
         self.presentationController.continueDismissalTransitionWithTimingParameters(nil, durationFactor: 0.5)
     }
     
@@ -252,7 +262,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
 
 extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
 {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool
+    {
         let state = self.popupController.popupPresentationState
         if state == .closed && gesture.direction == .down { return false }
         if state == .open && gesture.direction == .up { return false }
@@ -276,7 +287,8 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
         return true
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool
+    {
         if NSStringFromClass(type(of: otherGestureRecognizer.view!).self).contains("DropShadow") {
             otherGestureRecognizer.state = UIGestureRecognizer.State.failed
             return true
@@ -287,58 +299,33 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
 
 private extension UIPanGestureRecognizer
 {
-    enum PanDirection: Int {
+    enum PanDirection: Int
+    {
         case up, down, left, right
-        var isVertical: Bool { return [.up, .down].contains(self) }
-        var isHorizontal: Bool { return !isVertical }
-    }
-    
-    var direction: PanDirection? {
-        let velocity = self.velocity(in: view)
-        let isVertical = abs(velocity.y) > abs(velocity.x)
-        switch (isVertical, velocity.x, velocity.y) {
-        case (true, _, let y) where y < 0: return .up
-        case (true, _, let y) where y > 0: return .down
-        case (false, let x, _) where x > 0: return .right
-        case (false, let x, _) where x < 0: return .left
-        default: return nil
+        var isVertical: Bool {
+            return [.up, .down].contains(self)
+        }
+        var isHorizontal: Bool {
+            return !isVertical
         }
     }
-}
-
-private extension UIScrollView
-{
-    var isAtTop: Bool {
-        return contentOffset.y <= verticalOffsetForTop
-    }
     
-    var isAtBottom: Bool {
-        return contentOffset.y >= verticalOffsetForBottom
-    }
-    
-    var verticalOffsetForTop: CGFloat {
-        let topInset = contentInset.top
-        return -topInset
-    }
-    
-    var verticalOffsetForBottom: CGFloat {
-        let scrollViewHeight = bounds.height
-        let scrollContentSizeHeight = contentSize.height
-        let bottomInset = contentInset.bottom
-        let scrollViewBottomOffset = scrollContentSizeHeight + bottomInset - scrollViewHeight
-        return scrollViewBottomOffset
-    }
-}
-
-private extension UIScrollView
-{
-    var scrolledToTop: Bool {
-        let topEdge = 0 - contentInset.top
-        return contentOffset.y <= topEdge
-    }
-    
-    var scrolledToBottom: Bool {
-        let bottomEdge = contentSize.height + contentInset.bottom - bounds.height
-        return contentOffset.y >= bottomEdge
+    var direction: PanDirection?
+    {
+        let velocity = self.velocity(in: view)
+        let isVertical = abs(velocity.y) > abs(velocity.x)
+        
+        switch (isVertical, velocity.x, velocity.y) {
+        case (true, _, let y) where y < 0:
+            return .up
+        case (true, _, let y) where y > 0:
+            return .down
+        case (false, let x, _) where x > 0:
+            return .right
+        case (false, let x, _) where x < 0:
+            return .left
+        default:
+            return nil
+        }
     }
 }

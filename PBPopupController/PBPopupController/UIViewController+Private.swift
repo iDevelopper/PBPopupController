@@ -65,12 +65,14 @@ public extension UITabBarController
     /**
      :nodoc:
      */
-    @objc static func tbc_swizzle() {
+    @objc static func tbc_swizzle()
+    {
         _ = self.swizzleImplementation
     }
     
     //_hideBarWithTransition:isExplicit:
-    @objc private func _hBWT(t: Int, iE: Bool) {
+    @objc private func _hBWT(t: Int, iE: Bool)
+    {
         self.isTabBarHiddenDuringTransition = true
         
         self._hBWT(t: t, iE: iE)
@@ -101,7 +103,8 @@ public extension UITabBarController
     }
     
     //_showBarWithTransition:isExplicit:
-    @objc private func _sBWT(t: Int, iE: Bool) {
+    @objc private func _sBWT(t: Int, iE: Bool)
+    {
         self.isTabBarHiddenDuringTransition = false
         
         self._sBWT(t: t, iE: iE)
@@ -127,7 +130,8 @@ public extension UITabBarController
         }
     }
     
-    @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool) {
+    @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
+    {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
             PBPopupFixInsetsForViewController(obj, false, additionalInsets)
@@ -138,7 +142,8 @@ public extension UITabBarController
 
 internal extension UITabBarController
 {
-    @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc override func _animateBottomBarToHidden( _ hidden: Bool)
+    {
         let height = self.tabBar.frame.height
         if height > 0.0 {
             if hidden == false {
@@ -153,21 +158,24 @@ internal extension UITabBarController
         }
     }
     
-    @objc override func _setBottomBarPosition( _ position: CGFloat) {
+    @objc override func _setBottomBarPosition( _ position: CGFloat)
+    {
         let height = self.tabBar.frame.height
         if height > 0.0 {
             self.tabBar.frame.origin.y = position
         }
     }
     
-    @objc override func insetsForBottomBar() -> UIEdgeInsets {
+    @objc override func insetsForBottomBar() -> UIEdgeInsets
+    {
         if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
             return bottomBarInsets
         }
         return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
-    @objc override func defaultFrameForBottomBar() -> CGRect {
+    @objc override func defaultFrameForBottomBar() -> CGRect
+    {
         var bottomBarFrame = self.tabBar.frame
         let bottomBarSizeThatFits = self.tabBar.sizeThatFits(CGSize.zero)
         
@@ -178,7 +186,8 @@ internal extension UITabBarController
         return bottomBarFrame
     }
     
-    @objc override func configurePopupBarFromBottomBar() {
+    @objc override func configurePopupBarFromBottomBar()
+    {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }
@@ -225,12 +234,14 @@ public extension UINavigationController
     /**
      :nodoc:
      */
-    @objc static func nc_swizzle() {
+    @objc static func nc_swizzle()
+    {
         _ = self.swizzleImplementation
     }
     
     //_setToolbarHidden:edge:duration:
-    @objc private func _sTH(h: Bool, e: UInt, d: CGFloat) {
+    @objc private func _sTH(h: Bool, e: UInt, d: CGFloat)
+    {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
             if popupController.popupPresentationState != .hidden {
                 self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
@@ -285,7 +296,8 @@ public extension UINavigationController
 
 internal extension UINavigationController
 {
-    @objc override func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc override func _animateBottomBarToHidden( _ hidden: Bool)
+    {
         var height = self.toolbar.frame.height
         if let tabBarController = self.tabBarController {
             height += tabBarController.defaultFrameForBottomBar().height
@@ -312,14 +324,16 @@ internal extension UINavigationController
         }
     }
     
-    @objc override func _setBottomBarPosition( _ position: CGFloat) {
+    @objc override func _setBottomBarPosition( _ position: CGFloat)
+    {
         let height = self.toolbar.frame.height
         if height > 0.0 {
             self.toolbar.frame.origin.y = position
         }
     }
     
-    @objc override func insetsForBottomBar() -> UIEdgeInsets {
+    @objc override func insetsForBottomBar() -> UIEdgeInsets
+    {
         if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
             return tabBarController.insetsForBottomBar()
         }
@@ -331,7 +345,8 @@ internal extension UINavigationController
         return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
-    @objc override func defaultFrameForBottomBar() -> CGRect {
+    @objc override func defaultFrameForBottomBar() -> CGRect
+    {
         var toolBarFrame = self.toolbar.frame
         
         toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
@@ -345,15 +360,16 @@ internal extension UINavigationController
         return toolBarFrame
     }
     
-    @objc override func configurePopupBarFromBottomBar() {
+    @objc override func configurePopupBarFromBottomBar()
+    {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }
-        self.popupBar.barStyle = self.toolbar.barStyle
-        self.popupBar.tintColor = self.toolbar.tintColor
-        self.popupBar.barTintColor = self.toolbar.barTintColor
-        self.popupBar.backgroundColor = self.toolbar.backgroundColor
-        self.popupBar.isTranslucent = self.toolbar.isTranslucent
+        self.popupBar.barStyle = self.navigationBar.barStyle
+        self.popupBar.tintColor = self.navigationBar.tintColor
+        self.popupBar.barTintColor = self.navigationBar.barTintColor
+        self.popupBar.backgroundColor = self.navigationBar.backgroundColor
+        self.popupBar.isTranslucent = self.navigationBar.isTranslucent
     }
 }
 
@@ -422,12 +438,14 @@ public extension UIViewController
     /**
      :nodoc:
      */
-    @objc static func vc_swizzle() {
+    @objc static func vc_swizzle()
+    {
         _ = self.swizzleImplementation
     }
     
     //_setContentOverlayInsets:
-    @objc private func _sCoOvIns(insets: UIEdgeInsets) {
+    @objc private func _sCoOvIns(insets: UIEdgeInsets)
+    {
         var newInsets = insets
         newInsets.bottom += self.additionalSafeAreaInsetsBottomForContainer
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
@@ -445,12 +463,14 @@ public extension UIViewController
     }
     
     //_updateContentOverlayInsetsFromParentIfNecessary
-    @objc private func _uCOIFPIN() {
+    @objc private func _uCOIFPIN()
+    {
         self._uCOIFPIN()
     }
     
     //_viewSafeAreaInsetsFromScene
-    @objc private func _vSAIFS() -> UIEdgeInsets {
+    @objc private func _vSAIFS() -> UIEdgeInsets
+    {
         if let vc = self.popupContainerViewController {
             var insets = self.popupContainerViewController._vSAIFS()
             let containerInsets = self.popupContainerViewController.view.safeAreaInsets
@@ -471,7 +491,8 @@ public extension UIViewController
         return insets
     }
     
-    internal func pb_popupController() -> PBPopupController! {
+    internal func pb_popupController() -> PBPopupController!
+    {
         let rv = PBPopupController(containerViewController: self)
         self.popupController = rv
         return rv
@@ -506,7 +527,8 @@ public extension UIViewController
         }
     }
     
-    private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator) {
+    private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator)
+    {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
             if self.popupController.popupPresentationState != .dismissing {
                 self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
@@ -523,7 +545,8 @@ public extension UIViewController
         }
     }
     
-    @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
+    {
         self.pb_viewWillTransition(to: size, with: coordinator)
         if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
@@ -538,7 +561,8 @@ public extension UIViewController
         }
     }
     
-    internal func _cleanupPopup() {
+    internal func _cleanupPopup()
+    {
         PBLog("_cleanupPopup")
         objc_setAssociatedObject(self, &AssociatedKeys.popupContentViewController, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         objc_setAssociatedObject(self, &AssociatedKeys.popupContentView, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -551,7 +575,8 @@ public extension UIViewController
 
 internal extension UIViewController
 {
-    @objc func _animateBottomBarToHidden( _ hidden: Bool) {
+    @objc func _animateBottomBarToHidden( _ hidden: Bool)
+    {
         let height = self.popupController.bottomBarHeight
         
         // FIXME: iOS 14 beta 6 bug (toolbar frame animation fails)
@@ -571,14 +596,16 @@ internal extension UIViewController
         }
     }
     
-    @objc func _setBottomBarPosition( _ position: CGFloat) {
+    @objc func _setBottomBarPosition( _ position: CGFloat)
+    {
         let height = self.popupController.bottomBarHeight
         if height > 0.0 {
             self.bottomBar.frame.origin.y = position
         }
     }
     
-    @objc func insetsForBottomBar() -> UIEdgeInsets {
+    @objc func insetsForBottomBar() -> UIEdgeInsets
+    {
         var insets: UIEdgeInsets = .zero
         if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
             if dropShadowView.frame.minX > 0 {
@@ -594,7 +621,8 @@ internal extension UIViewController
         return insets
     }
     
-    @objc func defaultFrameForBottomBar() -> CGRect {
+    @objc func defaultFrameForBottomBar() -> CGRect
+    {
         var bottomBarFrame = CGRect(x: 0.0, y: self.view.bounds.size.height, width: self.view.bounds.size.width, height: 0.0)
         if let bottomBarView = self.popupController.dataSource?.bottomBarView?(for: self.popupController) {
             if let defaultFrame = self.popupController.dataSource?.popupController?(self.popupController, defaultFrameFor: self.bottomBar) {
@@ -608,7 +636,8 @@ internal extension UIViewController
         return bottomBarFrame
     }
     
-    @objc func configurePopupBarFromBottomBar() {
+    @objc func configurePopupBarFromBottomBar()
+    {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }
@@ -617,7 +646,8 @@ internal extension UIViewController
     }
 }
 
-@inline(__always) func PBPopupFixInsetsForViewController(_ controller: UIViewController, _ layout: Bool, _ additionalSafeAreaInsets: UIEdgeInsets) {
+@inline(__always) func PBPopupFixInsetsForViewController(_ controller: UIViewController, _ layout: Bool, _ additionalSafeAreaInsets: UIEdgeInsets)
+{
     if (controller is UITabBarController) || (controller is UINavigationController) || (controller.children.count > 0 && !(controller is UISplitViewController)) {
         for (_, obj) in controller.children.enumerated() {
             let oldInsets = obj.popupAdditionalSafeAreaInsets

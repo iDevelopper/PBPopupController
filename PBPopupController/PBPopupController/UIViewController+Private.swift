@@ -134,7 +134,9 @@ public extension UITabBarController
     {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+            if obj.popupAdditionalSafeAreaInsets == .zero {
+                PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+            }
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }
@@ -279,7 +281,9 @@ public extension UINavigationController
     {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
+            if viewController.popupAdditionalSafeAreaInsets == .zero {
+                PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
+            }
         }
         self.pb_pushViewController(viewController, animated: animated)
     }
@@ -288,7 +292,9 @@ public extension UINavigationController
     {
         for obj in viewControllers {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+            if obj.popupAdditionalSafeAreaInsets == .zero {
+                PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+            }
         }
         self.pb_setViewControllers(viewControllers, animated: animated)
     }

@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.4.7
+
+Fixes incorrect additionalSafeAreaInsets in some cases.
+
 ## 3.4.6
 
 Fixes a bug introduced in version 3.4.4 when the view of the content view controller is a scroll view.

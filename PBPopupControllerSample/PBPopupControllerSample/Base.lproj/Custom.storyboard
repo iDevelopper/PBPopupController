@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18092"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -224,50 +224,52 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="crF-K3-rzA">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="862"/>
                             </containerView>
-                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ven-ub-gDd">
-                                <rect key="frame" x="0.0" y="813" width="414" height="49"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                <viewLayoutGuide key="safeArea" id="YBV-dg-aVX"/>
-                                <items>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="tLz-7B-l2S"/>
-                                    <barButtonItem title="Child1" id="mb7-yN-Zg0">
-                                        <connections>
-                                            <action selector="itemSelected:" destination="3wX-X4-xw2" id="KnQ-QY-oqx"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="EeZ-29-yYp"/>
-                                    <barButtonItem tag="1" title="Child2" id="O31-f1-gFz">
-                                        <connections>
-                                            <action selector="itemSelected:" destination="3wX-X4-xw2" id="w4i-kA-6ga"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="2UR-h4-xwQ"/>
-                                    <barButtonItem tag="2" title="Child3" id="V85-Fc-fjE">
-                                        <connections>
-                                            <action selector="itemSelected:" destination="3wX-X4-xw2" id="XBI-p2-VCQ"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="EFf-AS-XqM"/>
-                                </items>
-                            </toolbar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QO1-5A-qSY">
+                                <rect key="frame" x="0.0" y="813" width="414" height="83"/>
+                                <subviews>
+                                    <tabBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WOA-Mz-xdI">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="49"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="49" id="t1K-rl-wYF"/>
+                                        </constraints>
+                                        <items>
+                                            <tabBarItem title="Deck" id="kvd-xY-fbH"/>
+                                            <tabBarItem tag="1" title="Full Screen" id="C9a-nJ-TcE"/>
+                                            <tabBarItem tag="2" title="Custom" id="0TR-jf-kHo"/>
+                                        </items>
+                                    </tabBar>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="WOA-Mz-xdI" secondAttribute="trailing" id="Gfh-h1-QEO"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="83" id="OKt-D4-djA"/>
+                                    <constraint firstItem="WOA-Mz-xdI" firstAttribute="top" secondItem="QO1-5A-qSY" secondAttribute="top" id="OW9-So-C9i"/>
+                                    <constraint firstItem="WOA-Mz-xdI" firstAttribute="leading" secondItem="QO1-5A-qSY" secondAttribute="leading" id="OXk-2j-gfZ"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="lbP-vr-vOZ"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="crF-K3-rzA" firstAttribute="top" secondItem="dds-16-dNL" secondAttribute="top" id="4c4-AO-UaK"/>
+                            <constraint firstItem="QO1-5A-qSY" firstAttribute="leading" secondItem="dds-16-dNL" secondAttribute="leading" id="7Cp-Uv-XvM"/>
+                            <constraint firstAttribute="bottom" secondItem="QO1-5A-qSY" secondAttribute="bottom" id="ENn-mW-hAr"/>
+                            <constraint firstItem="lbP-vr-vOZ" firstAttribute="bottom" secondItem="WOA-Mz-xdI" secondAttribute="bottom" id="QKq-zX-R4a"/>
                             <constraint firstItem="lbP-vr-vOZ" firstAttribute="trailing" secondItem="crF-K3-rzA" secondAttribute="trailing" id="SiA-tm-T75"/>
                             <constraint firstItem="crF-K3-rzA" firstAttribute="leading" secondItem="lbP-vr-vOZ" secondAttribute="leading" id="fcy-Mj-BWA"/>
+                            <constraint firstAttribute="trailing" secondItem="QO1-5A-qSY" secondAttribute="trailing" id="pnv-od-vJj"/>
                             <constraint firstItem="lbP-vr-vOZ" firstAttribute="bottom" secondItem="crF-K3-rzA" secondAttribute="bottom" id="slb-xK-NOI"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="bottomBarView" destination="Ven-ub-gDd" id="Eto-mX-ihd"/>
+                        <outlet property="bottomBarView" destination="QO1-5A-qSY" id="40W-Qg-FR4"/>
                         <outlet property="containerView" destination="crF-K3-rzA" id="Wwo-FZ-dYl"/>
+                        <outlet property="tabBar" destination="WOA-Mz-xdI" id="F0g-EO-nax"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gHb-2W-Qdq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="145" y="181"/>
+            <point key="canvasLocation" x="144.92753623188406" y="180.80357142857142"/>
         </scene>
         <!--Demo Child View Controller-->
         <scene sceneID="ODZ-9J-Upg">
@@ -277,6 +279,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Br-EF-THR">
+                                <rect key="frame" x="189.66666666666666" y="48.333333333333336" width="35" height="20.333333333333336"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Correct Bottom Layout Guide" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3LB-DX-3ay">
                                 <rect key="frame" x="96.000000000000014" y="841.66666666666663" width="222.33333333333337" height="20.333333333333371"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -292,7 +300,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="oca-q2-ae6">
-                                <rect key="frame" x="149.66666666666666" y="383" width="114.99999999999997" height="130"/>
+                                <rect key="frame" x="149.66666666666666" y="333" width="114.99999999999997" height="130"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kwq-he-J6V">
                                         <rect key="frame" x="0.0" y="0.0" width="115" height="30"/>
@@ -324,16 +332,22 @@
                         <viewLayoutGuide key="safeArea" id="Jw1-aW-Fd0"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="8Br-EF-THR" firstAttribute="centerY" secondItem="n5o-iw-cCd" secondAttribute="centerY" id="A4H-3S-RwV"/>
                             <constraint firstItem="n5o-iw-cCd" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Jw1-aW-Fd0" secondAttribute="leading" symbolic="YES" id="Akg-oF-hOD"/>
                             <constraint firstItem="oca-q2-ae6" firstAttribute="centerX" secondItem="11t-ta-cyk" secondAttribute="centerX" id="D0f-x6-y5M"/>
                             <constraint firstItem="Jw1-aW-Fd0" firstAttribute="bottom" secondItem="3LB-DX-3ay" secondAttribute="bottom" id="EYk-e0-6eL"/>
                             <constraint firstItem="n5o-iw-cCd" firstAttribute="top" secondItem="Jw1-aW-Fd0" secondAttribute="top" id="IaZ-vP-0xt"/>
-                            <constraint firstItem="oca-q2-ae6" firstAttribute="centerY" secondItem="11t-ta-cyk" secondAttribute="centerY" id="OcW-nT-dmC"/>
+                            <constraint firstItem="oca-q2-ae6" firstAttribute="centerY" secondItem="11t-ta-cyk" secondAttribute="centerY" constant="-50" id="OcW-nT-dmC"/>
                             <constraint firstItem="Jw1-aW-Fd0" firstAttribute="trailing" secondItem="n5o-iw-cCd" secondAttribute="trailing" constant="20" id="Z3D-Gj-Eba"/>
+                            <constraint firstItem="8Br-EF-THR" firstAttribute="centerX" secondItem="11t-ta-cyk" secondAttribute="centerX" id="dRZ-aE-PYu"/>
                             <constraint firstItem="3LB-DX-3ay" firstAttribute="centerX" secondItem="11t-ta-cyk" secondAttribute="centerX" id="dhj-VE-LtZ"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="childTitle" destination="8Br-EF-THR" id="8sB-ai-ohA"/>
+                        <outlet property="dismissButton" destination="Wd7-fx-Vo3" id="Y1o-LK-Gdp"/>
+                        <outlet property="presentButton" destination="kwq-he-J6V" id="RC9-8w-pEz"/>
+                        <outlet property="presentCustomButton" destination="SQ3-dd-iFa" id="BJb-J0-FIy"/>
                         <segue destination="aCP-f7-Vrv" kind="unwind" identifier="unwindToHome" unwindAction="unwindToHome:" id="8hS-oe-m6g"/>
                     </connections>
                 </viewController>
@@ -365,7 +379,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="gER-Z6-Ebm"/>
                                     <barButtonItem title="Full Screen Popup" id="Srf-me-aqj">
                                         <connections>
-                                            <action selector="fuulScreenItemTouch:" destination="bkW-G8-NxD" id="Lvr-bm-kAY"/>
+                                            <action selector="fullScreenItemTouch:" destination="bkW-G8-NxD" id="s2v-7t-oev"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="IjQ-7y-Xf4"/>

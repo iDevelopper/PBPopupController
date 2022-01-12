@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 private let reuseIdentifier = "musicCollectionViewCell"
 

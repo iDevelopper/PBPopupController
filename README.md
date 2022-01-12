@@ -158,7 +158,7 @@ etc...
 
 ## Managing the status bar
 
-Since iOSS 13, the staus bar is not animated correctly by Apple.
+Since iOSS 13, the status bar is not animated correctly by Apple.
 So, you can set the properties:
 
 `popupPreferredStatusBarStyle` for the preferred status bar style of the popup content view controller,

@@ -15,6 +15,10 @@ class DemoViewControllerNoChild: UIViewController {
         
         let topLabel = UILabel()
         topLabel.text = "Top"
+
+        if #available(iOS 13.0, *) {
+            topLabel.textColor = UIColor.label
+        }
         self.view.addSubview(topLabel)
         topLabel.translatesAutoresizingMaskIntoConstraints = false
         topLabel.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
@@ -22,6 +26,10 @@ class DemoViewControllerNoChild: UIViewController {
 
         let bottomLabel = UILabel()
         bottomLabel.text = "Bottom"
+
+        if #available(iOS 13.0, *) {
+            bottomLabel.textColor = UIColor.label
+        }
         self.view.addSubview(bottomLabel)
         bottomLabel.translatesAutoresizingMaskIntoConstraints = false
         bottomLabel.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
@@ -38,7 +46,6 @@ class DemoViewControllerNoChild: UIViewController {
         self.popupBar.rightBarButtonItems = [item]
         self.popupContentView.popupCloseButtonStyle = .chevron
         self.popupContentView.popupIgnoreDropShadowView = false
-        //self.popupContentView.popupCloseButton.tintColor = .black
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let contentVC = storyboard.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController {

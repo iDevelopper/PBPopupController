@@ -3,70 +3,89 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 13/07/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 
-internal class PBPopupPresentationController: UIPresentationController {
-    
+internal class PBPopupPresentationController: UIPresentationController
+{
     internal weak var presentingVC: UIViewController!
+    
     internal weak var popupController: PBPopupController!
-    private var popupPresentationState: PBPopupPresentationState {
+    
+    private var popupPresentationState: PBPopupPresentationState
+    {
         return popupController.popupPresentationState
     }
     
     private var backingView: UIView!
-    
+
     private var shouldUpdateBackingView: Bool = true
     
-    internal var popupPresentationStyle = PBPopupPresentationStyle.deck
+    internal var popupPresentationStyle = PBPopupPresentationStyle.deck {
+        didSet {
+            if self.popupPresentationStyle == .custom { return }
+            
+            if self.popupController.isContainerPresentationSheet {
+                popupPresentationStyle = .fullScreen
+            }
+            if self.presentingVC.splitViewController != nil {
+                popupPresentationStyle = .fullScreen
+            }
+            self.popupContentView.popupPresentationStyle = popupPresentationStyle
+        }
+    }
+    
     internal var isPresenting = false
     
     internal var animator: UIViewPropertyAnimator!
-    private weak var contextData: UIViewControllerContextTransitioning!
     
-    private var popupContentView: PBPopupContentView! {
+    private var finishAnimator: UIViewPropertyAnimator!
+    
+    private var popupContentView: PBPopupContentView!
+    {
         return popupController.containerViewController.popupContentView
     }
-    
-    private func dropShadowViewFor(_ view: UIView) -> UIView? {
+        
+    private func dropShadowViewFor(_ view: UIView) -> UIView?
+    {
         return popupController.dropShadowViewFor(view)
     }
     
-    private var popupContentViewTopInset: CGFloat {
+    private var popupContentViewTopInset: CGFloat
+    {
         #if targetEnvironment(macCatalyst)
         return 10.0
         #else
-        if self.dropShadowViewFor(self.presentingVC.view) != nil {
+        if self.popupController.isContainerPresentationSheet {
             return 0.0
         }
         return UIDevice.current.userInterfaceIdiom == .pad ? 10.0 : 10.0
         #endif
     }
     
-    private var statusBarFrame: CGRect {
+    private var statusBarFrame: CGRect
+    {
         var frame = self.popupController.statusBarFrame(for: self.popupController.containerViewController.view)
         if self.popupPresentationStyle == .deck, frame.height == 0 {
             let height = presentingVC.view.safeAreaInsets.top
             frame.size.height = height > 0 ? height : 20 // probably an old iPhone
         }
-        if self.dropShadowViewFor(self.presentingVC.view) != nil {
+        if self.popupController.isContainerPresentationSheet {
             frame.size.height = 0.0
         }
         return frame
     }
-    
-    internal var bottomBarForPresentation: UIView!
-    
+        
     internal var popupBarForPresentation: UIView!
     
     internal var imageViewForPresentation: PBPopupRoundShadowImageView?
     
     private var bottomModuleFrameForPopupStateOpen: CGRect = .zero
     
-    private var dimmerView: UIView = {
-        let view = UIView()
+    private var dimmerView: PBPopupDimmerView! = {
+        let view = PBPopupDimmerView()
         view.autoresizingMask = []
         view.backgroundColor = UIColor.black
         view.alpha = 0.0
@@ -74,15 +93,16 @@ internal class PBPopupPresentationController: UIPresentationController {
         return view
     }()
     
-    private var blackView: UIView = {
-        let view = UIView()
+    private var blackView: PBPopupBlackView! = {
+        let view = PBPopupBlackView()
         view.autoresizingMask = []
         view.backgroundColor = UIColor.black
         view.alpha = 1.0
         return view
     }()
     
-    private var popupBarView: PBPopupBarView! {
+    private var popupBarView: PBPopupBarView!
+    {
         get {
             return popupController.popupBarView
         }
@@ -90,8 +110,8 @@ internal class PBPopupPresentationController: UIPresentationController {
     
     private var touchForwardingView: PBTouchForwardingView!
     
-    private class PBTouchForwardingView: UIView {
-        
+    private class PBTouchForwardingView: UIView
+    {
         var passthroughViews: [UIView] = []
         weak var popupController: PBPopupController!
         
@@ -123,31 +143,34 @@ internal class PBPopupPresentationController: UIPresentationController {
         }
     }
     
-    override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
+    override init(presentedViewController: UIViewController, presenting presentingViewController: UIViewController?)
+    {
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
         self.presentingVC = presentingViewController
     }
     
-    deinit {
+    deinit
+    {
         PBLog("deinit \(self)")
     }
     
-    override var frameOfPresentedViewInContainerView: CGRect {
-        var frame = CGRect.zero
-        frame = self.popupContentViewFrameForPopupStateOpen()
-        frame.origin.x = 0.0
-        frame.origin.y = 0.0
-        return frame
+    // MARK: - UIPresentationController
+    
+    override var frameOfPresentedViewInContainerView: CGRect
+    {
+        return self.presentedViewFrameForPopupStateOpen()
     }
     
-    override func containerViewWillLayoutSubviews() {
+    override func containerViewWillLayoutSubviews()
+    {
         super.containerViewWillLayoutSubviews()
         
         self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
         self.presentedView?.frame = self.frameOfPresentedViewInContainerView
     }
     
-    override func containerViewDidLayoutSubviews() {
+    override func containerViewDidLayoutSubviews()
+    {
         super.containerViewDidLayoutSubviews()
     }
     
@@ -160,9 +183,10 @@ internal class PBPopupPresentationController: UIPresentationController {
             return
         }
         
-        containerView.frame = self.frameForContainerView()
+        containerView.frame = self.popupContainerViewFrame()
         
         let frame = containerView.bounds
+        
         self.touchForwardingView = PBTouchForwardingView(frame: frame)
         self.touchForwardingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.touchForwardingView.passthroughViews = [self.presentingVC.view]
@@ -180,44 +204,53 @@ internal class PBPopupPresentationController: UIPresentationController {
         self.popupBarForPresentation = self.setupPopupBarForPresentation()
         if let popupBarForPresentation = self.popupBarForPresentation {
             self.popupContentView.contentView.addSubview(popupBarForPresentation)
+            popupBarForPresentation.alpha = 1.0
         }
         
         self.imageViewForPresentation = self.setupImageViewForPresentation()
-        if self.imageViewForPresentation != nil {
-            self.popupContentView.contentView.addSubview(self.imageViewForPresentation!)
+        if let imageViewForPresentation = self.imageViewForPresentation {
+            self.popupContentView.contentView.addSubview(imageViewForPresentation)
+            self.configureImageViewInStartPosition()
+            self.configureBottomModuleInStartPosition()
         }
+                
+        self.popupContentView.popupCloseButton?.alpha = 0.0
+        self.popupContentView.popupCloseButton?.setButtonStateStationary()
+        
+        self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
         
         self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
         
-        coordinator.animate(alongsideTransition: { (context) in
+        coordinator.animate {context in
+            self.animateBackingViewToDeck(true, animated: true)
+            self.animateImageViewInFinalPosition()
+            
+            self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
+            
             if !context.isInteractive {
                 self.popupBarForPresentation?.alpha = 0.0
+                self.popupContentView.popupCloseButton?.alpha = 1.0
             }
             self.popupContentView.updatePopupCloseButtonPosition()
             self.presentingVC.setNeedsStatusBarAppearanceUpdate()
-        })
+        } completion: { _ in
+            self.popupContentView.popupImageView?.isHidden = false
+            self.popupContentView.popupImageModule?.isHidden = false
+        }
     }
     
-    override func presentationTransitionDidEnd(_ completed: Bool) {
-        self.bottomBarForPresentation?.removeFromSuperview()
-        self.bottomBarForPresentation = nil
+    override func presentationTransitionDidEnd(_ completed: Bool)
+    {
         self.popupBarForPresentation?.removeFromSuperview()
         self.popupBarForPresentation = nil
         self.imageViewForPresentation?.removeFromSuperview()
         self.imageViewForPresentation = nil
         if !completed {
-            self._cleanup()
+            self.cleanup()
         }
         else {
-            self.blackView.alpha = 1.0
+            self.blackView?.alpha = 1.0
             NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        }
-    }
-    
-    @objc func didEnterBackground(_ sender: Any) {
-        self.shouldUpdateBackingView = false
-        delay(2) {
-            self.shouldUpdateBackingView = true
         }
     }
     
@@ -231,79 +264,108 @@ internal class PBPopupPresentationController: UIPresentationController {
         self.popupBarForPresentation = self.setupPopupBarForPresentation()
         if let popupBarForPresentation = self.popupBarForPresentation {
             self.popupContentView.contentView.addSubview(popupBarForPresentation)
+            popupBarForPresentation.alpha = 0.0
         }
         
         self.imageViewForPresentation = self.setupImageViewForPresentation()
-        if self.imageViewForPresentation != nil {
-            self.popupContentView.contentView.addSubview(self.imageViewForPresentation!)
+        if let imageViewForPresentation = self.imageViewForPresentation {
+            self.popupContentView.contentView.addSubview(imageViewForPresentation)
             self.configureImageViewInStartPosition()
         }
         
-        self.backingView?.removeFromSuperview()
+        if let backingView = self.backingView {
+            backingView.removeFromSuperview()
+        }
         self.backingView = nil
         self.setupBackingView()
         self.animateBackingViewToDeck(true, animated: false)
         
-        self.popupBarForPresentation?.alpha = 0.0
+        self.popupContentView.popupCloseButton?.setButtonStateTransitioning()
         
         self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
-
-        coordinator.animate(alongsideTransition: { (context) in
+        
+        coordinator.animate { context in
             self.animateBackingViewToDeck(false, animated: true)
             if !context.isInteractive {
-                self.popupBarForPresentation?.alpha = 1.0
                 self.animateImageViewInFinalPosition()
-            }
-            self.setupCornerRadiusForPopupContentViewAnimated(true, open: false)
-            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
-        })
-    }
-    
-    internal func continueDismissalTransitionWithTimingParameters(_ timingParameters: UITimingCurveProvider?, durationFactor: CGFloat) {
-        if let animator = self.animator {
-            animator.addAnimations {
+                self.popupBarForPresentation?.alpha = 1.0
                 self.popupContentView.popupCloseButton?.alpha = 0.0
-                self.popupBarForPresentation?.alpha = 1.0
-                self.popupContentView.center = self.popupContentViewCenterForPopupStateClosed(true)
-                self.popupContentView.bounds = self.popupContentViewBoundsForPopupStateClosed(true)
-                
-                self.animateImageViewInFinalPosition()
-                self._animateBottomBarToHidden(false)
             }
-            animator.continueAnimation(withTimingParameters: timingParameters, durationFactor: durationFactor)
+            
+            self.setupCornerRadiusForPopupContentViewAnimated(true, open: false)
+    
+            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
+        } completion: { _ in
+            self.popupContentView.popupImageView?.isHidden = false
+            self.popupContentView.popupImageModule?.isHidden = false
         }
     }
     
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
-        self.bottomBarForPresentation?.removeFromSuperview()
-        self.bottomBarForPresentation = nil
+    internal func continueDismissalAnimationWithDurationFactor(_ durationFactor: CGFloat)
+    {
+        if let animator = self.animator {
+            animator.stopAnimation(false)
+
+            self.finishAnimator = UIViewPropertyAnimator(duration: animator.duration * Double(durationFactor), dampingRatio: 1, animations: {
+                self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true, isInteractive: true)
+                self.presentedView?.frame = self.presentedViewFrameForPopupStateClosed()
+                self.animateBottomBarToHidden(false)
+                self.animateBackingViewToDeck(false, animated: true)
+                self.animateImageViewInFinalPosition()
+                self.setupCornerRadiusForPopupContentViewAnimated(true, open: false)
+                self.popupContentView.popupCloseButton?.alpha = 0.0
+                self.popupBarForPresentation?.alpha = 1.0
+            })
+            
+            self.finishAnimator.addCompletion { (_) in
+                animator.finishAnimation(at: .end)
+            }
+            
+            self.finishAnimator.startAnimation()
+        }
+    }
+
+    override func dismissalTransitionDidEnd(_ completed: Bool)
+    {
         self.popupBarForPresentation?.removeFromSuperview()
         self.popupBarForPresentation = nil
         self.imageViewForPresentation?.removeFromSuperview()
         self.imageViewForPresentation = nil
         
         if completed {
-            self._cleanup()
+            self.cleanup()
         }
         else {
-            self.blackView.alpha = 1.0
+            self.blackView?.alpha = 1.0
         }
     }
     
-    private func _cleanup() {
-        if self.popupPresentationStyle == .deck {
-            self.backingView?.removeFromSuperview()
-            self.backingView = nil
-            self.blackView.removeFromSuperview()
-            self.dimmerView.removeFromSuperview()
+    @objc func didEnterBackground(_ sender: Any)
+    {
+        self.shouldUpdateBackingView = false
+        delay(2) {
+            self.shouldUpdateBackingView = true
         }
+    }
+    
+    private func cleanup()
+    {
+        self.backingView?.removeFromSuperview()
+        self.backingView = nil
+        
+        self.blackView?.removeFromSuperview()
+        self.dimmerView?.removeFromSuperview()
+        
         self.touchForwardingView.removeFromSuperview()
         self.touchForwardingView = nil
+        
         self.presentedView?.removeFromSuperview()
+        
         self.popupContentView.removeFromSuperview()
-        self.contextData = nil
     }
 }
+
+// MARK: - UIViewControllerAnimatedTransitioning
 
 extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
 {
@@ -323,63 +385,35 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         if self.animator != nil {
             return self.animator!
         }
-        self.contextData = transitionContext
         let presentedView = transitionContext.view(forKey: self.isPresenting ? .to : .from)
         
         var animator: UIViewPropertyAnimator!
         
-        presentedView?.setNeedsLayout()
-        presentedView?.layoutIfNeeded()
-        
-        presentedView?.clipsToBounds = false
-        presentedView?.autoresizingMask = []
-        
         if self.isPresenting {
-            self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(false)
+            self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: false)
             presentedView?.frame = self.presentedViewFrameForPopupStateClosed()
             
             self.popupContentView.isHidden = false
             
             self.popupContentView.popupCloseButton?.alpha = 0.0
             
-            self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
-            
-            self.configureImageViewInStartPosition()
-            self.configureBottomModuleInStartPosition()
-            
             let animations = {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 presentedView?.frame = self.presentedViewFrameForPopupStateOpen()
-                
-                self.animateBackingViewToDeck(true, animated: true)
-                self.animateImageViewInFinalPosition()
+
+                self.animateBottomBarToHidden(true)
                 self.animateBottomModuleInFinalPosition()
-                self._animateBottomBarToHidden(true)
-                
-                self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
-                
-                if !transitionContext.isInteractive {
-                    self.popupContentView.popupCloseButton?.alpha = 1.0
-                }
             }
-            
+
             let completion: (() -> Void) = {() -> Void in
-                self.popupContentView.popupImageView?.isHidden = false
-                self.popupContentView.popupImageModule?.isHidden = false
                 if transitionContext.transitionWasCancelled {
-                    self.popupContentView.popupCloseButton?.setButtonStateStationary()
-                    
                     // Restore the initial frame after cancel presenting
                     self.configureBottomModuleInOriginalPosition()
                 }
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
             
-            popupContentView.popupCloseButton?.alpha = 0.0
-            popupContentView.popupCloseButton?.setButtonStateStationary()
-            
-            let curve: UIView.AnimationCurve = transitionContext.isInteractive ? .easeInOut : .easeInOut
-            animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), curve: curve, animations: {
+            animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), dampingRatio: 1, animations: {
                 animations()
             })
             animator.addCompletion { (_) in
@@ -391,52 +425,27 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
             presentedView?.frame = self.presentedViewFrameForPopupStateOpen()
             
-            self.popupBarView.alpha = 0.0
+            self.animateBottomBarToHidden(true)
             
             let animations = {
-                self.popupContentView.center = self.popupContentViewCenterForPopupStateClosed(false)
-                self.popupContentView.bounds = self.popupContentViewBoundsForPopupStateClosed(false)
-                presentedView?.center = self.presentedViewCenterForPopupStateClosed()
-                presentedView?.bounds = self.presentedViewBoundsForPopupStateClosed()
-                
+                self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: false, isInteractive: transitionContext.isInteractive)
+                self.presentedView?.frame = self.presentedViewFrameForPopupStateClosed()
+
                 if !transitionContext.isInteractive {
-                    self._animateBottomBarToHidden(false)
-                    self.popupContentView.popupCloseButton?.alpha = 0.0
+                    self.animateBottomBarToHidden(false)
                 }
             }
-            
+
             let completion = {
-                self.popupBarView.alpha = 1.0
-                self.popupContentView.popupImageView?.isHidden = false
-                self.popupContentView.popupImageModule?.isHidden = false
-                
-                self.popupContentView.popupCloseButton?.setButtonStateStationary()
-                
                 // Restore the initial frame after dismiss
                 self.configureBottomModuleInOriginalPosition()
                 
                 transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             }
-            
-            self.popupContentView.popupCloseButton?.setButtonStateTransitioning()
-            
-            var timingParameters: UITimingCurveProvider
-            if transitionContext.isInteractive {
-                let curve: UIView.AnimationCurve = .linear
-                timingParameters = UICubicTimingParameters(animationCurve: curve)
-            }
-            else {
-                if self.dropShadowViewFor(self.presentingVC.view) != nil, self.popupPresentationStyle == .deck {
-                    timingParameters = UICubicTimingParameters(animationCurve: .easeInOut)
-                }
-                else {
-                    timingParameters = UISpringTimingParameters(dampingRatio: 1, initialVelocity: CGVector(dx: 0, dy: 0))
-                }
-            }
-            animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), timingParameters: timingParameters)
-            animator.addAnimations {
+
+            animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), dampingRatio: 1, animations: {
                 animations()
-            }
+            })
             animator.addCompletion { (_) in
                 completion()
             }
@@ -445,32 +454,21 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         if transitionContext.isInteractive {
             animator.startAnimation()
             animator.pauseAnimation()
-            transitionContext.pauseInteractiveTransition()
         }
         
         self.animator = animator
         return animator
     }
     
-    func initialAnimationVelocity(for gestureVelocity: CGFloat, distance: CGFloat) -> CGVector {
-        var animationVelocity = CGVector.zero
-        if distance != 0 {
-            animationVelocity.dy = gestureVelocity / distance
-        }
-        return animationVelocity
-    }
-    
-    func animationEnded(_ transitionCompleted: Bool) {
+    func animationEnded(_ transitionCompleted: Bool)
+    {
         self.animator = nil
-        #if DEBUG
-        delay(1) {
-            // prove the context goes out of existence in good order
-            PBLog("contextData: \(self.contextData as Any)")
-        }
-        #endif
     }
     
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    // MARK: - User Interface Style & Rotation
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?)
+    {
         super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             guard previousTraitCollection != nil, let backingView = self.backingView, self.shouldUpdateBackingView == true else { return }
@@ -483,33 +481,28 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         }
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
+    {
         super.viewWillTransition(to: size, with: coordinator)
         
-        // Let's restore original frames before animations
-        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-            dropShadowView.superview?.transform = .identity
+        self.containerView?.frame = self.popupContainerViewFrame()
+        if let backingView = self.backingView {
+            backingView.removeFromSuperview()
+            self.backingView = nil
         }
-        self.containerView?.frame = self.frameForContainerView()
-        
+        self.containerView?.setNeedsLayout()
+        self.containerView?.layoutIfNeeded()
         coordinator.animate(alongsideTransition: { (context) in
             if self.popupPresentationState == .open {
-                if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-                    dropShadowView.superview?.transform = .identity
-                }
-                self.containerView?.frame = self.frameForContainerView()
-                self.blackView.frame = self.popupBlackViewFrame()
-                self.blackView.isHidden = self.isCompactOrPhoneInLandscape() ? true : false
-                
-                if self.traitCollection.verticalSizeClass == .regular, let backingView = self.backingView {
-                    backingView.removeFromSuperview()
-                    self.backingView = nil
-                }
+                self.containerView?.frame = self.popupContainerViewFrame()
+                self.blackView?.frame = self.popupBlackViewFrame()
                 self.setupBackingView()
                 self.animateBackingViewToDeck(true, animated: false)
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
                 self.popupContentView.updatePopupCloseButtonPosition()
+                self.containerView?.setNeedsLayout()
+                self.containerView?.layoutIfNeeded()
             }
         }) { (context) in
             if let bottomModule = self.popupContentView.popupBottomModule {
@@ -523,7 +516,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
 
 extension PBPopupPresentationController
 {
-    private func frameForContainerView() -> CGRect {
+    private func popupContainerViewFrame() -> CGRect
+    {
         var frame = self.presentingVC.view.frame
         if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
             frame = dropShadowView.frame
@@ -533,53 +527,58 @@ extension PBPopupPresentationController
         return frame
     }
     
-    private func popupBlackViewFrame() -> CGRect {
-        var frame = self.popupContentViewFrameForPopupStateOpen()
-        frame.origin.y = 0
-        if self.dropShadowViewFor(self.presentingVC.view) != nil {
-            frame.size.height += frame.minY
+    private func popupBlackViewFrame() -> CGRect
+    {
+        var frame: CGRect = .zero
+        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+            frame = dropShadowView.bounds
         }
         else {
-            frame.size.height = self.presentingVC.defaultFrameForBottomBar().minY - self.presentingVC.insetsForBottomBar().bottom
+            frame = self.popupContentViewFrameForPopupStateOpen()
+            frame.origin.y = 0
         }
+        frame.size.height = self.presentingVC.defaultFrameForBottomBar().minY - self.presentingVC.insetsForBottomBar().bottom
         PBLog("\(frame)")
         return frame
     }
     
-    internal func popupContentViewFrameForPopupStateClosed(_ finish: Bool) -> CGRect {
+    private func dimmerViewFrame() -> CGRect
+    {
+        guard let containerView = self.containerView else { return .zero }
+        
         var frame: CGRect = .zero
-        if !self.isPresenting && self.contextData.isInteractive && !finish {
+        frame = containerView.bounds
+        self.dimmerView.frame.origin.x = self.popupContentViewFrameForPopupStateOpen().minX
+        self.dimmerView.frame.size.width = self.popupContentViewFrameForPopupStateOpen().width
+        PBLog("\(frame)")
+        return frame
+    }
+    
+    internal func popupContentViewFrameForPopupStateClosed(finish: Bool, isInteractive: Bool = false) -> CGRect
+    {
+        var frame: CGRect = .zero
+        if !self.isPresenting && isInteractive && !finish {
             frame = self.presentingVC.defaultFrameForBottomBar()
             frame.origin.x = self.popupController.popupBarViewFrameForPopupStateClosed().origin.x
             frame.size.width = self.popupController.popupBarViewFrameForPopupStateClosed().width
         }
         else {
             frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-            if self.dropShadowViewFor(self.presentingVC.view) != nil, self.popupPresentationStyle == .deck {
-                frame.size.height += (self.presentingVC.defaultFrameForBottomBar().height + self.presentingVC.insetsForBottomBar().bottom)
-            }
         }
-        if #available(iOS 14, *), UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
-            let x = self.presentingVC.view.safeAreaInsets.left
-            frame.origin.x = x
-            frame.size.width -= x
+        if #available(iOS 14, *) {
+            if UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
+                let x = self.presentingVC.view.safeAreaInsets.left
+                frame.origin.x = x
+                frame.size.width -= x
+            }
         }
         PBLog("\(frame)")
         return frame
     }
     
-    internal func popupContentViewCenterForPopupStateClosed(_ finish: Bool) -> CGPoint {
-        return self.popupContentViewFrameForPopupStateClosed(finish).center
-    }
-    
-    internal func popupContentViewBoundsForPopupStateClosed(_ finish: Bool) -> CGRect {
-        var frame = self.popupContentViewFrameForPopupStateClosed(finish)
-        frame.origin = .zero
-        return frame
-    }
-    
-    private func presentedViewFrameForPopupStateClosed() -> CGRect {
-        var frame = self.popupContentViewFrameForPopupStateClosed(false)
+    private func presentedViewFrameForPopupStateClosed() -> CGRect
+    {
+        var frame = self.popupContentViewFrameForPopupStateClosed(finish: false)
         frame.origin.x = 0
         frame.origin.y = 0
         frame.size.height = self.popupContentViewFrameForPopupStateOpen().height
@@ -588,94 +587,55 @@ extension PBPopupPresentationController
         return frame
     }
     
-    private func presentedViewCenterForPopupStateClosed() -> CGPoint {
-        return self.presentedViewFrameForPopupStateClosed().center
-    }
-    
-    private func presentedViewBoundsForPopupStateClosed() -> CGRect {
-        var frame = self.presentedViewFrameForPopupStateClosed()
-        frame.origin = .zero
-        return frame
-    }
-    /*
-     internal func popupContentViewFrameForPopupStateOpen() -> CGRect {
-     guard let containerView = self.containerView else { return .zero }
-     
-     var y: CGFloat = 0.0
-     
-     let height = self.presentingVC.view.bounds.height
-     
-     #if targetEnvironment(macCatalyst)
-     if self.popupPresentationStyle == .fullScreen {
-     //y = self.statusBarFrame.height
-     }
-     #endif
-     
-     if self.popupPresentationStyle == .deck && self.traitCollection.verticalSizeClass == .regular && self.presentingVC.splitViewController == nil {
-     y = self.statusBarFrame.height + self.popupContentViewTopInset
-     }
-     else if self.popupPresentationStyle == .custom {
-     y = height - self.popupContentView.popupContentSize.height
-     }
-     
-     var frame = CGRect(x: self.presentingVC.defaultFrameForBottomBar().origin.x, y: y, width: self.presentingVC.defaultFrameForBottomBar().size.width, height: height - y)
-     
-     if self.presentingVC is UINavigationController || self.presentingVC is UITabBarController {
-     frame = CGRect(x: 0.0, y: y, width: containerView.bounds.width, height: height - y)
-     
-     if #available(iOS 14, *), UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
-     let x = self.presentingVC.view.safeAreaInsets.left
-     frame = CGRect(x: x, y: y, width: containerView.bounds.width - x, height: height - y)
-     }
-     }
-     PBLog("\(frame)")
-     return frame
-     }
-     */
-    internal func popupContentViewFrameForPopupStateOpen() -> CGRect {
+    internal func popupContentViewFrameForPopupStateOpen() -> CGRect
+    {
         guard let containerView = self.containerView else { return .zero }
         
         var x: CGFloat = self.presentingVC.defaultFrameForBottomBar().origin.x
         var y: CGFloat = 0.0
-        
+
         var width = self.presentingVC.defaultFrameForBottomBar().size.width
         var height = self.presentingVC.view.bounds.height
         
+        /*
         #if targetEnvironment(macCatalyst)
         if self.popupPresentationStyle == .fullScreen {
             //y = self.statusBarFrame.height
         }
         #endif
+        */
         
-        if self.popupPresentationStyle == .deck && self.traitCollection.verticalSizeClass == .regular && self.presentingVC.splitViewController == nil {
-            y = self.statusBarFrame.height + self.popupContentViewTopInset
+        if self.popupPresentationStyle != .fullScreen {
+            y = self.isCompactOrPhoneInLandscape() ? 0.0 : self.statusBarFrame.height + self.popupContentViewTopInset
             width = self.presentingVC.defaultFrameForBottomBar().size.width
-        }
-        else if self.popupPresentationStyle == .custom {
-            if self.popupContentView.popupContentSize.width > 0 {
-                width = self.presentingVC.view.bounds.width
-                x = width - self.popupContentView.popupContentSize.width
-                width = width - x
+            if self.popupPresentationStyle == .custom {
+                y = height - self.popupContentView.popupContentSize.height
+                if self.popupContentView.popupContentSize.width > 0 {
+                    width = self.presentingVC.view.bounds.width
+                    x = width - self.popupContentView.popupContentSize.width
+                    width = width - x
+                }
             }
-            y = height - self.popupContentView.popupContentSize.height
             height = height - y
         }
-        
         var frame = CGRect(x: x, y: y, width: width, height: height)
         
         if self.presentingVC is UINavigationController || self.presentingVC is UITabBarController {
-            frame = CGRect(x: 0.0, y: y, width: containerView.bounds.width, height: height - y)
+            frame = CGRect(x: 0.0, y: y, width: containerView.bounds.width, height: height)
             
-            if #available(iOS 14, *), UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
-                let x = self.presentingVC.view.safeAreaInsets.left
-                frame = CGRect(x: x, y: y, width: containerView.bounds.width - x, height: height - y)
+            if #available(iOS 14, *) {
+                if UIDevice.current.userInterfaceIdiom == .pad, let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) != nil {
+                    let x = self.presentingVC.view.safeAreaInsets.left
+                    frame = CGRect(x: x, y: y, width: containerView.bounds.width - x, height: height)
+                }
             }
         }
         PBLog("\(frame)")
         return frame
     }
     
-    private func presentedViewFrameForPopupStateOpen() -> CGRect {
+    private func presentedViewFrameForPopupStateOpen() -> CGRect
+    {
         var frame = self.popupContentViewFrameForPopupStateOpen()
         frame.origin.x = 0
         frame.origin.y = 0
@@ -685,122 +645,113 @@ extension PBPopupPresentationController
     
     // MARK: - Corner radii
     
-    internal func setupCornerRadiusForBackingViewAnimated(_ animated: Bool, open: Bool) {
-        if self.backingView == nil {
-            return
-        }
-        else {
+    internal func setupCornerRadiusForDimmerView()
+    {
+        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+            self.dimmerView.layer.cornerRadius = dropShadowView.layer.cornerRadius
+            if let svc = self.presentingVC.splitViewController, self.traitCollection.horizontalSizeClass == .regular {
+                if svc.viewControllers.firstIndex(of: self.presentingVC) == 0 {
+                    self.dimmerView.frame.origin.x = self.popupContentViewFrameForPopupStateOpen().minX
+                    self.dimmerView.frame.size.width = self.popupContentViewFrameForPopupStateOpen().width
+                    self.dimmerView.layer.maskedCorners = [.layerMinXMinYCorner]
+                }
+                else if svc.viewControllers.firstIndex(of: self.presentingVC) == 1 {
+                    self.dimmerView.layer.maskedCorners = [.layerMaxXMinYCorner]
+                }
+            }
             if #available(iOS 13.0, *) {
-                self.backingView.layer.cornerCurve = .continuous
-            }
-            var cornerRadius: CGFloat = 0.0
-            var cornerRadiusForClose: CGFloat = 0.0
-            
-            let popupIgnoreDropShadowView = self.popupContentView.popupIgnoreDropShadowView
-            self.popupContentView.popupIgnoreDropShadowView = false
-            if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-                if #available(iOS 13.0, *) {
-                    self.backingView.layer.cornerCurve = dropShadowView.layer.cornerCurve
-                }
-                if open == false {
-                    cornerRadius = dropShadowView.layer.cornerRadius
-                    cornerRadiusForClose = dropShadowView.layer.cornerRadius
-                }
-            }
-            self.popupContentView.popupIgnoreDropShadowView = popupIgnoreDropShadowView
-            
-            if open && cornerRadius == 0 {
-                #if targetEnvironment(macCatalyst)
-                cornerRadius = 7.0
-                #else
-                cornerRadius = 10.0
-                #endif
-            }
-            if !animated {
-                self.backingView.setupCornerRadiusTo(open ? cornerRadius : cornerRadiusForClose, rect: self.backingView.bounds)
-            }
-            else {
-                self.backingView.updateCornerRadiusTo(open ? cornerRadius : cornerRadiusForClose, rect: self.backingView.bounds)
+                self.dimmerView.layer.cornerCurve = dropShadowView.layer.cornerCurve
             }
         }
     }
     
-    internal func setupCornerRadiusForPopupContentViewAnimated(_ animated: Bool, open: Bool) {
-        if let svc = self.presentingVC.splitViewController, self.dropShadowViewFor(svc.view) == nil, self.popupPresentationStyle != .custom { return }
+    internal func setupCornerRadiusForBackingViewAnimated(_ animated: Bool, open: Bool)
+    {
+        guard let backingView = self.backingView else { return }
         
-        self.popupContentView.layer.cornerRadius = 0.0
-        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                if self.popupController.containerViewController.splitViewController != nil, self.isCompactOrPhoneInLandscape() {
-                    return
-                }
-                self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                self.popupContentView.layer.cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
+        let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
+        
+        var cornerRadius: CGFloat = 0.0
+#if targetEnvironment(macCatalyst)
+        cornerRadius = defaultCornerRadius
+#else
+        cornerRadius = open ? 10.0 : defaultCornerRadius
+#endif
+        if #available(iOS 13.0, *) {
+            backingView.layer.cornerCurve = .continuous
+        }
+        backingView.layer.cornerRadius = cornerRadius
+    }
+    
+    internal func setupCornerRadiusForPopupContentViewAnimated(_ animated: Bool, open: Bool)
+    {
+        let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
+        
+        var cornerRadius: CGFloat = 0.0
+#if targetEnvironment(macCatalyst)
+        cornerRadius = defaultCornerRadius
+#else
+        switch self.popupPresentationStyle {
+        case .deck:
+            cornerRadius = open ? (self.isCompactOrPhoneInLandscape() ? defaultCornerRadius : 10.0) : 0.0
+        case .custom:
+            cornerRadius = open ? 10.0 : 0.0
+        case .fullScreen:
+            cornerRadius = open ? defaultCornerRadius : 0.0
+        }
+        
+        if #available(iOS 13.0, *) {
+            self.popupContentView.layer.cornerCurve = .continuous
+        }
+        if let dropShadowView = self.popupController.dropShadowViewFor(self.presentingVC.view) {
+            cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
+            if #available(iOS 13.0, *) {
+                self.popupContentView.layer.cornerCurve = dropShadowView.layer.cornerCurve
             }
-            else {
-                self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                if let svc = self.presentingVC.splitViewController, self.popupPresentationStyle != .custom {
-                    if svc.viewControllers.firstIndex(of: self.presentingVC) == 0 {
-                        self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                    }
-                    else if svc.viewControllers.firstIndex(of: self.presentingVC) == 1 {
-                        self.popupContentView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                    }
-                }
-                self.popupContentView.layer.cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
+        }
+#endif
+
+        /// splitViewController master or detail
+        if let svc = self.presentingVC.splitViewController, self.traitCollection.horizontalSizeClass == .regular {
+            if svc.viewControllers.firstIndex(of: self.presentingVC) == 0 {
+                self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner]
+            }
+            else if svc.viewControllers.firstIndex(of: self.presentingVC) == 1 {
+                self.popupContentView.layer.maskedCorners = [.layerMaxXMinYCorner]
+            }
+            if self.popupPresentationStyle == .custom {
+                self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             }
         }
         else {
-            var cornerRadius: CGFloat = 0.0
-            if self.popupPresentationStyle == .fullScreen {
-                let popupIgnoreDropShadowView = self.popupContentView.popupIgnoreDropShadowView
-                self.popupContentView.popupIgnoreDropShadowView = false
-                if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-                    if #available(iOS 13.0, *) {
-                        self.popupContentView.layer.cornerCurve = dropShadowView.layer.cornerCurve
-                    }
-                    cornerRadius = dropShadowView.layer.cornerRadius
-                }
-                self.popupContentView.popupIgnoreDropShadowView = popupIgnoreDropShadowView
-            }
-            if open && cornerRadius == 0 {
-                #if targetEnvironment(macCatalyst)
-                cornerRadius = 7.0
-                #else
-                cornerRadius = 10.0
-                #endif
-            }
-            if self.traitCollection.verticalSizeClass == .compact {
-                cornerRadius = 0.0
-            }
-            if !animated {
-                self.popupContentView.setupCornerRadiusTo(open ? cornerRadius : 0.0, rect: self.popupContentViewFrameForPopupStateOpen())
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             }
             else {
-                self.popupContentView.updateCornerRadiusTo(open ? cornerRadius : 0.0, rect: self.popupContentViewFrameForPopupStateOpen())
+                if !self.popupController.isContainerPresentationSheet {
+                    self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+                }
             }
         }
+        self.popupContentView.layer.cornerRadius = cornerRadius
     }
+    
     
     // MARK: - Snapshot views
     
     private func setupBackingView()
     {
-        if self.popupPresentationStyle == .custom { return }
+        guard let containerView = self.containerView else { return }
         
-        if self.presentingVC.splitViewController != nil { return }
-        
-        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-            
-            if self.popupPresentationStyle == .fullScreen { return }
-            
-            self.dimmerView.frame = dropShadowView.bounds
-            self.dimmerView.layer.cornerRadius = dropShadowView.layer.cornerRadius
-            dropShadowView.addSubview(self.dimmerView)
+        if self.popupPresentationStyle == .custom || self.popupController.isContainerPresentationSheet || self.presentingVC.splitViewController != nil {
+            self.dimmerView.frame = self.dimmerViewFrame()
+            self.setupCornerRadiusForDimmerView()
+            containerView.addSubview(self.dimmerView)
+            containerView.sendSubviewToBack(self.dimmerView)
             return
         }
-        
-        if self.traitCollection.verticalSizeClass == .regular && self.backingView == nil {
+
+        if self.backingView == nil {
             let isHidden = self.popupBarView.isHidden
             self.popupBarView.isHidden = true
             let alpha = self.popupBarView.alpha
@@ -848,21 +799,18 @@ extension PBPopupPresentationController
     
     private func animateBackingViewToDeck( _ deck: Bool, animated: Bool)
     {
-        if self.popupPresentationStyle == .custom { return }
-        
-        if self.presentingVC.splitViewController != nil { return }
-        
-        if self.traitCollection.verticalSizeClass == .regular {
-            if deck == true {
-                self.dimmerView.alpha = 0.2
-                
+        if deck == true {
+            self.dimmerView.alpha = 0.2
+            if self.presentingVC.splitViewController != nil { return }
+            
+            if self.popupPresentationStyle != .custom {
                 let scaledXY = (self.presentingVC.view.bounds.width - self.presentingVC.view.layoutMargins.right * 2) / self.presentingVC.view.bounds.width
                 
                 if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
                     
                     if self.popupPresentationStyle == .fullScreen { return }
                     
-                    let translatedY = dropShadowView.bounds.height * ((1 - scaledXY) / 2) + 10
+                    let translatedY = dropShadowView.superview!.bounds.height * ((1 - scaledXY) / 2) + 10
                     dropShadowView.superview?.transform = CGAffineTransform(a: scaledXY, b: 0.0, c: 0.0, d: scaledXY, tx: 1.0, ty: -translatedY)
                 }
                 else {
@@ -872,14 +820,17 @@ extension PBPopupPresentationController
                     self.setupCornerRadiusForBackingViewAnimated(animated, open: true)
                 }
             }
+        }
+        else {
+            self.dimmerView.alpha = 0.0
+            if self.presentingVC.splitViewController != nil { return }
+            if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+                dropShadowView.superview?.transform = .identity
+            }
             else {
-                self.dimmerView.alpha = 0.0
-                if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-                    dropShadowView.superview?.transform = .identity
-                }
-                else {
-                    self.setupCornerRadiusForBackingViewAnimated(animated, open: false)
-                    self.backingView.transform = .identity
+                self.setupCornerRadiusForBackingViewAnimated(animated, open: false)
+                if let backingView = self.backingView {
+                    backingView.transform = .identity
                 }
             }
         }
@@ -918,10 +869,9 @@ extension PBPopupPresentationController
     
     // MARK: - Bottom bar
     
-    internal func _animateBottomBarToHidden( _ hidden: Bool) {
-        if self.dropShadowViewFor(self.presentingVC.view) == nil || (self.dropShadowViewFor(self.presentingVC.view) != nil && self.popupPresentationStyle != .deck) {
-            self.presentingVC._animateBottomBarToHidden(hidden)
-        }
+    private func animateBottomBarToHidden( _ hidden: Bool)
+    {
+        self.presentingVC._animateBottomBarToHidden(hidden)
     }
     
     // MARK: - Image view
@@ -1007,10 +957,7 @@ extension PBPopupPresentationController
                 closedFrame.origin.x = popupBar.imageView.frame.minX
             }
             
-            imageViewForPresentation.center = closedFrame.center
-            closedFrame.origin = .zero
-            imageViewForPresentation.bounds = closedFrame
-            
+            imageViewForPresentation.frame = closedFrame
             imageViewForPresentation.cornerRadius = 3.0
         }
     }
@@ -1041,6 +988,8 @@ extension PBPopupPresentationController
                 bottomModule.frame = self.bottomModuleFrameForPopupStateOpen
             }
         }
+        self.containerView?.setNeedsLayout()
+        self.containerView?.layoutIfNeeded()
     }
     
     internal func animateBottomModuleInFinalPosition()
@@ -1059,6 +1008,8 @@ extension PBPopupPresentationController
         else {
             bottomModule.frame.origin.y = topModule.frame.origin.y + topModule.frame.height + bottomModuleTopConstraint.constant
         }
+        self.containerView?.setNeedsLayout()
+        self.containerView?.layoutIfNeeded()
     }
     
     private func configureBottomModuleInOriginalPosition()
@@ -1074,18 +1025,32 @@ extension PBPopupPresentationController
     
     // MARK: - Helpers
     
-    private func isCompactOrPhoneInLandscape() -> Bool {
+    private func isCompactOrPhoneInLandscape() -> Bool
+    {
         if self.traitCollection.verticalSizeClass == .compact {return true}
         let orientation = self.popupController.statusBarOrientation(for: self.popupController.containerViewController.view)
         return UIDevice.current.userInterfaceIdiom == .phone && (orientation == .landscapeLeft || orientation == .landscapeRight)
     }
     
-    private func delay(_ delay:Double, closure:@escaping ()->()) {
+    private func isRegularSizeClass() -> Bool
+    {
+        let orientation = self.popupController.statusBarOrientation(for: self.popupController.containerViewController.view)
+        if orientation == .landscapeLeft || orientation == .landscapeRight {
+            return self.traitCollection.horizontalSizeClass == .regular
+        }
+        else {
+            return self.traitCollection.verticalSizeClass == .regular
+        }
+    }
+
+    private func delay(_ delay:Double, closure:@escaping ()->())
+    {
         let when = DispatchTime.now() + delay
         DispatchQueue.main.asyncAfter(deadline: when, execute: closure)
     }
     
-    private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView? {
+    private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView?
+    {
         if view?.classForCoder == aClass {
             return view
         }
@@ -1097,5 +1062,30 @@ extension PBPopupPresentationController
             superview = superview?.superview
         }
         return nil
+    }
+}
+
+// MARK: - Custom views
+
+extension PBPopupPresentationController
+{
+    internal class PBPopupDimmerView: UIView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    internal class PBPopupBlackView: UIView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     }
 }

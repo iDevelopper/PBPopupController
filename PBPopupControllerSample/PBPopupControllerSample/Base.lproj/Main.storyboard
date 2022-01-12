@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EdL-cb-VQv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="EdL-cb-VQv">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -146,6 +145,7 @@
                             <constraint firstItem="mKy-51-xpX" firstAttribute="leading" secondItem="WPQ-H6-fN8" secondAttribute="leading" id="zAQ-TZ-gfk"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Kfe-Tc-iuf"/>
                     <connections>
                         <outlet property="containerView" destination="mKy-51-xpX" id="3EZ-pC-is4"/>
                         <segue destination="EQx-9t-sHr" kind="unwind" identifier="unwindToHome" unwindAction="unwindToHome:" id="Arv-Jz-dRF"/>
@@ -154,7 +154,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LW6-6y-WNF" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="EQx-9t-sHr" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4772" y="-618"/>
+            <point key="canvasLocation" x="5681.1594202898559" y="-618.08035714285711"/>
         </scene>
         <!--Demo Table View Controller-->
         <scene sceneID="vVH-27-7GL">
@@ -187,7 +187,7 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="musicTableViewCell" rowHeight="60" id="Su6-fd-XzZ" customClass="MusicTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="60" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="76.666666030883789" width="414" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Su6-fd-XzZ" id="IAZ-fa-mCp">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -289,7 +289,7 @@
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="segmentedTableViewCell" rowHeight="80" id="NAg-zZ-6zy" customClass="SegmentedTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="72" width="414" height="80"/>
+                                <rect key="frame" x="0.0" y="88.666666030883789" width="414" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NAg-zZ-6zy" id="eVw-By-5j6">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="80"/>
@@ -330,7 +330,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonTableViewCell" id="yWg-gN-JYj" customClass="ButtonTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="152" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="168.66666603088379" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yWg-gN-JYj" id="Te0-Cb-FoY">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -354,7 +354,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="musicTableViewCell" rowHeight="60" id="L6s-de-PLy" customClass="MusicTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="196" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="212.66666603088379" width="414" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="L6s-de-PLy" id="awe-xB-UAo">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -460,7 +460,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="cell" id="mAG-ve-bHb">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.666667938232422"/>
+                                <rect key="frame" x="0.0" y="44.666666030883789" width="414" height="43.666667938232422"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mAG-ve-bHb" id="218-nM-9fD">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
@@ -603,7 +603,7 @@
                 <splitViewController storyboardIdentifier="SplitViewController" allowDoubleColumnStyle="YES" id="8W4-ll-qzu" customClass="SplitViewController" customModule="PBPopupControllerSample" customModuleProvider="target" sceneMemberID="viewController">
                     <connections>
                         <segue destination="F6f-EP-F4p" kind="relationship" relationship="masterViewController" id="nG3-Oe-I94"/>
-                        <segue destination="N2q-o6-2bK" kind="relationship" relationship="detailViewController" id="rbu-ZX-qIe"/>
+                        <segue destination="fr2-RB-LQE" kind="relationship" relationship="detailViewController" id="rbu-ZX-qIe"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BRW-br-Rvr" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -736,7 +736,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="playerTableViewCell" rowHeight="896" id="A6h-27-Kc3" customClass="PlayerTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="896"/>
+                                <rect key="frame" x="0.0" y="44.666666030883789" width="414" height="896"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="A6h-27-Kc3" id="cbc-LC-qAt">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -805,7 +805,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Demo Album" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TYa-Ub-Ren" customClass="MarqueeLabel" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                                            <rect key="frame" x="32" y="90.666666666666629" width="350" height="27"/>
+                                                            <rect key="frame" x="32.000000000000007" y="90.666666666666629" width="126.66666666666669" height="27"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="22"/>
                                                             <color key="textColor" red="0.91372549020000005" green="0.27058823529999998" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
@@ -815,7 +815,7 @@
                                                     <constraints>
                                                         <constraint firstItem="37P-NZ-y66" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" id="2VR-Gq-8um"/>
                                                         <constraint firstItem="zW1-rq-Bqp" firstAttribute="leading" secondItem="zhC-ct-SW0" secondAttribute="leading" constant="32" id="4Is-yb-iLB"/>
-                                                        <constraint firstAttribute="trailing" secondItem="TYa-Ub-Ren" secondAttribute="trailing" constant="32" id="5Zi-uz-rye"/>
+                                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TYa-Ub-Ren" secondAttribute="trailing" id="5Zi-uz-rye"/>
                                                         <constraint firstItem="do3-F0-3EE" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" multiplier="3:6" id="CCq-iQ-n5b"/>
                                                         <constraint firstAttribute="trailing" secondItem="37P-NZ-y66" secondAttribute="trailing" constant="32" id="FJq-o0-iyz"/>
                                                         <constraint firstItem="MQk-Q4-ttC" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" id="GyO-YJ-DDB"/>
@@ -870,7 +870,7 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="musicTableViewCell" rowHeight="60" id="rr8-5S-SB8" customClass="MusicTableViewCell" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="924" width="414" height="60"/>
+                                <rect key="frame" x="0.0" y="940.66666603088379" width="414" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="rr8-5S-SB8" id="a9A-zi-SSh">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -1322,63 +1322,23 @@
             </objects>
             <point key="canvasLocation" x="3894" y="1774"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="GbX-y3-gkD">
+        <!--Navigation Controller-->
+        <scene sceneID="Lzf-cO-PDf">
             <objects>
-                <viewController id="ihV-O2-cW8" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="ipd-fS-hOM">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="jKn-HB-3hc"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="e5o-PP-s3g" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="fr2-RB-LQE" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ROf-mw-BwD">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="N2q-o6-2bK" kind="relationship" relationship="rootViewController" id="b9C-22-T46"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IOn-Qr-qil" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-657" y="275"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="yn1-lE-57v">
-            <objects>
-                <viewController id="R6W-F4-Vif" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="4B6-wI-Tev">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="ROh-DB-XjY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="o3C-xn-QBw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-942" y="905"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="YY2-m6-uhC">
-            <objects>
-                <viewController id="IDE-lV-Bwm" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="2U7-AQ-eyi">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2y2-3z-JJ6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-1609" y="908"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="nJs-Vy-pTZ">
-            <objects>
-                <viewController id="8RY-Xb-C4p" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="0AU-xN-MgY">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="z2U-aB-94w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-509" y="-582"/>
+            <point key="canvasLocation" x="4771.0144927536239" y="-618.08035714285711"/>
         </scene>
     </scenes>
     <designables>
@@ -1419,42 +1379,6 @@
         <image name="volUp" width="17" height="14"/>
         <systemColor name="darkTextColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

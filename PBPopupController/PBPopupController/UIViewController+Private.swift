@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 15/04/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -79,25 +79,20 @@ public extension UITabBarController
         
         if (t > 0) {
             if let _ = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-                if popupController.popupPresentationState != .hidden {
+                if self.popupController.popupPresentationState != .hidden {
                     var duration: TimeInterval = 0.35
                     if let coordinator = self.selectedViewController?.transitionCoordinator {
                         duration = coordinator.transitionDuration
                     }
-                    var insets: UIEdgeInsets = .zero
-                    insets = self.view.window?.safeAreaInsets ?? .zero
-                    if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
-                        if dropShadowView.frame.minX > 0 {
-                            insets = UIEdgeInsets.zero
+                    
+                    self.bottomBar.isHidden = true
+                    
+                    if self.popupBarIsHidden == false {
+                        UIView.animate(withDuration: duration) {
+                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
                         }
                     }
-                    UIView.animate(withDuration: duration) {
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        self.popupController.popupBarView.frame.origin.y -= insets.bottom
-                        self.popupController.popupBarView.frame.size.height += insets.bottom
-                    }
                 }
-                self.bottomBar.isHidden = true
             }
         }
     }
@@ -111,16 +106,26 @@ public extension UITabBarController
         
         if (t > 0) {
             if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-                if popupController.popupPresentationState != .hidden {
+                if self.popupController.popupPresentationState != .hidden {
                     self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
                         self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                        if self.popupBarWasHidden {
+                            self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                        }
                         rv.layoutIfNeeded()
                     }, completion: { (_ context) in
                         if context.isCancelled {
                             self.isTabBarHiddenDuringTransition = true
-                            UIView.animate(withDuration: 0.15) {
-                                self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                                rv.layoutIfNeeded()
+                            
+                            if !self.popupBarWasHidden {
+                                UIView.animate(withDuration: 0.15) {
+                                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                                    rv.layoutIfNeeded()
+                                }
+                            }
+                            
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: true)
                             }
                         }
                         self.bottomBar.isHidden = context.isCancelled ? true : false
@@ -132,13 +137,14 @@ public extension UITabBarController
     
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
     {
+        self.pb_setViewControllers(viewControllers, animated: animated)
+        
         for obj in viewControllers {
-            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.viewControllers?.first?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
+            let additionalInsets = self.popupAdditionalSafeAreaInsets
             if obj.popupAdditionalSafeAreaInsets == .zero {
-                PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+                PBPopupFixInsetsForViewController(self, false, additionalInsets)
             }
         }
-        self.pb_setViewControllers(viewControllers, animated: animated)
     }
 }
 
@@ -149,10 +155,7 @@ internal extension UITabBarController
         let height = self.tabBar.frame.height
         if height > 0.0 {
             if hidden == false {
-                var frame = tabBar.frame
-                frame.origin.y = self.view.bounds.height - height
-                self.tabBar.center = frame.center
-                //self.tabBar.frame.origin.y = self.view.bounds.height - height
+                self.tabBar.frame.origin.y = self.view.bounds.height - height
             }
             else {
                 self.tabBar.frame.origin.y = self.view.bounds.height
@@ -173,6 +176,11 @@ internal extension UITabBarController
         if let bottomBarInsets = self.popupController.dataSource?.popupController?(self.popupController, insetsFor: self.bottomBar) {
             return bottomBarInsets
         }
+        if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
+            if dropShadowView.frame.minX > 0 {
+                return UIEdgeInsets.zero
+            }
+        }
         return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
@@ -186,6 +194,25 @@ internal extension UITabBarController
         bottomBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.size.height - (self.isTabBarHiddenDuringTransition ? 0.0 : bottomBarFrame.size.height))
         
         return bottomBarFrame
+    }
+    
+    @objc override func configureScrollEdgeAppearanceForBottomBar() {
+#if targetEnvironment(macCatalyst)
+        return
+#else
+        if #available(iOS 15.0, *) {
+            if self.popupBar.inheritsVisualStyleFromBottomBar == false {
+                return
+            }
+            
+            if self.popupController.popupPresentationState == .presenting {
+                self.tabBar.scrollEdgeAppearance = self.tabBar.standardAppearance
+            }
+            else {
+                self.tabBar.scrollEdgeAppearance = nil
+            }
+        }
+#endif
     }
     
     @objc override func configurePopupBarFromBottomBar()
@@ -217,6 +244,24 @@ public extension UINavigationController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
+        originalMethod = class_getInstanceMethod(aClass, #selector(popViewController(animated:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_popViewController(animated:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
+        originalMethod = class_getInstanceMethod(aClass, #selector(popToViewController(_ :animated:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_popToViewController(_ :animated:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
+        originalMethod = class_getInstanceMethod(aClass, #selector(popToRootViewController(animated:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_popToRootViewController(animated:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+
         originalMethod = class_getInstanceMethod(aClass, #selector(setViewControllers(_ :animated:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_setViewControllers(_ :animated:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -245,25 +290,42 @@ public extension UINavigationController
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat)
     {
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-            if popupController.popupPresentationState != .hidden {
-                self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                
-                self._sTH(h: h, e: e, d: d)
-                self.bottomBar.isHidden = h
-                
-                if let coordinator = self.transitionCoordinator {
-                    coordinator.animate(alongsideTransition: { (_ context) in
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        rv.layoutIfNeeded()
-                    }) { (_ context) in
-                    }
+            if self.popupController.popupPresentationState != .hidden {
+                if self.popupBarIsHidden == true {
+                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
                 }
                 else {
-                    UIView.animate(withDuration: 0.15) {
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        rv.layoutIfNeeded()
-                    }
+                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
                 }
+                self._sTH(h: h, e: e, d: d)
+                self.bottomBar.isHidden = h
+                    if let coordinator = self.transitionCoordinator {
+                        coordinator.animate(alongsideTransition: { (_ context) in
+                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                            }
+                            rv.layoutIfNeeded()
+                        }) { (_ context) in
+                            if context.isCancelled {
+                                if self.popupBarWasHidden {
+                                    self.popupBarIsHidden = true
+                                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
+                                    self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
+                                    rv.layoutIfNeeded()
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        UIView.animate(withDuration: d) {
+                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                            }
+                            rv.layoutIfNeeded()
+                        }
+                    }
             }
             else {
                 self._sTH(h: h, e: e, d: d)
@@ -273,12 +335,25 @@ public extension UINavigationController
         }
         else {
             self._sTH(h: h, e: e, d: d)
-            self.bottomBar.isHidden = h
+            //self.toolbar.isHidden = h
         }
     }
     
     @objc private func pb_pushViewController(_ viewController: UIViewController, animated: Bool)
     {
+        if let popupController = self.popupControllerFor(self) {
+            if let vc = popupController.containerViewController {
+                if self.popupBarFor(vc) != nil, popupController.popupPresentationState == .closed {
+                    //vc.popupBarIsHidden = false
+                    vc.popupBarWasHidden = false
+                    if viewController.hidesPopupBarWhenPushed || vc.popupBarIsHidden {
+                        viewController.hidesPopupBarWhenPushed = true
+                        vc.popupBarIsHidden = true
+                        vc.hidePopupBar(animated: false, completion: nil)
+                    }
+                }
+            }
+        }
         if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar, !rv.isHidden {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
             if viewController.popupAdditionalSafeAreaInsets == .zero {
@@ -288,15 +363,128 @@ public extension UINavigationController
         self.pb_pushViewController(viewController, animated: animated)
     }
     
-    @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
+    @objc private func pb_popViewController(animated: Bool) -> UIViewController?
     {
-        for obj in viewControllers {
-            let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
-            if obj.popupAdditionalSafeAreaInsets == .zero {
-                PBPopupFixInsetsForViewController(obj, false, additionalInsets)
+        if let top = self.topViewController, top.hidesPopupBarWhenPushed {
+            if let popupController = self.popupControllerFor(self) {
+                if let vc = popupController.containerViewController {
+                    if self.popupBarFor(vc) != nil, vc.popupBarIsHidden == true {
+                        let back = self.viewControllers[self.viewControllers.count - 2] as UIViewController
+                        if back.hidesPopupBarWhenPushed == false {
+                            vc.popupBarWasHidden = true
+                            vc.popupBarIsHidden = false
+                            if let nc = vc as? UINavigationController, nc.isToolbarHidden {
+                                if let top = self.pb_popViewController(animated: animated), top.transitionCoordinator != nil {
+                                    self.startInteractivePopupBarTransition(fromViewController: top)
+                                    return top
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+        return self.pb_popViewController(animated: animated)
+    }
+    
+    @objc private func pb_popToViewController(_ viewController: UIViewController, animated: Bool) -> [UIViewController]?
+    {
+        if let top = self.topViewController, top.hidesPopupBarWhenPushed {
+            if let popupController = self.popupControllerFor(self) {
+                if let vc = popupController.containerViewController {
+                    if self.popupBarFor(vc) != nil, vc.popupBarIsHidden == true {
+                        if viewController.hidesPopupBarWhenPushed == false {
+                            vc.popupBarWasHidden = true
+                            vc.popupBarIsHidden = false
+                            if let nc = vc as? UINavigationController, nc.isToolbarHidden {
+                                if let viewControllers = self.pb_popToViewController(viewController, animated: animated), vc.transitionCoordinator != nil {
+                                    self.startInteractivePopupBarTransition(fromViewController: top)
+                                    return viewControllers
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return self.pb_popToViewController(viewController, animated: animated)
+    }
+    
+    @objc private func pb_popToRootViewController(animated: Bool) -> [UIViewController]?
+    {
+        if let top = self.topViewController, top.hidesPopupBarWhenPushed {
+            if let popupController = self.popupControllerFor(self) {
+                if let vc = popupController.containerViewController {
+                    if self.popupBarFor(vc) != nil, vc.popupBarIsHidden == true {
+                        let back = self.viewControllers[0] as UIViewController
+                        if back.hidesPopupBarWhenPushed == false {
+                            vc.popupBarWasHidden = true
+                            vc.popupBarIsHidden = false
+                            if let nc = vc as? UINavigationController, nc.isToolbarHidden {
+                                if let viewControllers = self.pb_popToRootViewController(animated: animated), vc.transitionCoordinator != nil {
+                                    self.startInteractivePopupBarTransition(fromViewController: top)
+                                    return viewControllers
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return self.pb_popToRootViewController(animated: animated)
+    }
+    
+    @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
+    {
         self.pb_setViewControllers(viewControllers, animated: animated)
+        for obj in viewControllers {
+            let additionalInsets = self.popupAdditionalSafeAreaInsets
+            if obj.popupAdditionalSafeAreaInsets == .zero {
+                PBPopupFixInsetsForViewController(self, false, additionalInsets)
+            }
+        }
+    }
+    
+    private func startInteractivePopupBarTransition(fromViewController: UIViewController)
+    {
+        guard let popupController = self.popupControllerFor(self), let vc = popupController.containerViewController else {
+            return
+        }
+        if let coordinator = fromViewController.transitionCoordinator {
+            coordinator.animate { context in
+                popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateClosed()
+                if vc.popupBarWasHidden {
+                    popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                }
+            } completion: { context in
+                if context.isCancelled {
+                    if vc.popupBarWasHidden {
+                        vc.popupBarIsHidden = true
+                        popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateHidden()
+                        popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func popupControllerFor(_ controller: UIViewController) -> PBPopupController?
+    {
+        if let rv = (objc_getAssociatedObject(controller, &AssociatedKeys.popupController) as? PBPopupController) {
+            return rv
+        }
+        if  controller.parent == nil {
+            return nil
+        }
+        return popupControllerFor(controller.parent!)
+    }
+    
+    private func popupBarFor(_ controller: UIViewController) -> PBPopupBar?
+    {
+        if let rv = objc_getAssociatedObject(controller, &AssociatedKeys.popupBar) as? PBPopupBar {
+            return rv
+        }
+        return nil
     }
 }
 
@@ -364,6 +552,25 @@ internal extension UINavigationController
         }
         
         return toolBarFrame
+    }
+    
+    @objc override func configureScrollEdgeAppearanceForBottomBar()
+    {
+#if targetEnvironment(macCatalyst)
+#else
+        if #available(iOS 15.0, *) {
+            if self.popupBar.inheritsVisualStyleFromBottomBar == false {
+                return
+            }
+            
+            if self.popupController.popupPresentationState == .presenting {
+                self.toolbar.scrollEdgeAppearance = self.toolbar.standardAppearance
+            }
+            else {
+                self.toolbar.scrollEdgeAppearance = nil
+            }
+        }
+#endif
     }
     
     @objc override func configurePopupBarFromBottomBar()
@@ -554,6 +761,7 @@ public extension UIViewController
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
     {
         self.pb_viewWillTransition(to: size, with: coordinator)
+
         if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
@@ -594,6 +802,7 @@ internal extension UIViewController
                 self.bottomBar.transform = .identity
             }
             else {
+                self.bottomBar.transform = .identity
                 //self.bottomBar.frame.origin.y = self.view.bounds.height
                 let fromY = self.bottomBar.frame.minY
                 let toY = self.view.bounds.height
@@ -642,6 +851,10 @@ internal extension UIViewController
         return bottomBarFrame
     }
     
+    @objc func configureScrollEdgeAppearanceForBottomBar() {
+        // Do nothing for UIView
+    }
+    
     @objc func configurePopupBarFromBottomBar()
     {
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
@@ -652,6 +865,7 @@ internal extension UIViewController
     }
 }
 
+/*
 @inline(__always) func PBPopupFixInsetsForViewController(_ controller: UIViewController, _ layout: Bool, _ additionalSafeAreaInsets: UIEdgeInsets)
 {
     if (controller is UITabBarController) || (controller is UINavigationController) || (controller.children.count > 0 && !(controller is UISplitViewController)) {
@@ -691,26 +905,69 @@ internal extension UIViewController
         controller.view.layoutIfNeeded()
     }
 }
+*/
 
-internal extension DispatchQueue {
-    private static var _onceTracker = [String]()
-    class func once(file: String = #file, function: String = #function, line: Int = #line, block:()->Void) {
-        let token = file + ":" + function + ":" + String(line)
-        once(token: token, block: block)
-    }
-    /**
-     Executes a block of code, associated with a unique token, only once.  The code is thread safe and will
-     only execute the code once even in the presence of multithreaded calls.
-     - parameter token: A unique reverse DNS style name such as com.vectorform.<name> or a GUID
-     - parameter block: Block to execute once
-     */
-    class func once(token: String, block:()->Void) {
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-        if _onceTracker.contains(token) {
-            return
+@inline(__always) func PBPopupFixInsetsForViewController(_ controller: UIViewController, _ layout: Bool, _ additionalSafeAreaInsets: UIEdgeInsets)
+{
+    if (controller is UITabBarController) || (controller is UINavigationController) || (controller.children.count > 0 && !(controller is UISplitViewController))
+    {
+        let oldInsets = controller.popupAdditionalSafeAreaInsets
+        var insets = oldInsets
+        if oldInsets.top != additionalSafeAreaInsets.top {
+            insets.top += additionalSafeAreaInsets.top
         }
-        _onceTracker.append(token)
-        block()
+        if oldInsets.bottom != additionalSafeAreaInsets.bottom {
+            insets.bottom += additionalSafeAreaInsets.bottom
+        }
+        if oldInsets != insets {
+            controller.popupAdditionalSafeAreaInsets = PBFixInsetsForInsets(insets)
+        }
+        
+        for (_, obj) in controller.children.enumerated() {
+            let oldInsets = obj.popupAdditionalSafeAreaInsets
+            var insets = oldInsets
+            if oldInsets.top != additionalSafeAreaInsets.top {
+                insets.top += additionalSafeAreaInsets.top
+            }
+            if oldInsets.bottom != additionalSafeAreaInsets.bottom {
+                insets.bottom += additionalSafeAreaInsets.bottom
+            }
+            if oldInsets != insets {
+                insets = PBFixInsetsForInsets(insets)
+                obj.additionalSafeAreaInsets = insets
+                obj.popupAdditionalSafeAreaInsets = insets
+            }
+        }
+    } else {
+        let oldInsets = controller.popupAdditionalSafeAreaInsets
+        var insets = oldInsets
+        if oldInsets.top != additionalSafeAreaInsets.top {
+            insets.top += additionalSafeAreaInsets.top
+        }
+        if oldInsets.bottom != additionalSafeAreaInsets.bottom {
+            insets.bottom += additionalSafeAreaInsets.bottom
+        }
+        if oldInsets != insets {
+            insets = PBFixInsetsForInsets(insets)
+            controller.additionalSafeAreaInsets = insets;
+            controller.popupAdditionalSafeAreaInsets = insets;
+        }
     }
+    if (layout)
+    {
+        controller.view.setNeedsUpdateConstraints()
+        controller.view.setNeedsLayout()
+        controller.view.layoutIfNeeded()
+    }
+}
+
+@inline(__always) func PBFixInsetsForInsets(_ insets: UIEdgeInsets) -> UIEdgeInsets {
+    var insets = insets
+    if insets.top < 0 {
+        insets.top = 0
+    }
+    if insets.bottom < 0 {
+        insets.bottom = 0
+    }
+    return insets
 }

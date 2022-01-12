@@ -176,7 +176,7 @@ class PopupContentViewController: UIViewController {
         }
         return containerVC.popupController.popupStatusBarStyle
     }
-
+    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
@@ -186,7 +186,7 @@ class PopupContentViewController: UIViewController {
         self.songNameLabel.text = self.songTitle
         self.albumNameLabel.text = self.albumTitle
         if let containerVC = self.popupContainerViewController {
-            containerVC.popupContentView.popupImageView = albumArtImageView
+            containerVC.popupContentView.popupImageView = self.albumArtImageView
         }
 
         #if compiler(>=5.1)

@@ -1,13 +1,6 @@
 {
   "warnings": [
     {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupBar.swift",
-      "line": 937,
-      "symbol": "PBPopupBar.traitCollectionDidChange(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupCloseButton.swift",
       "line": 102,
       "symbol": "PBPopupCloseButton.init(style:)",
@@ -16,70 +9,56 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupCloseButton.swift",
-      "line": 117,
+      "line": 119,
       "symbol": "PBPopupCloseButton.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupCloseButton.swift",
-      "line": 266,
+      "line": 267,
       "symbol": "PBPopupCloseButton.setButtonStateStationary()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupCloseButton.swift",
-      "line": 273,
+      "line": 275,
       "symbol": "PBPopupCloseButton.setButtonStateTransitioning()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupContentView.swift",
-      "line": 175,
-      "symbol": "PBPopupContentView.init(frame:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupContentView.swift",
-      "line": 192,
-      "symbol": "PBPopupContentView.layoutSubviews()",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController.swift",
-      "line": 136,
+      "line": 140,
       "symbol": "PBPopupControllerDataSource",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController.swift",
-      "line": 177,
+      "line": 181,
       "symbol": "PBPopupControllerDelegate",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController.swift",
-      "line": 308,
+      "line": 323,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController.swift",
-      "line": 869,
+      "line": 969,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController.swift",
-      "line": 971,
+      "line": 1092,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"

@@ -104,6 +104,9 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
         if let container = self.containerController {
             container.dismissPopup()
             self.performSegue(withIdentifier: "unwindToHome", sender: self)
+
+            let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.restoreInitialRootViewControllerIfNeeded()
         }
     }
 

@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 26/04/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -99,14 +99,16 @@ extension PBPopupCloseButtonStyle
     
     // MARK: - Public Init
     
-    public convenience init(style: PBPopupCloseButtonStyle) {
+    public convenience init(style: PBPopupCloseButtonStyle)
+    {
         self.init(customStyle: style)
     }
     
     /**
      :nodoc:
      */
-    required public init(customStyle: PBPopupCloseButtonStyle) {
+    required public init(customStyle: PBPopupCloseButtonStyle)
+    {
         self.style = customStyle
         
         super.init(frame: .zero)
@@ -114,13 +116,15 @@ extension PBPopupCloseButtonStyle
         self.commonSetup()
     }
     
-    required public init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder)
+    {
         super.init(coder: aDecoder)
         
         self.commonSetup()
     }
     
-    private func commonSetup() {
+    private func commonSetup()
+    {
         if self.style == .round {
             self.setupForRoundButton()
         } else {
@@ -130,7 +134,8 @@ extension PBPopupCloseButtonStyle
         accessibilityHint = NSLocalizedString("Double tap to close popup content", comment: "")
     }
     
-    private func setupForRoundButton() {
+    private func setupForRoundButton()
+    {
         var blurStyle: UIBlurEffect.Style;
         if #available(iOS 13, *) {
             blurStyle = .systemChromeMaterial
@@ -186,7 +191,8 @@ extension PBPopupCloseButtonStyle
         }
     }
     
-    private func setupForChevronButton() {
+    private func setupForChevronButton()
+    {
         chevronView = PBChevronView(frame: CGRect(x: 0, y: 0, width: 42, height: 15))
         chevronView.width = 5.5
         chevronView.state = .up
@@ -197,7 +203,8 @@ extension PBPopupCloseButtonStyle
     
     // MARK: - Private Methods
     
-    private func _setHighlighted(_ highlighted: Bool, animated: Bool) {
+    private func _setHighlighted(_ highlighted: Bool, animated: Bool)
+    {
         let block = {
             self.highlightView?.alpha = highlighted ? 1.0 : 0.0
             self.highlightView?.alpha = highlighted ? 1.0 : 0.0
@@ -215,7 +222,8 @@ extension PBPopupCloseButtonStyle
     /**
      :nodoc:
      */
-    override public func layoutSubviews() {
+    override public func layoutSubviews()
+    {
         super.layoutSubviews()
         
         if let effectView = self.effectView {
@@ -223,15 +231,6 @@ extension PBPopupCloseButtonStyle
             effectView.frame = self.bounds
             
             let minSideSize: CGFloat = min(self.bounds.size.width, self.bounds.size.height)
-            
-            /*
-             let maskLayer = CAShapeLayer()
-             maskLayer.rasterizationScale = UIScreen.main.nativeScale
-             maskLayer.shouldRasterize = true
-             let path = CGPath(roundedRect: self.bounds, cornerWidth: minSideSize / 2, cornerHeight: minSideSize / 2, transform: nil)
-             maskLayer.path = path
-             effectView.layer.mask = maskLayer
-             */
             
             effectView.clipsToBounds = true
             effectView.layer.cornerRadius = minSideSize / 2
@@ -247,7 +246,8 @@ extension PBPopupCloseButtonStyle
     /**
      :nodoc:
      */
-    override public func sizeThatFits(_ size: CGSize) -> CGSize {
+    override public func sizeThatFits(_ size: CGSize) -> CGSize
+    {
         if self.style == .round {
             return CGSize(width: 24.0, height: 24.0)
         }
@@ -257,20 +257,23 @@ extension PBPopupCloseButtonStyle
     /**
      :nodoc:
      */
-    public override func tintColorDidChange() {
+    public override func tintColorDidChange()
+    {
         self.setTitleColor(self.tintColor, for: .normal)
     }
     
     // MARK: - Public Methods
     
-    @objc public func setButtonStateStationary() {
+    @objc public func setButtonStateStationary()
+    {
         if self.style == .round {
             return
         }
         self.chevronView.state = .up
     }
     
-    @objc public func setButtonStateTransitioning() {
+    @objc public func setButtonStateTransitioning()
+    {
         if self.style == .round {
             return
         }
@@ -279,23 +282,28 @@ extension PBPopupCloseButtonStyle
     
     // MARK: - Actions
     
-    @objc private func didTouchDown(_ sender: UIButton) {
+    @objc private func didTouchDown(_ sender: UIButton)
+    {
         self._setHighlighted(true, animated: false)
     }
     
-    @objc private func didTouchDragExit(_ sender: UIButton) {
+    @objc private func didTouchDragExit(_ sender: UIButton)
+    {
         self._setHighlighted(false, animated: true)
     }
     
-    @objc private func didTouchDragEnter(_ sender: UIButton) {
+    @objc private func didTouchDragEnter(_ sender: UIButton)
+    {
         self._setHighlighted(true, animated: true)
     }
     
-    @objc private func didTouchUp(_ sender: UIButton) {
+    @objc private func didTouchUp(_ sender: UIButton)
+    {
         self._setHighlighted(false, animated: true)
     }
     
-    @objc private func didTouchCancel(_ sender: UIButton) {
+    @objc private func didTouchCancel(_ sender: UIButton)
+    {
         self._setHighlighted(false, animated: true)
     }
 }

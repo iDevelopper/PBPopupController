@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 19/10/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -172,16 +172,22 @@ import UIKit
     
     // MARK: - Init
     
-    public override init(frame: CGRect) {
+    /**
+     :nodoc:
+     */
+    internal override init(frame: CGRect)
+    {
         super.init(frame: frame)
         
         self.setupEffectView()
+        
         if #available(iOS 13.0, *) {
             self.layer.cornerCurve = .continuous
         }
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init(coder aDecoder: NSCoder)
+    {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -189,7 +195,11 @@ import UIKit
         PBLog("deinit \(self)")
     }
     
-    override public func layoutSubviews() {
+    /**
+     :nodoc:
+     */
+    public override func layoutSubviews()
+    {
         super.layoutSubviews()
         
         if let popupEffectView = self.popupEffectView {
@@ -199,17 +209,19 @@ import UIKit
     
     // MARK: - private Methods
     
-    private func setupEffectView() {
+    private func setupEffectView()
+    {
         let effect = UIBlurEffect(style: .light)
         
         self.popupEffectView = PBPopupEffectView(effect: effect)
+        self.popupEffectView.autoresizingMask = []
         self.popupEffectView.frame = self.bounds
-        self.popupEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
+
         self.addSubview(self.popupEffectView)
     }
     
-    private func setupPopupCloseButtonTintColor() {
+    private func setupPopupCloseButtonTintColor()
+    {
         if self.popupCloseButtonStyle == .round {
             if #available(iOS 13, *) {
                 self.popupCloseButton.tintColor = UIColor.label
@@ -264,11 +276,10 @@ import UIKit
             let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
-            let dropShadowView =  self.popupController.dropShadowViewFor(self.popupController.containerViewController.view)
             if self.popupPresentationStyle == .fullScreen || (self.popupPresentationStyle == .custom && self.popupContentSize.height == UIScreen.main.bounds.height) {
-                self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (dropShadowView == nil ? statusBarHeight : 0.0)
+                self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (self.popupController.isContainerPresentationSheet ? 0.0 : statusBarHeight)
             }
-            
+
             let hitTest = self.popupController.containerViewController.popupContentViewController.view.hitTest(CGPoint(x: 12, y: self.popupCloseButtonTopConstraint.constant), with: nil)
             let possibleBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar
             if possibleBar != nil {
@@ -304,7 +315,8 @@ import UIKit
         }
     }
     
-    private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView? {
+    private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView?
+    {
         if view?.classForCoder == aClass {
             return view
         }
@@ -321,7 +333,8 @@ import UIKit
     /**
      :nodoc:
      */
-    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView?
+    {
         let view = super.hitTest(point, with: event)
         
         guard let popupCloseButton = self.popupCloseButton else { return view }
@@ -338,12 +351,15 @@ extension PBPopupContentView
     /**
      Custom views For Debug View Hierarchy Names
      */
-    internal class PBPopupEffectView: UIVisualEffectView {
-        internal override init(effect: UIVisualEffect?) {
+    internal class PBPopupEffectView: UIVisualEffectView
+    {
+        internal override init(effect: UIVisualEffect?)
+        {
             super.init(effect: effect)
         }
         
-        required init(coder aDecoder: NSCoder) {
+        required init(coder aDecoder: NSCoder)
+        {
             fatalError("init(coder:) has not been implemented")
         }
     }

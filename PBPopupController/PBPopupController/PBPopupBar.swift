@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 29/03/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -319,6 +319,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             
             self.layoutIfNeeded()
             
+            let effect = UIBlurEffect(style: self.backgroundStyle)
+            self.backgroundView.effect = effect
+            
             self.layoutToolbarItems()
             self.configureTitleLabels()
             
@@ -356,7 +359,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                     self.backgroundView.backgroundColor = UIColor.clear
                 }
                 else {
-                    self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+                    // Drop iOS 11- look
+                    self.backgroundView.backgroundColor = nil
+                    //self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.65)
                 }
             }
             #endif
@@ -379,7 +384,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                 return .systemChromeMaterial
             }
             #endif
-            return self.systemBarStyle == .black ? .dark : popupBarStyle == .compact ? .extraLight : .light
+            // Drop iOS 11- look
+            //return self.systemBarStyle == .black ? .dark : popupBarStyle == .compact ? .extraLight : .light
+            return self.systemBarStyle == .black ? .dark : .extraLight
         }
         set {
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
@@ -662,6 +669,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     private var backgroundView: UIVisualEffectView!
     
     private var toolbar: PBPopupToolbar!
+
     private var toolbarBottomConstraint: NSLayoutConstraint!
     
     private var safeAreaBackgroundViewHeightConstraint: NSLayoutConstraint?
@@ -761,7 +769,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             self.backgroundView.backgroundColor = nil
         }
         else {
-            self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.5)
+            // Drop iOS 11- look
+            self.backgroundView.backgroundColor = nil
+            //self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.65)
         }
         self.addSubview(self.backgroundView)
         
@@ -934,6 +944,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         })
     }
     
+    /**
+     :nodoc:
+     */
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if #available(iOS 13.0, *) {
             let style = self.traitCollection.userInterfaceStyle
@@ -975,10 +988,10 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             self.customPopupBarViewController?.view.translatesAutoresizingMaskIntoConstraints = false
             
             NSLayoutConstraint.activate([
-                                            self.topAnchor.constraint(equalTo:(customPopupBarViewController?.view.topAnchor)!),
-                                            self.leftAnchor.constraint(equalTo: (customPopupBarViewController?.view.leftAnchor)!),
-                                            self.rightAnchor.constraint(equalTo: (customPopupBarViewController?.view.rightAnchor)!),
-                                            self.bottomAnchor.constraint(equalTo: (customPopupBarViewController?.view.bottomAnchor)!)])
+                self.topAnchor.constraint(equalTo:(customPopupBarViewController?.view.topAnchor)!),
+                self.leftAnchor.constraint(equalTo: (customPopupBarViewController?.view.leftAnchor)!),
+                self.rightAnchor.constraint(equalTo: (customPopupBarViewController?.view.rightAnchor)!),
+                self.bottomAnchor.constraint(equalTo: (customPopupBarViewController?.view.bottomAnchor)!)])
         }
     }
     
@@ -1606,53 +1619,3 @@ extension PBPopupBar
         }
     }
 }
-
-extension NSLayoutConstraint
-{
-    class func reportAmbiguity (_ v:UIView?) {
-        var v = v
-        if v == nil {
-            #if targetEnvironment(macCatalyst)
-            v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            #else
-            if #available(iOS 13.0, *) {
-                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            }
-            else {
-                v = UIApplication.shared.keyWindow
-            }
-            #endif
-        }
-        for vv in v!.subviews {
-            print("\(vv) \(vv.hasAmbiguousLayout)")
-            if vv.subviews.count > 0 {
-                self.reportAmbiguity(vv)
-            }
-        }
-    }
-    class func listConstraints (_ v:UIView?) {
-        var v = v
-        if v == nil {
-            #if targetEnvironment(macCatalyst)
-            v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            #else
-            if #available(iOS 13.0, *) {
-                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            }
-            else {
-                v = UIApplication.shared.keyWindow
-            }
-            #endif
-        }
-        for vv in v!.subviews {
-            let arr1 = vv.constraintsAffectingLayout(for:.horizontal)
-            let arr2 = vv.constraintsAffectingLayout(for:.vertical)
-            let s = String(format: "\n\n%@\nH: %@\nV:%@", vv, arr1, arr2)
-            print(s)
-            if vv.subviews.count > 0 {
-                self.listConstraints(vv)
-            }
-        }
-    }
-}
-

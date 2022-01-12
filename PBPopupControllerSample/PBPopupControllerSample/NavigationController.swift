@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 class NavigationController: UINavigationController {
 
@@ -30,6 +31,6 @@ class NavigationController: UINavigationController {
     }
     
     deinit {
-        print("Deinit: \(self)")
+        PBLog("Deinit: \(self)")
     }
 }

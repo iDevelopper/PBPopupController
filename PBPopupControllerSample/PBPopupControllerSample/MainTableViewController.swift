@@ -11,7 +11,7 @@ import SwiftUI
 
 class MainTableViewController: UITableViewController {
     
-    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller (With Child)", "View Controller (Without Child)" , "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container (iPad Only)", "SwiftUI Demo"]
+    let items = ["TabBar + Navigation Controllers", "Tab Bar Controller", "Navigation Controller", "Navigation Controller + Toolbar", "View Controller (With Child)", "View Controller (Without Child)" , "Split View Controller (Master)", "Split View Controller (Detail)", "Split View Controller (Global)", "Custom Container", "Custom Container (iPad Only)", "SwiftUI Demo (WIP)"]
     let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad", "SwiftUIDemo"]
 
     var presentationStyle: UIModalPresentationStyle!
@@ -108,11 +108,11 @@ class MainTableViewController: UITableViewController {
                 vc.isModalInPresentation = true
             }
             #endif
+            
             self.present(vc, animated: true, completion: nil)
-            //for internal tests (comment the line above)
+            // TODO: for internal tests (comment the line above & decomment the 2 lines below)
             //let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
             //appDelegate.replaceRootViewControllerWith(controller: vc)
-            //vc.popupContentView.popupIgnoreDropShadowView = true
         }
     }
 

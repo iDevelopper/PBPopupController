@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 16/03/2018.
-//  Copyright © 2018-2021 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -35,6 +35,9 @@ public extension UIViewController
         static var popupContentViewController: UIViewController?
         static var popupContentView: PBPopupContentView?
         static var isTabBarHiddenDuringTransition = "isTabBarHiddenDuringTransition"
+        static var hidesPopupBarWhenPushed = "hidesPopupBarWhenPushed"
+        static var popupBarIsHidden = "popupBarIsHidden"
+        static var popupBarWasHidden = "popupBarWasHidden"
         static var additionalSafeAreaInsetsBottomForContainer = "additionalSafeAreaInsetsBottomForContainer"
         static var popupAdditionalSafeAreaInsets = "popupAdditionalSafeAreaInsets"
     }
@@ -48,6 +51,41 @@ public extension UIViewController
             if let newValue = newValue {
                 objc_setAssociatedObject(self, &AssociatedKeys.isTabBarHiddenDuringTransition, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
+        }
+    }
+    
+    /**
+     A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.
+
+     - SeeAlso: `hidesBottomBarWhenPushed`.
+     */
+    @objc var hidesPopupBarWhenPushed: Bool {
+        get {
+            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.hidesPopupBarWhenPushed) as? NSNumber
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.hidesPopupBarWhenPushed, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    @objc internal var popupBarIsHidden: Bool {
+        get {
+            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.popupBarIsHidden) as? NSNumber
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.popupBarIsHidden, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    @objc internal var popupBarWasHidden: Bool {
+        get {
+            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.popupBarWasHidden) as? NSNumber
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.popupBarWasHidden, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
     
@@ -234,7 +272,6 @@ public extension UIViewController
         }
     }
     
-    
     /**
      Presents an interactive popup bar in the container's view hierarchy and optionally opens the popup in the same animation. The popup bar is attached to the container's bottom bar (see `popupContainerViewController`).
      
@@ -287,7 +324,15 @@ public extension UIViewController
         }
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
-        
+
+        controller.view.translatesAutoresizingMaskIntoConstraints = true
+        controller.view.autoresizingMask = []
+        controller.view.frame = self.view.bounds
+        controller.view.clipsToBounds = false
+
+        controller.view.setNeedsLayout()
+        controller.view.layoutIfNeeded()
+
         self.configurePopupBarFromBottomBar()
         
         self.popupController._presentPopupBarAnimated(animated) {
@@ -313,6 +358,42 @@ public extension UIViewController
                     self._cleanupPopup()
                     completion?()
                 }
+            }
+        }
+        else {
+            completion?()
+        }
+    }
+    
+    /**
+     Hide the popup bar.
+     
+     - Parameters:
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     */
+    @objc func hidePopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+        if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
+            self.popupController._hidePopupBarAnimated(animated) {
+                completion?()
+            }
+        }
+        else {
+            completion?()
+        }
+    }
+    
+    /**
+     Show the popup bar.
+     
+     - Parameters:
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     */
+    @objc func showPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+        if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
+            self.popupController._showPopupBarAnimated(animated) {
+                completion?()
             }
         }
         else {
@@ -368,21 +449,14 @@ public extension UIViewController
         }
         return subviewArray
     }
-}
-
-internal func getAllSubviews<T: UIView>(view: UIView) -> [T] {
-    return view.subviews.flatMap { subView -> [T] in
-        var result = getAllSubviews(view: subView) as [T]
-        if let view = subView as? T {
-            result.append(view)
+    
+    internal func getAllSubviews<T: UIView>(view: UIView) -> [T] {
+        return view.subviews.flatMap { subView -> [T] in
+            var result = getAllSubviews(view: subView) as [T]
+            if let view = subView as? T {
+                result.append(view)
+            }
+            return result
         }
-        return result
     }
-}
-
-internal func _PBPopupDecodeBase64String(base64String: String?) -> String? {
-    if let anOptions = Data(base64Encoded: base64String ?? "", options: []) {
-        return String(data: anOptions, encoding: .utf8)
-    }
-    return nil
 }

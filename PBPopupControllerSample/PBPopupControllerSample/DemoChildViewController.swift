@@ -11,6 +11,11 @@ import PBPopupController
 
 class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
     
+    @IBOutlet weak var childTitle: UILabel!
+    @IBOutlet weak var presentButton: UIButton!
+    @IBOutlet weak var presentCustomButton: UIButton!
+    @IBOutlet weak var dismissButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -72,6 +77,7 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             let customYTBar = self.storyboard?.instantiateViewController(withIdentifier: "CustomPopupBarViewController") as! CustomPopupBarViewController
             customYTBar.view.backgroundColor = .clear
             containerVC.popupController.dataSource = containerVC
+            containerVC.popupController.delegate = containerVC
             containerVC.popupBar.isTranslucent = false
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.customPopupBarViewController = customYTBar
@@ -80,17 +86,11 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             containerVC.popupBar.subtitle = customYTBar.subtitleLabel.text
             containerVC.popupContentView.popupCloseButtonStyle = .round
             containerVC.popupContentView.popupIgnoreDropShadowView = false
-            //containerVC.popupContentView.popupPresentationStyle = .fullScreen
-            //containerVC.popupContentView.popupEffectView.effect = nil
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
             popupContentController.albumArtImage = customYTBar.imageView.image!
             popupContentController.songTitle = customYTBar.titleLabel.text!
             popupContentController.albumTitle = customYTBar.subtitleLabel.text!
-            if #available(iOS 14.0, *) {
-                if containerVC.modalPresentationStyle == .pageSheet {
-                    containerVC.popupContentView.popupPresentationStyle = .fullScreen
-                }
-            }
+
             DispatchQueue.main.async {
                 containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {
                     PBLog("Custom Popup Bar Presented")
@@ -102,21 +102,16 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
     func presentPopup() {
         if let containerVC = self.parent as? DemoContainerController {
             containerVC.popupController.dataSource = containerVC
+            containerVC.popupController.delegate = containerVC
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.image = UIImage(named: "Cover22")
             containerVC.popupBar.title = LoremIpsum.title
             containerVC.popupBar.subtitle = LoremIpsum.sentence
             containerVC.popupBar.shadowImageView.shadowOpacity = 0
-            //containerVC.popupContentView.popupEffectView.effect = nil
             containerVC.popupContentView.popupIgnoreDropShadowView = false
             let popupContentController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupContentViewController") as! PopupContentViewController
             popupContentController.albumArtImage = UIImage(named: "Cover22")!
             popupContentController.songTitle = containerVC.popupBar.title!
-            if #available(iOS 14.0, *) {
-                if containerVC.modalPresentationStyle == .pageSheet {
-                    containerVC.popupContentView.popupPresentationStyle = .fullScreen
-                }
-            }
 
             DispatchQueue.main.async {
                 containerVC.presentPopupBar(withPopupContentViewController: popupContentController, animated: true) {

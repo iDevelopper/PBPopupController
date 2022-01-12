@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 class SplitViewController: UISplitViewController, UISplitViewControllerDelegate {
 
@@ -14,7 +15,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     var globalIsContainer: Bool = false
     
     weak var containerVC: UIViewController!
-    weak var detailVC: UIViewController!
+    /*weak */var detailVC: UIViewController!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -39,6 +40,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
                     if let primaryVC = vc1.topViewController as? FirstTableViewController {
                         self.containerVC = globalIsContainer ? self : masterIsContainer ? vc1 : vc2
                         self.detailVC = vc2
+                        vc2.topViewController?.title = "Split View Controller (Detail)"
                         primaryVC.title = globalIsContainer ? "Split View Controller (Global)": masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
                         primaryVC.loadViewIfNeeded()
                     }
@@ -47,10 +49,15 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         }
     }
     
+    deinit {
+        PBLog("Deinit: \(self)")
+    }
+    
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-        if let vc1 = primaryViewController as? UINavigationController, let vc2 = secondaryViewController as? DemoViewController {
+        if let vc1 = primaryViewController as? UINavigationController, let vc2 = secondaryViewController as? UINavigationController {
             if let primaryVC = vc1.topViewController as? FirstTableViewController {
                 self.containerVC = globalIsContainer ? self : masterIsContainer ? vc1 : vc2
+                vc2.topViewController?.title = "Split View Controller (Detail)"
                 self.detailVC = vc2
                 primaryVC.title = globalIsContainer ? "Split View Controller (Global)": masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
                 primaryVC.loadViewIfNeeded()

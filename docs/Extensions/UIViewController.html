@@ -17,7 +17,7 @@
     <a title="UIViewController Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.4.5 Docs</a> (79% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.4.7 Docs</a> (81% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
         <p class="header-right">
           <form role="search" action="../search.json">
@@ -86,6 +86,9 @@
                 <a href="../Extensions/UIColor.html">UIColor</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions/UIScreen.html">UIScreen</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
               </li>
               <li class="nav-group-task">
@@ -136,6 +139,39 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed"></a>
+                    <a name="//apple_ref/swift/Property/hidesPopupBarWhenPushed" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed">hidesPopupBarWhenPushed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>hidesBottomBarWhenPushed</code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">var</span> <span class="nv">hidesPopupBarWhenPushed</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -570,6 +606,72 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)hidePopupBarWithAnimated:completion:"></a>
+                    <a name="//apple_ref/swift/Method/hidePopupBar(animated:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)hidePopupBarWithAnimated:completion:">hidePopupBar(animated:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hide the popup bar.</p>
+
+<ul>
+<li>animated: Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</li>
+<li>completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">func</span> <span class="nf">hidePopupBar</span><span class="p">(</span><span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)showPopupBarWithAnimated:completion:"></a>
+                    <a name="//apple_ref/swift/Method/showPopupBar(animated:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)showPopupBarWithAnimated:completion:">showPopupBar(animated:<wbr>completion:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Show the popup bar.</p>
+
+<ul>
+<li>animated: Pass <code>true</code> to animate the presentation; otherwise, pass <code>false</code>.</li>
+<li>completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">func</span> <span class="nf">showPopupBar</span><span class="p">(</span><span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(im)openPopupWithAnimated:completion:"></a>
                     <a name="//apple_ref/swift/Method/openPopup(animated:completion:)" class="dashAnchor"></a>
                     <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(im)openPopupWithAnimated:completion:">openPopup(animated:<wbr>completion:<wbr>)</a>
@@ -672,7 +774,7 @@ If the popup bar&rsquo;s <code>inheritsVisualStyleFromBottomBar</code> property 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2021 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2021-08-07)</p>
+          <p>&copy; 2022 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2022-01-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

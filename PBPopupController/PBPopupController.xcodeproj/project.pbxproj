@@ -36,6 +36,10 @@
 		321DE7B22593137000F80BF7 /* CGVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7952593137000F80BF7 /* CGVector.swift */; };
 		321DE7B32593137000F80BF7 /* CGMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7962593137000F80BF7 /* CGMath.swift */; };
 		321DE7B42593137000F80BF7 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7972593137000F80BF7 /* CGRect.swift */; };
+		32D9939F26FEFA8300EC771F /* UIScreen+ScreenCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */; };
+		32DE1322272BDFBD00BEC209 /* DispatchQueue+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */; };
+		32DE132C272D107000BEC209 /* PBPopupController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */; };
+		32DE132F272E92E100BEC209 /* NSLayoutConstraint+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DE132E272E92E100BEC209 /* NSLayoutConstraint+Private.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +74,10 @@
 		321DE7952593137000F80BF7 /* CGVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGVector.swift; sourceTree = "<group>"; };
 		321DE7962593137000F80BF7 /* CGMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGMath.swift; sourceTree = "<group>"; };
 		321DE7972593137000F80BF7 /* CGRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
+		32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+ScreenCorners.swift"; sourceTree = "<group>"; };
+		32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Private.swift"; sourceTree = "<group>"; };
+		32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PBPopupController+Utils.swift"; sourceTree = "<group>"; };
+		32DE132E272E92E100BEC209 /* NSLayoutConstraint+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Private.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +126,10 @@
 				321DE77F2593136F00F80BF7 /* PBPopupRoundShadowImageView.swift */,
 				321DE78F2593137000F80BF7 /* PBPopupToolbar.swift */,
 				321DE7842593137000F80BF7 /* SwiftUIWrapper */,
+				32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */,
+				32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */,
+				32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */,
+				32DE132E272E92E100BEC209 /* NSLayoutConstraint+Private.swift */,
 				321DE7802593136F00F80BF7 /* UIColor+Random.swift */,
 				321DE77B2593136F00F80BF7 /* UIView+CornerRadius.swift */,
 				321DE7942593137000F80BF7 /* UIView+Snapshot.swift */,
@@ -246,19 +258,23 @@
 				321DE7B02593137000F80BF7 /* PBPopupPresentationController.swift in Sources */,
 				321DE7AD2593137000F80BF7 /* UIViewController+Private.swift in Sources */,
 				321DE79A2593137000F80BF7 /* PBPopupInteractivePresentationController.swift in Sources */,
+				32DE1322272BDFBD00BEC209 /* DispatchQueue+Private.swift in Sources */,
 				321DE7A32593137000F80BF7 /* PBPopupPreferences.swift in Sources */,
 				321DE7A62593137000F80BF7 /* PBPopupUI.swift in Sources */,
 				321DE7AF2593137000F80BF7 /* PBPopupBar.swift in Sources */,
 				321DE7B22593137000F80BF7 /* CGVector.swift in Sources */,
 				321DE7A42593137000F80BF7 /* PBPopupState.swift in Sources */,
+				32DE132F272E92E100BEC209 /* NSLayoutConstraint+Private.swift in Sources */,
 				321DE7AE2593137000F80BF7 /* PBPopupLogs.swift in Sources */,
 				321DE7A82593137000F80BF7 /* PBPopupProxyViewController.swift in Sources */,
 				321DE7A12593137000F80BF7 /* PBChevronView.swift in Sources */,
 				321DE79F2593137000F80BF7 /* UIViewController+Support.swift in Sources */,
+				32D9939F26FEFA8300EC771F /* UIScreen+ScreenCorners.swift in Sources */,
 				321DE7B32593137000F80BF7 /* CGMath.swift in Sources */,
 				321DE7AB2593137000F80BF7 /* PBPopupUIContentController.swift in Sources */,
 				321DE7A02593137000F80BF7 /* PBPopupContentView.swift in Sources */,
 				321DE7A72593137000F80BF7 /* PBPopupEnvironment.swift in Sources */,
+				32DE132C272D107000BEC209 /* PBPopupController+Utils.swift in Sources */,
 				321DE7992593137000F80BF7 /* UIView+CornerRadius.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

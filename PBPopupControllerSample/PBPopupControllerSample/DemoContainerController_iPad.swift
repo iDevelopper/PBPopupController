@@ -34,17 +34,13 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        #if !targetEnvironment(macCatalyst)
         if self.isPopupFullScreen == false {
             let orientation = self.statusBarOrientation(for: self.view)
             self.popupContentView.popupContentSize = CGSize(width: -1, height: UIScreen.main.bounds.height * ((orientation == .portrait || orientation == .portraitUpsideDown) ? 2/3 : 9/10))
         }
         else {
-            self.popupContentView.popupContentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+            self.popupContentView.popupContentSize = CGSize(width: self.view.bounds.width, height: self.view.bounds.height)
         }
-        #else
-        self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 9/10)
-        #endif
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -61,7 +57,7 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
         self.isPopupFullScreen = false
     }
     
-    @IBAction func fuulScreenItemTouch(_ sender: UIBarButtonItem) {
+    @IBAction func fullScreenItemTouch(_ sender: UIBarButtonItem) {
         self.isPopupFullScreen = true
     }
     
@@ -135,7 +131,6 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     func popupController(_ popupController: PBPopupController, insetsFor bottomBarView: UIView) -> UIEdgeInsets {
         var insets: UIEdgeInsets = .zero
         insets = self.view.superview?.safeAreaInsets ?? .zero
-        //PBLog(insets.bottom, error: true)
         return insets
     }
 }

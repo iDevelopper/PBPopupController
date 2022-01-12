@@ -9,15 +9,20 @@
 import UIKit
 import PBPopupController
 
-class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupControllerDataSource {
+class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupControllerDataSource, PBPopupControllerDelegate {
     
-    let useConstraintsForBottomBar: Bool = false
     var constraintsForBottomBar: [NSLayoutConstraint]!
-    var isFrameSetted: Bool = false
     
     @IBOutlet weak var containerView: UIView!
-    @IBOutlet weak var bottomBarView: UIToolbar!
-    
+    @IBOutlet weak var bottomBarView: UIView!
+    @IBOutlet weak var tabBar: UITabBar! {
+        didSet {
+            self.popupController.delegate = self
+            self.additionalSafeAreaInsetsBottomForContainer = self.tabBar.frame.height
+            tabBar.delegate = self
+        }
+    }
+
     var viewControllers = [UIViewController?]()
     var selectedIndex: Int = 0
     var currentChildVC: UIViewController!
@@ -25,9 +30,7 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.additionalSafeAreaInsetsBottomForContainer = self.frameForBottomBar().height
-
-        self.bottomBarView.delegate = self
+        self.setupConstraintsForBottomBar()
         
         if let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
             if #available(iOS 13.0, *) {
@@ -39,6 +42,7 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
             } else {
                 childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }
+            childVC1.childTitle.text = self.tabBar.items![0].title
             self.viewControllers.append(childVC1)
         }
         
@@ -52,8 +56,10 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
             } else {
                 childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }
+            childVC2.childTitle.text = self.tabBar.items![1].title
             self.viewControllers.append(childVC2)
         }
+        
         if let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
             if #available(iOS 13.0, *) {
                 #if compiler(>=5.1)
@@ -64,14 +70,18 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
             } else {
                 childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }
+            childVC3.childTitle.text = self.tabBar.items![2].title
             self.viewControllers.append(childVC3)
         }
+        
         for controller in self.viewControllers {
             if let child = controller as? DemoChildViewController  {
-                addChild(child)
+                self.addChild(child)
             }
         }
         self.selectedIndex = 0
+        
+        self.tabBar.selectedItem = self.tabBar.items?.first
         
         self.presentChild()
     }
@@ -85,20 +95,7 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     }
     
     override func viewWillLayoutSubviews() {
-        if let constraints = self.constraintsForBottomBar {
-            NSLayoutConstraint.deactivate(constraints)
-        }
         super.viewWillLayoutSubviews()
-        
-        if useConstraintsForBottomBar == true {
-            self.setupConstraintsForBottomBar()
-        }
-        else {
-            if !self.isFrameSetted {
-                self.setupFrameForBottomBar()
-                self.isFrameSetted.toggle()
-            }
-        }
     }
 
     deinit {
@@ -107,18 +104,9 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     
     // MARK: - Navigation
     
-    @IBAction func dismiss(_ sender: Any) {
-        self.performSegue(withIdentifier: "unwindToHome", sender: self)
-    }
-    
-    @IBAction func itemSelected(_ sender: UIBarButtonItem) {
-        if sender.tag != self.selectedIndex {
-            self.selectedIndex = sender.tag
-            self.presentChild()
-        }
-    }
-
     func presentChild() {
+        self.popupController.delegate = self
+        
         if let childVC = self.viewControllers[selectedIndex] {
             self.currentChildVC?.willMove(toParent: nil)
             childVC.view.frame = self.containerView.bounds
@@ -132,47 +120,40 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
         }
     }
 
-    // MARK: - Frames
+    // MARK: - Layout
     
     func setupConstraintsForBottomBar() {
-        var insets: UIEdgeInsets = .zero
-        insets = self.view.superview?.safeAreaInsets ?? .zero
-        
         self.bottomBarView.translatesAutoresizingMaskIntoConstraints = false
         self.constraintsForBottomBar = [
-            self.bottomBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            self.bottomBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            self.bottomBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -insets.bottom)
+            self.bottomBarView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            self.bottomBarView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            self.bottomBarView.heightAnchor.constraint(lessThanOrEqualToConstant: 83),
+            self.bottomBarView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
+            
+            self.tabBar.leadingAnchor.constraint(equalTo: self.bottomBarView.leadingAnchor),
+            self.tabBar.trailingAnchor.constraint(equalTo: self.bottomBarView.trailingAnchor),
+            self.tabBar.topAnchor.constraint(equalTo: self.bottomBarView.topAnchor),
+            self.tabBar.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
         ]
         NSLayoutConstraint.activate(self.constraintsForBottomBar)
-    }
-    
-    func setupFrameForBottomBar() {
-        var frame = self.frameForBottomBar()
-        frame.origin.y -= self.insetsForBottomBar().bottom
-        self.bottomBarView.frame = frame
     }
     
     func frameForBottomBar() -> CGRect {
         var height: CGFloat = 0
         height = self.bottomBarView.frame.height
         
-        let frame = CGRect(x: 0, y: self.view.bounds.height - height/* - insets.bottom*/, width: self.view.bounds.width, height: height)
+        let frame = CGRect(x: 0, y: self.view.bounds.height - height, width: self.view.bounds.width, height: height)
         //PBLog(frame, error: true)
         return frame
     }
     
-    func insetsForBottomBar() -> UIEdgeInsets {
-        var insets: UIEdgeInsets = .zero
-        insets = self.view.superview?.safeAreaInsets ?? .zero
-        //PBLog(insets.bottom, error: true)
-        return insets
-    }
+    // MARK: - UITabBar delegate
     
-    // MARK: - UIToolbar delegate
-    
-    public func position(for bar: UIBarPositioning) -> UIBarPosition {
-        return .bottom
+    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        if item.tag != self.selectedIndex {
+            self.selectedIndex = item.tag
+            self.presentChild()
+        }
     }
     
     // MARK: - PBPopupController dataSource
@@ -186,6 +167,30 @@ class DemoContainerController: UIViewController, UIToolbarDelegate, PBPopupContr
     }
     
     func popupController(_ popupController: PBPopupController, insetsFor bottomBarView: UIView) -> UIEdgeInsets {
-        return self.insetsForBottomBar()
+        return .zero
+    }
+
+    // MARK: - PBPopupController delegate
+    
+    func popupControllerTapGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        return true
+    }
+    
+    func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        return true
+    }
+    
+    func popupController(_ popupController: PBPopupController, shouldOpen popupContentViewController: UIViewController) -> Bool {
+        switch self.selectedIndex {
+        case 0:
+            self.popupContentView.popupPresentationStyle = .deck
+        case 1:
+            self.popupContentView.popupPresentationStyle = .fullScreen
+
+        default:
+            self.popupContentView.popupPresentationStyle = .custom
+            self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 8/10)
+        }
+        return true
     }
 }

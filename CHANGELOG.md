@@ -1,6 +1,12 @@
 # CHANGELOG
 
 
+## 3.4.8
+
+iOS 15 support.
+Improvements.
+Updated example.
+
 ## 3.4.7
 
 Fixes incorrect additionalSafeAreaInsets in some cases.

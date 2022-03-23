@@ -786,6 +786,10 @@ extension PBPopupPresentationController
             
             self.setupCornerRadiusForBackingViewAnimated(false, open: false)
             
+            if #available(iOS 13.0, *) {
+                self.dimmerView.backgroundColor = self.traitCollection.userInterfaceStyle == .light ? .black : .lightGray
+            }
+            
             self.dimmerView.frame = self.backingView.bounds
             self.backingView.addSubview(self.dimmerView)
             

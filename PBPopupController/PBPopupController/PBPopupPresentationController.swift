@@ -680,6 +680,7 @@ extension PBPopupPresentationController
         if #available(iOS 13.0, *) {
             backingView.layer.cornerCurve = .continuous
         }
+        backingView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         backingView.layer.cornerRadius = cornerRadius
     }
     

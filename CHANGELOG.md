@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.4.9
+
+Minor fixes.
+
 ## 3.4.8
 
 iOS 15 support.

@@ -742,9 +742,11 @@ extension PBPopupPresentationStyle
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
+            tgr.isEnabled = false
             vc.popupBar.setHighlighted(true, animated: false)
             self._openPopupAnimated(true) {
                 vc.popupBar.setHighlighted(false, animated: false)
+                tgr.isEnabled = true
             }
         }
     }
@@ -1038,13 +1040,15 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             
-            vc.popupBar.setHighlighted(true, animated: false)
-    
+            //vc.popupBar.setHighlighted(true, animated: false)
+            vc.popupBar.popupTapGestureRecognizer.isEnabled = false
+
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             vc.present(vc.popupContentViewController, animated: true) {
-                vc.popupBar.setHighlighted(false, animated: false)
+                //vc.popupBar.setHighlighted(false, animated: false)
+                vc.popupBar.popupTapGestureRecognizer.isEnabled = true
                 if self.popupPresentationState == .opening {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                         self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset

@@ -930,7 +930,9 @@ extension PBPopupPresentationController
         else {
             let openFrame = imageView.convert(imageView.bounds, to: presentedView)
             imageViewForPresentation.frame = openFrame
-            imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
+            if imageView.layer.cornerRadius > 0 {
+                imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
+            }
             imageViewForPresentation.isHidden = false
         }
         imageView.isHidden = true
@@ -952,7 +954,9 @@ extension PBPopupPresentationController
         if self.isPresenting {
             let openFrame = imageView.convert(imageView.bounds, to: presentedView)
             imageViewForPresentation.frame = openFrame
-            imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
+            if imageView.layer.cornerRadius > 0 {
+                imageViewForPresentation.cornerRadius = imageView.layer.cornerRadius
+            }
         }
         else {
             var closedFrame = popupBar.imageView.frame

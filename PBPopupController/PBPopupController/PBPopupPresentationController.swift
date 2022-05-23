@@ -389,6 +389,9 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         
         var animator: UIViewPropertyAnimator!
         
+        presentedView?.autoresizingMask = []
+        presentedView?.clipsToBounds = false
+        
         if self.isPresenting {
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: false)
             presentedView?.frame = self.presentedViewFrameForPopupStateClosed()

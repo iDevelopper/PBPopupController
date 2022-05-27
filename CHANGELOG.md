@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.4.10
+
+Layout improvements.
+
 ## 3.4.9
 
 Minor fixes.

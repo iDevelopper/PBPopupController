@@ -273,7 +273,7 @@ import UIKit
         }
         
         if popupCloseButtonStyle != .none {
-            let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
+            //let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
             if self.popupPresentationStyle == .fullScreen || (self.popupPresentationStyle == .custom && self.popupContentSize.height == UIScreen.main.bounds.height) {
@@ -305,13 +305,18 @@ import UIKit
                 NSLayoutConstraint.activate([self.popupCloseButtonHorizontalConstraint])
             }
             
-            if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
+            //if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
                 self.setNeedsUpdateConstraints()
                 
+                UIView.performWithoutAnimation {
+                    self.layoutIfNeeded()
+                }
+                /*
                 UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
                     self.layoutIfNeeded()
                 }, completion: nil)
-            }
+                */
+            //}
         }
     }
     

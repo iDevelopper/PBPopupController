@@ -167,6 +167,8 @@ internal class PBPopupPresentationController: UIPresentationController
         
         self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
         self.presentedView?.frame = self.frameOfPresentedViewInContainerView
+
+        self.containerView?.layoutIfNeeded()
     }
     
     override func containerViewDidLayoutSubviews()
@@ -211,7 +213,6 @@ internal class PBPopupPresentationController: UIPresentationController
         if let imageViewForPresentation = self.imageViewForPresentation {
             self.popupContentView.contentView.addSubview(imageViewForPresentation)
             self.configureImageViewInStartPosition()
-            self.configureBottomModuleInStartPosition()
         }
                 
         self.popupContentView.popupCloseButton?.alpha = 0.0
@@ -233,6 +234,8 @@ internal class PBPopupPresentationController: UIPresentationController
             }
             self.popupContentView.updatePopupCloseButtonPosition()
             self.presentingVC.setNeedsStatusBarAppearanceUpdate()
+
+            containerView.layoutIfNeeded()
         } completion: { _ in
             self.popupContentView.popupImageView?.isHidden = false
             self.popupContentView.popupImageModule?.isHidden = false
@@ -389,9 +392,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         
         var animator: UIViewPropertyAnimator!
         
-        presentedView?.autoresizingMask = []
-        presentedView?.clipsToBounds = false
-        
+        self.containerView?.layoutIfNeeded()
+
         if self.isPresenting {
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: false)
             presentedView?.frame = self.presentedViewFrameForPopupStateClosed()
@@ -400,12 +402,16 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             
             self.popupContentView.popupCloseButton?.alpha = 0.0
             
+            self.configureBottomModuleInStartPosition()
+            
             let animations = {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 presentedView?.frame = self.presentedViewFrameForPopupStateOpen()
 
                 self.animateBottomBarToHidden(true)
                 self.animateBottomModuleInFinalPosition()
+
+                self.containerView?.layoutIfNeeded()
             }
 
             let completion: (() -> Void) = {() -> Void in
@@ -493,7 +499,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             backingView.removeFromSuperview()
             self.backingView = nil
         }
-        self.containerView?.setNeedsLayout()
         self.containerView?.layoutIfNeeded()
         coordinator.animate(alongsideTransition: { (context) in
             if self.popupPresentationState == .open {
@@ -504,7 +509,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
                 self.popupContentView.updatePopupCloseButtonPosition()
-                self.containerView?.setNeedsLayout()
                 self.containerView?.layoutIfNeeded()
             }
         }) { (context) in
@@ -1000,8 +1004,6 @@ extension PBPopupPresentationController
                 bottomModule.frame = self.bottomModuleFrameForPopupStateOpen
             }
         }
-        self.containerView?.setNeedsLayout()
-        self.containerView?.layoutIfNeeded()
     }
     
     internal func animateBottomModuleInFinalPosition()
@@ -1020,8 +1022,6 @@ extension PBPopupPresentationController
         else {
             bottomModule.frame.origin.y = topModule.frame.origin.y + topModule.frame.height + bottomModuleTopConstraint.constant
         }
-        self.containerView?.setNeedsLayout()
-        self.containerView?.layoutIfNeeded()
     }
     
     private func configureBottomModuleInOriginalPosition()

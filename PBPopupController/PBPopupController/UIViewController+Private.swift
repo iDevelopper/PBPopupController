@@ -685,7 +685,6 @@ public extension UIViewController
     @objc private func _vSAIFS() -> UIEdgeInsets
     {
         /// Find the popup content view safe area insets
-        print("_vSAIFS() - self:\(self)")
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
             var insets = popupContentView.safeAreaInsets
             let containerInsets = vc.view.safeAreaInsets
@@ -701,27 +700,6 @@ public extension UIViewController
         }
         let insets = self._vSAIFS()
         return insets
-        /*
-        if let vc = self.popupContainerViewController {
-            var insets = vc._vSAIFS()
-            //var insets = self._vSAIFS()
-            let containerInsets = vc.view.safeAreaInsets
-            if let svc = vc.splitViewController, containerInsets.left > 0 {
-                if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
-                    insets.left = containerInsets.left
-                }
-            }
-            let additionalInsets = vc.popupAdditionalSafeAreaInsets
-            
-            var finalInsets = UIEdgeInsets(top: insets.top, left: insets.left, bottom: min(insets.bottom, additionalInsets.bottom), right: insets.right)
-            if vc.popupContentView.popupPresentationStyle == .deck  || vc.popupContentView.popupPresentationStyle == .custom {
-                finalInsets.top = 0
-            }
-            return finalInsets
-        }
-        let insets = self._vSAIFS()
-        return insets
-        */
     }
     
     internal func pb_popupController() -> PBPopupController!

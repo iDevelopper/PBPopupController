@@ -25,13 +25,13 @@ Pod::Spec.new do |s|
     # s.source_files  = "PBPopupController/**/*.{swift,h,m}"
     # s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}"
 
-    s.subspec "UIKit" do |ss|
+    s.subspec 'UIKit' do |ss|
         ss.source_files = "PBPopupController/PBPopupController/*.{swift,h,m}"
     end
 
-    s.subspec "SwiftUIWrapper" do |ss|
+    s.subspec 'SwiftUIWrapper' do |ss|
         ss.source_files = "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
-        ss.dependency 'UIKit'
+        ss.dependency 'PBPopupController/PBPopupController'
     end
 
     s.swift_version = '5.2'

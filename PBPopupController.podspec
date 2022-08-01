@@ -23,18 +23,18 @@ Pod::Spec.new do |s|
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 
     # s.source_files  = "PBPopupController/**/*.{swift,h,m}"
-    s.source_files  = "PBPopupController/*.{swift,h,m}"
+    s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}"
     # s.exclude_files = "PBPopupController/CGMathSwift"
 
 
     s.subspec "SwiftUIWrapper" do |ss|
-        ss.source_files = "PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
+        ss.source_files = "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
     end
 
     #"subspecs": [
     #{
     #    "name": "SwiftUIWrapper",
-    #    "source_files": "PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
+    #    "source_files": "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
     #}
     #]
     

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "3.4.10"
+    s.version      = "3.5.0"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
 
     s.description  = <<-DESC
@@ -31,13 +31,6 @@ Pod::Spec.new do |s|
         ss.source_files = "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
     end
 
-    #"subspecs": [
-    #{
-    #    "name": "SwiftUIWrapper",
-    #    "source_files": "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
-    #}
-    #]
-    
     s.swift_version = '5.2'
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #

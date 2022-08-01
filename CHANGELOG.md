@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.5.0
+
+Update for SwiftUI.
+
 ## 3.4.10
 
 Layout improvements.

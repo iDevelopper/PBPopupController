@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "3.5.0"
+    s.version      = "3.5.4"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
 
     s.description  = <<-DESC
@@ -23,16 +23,7 @@ Pod::Spec.new do |s|
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 
     # s.source_files  = "PBPopupController/**/*.{swift,h,m}"
-    # s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}"
-
-    s.subspec 'UIKit' do |ss|
-        ss.source_files = "PBPopupController/PBPopupController/*.{swift,h,m}"
-    end
-
-    s.subspec 'SwiftUIWrapper' do |ss|
-        ss.source_files = "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
-        ss.dependency 'PBPopupController/PBPopupController'
-    end
+    s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}, PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
 
     s.swift_version = '5.2'
 

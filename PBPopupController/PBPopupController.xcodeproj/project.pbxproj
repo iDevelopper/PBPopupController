@@ -36,6 +36,7 @@
 		321DE7B22593137000F80BF7 /* CGVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7952593137000F80BF7 /* CGVector.swift */; };
 		321DE7B32593137000F80BF7 /* CGMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7962593137000F80BF7 /* CGMath.swift */; };
 		321DE7B42593137000F80BF7 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 321DE7972593137000F80BF7 /* CGRect.swift */; };
+		329A45C42895A33D00D80136 /* UIView+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329A45C32895A33D00D80136 /* UIView+Private.swift */; };
 		32D9939F26FEFA8300EC771F /* UIScreen+ScreenCorners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */; };
 		32DE1322272BDFBD00BEC209 /* DispatchQueue+Private.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */; };
 		32DE132C272D107000BEC209 /* PBPopupController+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */; };
@@ -74,6 +75,7 @@
 		321DE7952593137000F80BF7 /* CGVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGVector.swift; sourceTree = "<group>"; };
 		321DE7962593137000F80BF7 /* CGMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGMath.swift; sourceTree = "<group>"; };
 		321DE7972593137000F80BF7 /* CGRect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
+		329A45C32895A33D00D80136 /* UIView+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Private.swift"; sourceTree = "<group>"; };
 		32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIScreen+ScreenCorners.swift"; sourceTree = "<group>"; };
 		32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Private.swift"; sourceTree = "<group>"; };
 		32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PBPopupController+Utils.swift"; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				32DE132E272E92E100BEC209 /* NSLayoutConstraint+Private.swift */,
 				321DE7802593136F00F80BF7 /* UIColor+Random.swift */,
 				321DE77B2593136F00F80BF7 /* UIView+CornerRadius.swift */,
+				329A45C32895A33D00D80136 /* UIView+Private.swift */,
 				321DE7942593137000F80BF7 /* UIView+Snapshot.swift */,
 				321DE7902593137000F80BF7 /* UIViewController+Private.swift */,
 				321DE7812593136F00F80BF7 /* UIViewController+Support.swift */,
@@ -249,6 +252,7 @@
 				321DE7B42593137000F80BF7 /* CGRect.swift in Sources */,
 				321DE79D2593137000F80BF7 /* PBPopupRoundShadowImageView.swift in Sources */,
 				321DE7B12593137000F80BF7 /* UIView+Snapshot.swift in Sources */,
+				329A45C42895A33D00D80136 /* UIView+Private.swift in Sources */,
 				321DE79E2593137000F80BF7 /* UIColor+Random.swift in Sources */,
 				321DE7982593137000F80BF7 /* CGPoint.swift in Sources */,
 				321DE7AA2593137000F80BF7 /* PBPopupViewWrapper.swift in Sources */,

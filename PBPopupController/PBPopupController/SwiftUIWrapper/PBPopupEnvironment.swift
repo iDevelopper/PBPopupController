@@ -48,12 +48,16 @@ internal struct PBPopupContentSizeKey: EnvironmentKey {
     static let defaultValue: CGSize = .zero
 }
 
-@available(iOS 13.0, *)
+internal struct PBPopupIgnoreDropShadowViewKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
+@available(iOS 14.0, *)
 internal struct PBPopupBarCustomViewKey: EnvironmentKey {
     static let defaultValue: PBPopupBarCustomView? = nil
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 internal extension EnvironmentValues {
     var popupCloseButtonStyle: PBPopupCloseButtonStyle {
         get { self[PBPopupCloseButtonStyleKey.self] }
@@ -103,6 +107,11 @@ internal extension EnvironmentValues {
     var popupContentSize: CGSize {
         get { self[PBPopupContentSizeKey.self] }
         set { self[PBPopupContentSizeKey.self] = newValue }
+    }
+    
+    var popupIgnoreDropShadowView: Bool {
+        get { self[PBPopupIgnoreDropShadowViewKey.self] }
+        set { self[PBPopupIgnoreDropShadowViewKey.self] = newValue }
     }
     
     var popupBarCustomBarView: PBPopupBarCustomView? {

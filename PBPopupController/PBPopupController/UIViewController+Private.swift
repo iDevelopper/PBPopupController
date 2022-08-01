@@ -684,9 +684,28 @@ public extension UIViewController
     //_viewSafeAreaInsetsFromScene
     @objc private func _vSAIFS() -> UIEdgeInsets
     {
+        /// Find the popup content view safe area insets
+        print("_vSAIFS() - self:\(self)")
+        if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
+            var insets = popupContentView.safeAreaInsets
+            let containerInsets = vc.view.safeAreaInsets
+            if let svc = vc.splitViewController, containerInsets.left > 0 {
+                if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
+                    insets.left = containerInsets.left
+                }
+            }
+            if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
+                insets.top = 0
+            }
+            return insets
+        }
+        let insets = self._vSAIFS()
+        return insets
+        /*
         if let vc = self.popupContainerViewController {
-            var insets = self.popupContainerViewController._vSAIFS()
-            let containerInsets = self.popupContainerViewController.view.safeAreaInsets
+            var insets = vc._vSAIFS()
+            //var insets = self._vSAIFS()
+            let containerInsets = vc.view.safeAreaInsets
             if let svc = vc.splitViewController, containerInsets.left > 0 {
                 if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
                     insets.left = containerInsets.left
@@ -702,6 +721,7 @@ public extension UIViewController
         }
         let insets = self._vSAIFS()
         return insets
+        */
     }
     
     internal func pb_popupController() -> PBPopupController!
@@ -742,20 +762,19 @@ public extension UIViewController
     
     private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator)
     {
-        if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
             if self.popupController.popupPresentationState != .dismissing {
                 self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
             }
+            
             if self.popupController.popupPresentationState == .closed {
                 self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
                 self.popupContentViewController.view.frame.origin = self.popupContentView.frame.origin
                 self.popupContentViewController.view.frame.size = CGSize(width: self.popupContentView.frame.size.width, height: self.view.frame.height)
             }
             
-            rv.setNeedsUpdateConstraints()
-            rv.setNeedsLayout()
-            rv.layoutIfNeeded()
-        }
+            //rv.setNeedsUpdateConstraints()
+            //rv.setNeedsLayout()
+            //rv.layoutIfNeeded()
     }
     
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
@@ -765,12 +784,8 @@ public extension UIViewController
         if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
-                
             }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
-                // Fix for split view controller layout issue
-                if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-                    rv.layoutSubviews()
-                }
+                self.viewWillTransitionToSize(size, with: coordinator)
             })
         }
     }

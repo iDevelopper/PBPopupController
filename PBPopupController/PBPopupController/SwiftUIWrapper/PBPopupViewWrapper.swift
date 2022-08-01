@@ -9,10 +9,11 @@
 import SwiftUI
 import UIKit
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepresentable where Content: View, PopupContent: View {
     @Binding private var isPresented: Bool
     @Binding private var isOpen: Bool
+    @Binding private var isHidden: Bool
     private let passthroughContent: () -> Content
     private let popupContent: (() -> PopupContent)?
     private let popupContentController: UIViewController?
@@ -31,11 +32,13 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupCompletionThreshold) var popupCompletionThreshold: CGFloat
     @Environment(\.popupCompletionFlickMagnitude) var popupCompletionFlickMagnitude: CGFloat
     @Environment(\.popupContentSize) var popupContentSize: CGSize
+    @Environment(\.popupIgnoreDropShadowView) var popupIgnoreDropShadowView: Bool
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
     
-    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen
+        self._isHidden = isHidden
         self.passthroughContent = content
         self.popupContent = popupContent
         self.popupContentController = popupContentController
@@ -55,6 +58,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
         
         let state = PBPopupState(isPresented: _isPresented,
                                  isOpen: _isOpen,
+                                 isHidden: _isHidden,
                                  closeButtonStyle: popupCloseButtonStyle,
                                  popupBarStyle: popupBarStyle,
                                  progressViewStyle: popupBarProgressViewStyle,
@@ -66,6 +70,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  popupCompletionThreshold: popupCompletionThreshold,
                                  popupCompletionFlickMagnitude: popupCompletionFlickMagnitude,
                                  popupContentSize: popupContentSize,
+                                 popupIgnoreDropShadowView: popupIgnoreDropShadowView,
                                  popupContent: popupContent,
                                  popupContentViewController: popupContentController,
                                  onPresent: onPresent,

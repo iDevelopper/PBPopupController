@@ -119,7 +119,7 @@ class MainTableViewController: UITableViewController {
     func viewControllerForIndexPath(_ indexPath: IndexPath) -> UIViewController? {
         if indexPath.row == 11 {
             if #available(iOS 14.0, *) {
-                let contentView = SceneSelection {
+                let contentView = SceneSelection() {
                     self.dismiss(animated: true, completion: nil)
                 }
                 let vc = UIHostingController(rootView: contentView)

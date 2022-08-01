@@ -471,7 +471,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
      */
     @objc public var image: UIImage? = nil {
         didSet {
-            self.imageView?.image = image
+            self.shadowImageView.imageView.image = image
             self.layoutImageView()
         }
     }
@@ -684,19 +684,31 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     
     private var imageController: UIViewController?
     
-    internal var swiftImageController: UIViewController? {
+    internal var imageShadowOpacity: Float = 0.0
+
+    internal var swiftUIImageController: UIViewController? {
         set {
             if let imageController = imageController {
                 imageController.view.removeFromSuperview()
             }
             imageController = newValue
+            imageController?.view.backgroundColor = nil
             if let imageController = imageController {
-                self.imageView.addSubview(imageController.view)
+                self.shadowImageView.cornerRadius = imageController.value(forKey: "cornerRadius") as! CGFloat
+                self.shadowImageView.shadowColor = imageController.value(forKey: "shadowColor") as? UIColor
+                self.shadowImageView.shadowOffset = imageController.value(forKey: "shadowOffset") as! CGSize
+                self.shadowImageView.shadowOpacity = imageController.value(forKey: "shadowOpacity") as! Float
+                self.shadowImageView.shadowRadius = imageController.value(forKey: "shadowRadius") as! CGFloat
+                self.imageShadowOpacity = self.shadowImageView.shadowOpacity
+                self.shadowImageView.addSubview(imageController.view)
+                self.shadowImageView.shadowOpacity = 0.0
+                
+                self.shadowImageView.addSubview(imageController.view)
                 imageController.view.translatesAutoresizingMaskIntoConstraints = false
-                imageController.view.topAnchor.constraint(equalTo: self.imageView.topAnchor, constant: 0.0).isActive = true
-                imageController.view.leftAnchor.constraint(equalTo: self.imageView.leftAnchor, constant: 0.0).isActive = true
-                imageController.view.rightAnchor.constraint(equalTo: self.imageView.rightAnchor, constant: 0.0).isActive = true
-                imageController.view.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 0.0).isActive = true
+                imageController.view.topAnchor.constraint(equalTo: self.shadowImageView.topAnchor, constant: 0.0).isActive = true
+                imageController.view.leftAnchor.constraint(equalTo: self.shadowImageView.leftAnchor, constant: 0.0).isActive = true
+                imageController.view.rightAnchor.constraint(equalTo: self.shadowImageView.rightAnchor, constant: 0.0).isActive = true
+                imageController.view.bottomAnchor.constraint(equalTo: self.shadowImageView.bottomAnchor, constant: 0.0).isActive = true
                 
                 self.layoutImageView()
                 self.layoutTitlesView()
@@ -818,27 +830,20 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         
         self.addSubview(self.toolbar)
         
-        self.imageView = UIImageView()
-        
-        self.imageView.accessibilityTraits = UIAccessibilityTraits.image
-        self.imageView.isAccessibilityElement = true
-        
-        self.imageView.translatesAutoresizingMaskIntoConstraints = false
-        self.imageView.autoresizingMask = []
-        self.imageView.contentMode = .scaleAspectFit
-        
-        self.imageView.layer.cornerRadius = 3.0
-        self.imageView.layer.masksToBounds = true
-        
-        self.shadowImageView = PBPopupRoundShadowImageView(frame: self.bounds)
-        self.shadowImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        self.shadowImageView.backgroundColor = UIColor.clear
+        self.shadowImageView = PBPopupRoundShadowImageView(frame: .zero)
+        self.shadowImageView.cornerRadius = 3.0
         self.shadowImageView.shadowColor = UIColor.black
-        self.shadowImageView.shadowOffset = CGSize(width: 0.0, height: 0.0)
+        self.shadowImageView.shadowOffset = CGSize(width: 0.0, height: 3.0)
         self.shadowImageView.shadowRadius = 3.0
         self.shadowImageView.shadowOpacity = 0.5
         
-        self.shadowImageView.addSubview(self.imageView)
+        self.shadowImageView.imageView.accessibilityTraits = UIAccessibilityTraits.image
+        self.shadowImageView.imageView.isAccessibilityElement = true
+        
+        self.shadowImageView.imageView.contentMode = .scaleAspectFit
+        self.shadowImageView.contentMode = .scaleAspectFit
+
+        self.shadowImageView.translatesAutoresizingMaskIntoConstraints = false
         
         self.toolbar.addSubview(self.shadowImageView)
         
@@ -1073,13 +1078,13 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         let height = self.popupBarHeight
         let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
         
-        if self.imageView.translatesAutoresizingMaskIntoConstraints == false {
+        if self.shadowImageView.translatesAutoresizingMaskIntoConstraints == false {
             
             if let topConstraint = self.imageViewTopConstraint {
                 topConstraint.constant = (height - imageHeight) / 2
             }
             else {
-                self.imageViewTopConstraint = self.imageView.topAnchor.constraint(equalTo: self.topAnchor, constant: (height - imageHeight) / 2)
+                self.imageViewTopConstraint = self.shadowImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: (height - imageHeight) / 2)
             }
             self.imageViewTopConstraint.isActive = true
             
@@ -1091,7 +1096,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                     leftConstraint.constant = 16.0 + safeLeading
                 }
                 else {
-                    self.imageViewLeftConstraint = self.imageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16.0 + safeLeading)
+                    self.imageViewLeftConstraint = self.shadowImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16.0 + safeLeading)
                 }
                 self.imageViewLeftConstraint.isActive = true
             }
@@ -1100,7 +1105,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                     rightConstraint.constant = -(16.0 + safeLeading + safeTrailing)
                 }
                 else {
-                    self.imageViewRightConstraint = self.imageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing))
+                    self.imageViewRightConstraint = self.shadowImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing))
                 }
                 self.imageViewRightConstraint.isActive = true
             }
@@ -1109,7 +1114,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                 widthConstraint.constant = imageHeight
             }
             else {
-                self.imageViewWidthConstraint = self.imageView.widthAnchor.constraint(equalToConstant: imageHeight)
+                self.imageViewWidthConstraint = self.shadowImageView.widthAnchor.constraint(equalToConstant: imageHeight)
             }
             self.imageViewWidthConstraint.isActive = true
             
@@ -1117,14 +1122,14 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                 heightConstraint.constant = imageHeight
             }
             else {
-                self.imageViewHeightConstraint = self.imageView.heightAnchor.constraint(equalToConstant: imageHeight)
+                self.imageViewHeightConstraint = self.shadowImageView.heightAnchor.constraint(equalToConstant: imageHeight)
             }
             self.imageViewHeightConstraint.isActive = true
         }
         
-        self.imageView.isHidden = ((self.image == nil && self.imageController == nil) || self.popupBarStyle == .compact)
+        self.shadowImageView.isHidden = ((self.image == nil && self.imageController == nil) || self.popupBarStyle == .compact)
         
-        self.imageView.layoutIfNeeded()
+        self.shadowImageView.layoutIfNeeded()
     }
     
     private func layoutTitlesView() {
@@ -1141,11 +1146,11 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         
         if left == 0.0 && right == 0.0 {
             if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
-                left = 16 + (hasImage ? (self.imageView.frame.origin.x + self.imageView.frame.size.width) : 0.0)
+                left = 16 + (hasImage ? (self.shadowImageView.frame.origin.x + self.shadowImageView.frame.size.width) : 0.0)
                 right = 16
             }
             else {
-                right = self.frame.size.width - (hasImage ? (self.imageView.frame.origin.x) : 0.0) + 16
+                right = self.frame.size.width - (hasImage ? (self.shadowImageView.frame.origin.x) : 0.0) + 16
                 left = 16
             }
         }
@@ -1159,7 +1164,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
                 else {
-                    right = hasImage ? self.imageView.frame.size.width + 2 * 16.0 + safeLeading + safeTrailing : 16.0 + safeLeading + safeTrailing
+                    right = hasImage ? self.shadowImageView.frame.size.width + 2 * 16.0 + safeLeading + safeTrailing : 16.0 + safeLeading + safeTrailing
                 }
             }
             else {
@@ -1379,7 +1384,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         
         self.borderView.translatesAutoresizingMaskIntoConstraints = false
         
-        let views: [String: UIView] = ["view": (self.borderView)!, "imageView": (self.imageView)]
+        let views: [String: UIView] = ["view": (self.borderView)!, "imageView": (self.shadowImageView)]
         let height = self.popupBarHeight
         let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
         let metrics = ["verticalPadding": (height - imageHeight) / 2]

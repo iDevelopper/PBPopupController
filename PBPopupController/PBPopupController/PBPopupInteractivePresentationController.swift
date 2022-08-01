@@ -87,9 +87,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         let translation = gesture.translation(in: gesture.view?.superview)
         
-        //let availableHeight: CGFloat = self.popupContainerViewAvailableHeight()
-        //print("availableHeight1: \(availableHeight)")
-
         if !self.isPresenting {
             if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 if scrollView.contentOffset.y <= self.contentOffset.y {
@@ -209,6 +206,12 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         let previousState = self.popupController.popupPresentationState
                         self.popupController.popupPresentationState = .closed
                         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+                        // TODO: SwiftUI
+                        if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
+                            vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
+                            vc.view.insertSubview(vc.popupContentView, at: 0)
+                        }
+                        //
                     }
                     self.presentationController.popupBarForPresentation?.alpha = 1.0
                     

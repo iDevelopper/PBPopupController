@@ -8,6 +8,7 @@ import SwiftUI
 @available(iOS 14.0, *)
 struct NavDemoView : View {
     @State private var isPopupPresented: Bool = true
+    @State private var isPopupHidden: Bool = false
     let onDismiss: () -> Void
     @Environment(\.colorScheme) private var environmentColorScheme
     @State private var forcedColorScheme: ColorScheme?
@@ -19,8 +20,8 @@ struct NavDemoView : View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
-                        Button("Present Bar") {
-                            isPopupPresented = true
+                        Button("Show Bar") {
+                            isPopupHidden = false
                         }
                     }
                     ToolbarItem(placement: .bottomBar) {
@@ -39,8 +40,8 @@ struct NavDemoView : View {
                         Spacer()
                     }
                     ToolbarItem(placement: .bottomBar) {
-                        Button("Dismiss Bar") {
-                            isPopupPresented = false
+                        Button("Hide Bar") {
+                            isPopupHidden = true
                         }
                     }
                 }
@@ -50,6 +51,6 @@ struct NavDemoView : View {
         }
         .colorScheme(forcedColorScheme ?? environmentColorScheme)
         .navigationViewStyle(StackNavigationViewStyle())
-        .popupDemo(isPresented: $isPopupPresented)
+        .popupDemo(isPresented: $isPopupPresented, isHidden: $isPopupHidden)
     }
 }

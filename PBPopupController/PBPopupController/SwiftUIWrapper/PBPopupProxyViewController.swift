@@ -9,12 +9,36 @@
 import UIKit
 import SwiftUI
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
+internal class PBPopupImageViewController<Content>: UIHostingController<Content> where Content: View {
+    @objc dynamic var cornerRadius: CGFloat = 0.0
+    @objc dynamic var shadowColor: UIColor = UIColor.black
+    @objc dynamic var shadowOffset: CGSize = .zero
+    @objc dynamic var shadowOpacity: Float = 0.0
+    @objc dynamic var shadowRadius: CGFloat = 0.0
+    
+    init(rootView: Content, cornerRadius: CGFloat = 0.0, shadowColor: UIColor = UIColor.black, shadowOffset: CGSize = .zero, shadowOpacity: Float = 0.0, shadowRadius: CGFloat = 0.0) {
+        super.init(rootView: rootView)
+        
+        self.cornerRadius = cornerRadius
+        self.shadowColor = shadowColor
+        self.shadowOffset = shadowOffset
+        self.shadowOpacity = shadowOpacity
+        self.shadowRadius = shadowRadius
+    }
+
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+@available(iOS 14.0, *)
 internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingController<Content>, PBPopupControllerDelegate, PBPopupBarDataSource where Content: View, PopupContent: View {
     
     var currentPopupState: PBPopupState<PopupContent>! = nil
     var popupViewController: UIViewController?
     
+    var popupImageViewController: UIHostingController<AnyView>? = nil
     var leadingBarItemsController: UIHostingController<AnyView>? = nil
     var trailingBarItemsController: UIHostingController<AnyView>? = nil
     var leadingBarButtonItem: UIBarButtonItem? = nil
@@ -82,26 +106,39 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     
     func viewHandler(_ state: PBPopupState<PopupContent>) -> (() -> Void) {
         let view = {
-            /*return */self.currentPopupState.popupContent!()
+            return self.currentPopupState.popupContent!()
                 .onPreferenceChange(PBPopupTitlePreferenceKey.self) { [weak self] titleData in
                     self?.target.popupBar.title = titleData?.title
                     self?.target.popupBar.subtitle = titleData?.subtitle
                 }
                 .onPreferenceChange(PBPopupLabelPreferenceKey.self) { [weak self] labelData in
+                    if self?.target.popupBar.dataSource == nil {
+                        self?.target.popupBar.dataSource = self
+                    }
                     if let label = labelData?.label {
                         self?.target.popupBar.titleLabel = label
                     }
                     if let sublabel = labelData?.sublabel {
                         self?.target.popupBar.subtitleLabel = sublabel
                     }
-                    self?.target.popupBar.dataSource = self
+                }
+                .onPreferenceChange(PBPopupRoundShadowImagePreferenceKey.self) { [weak self] imageData in
+                    if let imageData = imageData {
+                        self?.target.popupBar.image = imageData.image
+                        self?.target.popupBar.shadowImageView.cornerRadius = imageData.cornerRadius
+                        self?.target.popupBar.shadowImageView.shadowColor = imageData.shadowColor
+                        self?.target.popupBar.shadowImageView.shadowOffset = imageData.shadowOffset
+                        self?.target.popupBar.shadowImageView.shadowOpacity = imageData.shadowOpacity
+                        self?.target.popupBar.shadowImageView.shadowRadius = imageData.shadowRadius
+                    }
                 }
                 .onPreferenceChange(PBPopupImagePreferenceKey.self) { [weak self] image in
+                    print("Image: \(String(describing: image))")
                     if image != nil {
-                        if let imageController = self?.target.popupBar.swiftImageController as? UIHostingController<Image?> {
+                        if let imageController = self?.target.popupBar.swiftUIImageController as? UIHostingController<Image?> {
                             imageController.rootView = image
                         } else {
-                            self?.target.popupBar.swiftImageController = UIHostingController(rootView: image)
+                            self?.target.popupBar.swiftUIImageController = PBPopupImageViewController(rootView: image)
                         }
                     }
                 }
@@ -154,7 +191,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             self.target.popupContentView.popupCompletionThreshold = self.currentPopupState.popupCompletionThreshold
             self.target.popupContentView.popupCompletionFlickMagnitude = self.currentPopupState.popupCompletionFlickMagnitude
             self.target.popupContentView.popupContentSize = self.currentPopupState.popupContentSize
-            
+            self.target.popupContentView.popupIgnoreDropShadowView = self.currentPopupState.popupIgnoreDropShadowView
             if let customBarView = self.currentPopupState.customBarView {
                 let rv: PBPopupUICustomBarViewController
                 if let customController = self.target.popupBar.customPopupBarViewController as? PBPopupUICustomBarViewController {
@@ -174,12 +211,24 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             if self.currentPopupState.isPresented == true {
                 popupContentHandler()
                 
-                //DispatchQueue.main.async {
-                self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated) {
-                    //
+                let presentationState = self.target.popupController.popupPresentationState
+                if presentationState == .hidden || presentationState == .dismissed {
+                    self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated, completion: nil)
                 }
-                //}
+                else {
+                    if self.currentPopupState.isHidden == true {
+                        if !self.target.popupBarIsHidden {
+                            self.target.hidePopupBar(animated: true)
+                        }
+                    }
+                    else {
+                        if self.target.popupBarIsHidden {
+                            self.target.showPopupBar(animated: true)
+                        }
+                    }
+                }
             } else {
+                print("state: \(self.target.popupController.popupPresentationState.description)")
                 self.target.dismissPopupBar(animated: animated, completion: nil)
             }
         }
@@ -194,6 +243,10 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     
     func titleLabel(for popupBar: PBPopupBar) -> UILabel? {
         return popupBar.titleLabel
+    }
+    
+    func subtitleLabel(for popupBar: PBPopupBar) -> UILabel? {
+        return popupBar.subtitleLabel
     }
     
     //MARK: PBPopupControllerDelegate

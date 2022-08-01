@@ -167,7 +167,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 navigationController.toolbarIsShown = false
             }
             nextVC.title = self.title
-            nextVC.modalPresentationStyle = .pageSheet
+            nextVC.modalPresentationStyle = .currentContext
             self.show(nextVC, sender: sender)
         }
     }
@@ -175,25 +175,25 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     @IBAction func dismiss(_ sender: Any?) {
         self.popupContentVC = nil
         self.popupContentTVC = nil
-        
-        self.containerVC.dismissPopupBar(animated: false, completion: nil)
-        
-        if sender is UIBarButtonItem || sender is UIButton { // Home button
-            #if targetEnvironment(macCatalyst)
-            let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            guard let windowScene = window?.windowScene else {
-                return
+                
+        self.containerVC.dismissPopupBar(animated: false) {
+            if sender is UIBarButtonItem || sender is UIButton { // Home button
+                #if targetEnvironment(macCatalyst)
+                let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+                guard let windowScene = window?.windowScene else {
+                    return
+                }
+                if let titlebar = windowScene.titlebar, let toolbar = titlebar.toolbar {
+                    toolbar.isVisible = false
+                    titlebar.toolbar = nil
+                }
+                #endif
+                
+                self.performSegue(withIdentifier: "unwindToHome", sender: sender)
             }
-            if let titlebar = windowScene.titlebar, let toolbar = titlebar.toolbar {
-                toolbar.isVisible = false
-                titlebar.toolbar = nil
-            }
-            #endif
-            
-            self.performSegue(withIdentifier: "unwindToHome", sender: sender)
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.restoreInitialRootViewControllerIfNeeded()
         }
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.restoreInitialRootViewControllerIfNeeded()
     }
     
     // MARK: - Setups

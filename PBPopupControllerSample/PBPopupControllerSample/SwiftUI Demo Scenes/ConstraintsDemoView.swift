@@ -58,14 +58,14 @@ struct SafeAreaDemoView : View {
 
 @available(iOS 14.0.0, *)
 extension View {
-    func popupDemo(isPresented: Binding<Bool>) -> some View {
-        return self.popup(isPresented: isPresented, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
+    func popupDemo(isPresented: Binding<Bool>, isHidden: Binding<Bool>? = nil) -> some View {
+        return self.popup(isPresented: isPresented, isHidden: isHidden, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
             SafeAreaDemoView(offset: true)
-                .popupLabel(MarqueeLabel())
+                .popupLabel(MarqueeLabel(), sublabel: MarqueeLabel())
                 
                 .popupTitle(LoremIpsum.title, subtitle: LoremIpsum.sentence)
                 
-                .popupImage(Image("Cover23"))
+                .popupImage(Image("Cover23").resizable())
                 
                 .popupBarItems(trailing: {
                     HStack(spacing: 20) {
@@ -87,7 +87,9 @@ extension View {
         //.popupBarStyle(.compact)
         //.popupCloseButtonStyle(.round)
         //.popupPresentationStyle(.fullScreen)
-        .popupContentSize(CGSize(width: -1, height: 500))
+        //.popupPresentationStyle(.custom)
+        //.popupContentSize(CGSize(width: -1, height: 500))
         .popupPresentationDuration(0.35)
+        .popupIgnoreDropShadowView(false)
     }
 }

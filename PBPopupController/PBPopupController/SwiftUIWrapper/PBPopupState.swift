@@ -9,15 +9,16 @@
 import SwiftUI
 import UIKit
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 internal struct PBPopupBarCustomView {
     let popupBarCustomBarView: AnyView
 }
 
-@available(iOS 13.0, *)
+@available(iOS 14.0, *)
 internal struct PBPopupState<PopupContent: View> {
     @Binding var isPresented: Bool
     @Binding var isOpen: Bool
+    @Binding var isHidden: Bool
     let closeButtonStyle: PBPopupCloseButtonStyle
     var popupBarStyle: PBPopupBarStyle
     let progressViewStyle: PBPopupBarProgressViewStyle
@@ -29,6 +30,7 @@ internal struct PBPopupState<PopupContent: View> {
     let popupCompletionThreshold: CGFloat
     let popupCompletionFlickMagnitude: CGFloat
     let popupContentSize: CGSize
+    let popupIgnoreDropShadowView: Bool
     let popupContent: (() -> PopupContent)?
     let popupContentViewController: UIViewController?
     let onPresent: (() -> Void)?

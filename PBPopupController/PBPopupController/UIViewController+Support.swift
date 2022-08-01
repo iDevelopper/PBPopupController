@@ -329,7 +329,15 @@ public extension UIViewController
         controller.view.autoresizingMask = []
         controller.view.frame = self.view.bounds
         controller.view.clipsToBounds = false
-
+        
+        // TODO: SwiftUI
+        // SwiftUI: The popup content view must be in the responder chain for the preferences to work.
+        if NSStringFromClass(type(of: controller).self).contains("PBPopupUIContentController") {
+            self.popupContentView.insertSubview(controller.view, at: 0)
+            self.view.insertSubview(self.popupContentView, at: 0)
+        }
+        //
+        
         controller.view.setNeedsLayout()
         controller.view.layoutIfNeeded()
 

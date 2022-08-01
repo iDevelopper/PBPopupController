@@ -13,12 +13,15 @@ struct SceneSelection: View {
     @State var viewPresented: Bool = false
     @State var viewSheetPresented: Bool = false
     @State var mapSheetPresented: Bool = false
+    @State var musicSheetPresented: Bool = false
     let onDismiss: () -> Void
+    
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Standard Scenes").frame(height: 48, alignment: .bottom)) {
+                Section(header: Text("Standard Scenes")) {
                     Button("Tab View + Navigation View") {
                         tabnavPresented.toggle()
                     }
@@ -73,6 +76,17 @@ struct SceneSelection: View {
                     .fullScreenCover(isPresented: $viewPresented, content: {
                         CustomBarView {
                             viewPresented.toggle()
+                        }
+                    })
+                }
+                Section(header: Text("Demo App")) {
+                    Button("Apple Music") {
+                        musicSheetPresented.toggle()
+                    }
+                    .foregroundColor(Color(.label))
+                    .fullScreenCover(isPresented: $musicSheetPresented, content: {
+                        MusicView {
+                            musicSheetPresented.toggle()
                         }
                     })
                 }

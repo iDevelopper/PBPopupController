@@ -25,13 +25,18 @@ Pod::Spec.new do |s|
     # s.source_files  = "PBPopupController/**/*.{swift,h,m}"
     s.source_files  = "PBPopupController/*.{swift,h,m}"
     # s.exclude_files = "PBPopupController/CGMathSwift"
-    
-    "subspecs": [
-    {
-        "name": "SwiftUIWrapper",
-        "source_files": "PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
-    }
-    ]
+
+
+    s.subspec "SwiftUIWrapper" do |ss|
+        ss.source_files = "PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
+    end
+
+    #"subspecs": [
+    #{
+    #    "name": "SwiftUIWrapper",
+    #    "source_files": "PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
+    #}
+    #]
     
     s.swift_version = '5.2'
 

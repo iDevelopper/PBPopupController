@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 
     # s.source_files  = "PBPopupController/**/*.{swift,h,m}"
-    s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}, PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
+    s.source_files  = "PBPopupController/PBPopupController/*.{swift,h,m}", "PBPopupController/PBPopupController/SwiftUIWrapper/*.{swift,h,m}"
 
     s.swift_version = '5.2'
 

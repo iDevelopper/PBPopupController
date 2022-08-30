@@ -162,6 +162,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
+            self.popupController.setGesturesEnabled(false)
+            
             self.shouldComplete = self.completionPosition() == .end
             
             if self.shouldComplete {
@@ -207,10 +209,10 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         self.popupController.popupPresentationState = .closed
                         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
                         // TODO: SwiftUI
-                        if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
-                            vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
-                            vc.view.insertSubview(vc.popupContentView, at: 0)
-                        }
+                        //if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
+                        //    vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
+                        //    vc.view.insertSubview(vc.popupContentView, at: 0)
+                        //}
                         //
                     }
                     self.presentationController.popupBarForPresentation?.alpha = 1.0

@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.1
+
+Gestures improvements.
+
 ## 3.6.0
 
 Update for SwiftUI.

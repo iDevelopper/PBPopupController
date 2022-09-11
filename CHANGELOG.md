@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.2
+
+iOS 16 support.
+
 ## 3.6.1
 
 Gestures improvements.

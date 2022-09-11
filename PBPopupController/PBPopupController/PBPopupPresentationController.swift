@@ -408,8 +408,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             
             self.popupContentView.isHidden = false
             
-            self.popupContentView.popupCloseButton?.alpha = 0.0
-            
             self.configureBottomModuleInStartPosition()
             
             let animations = {
@@ -708,7 +706,7 @@ extension PBPopupPresentationController
         case .deck:
             cornerRadius = open ? (self.isCompactOrPhoneInLandscape() ? defaultCornerRadius : 10.0) : 0.0
         case .custom:
-            cornerRadius = open ? 10.0 : 0.0
+            cornerRadius = open ? (self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height ? 0.0 : 10.0) : 0.0
         case .fullScreen:
             cornerRadius = open ? defaultCornerRadius : 0.0
         }

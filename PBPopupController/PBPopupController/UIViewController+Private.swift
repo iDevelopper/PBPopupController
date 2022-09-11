@@ -686,7 +686,7 @@ public extension UIViewController
     {
         /// Find the popup content view safe area insets
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
-            var insets = popupContentView.safeAreaInsets
+            var insets = popupContentView.superview!.safeAreaInsets
             let containerInsets = vc.view.safeAreaInsets
             if let svc = vc.splitViewController, containerInsets.left > 0 {
                 if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {

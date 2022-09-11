@@ -214,7 +214,6 @@ import UIKit
         let effect = UIBlurEffect(style: .light)
         
         self.popupEffectView = PBPopupEffectView(effect: effect)
-        self.popupEffectView.autoresizingMask = [.flexibleWidth]
         self.popupEffectView.frame = self.bounds
 
         self.addSubview(self.popupEffectView)

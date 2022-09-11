@@ -71,7 +71,6 @@ import UIKit
     @objc public override init(frame: CGRect) {
         super.init(frame: frame)
         self.clipsToBounds = false
-        imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(imageView)
         imageView.frame = bounds
     }

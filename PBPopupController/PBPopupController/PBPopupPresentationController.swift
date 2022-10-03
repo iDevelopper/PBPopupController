@@ -547,7 +547,8 @@ extension PBPopupPresentationController
             frame = self.popupContentViewFrameForPopupStateOpen()
             frame.origin.y = 0
         }
-        frame.size.height -= self.presentingVC.defaultFrameForBottomBar().height - self.presentingVC.insetsForBottomBar().bottom
+        let popupBarViewFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
+        frame.size.height -= self.presentingVC.view.bounds.height -  popupBarViewFrame.minY + popupBarViewFrame.height
         PBLog("\(frame)")
         return frame
     }

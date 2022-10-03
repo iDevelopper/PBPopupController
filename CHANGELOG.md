@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.6.3
+
+Fix for bad layout animation when the bottom bar is the toolbar of a navigation controller.
+Bug fixes when hidesPopupBarWhenPushed is true.
+
 ## 3.6.2
 
 iOS 16 support.

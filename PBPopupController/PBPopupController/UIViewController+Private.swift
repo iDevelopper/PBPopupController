@@ -106,30 +106,38 @@ public extension UITabBarController
         
         if (t > 0) {
             if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
-                if self.popupController.popupPresentationState != .hidden {
-                    self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        if self.popupBarWasHidden {
-                            self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
-                        }
-                        rv.layoutIfNeeded()
-                    }, completion: { (_ context) in
-                        if context.isCancelled {
-                            self.isTabBarHiddenDuringTransition = true
-                            
-                            if !self.popupBarWasHidden {
-                                UIView.animate(withDuration: 0.15) {
-                                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                                    rv.layoutIfNeeded()
+                if let vc = self.popupController.containerViewController {
+                    if self.popupController.popupPresentationState != .hidden || vc.popupBarIsHidden {
+                        self.popupController.popupBarView.alpha = 1
+                        self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { (_ context) in
+                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                            self.popupController.popupPresentationState = .closed
+                            vc.popupBarIsHidden = false
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                            }
+                            rv.layoutIfNeeded()
+                        }, completion: { (_ context) in
+                            if context.isCancelled {
+                                self.isTabBarHiddenDuringTransition = true
+                                
+                                if !self.popupBarWasHidden {
+                                    UIView.animate(withDuration: 0.15) {
+                                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+                                        rv.layoutIfNeeded()
+                                    }
+                                }
+                                
+                                if self.popupBarWasHidden {
+                                    self.popupController.popupBarView.alpha = 0
+                                    self.popupController.popupPresentationState = .hidden
+                                    vc.popupBarIsHidden = true
+                                    self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: true)
                                 }
                             }
-                            
-                            if self.popupBarWasHidden {
-                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: true)
-                            }
-                        }
-                        self.bottomBar.isHidden = context.isCancelled ? true : false
-                    })
+                            self.bottomBar.isHidden = context.isCancelled ? true : false
+                        })
+                    }
                 }
             }
         }
@@ -344,7 +352,6 @@ public extension UINavigationController
         if let popupController = self.popupControllerFor(self) {
             if let vc = popupController.containerViewController {
                 if self.popupBarFor(vc) != nil, popupController.popupPresentationState == .closed {
-                    //vc.popupBarIsHidden = false
                     vc.popupBarWasHidden = false
                     if viewController.hidesPopupBarWhenPushed || vc.popupBarIsHidden {
                         viewController.hidesPopupBarWhenPushed = true
@@ -372,7 +379,6 @@ public extension UINavigationController
                         let back = self.viewControllers[self.viewControllers.count - 2] as UIViewController
                         if back.hidesPopupBarWhenPushed == false {
                             vc.popupBarWasHidden = true
-                            vc.popupBarIsHidden = false
                             if let nc = vc as? UINavigationController, nc.isToolbarHidden {
                                 if let top = self.pb_popViewController(animated: animated), top.transitionCoordinator != nil {
                                     self.startInteractivePopupBarTransition(fromViewController: top)
@@ -395,7 +401,6 @@ public extension UINavigationController
                     if self.popupBarFor(vc) != nil, vc.popupBarIsHidden == true {
                         if viewController.hidesPopupBarWhenPushed == false {
                             vc.popupBarWasHidden = true
-                            vc.popupBarIsHidden = false
                             if let nc = vc as? UINavigationController, nc.isToolbarHidden {
                                 if let viewControllers = self.pb_popToViewController(viewController, animated: animated), vc.transitionCoordinator != nil {
                                     self.startInteractivePopupBarTransition(fromViewController: top)
@@ -419,7 +424,6 @@ public extension UINavigationController
                         let back = self.viewControllers[0] as UIViewController
                         if back.hidesPopupBarWhenPushed == false {
                             vc.popupBarWasHidden = true
-                            vc.popupBarIsHidden = false
                             if let nc = vc as? UINavigationController, nc.isToolbarHidden {
                                 if let viewControllers = self.pb_popToRootViewController(animated: animated), vc.transitionCoordinator != nil {
                                     self.startInteractivePopupBarTransition(fromViewController: top)
@@ -450,15 +454,20 @@ public extension UINavigationController
         guard let popupController = self.popupControllerFor(self), let vc = popupController.containerViewController else {
             return
         }
+        popupController.popupBarView.alpha = 1
         if let coordinator = fromViewController.transitionCoordinator {
             coordinator.animate { context in
                 popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateClosed()
+                self.popupController.popupPresentationState = .closed
+                vc.popupBarIsHidden = false
                 if vc.popupBarWasHidden {
                     popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
                 }
             } completion: { context in
                 if context.isCancelled {
                     if vc.popupBarWasHidden {
+                        popupController.popupBarView.alpha = 0.0
+                        self.popupController.popupPresentationState = .hidden
                         vc.popupBarIsHidden = true
                         popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateHidden()
                         popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
@@ -511,7 +520,6 @@ internal extension UINavigationController
                 let toY = self.view.bounds.height
                 self.toolbar.transform = self.toolbar.transform.translatedBy(x: 0, y: toY - fromY)
             }
-            
             if let tabBarController = self.tabBarController {
                 tabBarController._animateBottomBarToHidden(hidden)
             }

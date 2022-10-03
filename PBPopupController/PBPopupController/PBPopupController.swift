@@ -612,7 +612,7 @@ extension PBPopupPresentationStyle
             completionBlock?()
             return
         }
-        if self.popupPresentationState != .hidden {
+        if self.popupPresentationState != .hidden || vc.popupBarIsHidden {
             completionBlock?()
             return
         }
@@ -727,14 +727,12 @@ extension PBPopupPresentationStyle
             self.fixInsetsForContainerIfNeeded(addInsets: false)
         }) { (success) in
             self.popupPresentationState = .hidden
-            vc.popupBarIsHidden = true
             completionBlock?()
         }
     }
     
     internal func _showPopupBarAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
     {
-        self.popupPresentationState = .hidden
         self._presentPopupBarAnimated(animated, completionBlock: nil)
     }
     

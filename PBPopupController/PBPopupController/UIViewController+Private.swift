@@ -748,30 +748,29 @@ public extension UIViewController
     
     private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator)
     {
-            if self.popupController.popupPresentationState != .dismissing {
-                self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
-            }
-            
-            if self.popupController.popupPresentationState == .closed {
-                self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                self.popupContentViewController.view.frame.origin = self.popupContentView.frame.origin
-                self.popupContentViewController.view.frame.size = CGSize(width: self.popupContentView.frame.size.width, height: self.view.frame.height)
-            }
-            
-            //rv.setNeedsUpdateConstraints()
-            //rv.setNeedsLayout()
-            //rv.layoutIfNeeded()
+        if self.popupController.popupPresentationState != .dismissing {
+            self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
+        }
+        
+        if self.popupController.popupPresentationState == .closed {
+            self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
+            self.popupContentViewController.view.frame.origin = self.popupContentView.frame.origin
+            self.popupContentViewController.view.frame.size = CGSize(width: self.popupContentView.frame.size.width, height: self.view.frame.height)
+        }
     }
     
     @objc private func pb_viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator)
     {
         self.pb_viewWillTransition(to: size, with: coordinator)
 
-        if (objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar) != nil {
+        if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
             }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
+                rv.setNeedsUpdateConstraints()
+                rv.setNeedsLayout()
+                rv.layoutIfNeeded()
             })
         }
     }

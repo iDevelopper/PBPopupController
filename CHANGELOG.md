@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.5
+
+Fixes a popup bar layout issue after transition to size.
+
 ## 3.6.4
 
 Fix for bad layout animation when the bottom bar is the toolbar of a navigation controller.

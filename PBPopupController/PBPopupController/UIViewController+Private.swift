@@ -694,17 +694,18 @@ public extension UIViewController
     {
         /// Find the popup content view safe area insets
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
-            var insets = popupContentView.superview!.safeAreaInsets
-            let containerInsets = vc.view.safeAreaInsets
-            if let svc = vc.splitViewController, containerInsets.left > 0 {
-                if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
-                    insets.left = containerInsets.left
+            if var insets = popupContentView.superview?.safeAreaInsets {
+                let containerInsets = vc.view.safeAreaInsets
+                if let svc = vc.splitViewController, containerInsets.left > 0 {
+                    if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
+                        insets.left = containerInsets.left
+                    }
                 }
+                if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
+                    insets.top = 0
+                }
+                return insets
             }
-            if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
-                insets.top = 0
-            }
-            return insets
         }
         let insets = self._vSAIFS()
         return insets

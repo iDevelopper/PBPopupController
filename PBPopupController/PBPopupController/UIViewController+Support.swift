@@ -181,7 +181,11 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupContainerViewController: UIViewController! {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController
+            //return objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController
+            if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController {
+                return rv
+            }
+            return self.popupContainerViewController()
         }
         
         set {
@@ -449,6 +453,17 @@ public extension UIViewController
 
 public extension UIViewController
 {
+    func popupContainerViewController(for viewController: UIViewController? = nil) -> UIViewController? {
+        let controller = viewController ?? self
+        if let rv = (objc_getAssociatedObject(controller, &AssociatedKeys.popupController) as? PBPopupController) {
+            return rv.containerViewController
+        }
+        if controller.parent == nil {
+            return nil
+        }
+        return popupContainerViewController(for: controller.parent!)
+    }
+    
     internal func getSubviewsOfView(view: UIView) -> [UIView] {
         var subviewArray = [UIView]()
         for subview in view.subviews {

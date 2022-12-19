@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 class DemoViewController: UIViewController {
     

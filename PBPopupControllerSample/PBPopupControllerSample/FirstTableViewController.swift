@@ -22,12 +22,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     var demoViewController: DemoViewController!
 
-    var popupPlayButtonItemForProminent: UIBarButtonItem!
-    var popupNextButtonItemForProminent: UIBarButtonItem!
-    var popupPrevButtonItemForCompact: UIBarButtonItem!
-    var popupPlayButtonItemForCompact: UIBarButtonItem!
-    var popupNextButtonItemForCompact: UIBarButtonItem!
-    var popupMoreButtonItemForCompact: UIBarButtonItem!
+    var popupPlayButtonItem: UIBarButtonItem!
+    var popupNextButtonItem: UIBarButtonItem!
+    var popupPrevButtonItem: UIBarButtonItem!
+    var popupMoreButtonItem: UIBarButtonItem!
 
     var popupBarStyle: PBPopupBarStyle!
     var progressViewStyle: PBPopupBarProgressViewStyle!
@@ -36,14 +34,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     var isPopupContentTableView: Bool = false
     
-    var isPlaying: Bool = false
-    
-    var indexOfCurrentSong: Int = 0
-    
     var images = [UIImage]()
     var titles = [String]()
     var subtitles = [String]()
     
+    // Labels for popup bar data source
     var label: MarqueeLabel = {
         let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
         marqueeLabel.leadingBuffer = 0.0   // 0
@@ -68,7 +63,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 2) {
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
@@ -77,33 +72,34 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
+#if compiler(>=5.1)
             self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
+#else
             self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
+#endif
         } else {
             self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
-
+        
         self.tableView.tableFooterView = UIView()
         
         self.tableView.tableHeaderView = nil
         if (self.navigationController == nil) {
             self.tableView.tableHeaderView = self.headerView
         }
-
+        
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 80.0
-
-        self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-        self.popupContentVC.firstVC = self
         
-        DispatchQueue.main.async {
-            self.setupContainerVC()
-            self.commonSetup()
-            self.createBarButtonItems()
-        }
+        self.setupContainerVC()
+        
+        //self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+        //self.popupContentVC.images = self.images
+        //self.popupContentVC.titles = self.titles
+        //self.popupContentVC.subtitles = self.subtitles
+        
+        //self.commonSetup()
+        //self.createBarButtonItems()
     }
     
     override func viewDidLayoutSubviews() {
@@ -118,6 +114,19 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         super.viewWillAppear(animated)
         
         self.tabBarController?.delegate = self
+        
+        self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+        self.popupContentVC.images = self.images
+        self.popupContentVC.titles = self.titles
+        self.popupContentVC.subtitles = self.subtitles
+        
+        self.commonSetup()
+        self.createBarButtonItems()
+
+        if self.containerVC.popupController.popupPresentationState == .closed {
+            // Present the popup bar with another popup
+            self.presentPopupBar(self)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -158,7 +167,18 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 }
             }
         }
-        if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as? DemoViewController {
+
+        var nextVC: UIViewController! = nil
+        if let navigationController = self.navigationController as? NavigationController {
+            navigationController.toolbarIsShown = false
+            nextVC = self.storyboard?.instantiateViewController(withIdentifier: "DemoTableViewController") as! DemoTableViewController
+            (nextVC as! DemoTableViewController).firstVC = self
+        }
+        else {
+            nextVC = self.storyboard?.instantiateViewController(withIdentifier: "DemoTableViewController") as! DemoTableViewController
+            (nextVC as! DemoTableViewController).firstVC = self
+        }
+        if let nextVC = nextVC {
             nextVC.hidesBottomBarWhenPushed = true
             if sender is FirstTableViewController {
                 nextVC.hidesPopupBarWhenPushed = true
@@ -310,8 +330,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
             popupBar.image?.accessibilityLabel = NSLocalizedString("Cover", comment: "")
             
-            self.configureBarButtonItems()
-
             if #available(iOS 13.0, *) {
                 let interaction = UIContextMenuInteraction(delegate: self)
                 popupBar.addInteraction(interaction)
@@ -328,54 +346,56 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     func createBarButtonItems() {
-        self.popupPlayButtonItemForProminent = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
-        self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString("Play", comment: "")
+        self.popupPlayButtonItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: nil, action: nil)
+        self.popupPlayButtonItem.accessibilityLabel = NSLocalizedString("Play", comment: "")
+
+        self.popupNextButtonItem = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: nil, action: nil)
+        self.popupNextButtonItem.accessibilityLabel = NSLocalizedString("Next track", comment: "")
+
+        self.popupMoreButtonItem = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: nil, action: nil)
+        self.popupMoreButtonItem.accessibilityLabel = NSLocalizedString("More", comment: "")
+
+        self.popupPrevButtonItem = UIBarButtonItem(image: UIImage(named: "prev-small"), style: .plain, target: nil, action: nil)
+        self.popupPrevButtonItem.accessibilityLabel = NSLocalizedString("Previous track", comment: "")
         
-        self.popupNextButtonItemForProminent = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
-        self.popupNextButtonItemForProminent.accessibilityLabel = NSLocalizedString("Next track", comment: "")
-
-        self.popupMoreButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: self, action: #selector(moreAction(_:)))
-        self.popupMoreButtonItemForCompact.accessibilityLabel = NSLocalizedString("More", comment: "")
-
-        self.popupPlayButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: self, action: #selector(playPauseAction(_:)))
-        self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString("Play", comment: "")
-
-        self.popupNextButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: self, action: #selector(nextAction(_:)))
-        self.popupNextButtonItemForCompact.accessibilityLabel = NSLocalizedString("Next track", comment: "")
-
-        self.popupPrevButtonItemForCompact = UIBarButtonItem(image: UIImage(named: "prev-small"), style: .plain, target: self, action: #selector(prevAction(_:)))
-        self.popupPrevButtonItemForCompact.accessibilityLabel = NSLocalizedString("Previous track", comment: "")
+        self.configureBarButtonItems()
     }
     
     func configureBarButtonItems() {
         if let popupBar = self.containerVC.popupBar {
+            popupBar.leftBarButtonItems = nil
+            popupBar.rightBarButtonItems = nil
             if UIDevice.current.userInterfaceIdiom == .phone {
                 if popupBar.popupBarStyle == .prominent {
                     popupBar.leftBarButtonItems = nil
-                    popupBar.rightBarButtonItems = [self.popupPlayButtonItemForProminent, self.popupNextButtonItemForProminent]
+                    popupBar.rightBarButtonItems = [self.popupPlayButtonItem, self.popupNextButtonItem]
                 }
                 else {
-                    popupBar.leftBarButtonItems = [self.popupPlayButtonItemForCompact]
-                    popupBar.rightBarButtonItems = [self.popupMoreButtonItemForCompact]
+                    popupBar.leftBarButtonItems = [self.popupPlayButtonItem]
+                    popupBar.rightBarButtonItems = [self.popupMoreButtonItem]
                 }
             }
             else {
                 if popupBar.popupBarStyle == .prominent {
                     popupBar.leftBarButtonItems = nil
-                    popupBar.rightBarButtonItems = [self.popupPlayButtonItemForProminent, self.popupNextButtonItemForProminent]
+                    popupBar.rightBarButtonItems = [self.popupPlayButtonItem, self.popupNextButtonItem]
                 }
                 else {
-                    popupBar.leftBarButtonItems = [self.popupPrevButtonItemForCompact, self.popupPlayButtonItemForCompact, self.popupNextButtonItemForCompact]
-                    popupBar.rightBarButtonItems = [self.popupMoreButtonItemForCompact]
+                    popupBar.leftBarButtonItems = [self.popupPrevButtonItem, self.popupPlayButtonItem, self.popupNextButtonItem]
+                    popupBar.rightBarButtonItems = [self.popupMoreButtonItem]
                 }
             }
+            let target = self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC
+            self.popupPlayButtonItem.target = target
+            self.popupPlayButtonItem.action = self.isPopupContentTableView ? #selector(PopupContentViewController.playPauseAction(_:)) : #selector(PopupContentTableViewController.playPauseAction(_:))
+            self.popupNextButtonItem.target = target
+            self.popupNextButtonItem.action = self.isPopupContentTableView ? #selector(PopupContentViewController.nextAction(_:)) : #selector(PopupContentTableViewController.nextAction(_:))
+            self.popupPrevButtonItem.target = target
+            self.popupPrevButtonItem.action = self.isPopupContentTableView ? #selector(PopupContentViewController.prevAction(_:)) : #selector(PopupContentTableViewController.prevAction(_:))
+            self.popupMoreButtonItem.target = target
+            self.popupMoreButtonItem.action = self.isPopupContentTableView ? #selector(PopupContentViewController.moreAction(_:)) : #selector(PopupContentTableViewController.moreAction(_:))
         }
-        
-        self.popupPlayButtonItemForProminent.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
-        self.popupPlayButtonItemForProminent.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
-        self.popupPlayButtonItemForCompact.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
-        self.popupPlayButtonItemForCompact.accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
- }
+    }
     
     // MARK: - Toolbar container actions
     
@@ -533,6 +553,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         else {
             self.containerVC.popupContentView.popupCloseButtonStyle = self.popupCloseButtonStyle
         }
+        
         self.commonSetup()
     }
     
@@ -541,24 +562,29 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         case 0:
             self.isPopupContentTableView = false
             self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-            self.popupContentVC.firstVC = self
-            self.popupContentVC.albumArtImage = self.popupContentTVC.albumArtImage
-            self.popupContentVC.songTitle = self.popupContentTVC.songTitle
-            self.popupContentVC.albumTitle = self.popupContentTVC.albumTitle
+            self.popupContentVC.images = self.images
+            self.popupContentVC.titles = self.titles
+            self.popupContentVC.subtitles = self.subtitles
+            //self.popupContentVC.albumArtImage = self.containerVC.popupBar.image
+            //self.popupContentVC.songTitle = self.containerVC.popupBar.title
+            //self.popupContentVC.albumTitle = self.containerVC.popupBar.subtitle
             self.popupContentTVC = nil
         case 1:
             self.isPopupContentTableView = true
             self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as? PopupContentTableViewController
-            self.popupContentTVC.firstVC = self
-            self.popupContentTVC.albumArtImage = self.popupContentVC.albumArtImage
-            self.popupContentTVC.songTitle = self.popupContentVC.songTitle
-            self.popupContentTVC.albumTitle = self.popupContentVC.albumTitle
+            self.popupContentTVC.images = self.images
+            self.popupContentTVC.titles = self.titles
+            self.popupContentTVC.subtitles = self.subtitles
+            //self.popupContentTVC.albumArtImage = self.containerVC.popupBar.image
+            //self.popupContentTVC.songTitle = self.containerVC.popupBar.title
+            //self.popupContentTVC.albumTitle = self.containerVC.popupBar.subtitle
             self.popupContentVC = nil
         default:
             break
         }
         
         self.commonSetup()
+        
         if self.containerVC.popupController.popupPresentationState == .closed {
             // Present the popup bar with another popup
             self.presentPopupBar(self)
@@ -578,10 +604,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.commonSetup()
         self.setupPopupBar()
         self.setupCustomPopupBar()
-        
+        self.configureBarButtonItems()
+
         // If sender is the present item of the navigation controller toolbar
         if sender is UIBarButtonItem {
-            self.updatePopupBarAndPopupContent(forRowAt: IndexPath(row: 0, section: 2))
+            self.updatePopupBar(forRowAt: 0)
         }
         
         DispatchQueue.main.async {
@@ -603,48 +630,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             PBLog("Popup Bar Dismissed")
         })
         //
-    }
-    
-    // MARK: - Controls Actions
-    
-    @IBAction func playPauseAction(_ sender: Any) {
-        PBLog("PopupBar playPauseAction")
-        
-        self.isPlaying = !self.isPlaying
-        
-        self.configureBarButtonItems()
-        
-        if !self.isPopupContentTableView {
-            self.popupContentVC.playPauseAction(sender)
-        }
-    }
-    
-    @IBAction func prevAction(_ sender: Any) {
-        PBLog("prevAction")
-
-        if self.indexOfCurrentSong > 0 {
-            self.indexOfCurrentSong -= 1
-        }
-        else {
-            self.indexOfCurrentSong = self.images.count - 1
-        }
-        self.updatePopupBarAndPopupContent(forRowAt: IndexPath(row: self.indexOfCurrentSong, section: 2))
-    }
-    
-    @IBAction func nextAction(_ sender: Any) {
-        PBLog("nextAction")
-
-        if self.indexOfCurrentSong < images.count - 1 {
-            self.indexOfCurrentSong += 1
-        }
-        else {
-            self.indexOfCurrentSong = 0
-        }
-        self.updatePopupBarAndPopupContent(forRowAt: IndexPath(row: self.indexOfCurrentSong, section: 2))
-    }
-    
-    @IBAction func moreAction(_ sender: Any) {
-        PBLog("moreAction")
     }
 }
 
@@ -915,32 +900,15 @@ extension FirstTableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         if indexPath.section == 2 {
-            self.updatePopupBarAndPopupContent(forRowAt: indexPath)
-            
-            self.indexOfCurrentSong = indexPath.row
-            
-            if let cell = tableView.cellForRow(at: indexPath) {
-                self.presentPopupBar(cell)
-            }
+            self.updatePopupBar(forRowAt: indexPath.row)
+            self.presentPopupBar(self)
         }
     }
     
-    func updatePopupBarAndPopupContent(forRowAt indexPath: IndexPath) {
-        self.containerVC.popupBar.image = images[indexPath.row]
-        self.containerVC.popupBar.title = titles[indexPath.row]
-        self.containerVC.popupBar.subtitle = subtitles[indexPath.row]
-        
-        if let popupContentVC = self.popupContentVC {
-            popupContentVC.albumArtImage = images[indexPath.row]
-            popupContentVC.songTitle = titles[indexPath.row]
-            popupContentVC.albumTitle = subtitles[indexPath.row]
-        }
-        
-        if let popupContentTVC = self.popupContentTVC {
-            popupContentTVC.albumArtImage = images[indexPath.row]
-            popupContentTVC.songTitle = titles[indexPath.row]
-            popupContentTVC.albumTitle = subtitles[indexPath.row]
-        }
+    func updatePopupBar(forRowAt index: Int) {
+        self.containerVC.popupBar.image = images[index]
+        self.containerVC.popupBar.title = titles[index]
+        self.containerVC.popupBar.subtitle = subtitles[index]
     }
 }
 
@@ -988,9 +956,25 @@ extension FirstTableViewController: PBPopupControllerDelegate {
         PBLog("didDismiss - state: \(popupController.popupPresentationState.description)")
     }
     
+    func popupController(_ popupController: PBPopupController, shouldOpen popupContentViewController: UIViewController) -> Bool {
+        PBLog("shouldOpen - state: \(popupController.popupPresentationState.description)")
+        if let popupContent = popupContentViewController as? PopupContentViewController {
+            popupContent.albumArtImage = self.containerVC.popupBar.image
+            popupContent.songTitle = self.containerVC.popupBar.title
+            popupContent.albumTitle = self.containerVC.popupBar.subtitle
+        }
+        
+        if let popupContent = popupContentViewController as? PopupContentTableViewController {
+            popupContent.albumArtImage = self.containerVC.popupBar.image
+            popupContent.songTitle = self.containerVC.popupBar.title
+            popupContent.albumTitle = self.containerVC.popupBar.subtitle
+        }
+        return true
+    }
+    
     func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController) {
         PBLog("willOpen - state: \(popupController.popupPresentationState.description)")
-        
+
         if let popupContentView = self.containerVC.popupContentView {
             if let bottomModule = popupContentView.popupBottomModule {
                 bottomModule.alpha = 1.0
@@ -1011,6 +995,11 @@ extension FirstTableViewController: PBPopupControllerDelegate {
 
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
         PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
+    }
+    
+    func popupController(_ popupController: PBPopupController, shouldClose popupContentViewController: UIViewController) -> Bool {
+        PBLog("willClose - state: \(popupController.popupPresentationState.description)")
+        return true
     }
     
     func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController) {
@@ -1220,7 +1209,6 @@ extension FirstTableViewController: UIContextMenuInteractionDelegate
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willDisplayMenuFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
         print("willDisplayMenuFor")
     }
-    
 }
 
 // MARK: - PBPopupController dataSource

@@ -1,27 +1,23 @@
 //
-//  DemoTableViewController.swift
+//  NextTableViewController.swift
 //  PBPopupControllerSample
 //
-//  Created by Patrick BODET on 20/04/2018.
-//  Copyright © 2018 Patrick BODET. All rights reserved.
+//  Created by Patrick BODET on 17/12/2022.
+//  Copyright © 2022 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 import PBPopupController
 
-class DemoTableViewController: UITableViewController {
-
-    @IBOutlet weak var headerView: UIView!
-
+class NextTableViewController: UITableViewController {
+    
     var images = [UIImage]()
     var titles = [String]()
     var subtitles = [String]()
-            
-    weak var firstVC: FirstTableViewController!
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 0) {
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
@@ -30,79 +26,45 @@ class DemoTableViewController: UITableViewController {
         }
         
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
+#if compiler(>=5.1)
             self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
+#else
             self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
+#endif
         } else {
             self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
-    
+        
         self.tableView.tableFooterView = UIView()
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(pushNext(_:)))
         
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 80.0
-        
-        self.navigationItem.largeTitleDisplayMode = .automatic
-
-        let rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(pushNext(_:)))
-        self.navigationItem.rightBarButtonItems?.append(rightBarButtonItem)
     }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        self.tableView.tableHeaderView = nil
-        if (self.navigationController == nil) {
-            self.tableView.tableHeaderView = self.headerView
-        }
-        
-        self.tableView.reloadData()
-    }
-    
-    deinit {
-        PBLog("deinit \(self)")
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    // MARK: - Navigation
     
     @objc func pushNext(_ sender: Any) {
-        if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "DemoTableViewController") as? DemoTableViewController {
-            nextVC.firstVC = self.firstVC
+        if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "NextTableViewController") as? NextTableViewController {
             self.show(nextVC, sender: sender)
         }
     }
     
-    @IBAction func dismiss(_ sender: Any) {
-        self.dismiss(animated: true)
-    }
-    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 22
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "musicTableViewCell", for: indexPath) as! MusicTableViewCell
-        
-        cell.albumArtImageView.image = self.images[indexPath.row]
-        cell.songNameLabel.text = self.titles[indexPath.row]
-        cell.albumNameLabel.text = self.subtitles[indexPath.row]
+        cell.albumArtImageView.image = images[indexPath.row]
+        cell.songNameLabel.text = titles[indexPath.row]
+        cell.albumNameLabel.text = subtitles[indexPath.row]
+        cell.selectionStyle = .default
         
         var font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.songNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
@@ -112,23 +74,24 @@ class DemoTableViewController: UITableViewController {
         cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         cell.albumNameLabel.adjustsFontForContentSizeCategory = true
         
-        #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
+#if compiler(>=5.1)
             cell.songNameLabel.textColor = UIColor.label
             cell.albumNameLabel.textColor = UIColor.secondaryLabel
+#else
+            cell.songNameLabel.textColor = UIColor.darkText
+            cell.albumNameLabel.textColor = UIColor.darkGray
+#endif
         }
-        #endif
-        
-        cell.backgroundColor = UIColor.clear
+        else {
+            cell.songNameLabel.textColor = UIColor.darkText
+            cell.albumNameLabel.textColor = UIColor.darkGray
+        }
         
         return cell
     }
-
+    
     // MARK: - Table view delegate
-
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = UIColor.clear
-    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -138,14 +101,6 @@ class DemoTableViewController: UITableViewController {
             popupBar.image = images[indexPath.row]
             popupBar.title = titles[indexPath.row]
             popupBar.subtitle = subtitles[indexPath.row]
-        }
-
-        if let firstVC = self.firstVC, let containerVC = firstVC.containerVC {
-            if containerVC.popupController.popupPresentationState == .hidden {
-                containerVC.presentPopupBar(withPopupContentViewController: firstVC.isPopupContentTableView ? firstVC.popupContentTVC : firstVC.popupContentVC, animated: true, completion: {
-                    PBLog("Popup Bar Presented")
-                })
-            }
         }
     }
 }

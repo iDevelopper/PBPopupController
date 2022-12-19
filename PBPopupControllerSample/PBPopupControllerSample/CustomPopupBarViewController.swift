@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 class CustomPopupBarViewController: UIViewController {
     @IBOutlet weak var barView: UIView!
@@ -41,7 +42,7 @@ class CustomPopupBarViewController: UIViewController {
         PBLog("deinit \(self)")
     }
     
-    // MARK: - Actions
+    // MARK: - Actions (See StoryBoard)
     
     @IBAction func playPause(_ sender: Any) {
         PBLog("Popup Bar playPause")

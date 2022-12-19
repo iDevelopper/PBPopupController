@@ -10,8 +10,12 @@ import UIKit
 import PBPopupController
 
 class PopupContentViewController: UIViewController {
-    
-    weak var firstVC: FirstTableViewController!
+        
+    var images: [UIImage]!
+    var titles: [String]!
+    var subtitles: [String]!
+
+    var indexOfCurrentSong: Int = 0
 
     var isPlaying: Bool = false
     
@@ -37,11 +41,11 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var imageModuleLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageModuleTrailingConstraint: NSLayoutConstraint!
 
-    var albumArtImage: UIImage!/* = UIImage()*/ {
+    var albumArtImage: UIImage! {
         didSet {
             if isViewLoaded {
                 self.albumArtImageView.image = albumArtImage
-                if let containerVC = self.popupContainerViewController, !self.firstVC.isPopupContentTableView {
+                if let containerVC = self.popupContainerViewController/*, !self.firstVC.isPopupContentTableView*/ {
                     containerVC.popupContentView.popupImageView = albumArtImageView
                 }
             }
@@ -80,7 +84,7 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var progressView: UIProgressView!
 
-    var songTitle: String!/* = ""*/ {
+    var songTitle: String! {
         didSet {
             if isViewLoaded {
                 songNameLabel.text = songTitle
@@ -100,7 +104,7 @@ class PopupContentViewController: UIViewController {
         }
     }
 
-    var albumTitle: String!/* = ""*/ {
+    var albumTitle: String! {
         didSet {
             if isViewLoaded {
                 albumNameLabel.text = albumTitle
@@ -296,6 +300,8 @@ class PopupContentViewController: UIViewController {
     
     deinit {
         PBLog("deinit \(self)")
+        
+        self.stopTimer()
     }
     
     // MARK: - Setups
@@ -349,19 +355,19 @@ class PopupContentViewController: UIViewController {
     
     @IBAction func playPauseAction(_ sender: Any?) {
         PBLog("playPauseAction")
+        
         self.isPlaying = !self.isPlaying
-        if let firstVC = self.firstVC {
-            firstVC.isPlaying = self.isPlaying
-        }
         self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
         
-        guard let containerVC = self.popupContainerViewController else {return}
-        guard let popupBar = containerVC.popupBar else {return}
+        guard let containerVC = self.popupContainerViewController,
+              let popupBar = containerVC.popupBar else {return}
+        
         if popupBar.popupBarStyle == .prominent {
             popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         }
         let dev = UIDevice.current.userInterfaceIdiom
         popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+        popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
         self.setupImageViewForPlaying()
         if self.isPlaying {
             self.setupTimer()
@@ -374,12 +380,20 @@ class PopupContentViewController: UIViewController {
     @IBAction func prevAction(_ sender: Any) {
         PBLog("prevAction")
 
-        guard let firstVC = self.firstVC else {return}
+        if self.indexOfCurrentSong > 0 {
+            self.indexOfCurrentSong -= 1
+        }
+        else {
+            self.indexOfCurrentSong = self.images.count - 1
+        }
         
-        firstVC.prevAction(self)
-        
-        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+        guard let containerVC = self.popupContainerViewController,
+              let popupBar = containerVC.popupBar else {return}
 
+        popupBar.image = self.images[self.indexOfCurrentSong]
+        popupBar.title = self.titles[self.indexOfCurrentSong]
+        popupBar.subtitle = self.subtitles[self.indexOfCurrentSong]
+        
         self.albumArtImage = popupBar.image!
         self.songTitle = popupBar.title!
         self.albumTitle = popupBar.subtitle!
@@ -388,19 +402,32 @@ class PopupContentViewController: UIViewController {
     @IBAction func nextAction(_ sender: Any) {
         PBLog("nextAction")
         
-        guard let firstVC = self.firstVC else {return}
+        if self.indexOfCurrentSong < images.count - 1 {
+            self.indexOfCurrentSong += 1
+        }
+        else {
+            self.indexOfCurrentSong = 0
+        }
         
-        firstVC.nextAction(self)
-        
-        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+        guard let containerVC = self.popupContainerViewController,
+              let popupBar = containerVC.popupBar else {return}
 
+        popupBar.image = self.images[self.indexOfCurrentSong]
+        popupBar.title = self.titles[self.indexOfCurrentSong]
+        popupBar.subtitle = self.subtitles[self.indexOfCurrentSong]
+        
         self.albumArtImage = popupBar.image!
         self.songTitle = popupBar.title!
         self.albumTitle = popupBar.subtitle!
     }
     
+    @IBAction func moreAction(_ sender: Any) {
+        PBLog("moreAction")
+    }
+    
     @objc func tick() {
-        guard let popupBar = self.popupContainerViewController.popupBar else {return}
+        guard let containerVC = self.popupContainerViewController,
+              let popupBar = containerVC.popupBar else {return}
 
         popupBar.progress += 0.002
         popupBar.accessibilityProgressLabel = NSLocalizedString("Playback Progress", comment: "")

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 class DemoViewControllerNoChild: UIViewController {
 
@@ -42,8 +43,6 @@ class DemoViewControllerNoChild: UIViewController {
         self.popupBar.image = UIImage(named: String(format: "Cover%02d", Int.random(in: 1...23)))
         self.popupBar.title = LoremIpsum.title
         self.popupBar.subtitle = LoremIpsum.sentence
-        let item = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))
-        self.popupBar.rightBarButtonItems = [item]
         self.popupContentView.popupCloseButtonStyle = .chevron
         self.popupContentView.popupIgnoreDropShadowView = false
 
@@ -54,6 +53,10 @@ class DemoViewControllerNoChild: UIViewController {
             contentVC.albumTitle = self.popupBar.title
             contentVC.songTitle = self.popupBar.subtitle
             
+            let closeItem = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))
+            let playItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: contentVC, action: #selector(PopupContentViewController.playPauseAction(_:)))
+            self.popupBar.rightBarButtonItems = [playItem, closeItem]
+
             DispatchQueue.main.async {
                 self.presentPopupBar(withPopupContentViewController: contentVC, animated: true) {
                     PBLog("Popup Bar Presented")

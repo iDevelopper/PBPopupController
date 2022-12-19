@@ -12,36 +12,47 @@ import PBPopupController
 private let reuseIdentifier = "musicCollectionViewCell"
 
 class DemoCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+    
     fileprivate let sectionInsets = UIEdgeInsets(top: 20.0, left: 20.0, bottom: 20.0, right: 20.0)
     
     fileprivate var itemsPerRow: CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad {return 4}
         var statusBarOrientation: UIInterfaceOrientation = .unknown
-        #if !targetEnvironment(macCatalyst)
+#if !targetEnvironment(macCatalyst)
         if #available(iOS 13.0, *) {
             statusBarOrientation = self.view.window?.windowScene?.interfaceOrientation ?? .unknown
         } else {
-           statusBarOrientation = UIApplication.shared.statusBarOrientation
+            statusBarOrientation = UIApplication.shared.statusBarOrientation
         }
-        #endif
+#endif
         if statusBarOrientation == .portrait || statusBarOrientation == .portraitUpsideDown {return 2}
         return 4
     }
-
+    
+    var images = [UIImage]()
+    var titles = [String]()
+    var subtitles = [String]()
+    
     weak var firstVC: FirstTableViewController!
-
+    
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        for idx in 1...self.collectionView(collectionView, numberOfItemsInSection: 0) {
+            let imageName = String(format: "Cover%02d", idx)
+            images += [UIImage(named: imageName)!]
+            titles += [LoremIpsum.title]
+            subtitles += [LoremIpsum.sentence]
+        }
+        
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
+#if compiler(>=5.1)
             self.collectionView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
+#else
             self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
+#endif
         } else {
             self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
@@ -57,7 +68,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         
         self.collectionView.reloadData()
     }
-
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
@@ -67,44 +78,41 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
             }
         }, completion: nil)
     }
-
+    
     deinit {
         PBLog("deinit \(self)")
     }
     
     // MARK: - Navigation
-
+    
     @IBAction func dismiss(_ sender: Any) {
-        self.firstVC.dismiss(sender)
+        self.dismiss(animated: true)
     }
-
+    
     // MARK: - UICollectionViewDataSource
-
+    
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let firstVC = self.firstVC {
-            return firstVC.images.count
-        }
-        return 0
+        return 22
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MusicCollectionViewCell
-    
-        cell.imageView.image = self.firstVC.images[indexPath.row]
-        cell.title.text = self.firstVC.titles[indexPath.row]
-        cell.subtitle.text = self.firstVC.subtitles[indexPath.row]
         
-        #if compiler(>=5.1)
+        cell.imageView.image = self.images[indexPath.row]
+        cell.title.text = self.titles[indexPath.row]
+        cell.subtitle.text = self.subtitles[indexPath.row]
+        
+#if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             cell.title.textColor = UIColor.label
             cell.subtitle.textColor = UIColor.secondaryLabel
         }
-        #endif
-
+#endif
+        
         return cell
     }
     
@@ -113,7 +121,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         headerView.backgroundColor = UIColor.clear
         return headerView
     }
-
+    
     // MARK: - UICollectionView DelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -122,7 +130,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         }
         return CGSize(width: collectionView.bounds.width, height: 32.0)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let paddingSpace = sectionInsets.left * (itemsPerRow + 1)
         let availableWidth = view.frame.width - paddingSpace
@@ -138,27 +146,23 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return sectionInsets.left
     }
-
+    
     // MARK: - UICollectionViewDelegate
-
-    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath) as! MusicCollectionViewCell
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {        
+        print("\(String(describing: self.popupContainerViewController()))")
+        if let containerVC = popupContainerViewController, let popupBar = containerVC.popupBar {
+            popupBar.image = images[indexPath.row]
+            popupBar.title = titles[indexPath.row]
+            popupBar.subtitle = subtitles[indexPath.row]
+        }
         
-        if let firstVC = self.firstVC {
-            firstVC.containerVC.popupBar.image = cell.imageView.image
-            firstVC.containerVC.popupBar.title = cell.title.text
-            firstVC.containerVC.popupBar.subtitle = cell.subtitle.text
-            if let popupContentVC = firstVC.popupContentVC {
-                popupContentVC.albumArtImage = cell.imageView.image!
-                popupContentVC.songTitle = cell.title.text!
-                popupContentVC.albumTitle = cell.subtitle.text!
+        if let firstVC = self.firstVC, let containerVC = firstVC.containerVC {
+            if containerVC.popupController.popupPresentationState == .hidden {
+                containerVC.presentPopupBar(withPopupContentViewController: firstVC.isPopupContentTableView ? firstVC.popupContentTVC : firstVC.popupContentVC, animated: true, completion: {
+                    PBLog("Popup Bar Presented")
+                })
             }
-            if let popupContentTVC = firstVC.popupContentTVC {
-                popupContentTVC.albumArtImage = cell.imageView.image!
-                popupContentTVC.songTitle = cell.title.text!
-                popupContentTVC.albumTitle = cell.subtitle.text!
-            }
-            firstVC.presentPopupBar(self)
         }
     }
 }

@@ -43,6 +43,7 @@
 		32DB35C22534977F0099EB80 /* TabNavView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BA2534977F0099EB80 /* TabNavView.swift */; };
 		32DB35C32534977F0099EB80 /* ViewDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BB2534977F0099EB80 /* ViewDemoView.swift */; };
 		32DB35C42534977F0099EB80 /* TabDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35BC2534977F0099EB80 /* TabDemoView.swift */; };
+		32DF55EC294DA7290080EC6F /* NextTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DF55EB294DA7290080EC6F /* NextTableViewController.swift */; };
 		32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */; };
 		32E0EC2D217DF78D009C3DA9 /* SegmentedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2C217DF78D009C3DA9 /* SegmentedTableViewCell.swift */; };
 		32E0EC2F217EED03009C3DA9 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32E0EC2E217EED03009C3DA9 /* ButtonTableViewCell.swift */; };
@@ -140,6 +141,7 @@
 		32DB35BA2534977F0099EB80 /* TabNavView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabNavView.swift; sourceTree = "<group>"; };
 		32DB35BB2534977F0099EB80 /* ViewDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewDemoView.swift; sourceTree = "<group>"; };
 		32DB35BC2534977F0099EB80 /* TabDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabDemoView.swift; sourceTree = "<group>"; };
+		32DF55EB294DA7290080EC6F /* NextTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextTableViewController.swift; sourceTree = "<group>"; };
 		32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstTableViewController.swift; sourceTree = "<group>"; };
 		32E0EC2C217DF78D009C3DA9 /* SegmentedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedTableViewCell.swift; sourceTree = "<group>"; };
 		32E0EC2E217EED03009C3DA9 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTableViewCell.swift; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				323E309B2194A42A00CB8150 /* SplitViewController.swift */,
 				32E52FE620DA787400A6A11E /* MainTableViewController.swift */,
 				32E0EC2A217DF3F0009C3DA9 /* FirstTableViewController.swift */,
+				32DF55EB294DA7290080EC6F /* NextTableViewController.swift */,
 				3268B822219C2E0E00AC66EF /* DemoViewController.swift */,
 				3205F6A0250B4D81006EBC9F /* DemoViewControllerNoChild.swift */,
 				32080BD9208714190017FECD /* PopupContentViewController.swift */,
@@ -402,6 +405,7 @@
 				32080BC82087130E0017FECD /* AppDelegate.swift in Sources */,
 				32C0B672216C6A2100E0AC2B /* DemoChildViewController.swift in Sources */,
 				32C0160823268D31004DDDF1 /* SceneDelegate.swift in Sources */,
+				32DF55EC294DA7290080EC6F /* NextTableViewController.swift in Sources */,
 				32DB35C12534977F0099EB80 /* PBUIKitPopupContentController.swift in Sources */,
 				3246397A2197F96D0036E3B3 /* PlayerTableViewCell.swift in Sources */,
 				32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */,

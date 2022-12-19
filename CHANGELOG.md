@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.6
+
+Example improvements.
+
 ## 3.6.5
 
 Fixes a popup bar layout issue after transition to size.

@@ -249,6 +249,12 @@ internal class PBPopupPresentationController: UIPresentationController
     
     override func presentationTransitionDidEnd(_ completed: Bool)
     {
+        // Issue #23 - Reset the corner radius for the aesthetics of the animation of the control center presentation when state is open.
+        let isFullScreen = self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height
+        if self.popupPresentationStyle == .fullScreen ||  (self.popupPresentationStyle == .custom && isFullScreen) {
+            self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
+        }
+        //
         self.popupBarForPresentation?.removeFromSuperview()
         self.popupBarForPresentation = nil
         self.imageViewForPresentation?.removeFromSuperview()
@@ -290,6 +296,10 @@ internal class PBPopupPresentationController: UIPresentationController
         self.animateBackingViewToDeck(true, animated: false)
         
         self.popupContentView.popupCloseButton?.setButtonStateTransitioning()
+        
+        // Issue #23
+        self.setupCornerRadiusForPopupContentViewAnimated(false, open: true)
+        //
         
         self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
         
@@ -343,6 +353,12 @@ internal class PBPopupPresentationController: UIPresentationController
         self.imageViewForPresentation?.removeFromSuperview()
         self.imageViewForPresentation = nil
         
+        // Issue #23
+        let isFullScreen = self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height
+        if self.popupPresentationStyle == .fullScreen || (self.popupPresentationStyle == .custom && isFullScreen) {
+            self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
+        }
+        //
         if completed {
             self.cleanup()
         }
@@ -707,7 +723,13 @@ extension PBPopupPresentationController
         case .deck:
             cornerRadius = open ? (self.isCompactOrPhoneInLandscape() ? defaultCornerRadius : 10.0) : 0.0
         case .custom:
-            cornerRadius = open ? (self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height ? 0.0 : 10.0) : 0.0
+            let isFullScreen = self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height
+            if isFullScreen {
+                cornerRadius = open ? defaultCornerRadius : 0.0
+            }
+            else {
+                cornerRadius = open ? 10.0 : 0.0
+            }
         case .fullScreen:
             cornerRadius = open ? defaultCornerRadius : 0.0
         }

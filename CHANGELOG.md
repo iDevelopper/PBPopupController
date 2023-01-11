@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.7
+
+Reset the corner radius for the aesthetics of the animation of the control center presentation when state is open (issue #23).
+
 ## 3.6.6
 
 Example improvements.

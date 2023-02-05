@@ -883,7 +883,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Demo Album" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TYa-Ub-Ren" customClass="MarqueeLabel" customModule="PBPopupControllerSample" customModuleProvider="target">
-                                                            <rect key="frame" x="32.000000000000007" y="90.666666666666629" width="126.66666666666669" height="27"/>
+                                                            <rect key="frame" x="32" y="90.666666666666629" width="350" height="27"/>
                                                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="22"/>
                                                             <color key="textColor" red="0.91372549020000005" green="0.27058823529999998" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
@@ -893,7 +893,8 @@
                                                     <constraints>
                                                         <constraint firstItem="37P-NZ-y66" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" id="2VR-Gq-8um"/>
                                                         <constraint firstItem="zW1-rq-Bqp" firstAttribute="leading" secondItem="zhC-ct-SW0" secondAttribute="leading" constant="32" id="4Is-yb-iLB"/>
-                                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TYa-Ub-Ren" secondAttribute="trailing" id="5Zi-uz-rye"/>
+                                                        <constraint firstAttribute="trailing" secondItem="TYa-Ub-Ren" secondAttribute="trailing" constant="32" id="5Zi-uz-rye"/>
+                                                        <constraint firstItem="TYa-Ub-Ren" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" id="9J9-kQ-a6x"/>
                                                         <constraint firstItem="do3-F0-3EE" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" multiplier="3:6" id="CCq-iQ-n5b"/>
                                                         <constraint firstAttribute="trailing" secondItem="37P-NZ-y66" secondAttribute="trailing" constant="32" id="FJq-o0-iyz"/>
                                                         <constraint firstItem="MQk-Q4-ttC" firstAttribute="centerX" secondItem="zhC-ct-SW0" secondAttribute="centerX" id="GyO-YJ-DDB"/>
@@ -954,20 +955,20 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rlk-O2-AQP">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rlk-O2-AQP">
                                             <rect key="frame" x="24" y="6" width="48" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="7PC-ya-edO"/>
                                                 <constraint firstAttribute="width" constant="48" id="RB3-tP-SCT"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SQo-ta-OwN">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SQo-ta-OwN">
                                             <rect key="frame" x="80" y="34" width="314" height="15"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0vw-cX-Gyq">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0vw-cX-Gyq">
                                             <rect key="frame" x="80" y="11" width="314" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>

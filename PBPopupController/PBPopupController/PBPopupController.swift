@@ -334,7 +334,7 @@ extension PBPopupPresentationStyle
     @objc optional func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool
 }
 
-@objc public class PBPopupController: NSObject {
+@objc public class PBPopupController: NSObject, UIGestureRecognizerDelegate {
     
     // MARK: - Public Properties
     
@@ -361,6 +361,11 @@ extension PBPopupPresentationStyle
      */
     @objc public internal(set) var popupPresentationState: PBPopupPresentationState
     
+    /**
+     The tap gesture recognizer attached to the popup bar for presenting the popup content view.
+     */
+    @objc public var popupBarTapGestureRecognizer: UITapGestureRecognizer!
+
     /**
      The pan gesture recognizer attached to the popup bar for presenting the popup content view.
      */
@@ -540,11 +545,15 @@ extension PBPopupPresentationStyle
         rv.isHidden = true
         self.popupPresentationState = .hidden
         
-        rv.popupTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.popupTapGestureRecognized(tgr:)))
-        rv.addGestureRecognizer(rv.popupTapGestureRecognizer)
+        //rv.popupTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.popupTapGestureRecognized(tgr:)))
+        //rv.addGestureRecognizer(rv.popupTapGestureRecognizer)
         
         self.popupBarView.addSubview(rv)
         
+        self.popupBarTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.popupTapGestureRecognized(tgr:)))
+        self.popupBarView.addGestureRecognizer(self.popupBarTapGestureRecognizer)
+        self.popupBarTapGestureRecognizer.delegate = self
+
         self.containerViewController.popupBar = rv
         rv.popupController = self
         
@@ -764,37 +773,40 @@ extension PBPopupPresentationStyle
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
-            self.setGesturesEnabled(false)
+            //self.setGesturesEnabled(false)
             vc.popupBar.setHighlighted(true, animated: false)
             self._openPopupAnimated(true) {
                 vc.popupBar.setHighlighted(false, animated: false)
-                self.setGesturesEnabled(true)
+                //self.setGesturesEnabled(true)
             }
         }
     }
 
     internal func setGesturesEnabled(_ enabled: Bool, onlyTap: Bool = false)
     {
-        guard let vc = self.containerViewController else {
-            return
-        }
-        
         if enabled == false {
-            vc.popupBar.popupTapGestureRecognizer.isEnabled = false
+            self.popupBarTapGestureRecognizer.isEnabled = false
             if !onlyTap {
-                vc.popupController.popupBarPanGestureRecognizer.isEnabled = false
-                vc.popupController.popupContentPanGestureRecognizer.isEnabled = false
+                self.popupBarPanGestureRecognizer.isEnabled = false
+                self.popupContentPanGestureRecognizer.isEnabled = false
             }
         }
         else {
             DispatchQueue.main.async {
-                vc.popupBar.popupTapGestureRecognizer.isEnabled = true
-                vc.popupController.popupBarPanGestureRecognizer.isEnabled = true
-                vc.popupController.popupContentPanGestureRecognizer.isEnabled = true
+                self.popupBarTapGestureRecognizer.isEnabled = true
+                self.popupBarPanGestureRecognizer.isEnabled = true
+                self.popupContentPanGestureRecognizer.isEnabled = true
             }
         }
     }
-    
+
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer == self.popupBarTapGestureRecognizer && otherGestureRecognizer == self.popupBarPanGestureRecognizer {
+            return true
+        }
+        return false
+    }
+
     // MARK: - Popup Content Animation
     
     internal func preparePopupContentViewControllerForPresentation()
@@ -834,11 +846,12 @@ extension PBPopupPresentationStyle
             return
         }
         
-        self.setGesturesEnabled(false)
+        //self.setGesturesEnabled(false)
         
-        self._closePopupAnimated(true) {
-            self.setGesturesEnabled(true)
-        }
+        //self._closePopupAnimated(true) {
+        //    self.setGesturesEnabled(true)
+        //}
+        self._closePopupAnimated(true)
     }
     
     internal func _openPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
@@ -1105,7 +1118,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.layoutIfNeeded()
             
             //vc.popupBar.setHighlighted(true, animated: false)
-            self.setGesturesEnabled(false, onlyTap: true)
+            //self.setGesturesEnabled(false, onlyTap: true)
 
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
@@ -1119,7 +1132,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             //
             vc.present(vc.popupContentViewController, animated: true) {
                 //vc.popupBar.setHighlighted(false, animated: false)
-                self.setGesturesEnabled(true)
+                //self.setGesturesEnabled(true)
                 if self.popupPresentationState == .opening {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                         self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
@@ -1150,13 +1163,13 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             
-            self.setGesturesEnabled(false, onlyTap: true)
+            //self.setGesturesEnabled(false, onlyTap: true)
             
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             vc.popupContentViewController.dismiss(animated: true) {
-                self.setGesturesEnabled(true)
+                //self.setGesturesEnabled(true)
                 if self.popupPresentationState == .closing {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                         self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
@@ -1172,6 +1185,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                         vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
                         vc.view.insertSubview(vc.popupContentView, at: 0)
                     }
+                    self.popupBarPanGestureRecognizer.isEnabled = true
                     //
                 }
             }
@@ -1192,11 +1206,11 @@ extension PBPopupController: UIViewControllerPreviewingDelegate
             if let rv = vc.popupBar.previewingDelegate?.previewingViewControllerFor?(vc.popupBar) {
                 
                 // Disable interaction if a preview view controller is about to be presented.
-                vc.popupBar.popupTapGestureRecognizer.isEnabled = false
-                self.popupPresentationInteractiveController.gesture.isEnabled = false
+                self.popupBarTapGestureRecognizer.isEnabled = false
+                self.popupBarPanGestureRecognizer.isEnabled = false
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-                    vc.popupBar.popupTapGestureRecognizer.isEnabled = true
-                    self.popupPresentationInteractiveController.gesture.isEnabled = true
+                    self.popupBarTapGestureRecognizer.isEnabled = true
+                    self.popupBarPanGestureRecognizer.isEnabled = true
                 })
                 return rv
             }

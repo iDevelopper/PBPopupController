@@ -564,7 +564,7 @@ extension PBPopupPresentationController
             frame.origin.y = 0
         }
         let popupBarViewFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
-        frame.size.height = popupBarViewFrame.maxY
+        frame.size.height = popupBarViewFrame.origin.y
         PBLog("\(frame)")
         return frame
     }
@@ -979,12 +979,9 @@ extension PBPopupPresentationController
         else {
             let openFrame = imageView.convert(imageView.bounds, to: presentedView)
             imageViewForPresentation.frame = openFrame
-            imageViewForPresentation.isHidden = false
         }
         imageView.isHidden = true
-        if let imageModule = self.popupContentView.popupImageModule {
-            imageModule.isHidden = true
-        }
+        self.popupContentView.popupImageModule?.isHidden = true
     }
     
     internal func animateImageViewInFinalPosition()

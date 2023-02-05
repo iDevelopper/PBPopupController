@@ -998,7 +998,7 @@ extension FirstTableViewController: PBPopupControllerDelegate {
     }
     
     func popupController(_ popupController: PBPopupController, shouldClose popupContentViewController: UIViewController) -> Bool {
-        PBLog("willClose - state: \(popupController.popupPresentationState.description)")
+        PBLog("shouldClose - state: \(popupController.popupPresentationState.description)")
         return true
     }
     
@@ -1188,11 +1188,11 @@ extension FirstTableViewController: UIContextMenuInteractionDelegate
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
         
         // Disable interaction if a preview view controller is about to be presented.
-        self.containerVC.popupBar.popupTapGestureRecognizer.isEnabled = false
+        self.containerVC.popupController.popupBarTapGestureRecognizer.isEnabled = false
         self.containerVC.popupController.popupBarPanGestureRecognizer.isEnabled = false
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-           self.containerVC.popupBar.popupTapGestureRecognizer.isEnabled = true
-           self.containerVC.popupController.popupBarPanGestureRecognizer.isEnabled = true
+            self.containerVC.popupController.popupBarTapGestureRecognizer.isEnabled = true
+            self.containerVC.popupController.popupBarPanGestureRecognizer.isEnabled = true
         })
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: nil)
     }

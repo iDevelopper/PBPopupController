@@ -54,6 +54,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         self.gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gesture:)))
         self.gesture.delegate = self
+        self.popupController.popupBarTapGestureRecognizer.require(toFail: self.gesture)
         view.addGestureRecognizer(self.gesture)
         if presenting {
             self.popupController.popupBarPanGestureRecognizer = self.gesture
@@ -117,8 +118,15 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 }
             }
             self.location = vc.popupContentView.frame.minY
+            
             if self.isPresenting {
                 self.location = self.popupController.popupBarView.frame.minY
+            }
+            
+            if self.isDismissing {
+                self.presentationController.imageViewForPresentation?.isHidden = true
+                vc.popupContentView.popupImageView?.isHidden = false
+                vc.popupContentView.popupImageModule?.isHidden = false
             }
             
         case .changed:
@@ -162,7 +170,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         case .ended, .cancelled:
             guard let animator = self.animator else { return }
             
-            self.popupController.setGesturesEnabled(false)
+            //self.popupController.setGesturesEnabled(false)
             
             self.shouldComplete = self.completionPosition() == .end
             
@@ -187,6 +195,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     animator.addAnimations {
                         vc.setNeedsStatusBarAppearanceUpdate()
                     }
+                    self.presentationController.imageViewForPresentation?.isHidden = false
+                    vc.popupContentView.popupImageView?.isHidden = true
+                    vc.popupContentView.popupImageModule?.isHidden = true
+                    
+                    self.popupController.popupBarPanGestureRecognizer.isEnabled = false
                     self.presentationController.continueDismissalAnimationWithDurationFactor(1.0)
                     
                     let previousState = self.popupController.popupPresentationState
@@ -200,6 +213,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             else {
                 animator.isReversed = true
                 if self.isPresenting {
+                    self.popupController.popupBarPanGestureRecognizer.isEnabled = false
                     self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
                     animator.addAnimations {
                         vc.setNeedsStatusBarAppearanceUpdate()
@@ -208,6 +222,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         let previousState = self.popupController.popupPresentationState
                         self.popupController.popupPresentationState = .closed
                         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+                        self.popupController.popupBarPanGestureRecognizer.isEnabled = true
                         // TODO: SwiftUI
                         //if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                         //    vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
@@ -236,6 +251,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                             self.popupController.popupPresentationState = .open
                             self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
                         }
+                        
+                        self.presentationController.imageViewForPresentation?.isHidden = true
+                        vc.popupContentView.popupImageView?.isHidden = false
+                        vc.popupContentView.popupImageModule?.isHidden = false
+
                         animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
                     }
                 }
@@ -308,7 +328,20 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
             otherGestureRecognizer.state = UIGestureRecognizer.State.failed
             return true
         }
+        if otherGestureRecognizer == self.popupController.popupBarTapGestureRecognizer {
+            otherGestureRecognizer.state = UIGestureRecognizer.State.failed
+            return true
+        }
         return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool
+    {
+        // Do not begin the pan until the tap fails.
+        if gestureRecognizer == self.gesture && otherGestureRecognizer == self.popupController.popupBarTapGestureRecognizer {
+            return true
+        }
+        return false
     }
 }
 

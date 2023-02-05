@@ -266,6 +266,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     /**
      The tap gesture recognizer attached to the popup bar for presenting the popup content view.
      */
+    @available(*, deprecated, message: "Use PBPopupController.popupBarTapGestureRecognizer instead")
     @objc public var popupTapGestureRecognizer: UITapGestureRecognizer!
     
     /**

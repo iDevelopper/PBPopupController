@@ -808,7 +808,7 @@ extension PBPopupPresentationController
             if let nc = self.presentingVC.navigationController {
                 snapshotView = nc.view
             }
-            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: true, withCapInsets: .zero)
+            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: false, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
             self.popupBarView.isHidden = isHidden

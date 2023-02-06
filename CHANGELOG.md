@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.9
+
+Screenshot improvements.
+
 ## 3.6.8
 
 Gestures animations and conflicts improvements.

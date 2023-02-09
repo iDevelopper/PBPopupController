@@ -1,7 +1,7 @@
 # CHANGELOG
 
 
-## 3.6.9
+## 3.6.9 & 3.6.10
 
 Screenshot improvements.
 

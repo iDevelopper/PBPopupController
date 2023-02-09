@@ -564,7 +564,7 @@ extension PBPopupPresentationController
             frame.origin.y = 0
         }
         let popupBarViewFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
-        frame.size.height = popupBarViewFrame.origin.y
+        frame.size.height = popupBarViewFrame.maxY
         PBLog("\(frame)")
         return frame
     }
@@ -808,7 +808,7 @@ extension PBPopupPresentationController
             if let nc = self.presentingVC.navigationController {
                 snapshotView = nc.view
             }
-            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: false, withCapInsets: .zero)
+            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: self.isPresenting ? false : true, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
             self.popupBarView.isHidden = isHidden

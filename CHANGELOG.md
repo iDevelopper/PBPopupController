@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.6.11
+
+Pan gesture bug fixes and improvements.
+
 ## 3.6.9 & 3.6.10
 
 Screenshot improvements.

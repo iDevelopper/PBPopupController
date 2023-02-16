@@ -873,12 +873,13 @@ extension PBPopupPresentationStyle
         vc.view.setNeedsLayout()
         vc.view.layoutIfNeeded()
         
+        self.disableInteractiveTransitioning = true
+        self.popupContentPanGestureRecognizer.isEnabled = false
         delay(0.1) {
             let previousState = self.popupPresentationState
             self.popupPresentationState = .opening
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
-            self.disableInteractiveTransitioning = true
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 if (vc.popupContentView.superview != nil) {
@@ -894,9 +895,10 @@ extension PBPopupPresentationStyle
                 let previousState = self.popupPresentationState
                 self.popupPresentationState = .open
                 self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
-                self.disableInteractiveTransitioning = false
                 self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
                 completionBlock?()
+                self.disableInteractiveTransitioning = false
+                self.popupContentPanGestureRecognizer.isEnabled = true
             }
         }
     }
@@ -919,16 +921,15 @@ extension PBPopupPresentationStyle
         vc.view.setNeedsLayout()
         vc.view.layoutIfNeeded()
         
+        self.disableInteractiveTransitioning = true
         let previousState = self.popupPresentationState
         self.popupPresentationState = .closing
         self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
         self.delegate?.popupController?(self, willClose: vc.popupContentViewController)
-        self.disableInteractiveTransitioning = true
         vc.popupContentViewController.dismiss(animated: animated) {
             let previousState = self.popupPresentationState
             self.popupPresentationState = .closed
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
-            self.disableInteractiveTransitioning = false
             self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
             if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
@@ -941,6 +942,7 @@ extension PBPopupPresentationStyle
             }
             //
             completionBlock?()
+            self.disableInteractiveTransitioning = false
         }
     }
     
@@ -1111,6 +1113,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
     internal func presentInteractive()
     {
         if let vc = self.containerViewController {
+            self.popupContentPanGestureRecognizer.isEnabled = false
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
@@ -1150,6 +1153,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                     }
                 }
                 //
+                self.popupContentPanGestureRecognizer.isEnabled = true
             }
         }
     }
@@ -1185,8 +1189,8 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                         vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
                         vc.view.insertSubview(vc.popupContentView, at: 0)
                     }
-                    self.popupBarPanGestureRecognizer.isEnabled = true
                     //
+                    self.popupBarPanGestureRecognizer.isEnabled = true
                 }
             }
         }

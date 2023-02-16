@@ -72,9 +72,15 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     }
     
     override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning)
-    {        
+    {
+        super.startInteractiveTransition(transitionContext)
         self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
-        
+        if self.shouldComplete {
+            PBLog("shouldComplete", error: true)
+            self.continuePresentationAnimation()
+            self.finish()
+            return
+        }
         self.availableHeight = self.popupContainerViewAvailableHeight()
         self.panDirection = .right
         self.progress = 0.0
@@ -102,6 +108,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         switch gesture.state {
         case .began:
+            self.animator = nil
             self.progress = 0.0
             self.location = 0.0
             self.shouldComplete = false
@@ -168,27 +175,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: self.isPresenting ? .closed : .open, progress: self.progress, location: location)
 
         case .ended, .cancelled:
-            guard let animator = self.animator else { return }
-            
+            guard let animator = self.animator else {
+                self.shouldComplete = true
+                return
+            }
+
             //self.popupController.setGesturesEnabled(false)
             
             self.shouldComplete = self.completionPosition() == .end
             
             if self.shouldComplete {
                 if self.isPresenting {
-                    self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
-                    animator.addAnimations {
-                        vc.setNeedsStatusBarAppearanceUpdate()
-                        vc.popupContentView.popupCloseButton?.alpha = 1.0
-                        self.presentationController.popupBarForPresentation?.alpha = 0.0
-                    }
-                    
-                    animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
-                    
-                    let previousState = self.popupController.popupPresentationState
-                    self.popupController.popupPresentationState = .opening
-                    self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-                    self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
+                    self.continuePresentationAnimation()
                 }
                 else {
                     self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
@@ -205,7 +203,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     let previousState = self.popupController.popupPresentationState
                     self.popupController.popupPresentationState = .closing
                     self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-
                     self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
                 }
                 self.finish()
@@ -267,6 +264,25 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         default:
             break
         }
+    }
+    
+    private func continuePresentationAnimation()
+    {
+        guard let vc = self.popupController.containerViewController else { return }
+        
+        self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
+        animator.addAnimations {
+            vc.setNeedsStatusBarAppearanceUpdate()
+            vc.popupContentView.popupCloseButton?.alpha = 1.0
+            self.presentationController.popupBarForPresentation?.alpha = 0.0
+        }
+        
+        animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
+        
+        let previousState = self.popupController.popupPresentationState
+        self.popupController.popupPresentationState = .opening
+        self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+        self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
     }
     
     private func completionPosition() -> UIViewAnimatingPosition

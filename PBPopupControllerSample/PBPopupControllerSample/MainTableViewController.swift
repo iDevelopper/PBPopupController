@@ -141,7 +141,7 @@ class MainTableViewController: UITableViewController {
         }
         else if indexPath.row == 5 {
             let vc = DemoViewControllerNoChild()
-            vc.view.backgroundColor = .white
+            //vc.view.backgroundColor = .white
             return vc
         }
         else if let vc = self.storyboard?.instantiateViewController(withIdentifier: self.identifiers[indexPath.row]) {

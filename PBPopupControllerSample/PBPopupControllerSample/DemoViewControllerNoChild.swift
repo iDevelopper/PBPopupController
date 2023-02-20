@@ -14,6 +14,10 @@ class DemoViewControllerNoChild: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if #available(iOS 13.0, *) {
+            self.view.backgroundColor = UIColor.systemBackground
+        }
+        
         let topLabel = UILabel()
         topLabel.text = "Top"
 

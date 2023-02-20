@@ -76,8 +76,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         super.startInteractiveTransition(transitionContext)
         self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
         if self.shouldComplete {
-            PBLog("shouldComplete", error: true)
-            self.continuePresentationAnimation()
+            //PBLog("shouldComplete", error: true)
+            self.continuePresentationAnimation(0.6)
             self.finish()
             return
         }
@@ -266,7 +266,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         }
     }
     
-    private func continuePresentationAnimation()
+    private func continuePresentationAnimation(_ durationFactor: CGFloat = 0.0)
     {
         guard let vc = self.popupController.containerViewController else { return }
         
@@ -277,7 +277,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             self.presentationController.popupBarForPresentation?.alpha = 0.0
         }
         
-        animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
+        if durationFactor == 0.0 {
+            animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
+        }
+        else {
+            let timingParameters = UICubicTimingParameters(animationCurve: .easeInOut)
+            animator.continueAnimation(withTimingParameters: timingParameters, durationFactor: durationFactor)
+        }
         
         let previousState = self.popupController.popupPresentationState
         self.popupController.popupPresentationState = .opening

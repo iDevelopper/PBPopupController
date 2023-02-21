@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PBPopupController
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,6 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let font = UIFont.boldSystemFont(ofSize: UIFont.buttonFontSize)
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
+        
+        PBPopupLogs.instance.isEnabled = true // default, false will disable logging from the module PBPopupController
+        
         return true
     }
 

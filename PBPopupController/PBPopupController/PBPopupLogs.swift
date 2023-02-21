@@ -8,15 +8,20 @@
 
 import Foundation
 
-let debug: Bool = true
+@objc public class PBPopupLogs: NSObject {
+    
+    public static var instance = PBPopupLogs()
+    
+    public var isEnabled: Bool = true
+}
 
 /**
  Logs a message to the Apple System Log facility.
  */
-public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: String = #file, function: String = #function, _ line: Int = #line)
+public func PBLog<T>( _ object: @autoclosure() -> T, error: Bool = false, file: String = #fileID, function: String = #function, _ line: Int = #line)
 {
     #if DEBUG
-    if debug {
+    if PBPopupLogs.instance.isEnabled || !file.contains("PBPopupController/") {
         let value = object()
         let stringRepresentation: String
         

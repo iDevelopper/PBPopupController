@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.6.13
+
+Pan gesture bug fixes and improvements for dismissal transition.
+Console logs from PBPopupController module can be disabled.
+
 ## 3.6.11 & 3.6.12
 
 Pan gesture bug fixes and improvements.

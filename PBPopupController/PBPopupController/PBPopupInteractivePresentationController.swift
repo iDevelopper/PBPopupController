@@ -24,7 +24,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
     internal var contentOffset: CGPoint!
     
-    internal var gesture: UIPanGestureRecognizer!
+    private var gesture: UIPanGestureRecognizer!
     
     private var panDirection: UIPanGestureRecognizer.PanDirection!
     
@@ -76,8 +76,14 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         super.startInteractiveTransition(transitionContext)
         self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
         if self.shouldComplete {
-            //PBLog("shouldComplete", error: true)
-            self.continuePresentationAnimation(0.6)
+            PBLog("shouldComplete", error: true)
+            if self.isPresenting {
+                self.continuePresentationAnimation(0.6)
+            }
+            else {
+                self.continueDismissalAnimation(0.6)
+                self.isDismissing = false
+            }
             self.finish()
             return
         }
@@ -179,8 +185,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 self.shouldComplete = true
                 return
             }
-
-            //self.popupController.setGesturesEnabled(false)
             
             self.shouldComplete = self.completionPosition() == .end
             
@@ -189,21 +193,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.continuePresentationAnimation()
                 }
                 else {
-                    self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
-                    animator.addAnimations {
-                        vc.setNeedsStatusBarAppearanceUpdate()
-                    }
-                    self.presentationController.imageViewForPresentation?.isHidden = false
-                    vc.popupContentView.popupImageView?.isHidden = true
-                    vc.popupContentView.popupImageModule?.isHidden = true
-                    
-                    self.popupController.popupBarPanGestureRecognizer.isEnabled = false
-                    self.presentationController.continueDismissalAnimationWithDurationFactor(1.0)
-                    
-                    let previousState = self.popupController.popupPresentationState
-                    self.popupController.popupPresentationState = .closing
-                    self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-                    self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
+                    self.continueDismissalAnimation()
                 }
                 self.finish()
             }
@@ -289,6 +279,27 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         self.popupController.popupPresentationState = .opening
         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
         self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
+    }
+    
+    private func continueDismissalAnimation(_ durationFactor: CGFloat = 0.0)
+    {
+        guard let vc = self.popupController.containerViewController else { return }
+
+        self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
+        animator.addAnimations {
+            vc.setNeedsStatusBarAppearanceUpdate()
+        }
+        self.presentationController.imageViewForPresentation?.isHidden = false
+        vc.popupContentView.popupImageView?.isHidden = true
+        vc.popupContentView.popupImageModule?.isHidden = true
+        
+        self.popupController.popupBarPanGestureRecognizer.isEnabled = false
+        self.presentationController.continueDismissalAnimationWithDurationFactor(1.0)
+        
+        let previousState = self.popupController.popupPresentationState
+        self.popupController.popupPresentationState = .closing
+        self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+        self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
     }
     
     private func completionPosition() -> UIViewAnimatingPosition

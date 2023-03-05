@@ -27,9 +27,10 @@ internal class PBPopupUICustomBarViewController : UIViewController {
         
         addChild(hostingChild)
         hostingChild.view.backgroundColor = nil
-        hostingChild.view.translatesAutoresizingMaskIntoConstraints = true
-        hostingChild.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        hostingChild.view.frame = view.bounds
+        hostingChild.view.autoresizingMask = [.flexibleWidth]
+        var frame = view.bounds
+        frame.size.height = hostingChild.sizeThatFits(in: CGSize.zero).height
+        hostingChild.view.frame = frame
         view.addSubview(hostingChild.view)
         hostingChild.didMove(toParent: self)
         
@@ -39,5 +40,17 @@ internal class PBPopupUICustomBarViewController : UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.view.preservesSuperviewLayoutMargins = true
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.preferredContentSize = hostingChild.sizeThatFits(in: CGSize.zero)
     }
 }

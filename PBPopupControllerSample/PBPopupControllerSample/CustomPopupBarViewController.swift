@@ -23,6 +23,8 @@ class CustomPopupBarViewController: UIViewController {
         
         self.view.preservesSuperviewLayoutMargins = true
         
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        
         barView.layer.shadowColor = UIColor.black.cgColor
         barView.layer.shadowOpacity = 0.5
         barView.layer.shadowRadius = 5

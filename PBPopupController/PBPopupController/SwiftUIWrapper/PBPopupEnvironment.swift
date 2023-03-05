@@ -12,6 +12,35 @@ internal struct PBPopupBarStyleKey: EnvironmentKey {
     static let defaultValue: PBPopupBarStyle = .default
 }
 
+internal struct PBPopupBarBarStyleKey: EnvironmentKey {
+    static let defaultValue: UIBarStyle = .default
+}
+
+@available(iOS 14.0, *)
+internal struct PBPopupBarBackgroundStyleKey: EnvironmentKey {
+    static let defaultValue: UIBlurEffect.Style = .systemMaterial
+}
+
+internal struct PBPopupBarBackgroundEffectKey: EnvironmentKey {
+    static let defaultValue: UIBlurEffect? = nil
+}
+
+internal struct PBPopupBarInheritsVisualStyleFromBottomBarKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
+internal struct PBPopupBarIsTranslucentKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
+internal struct PBPopupBarBackgroundColorKey: EnvironmentKey {
+    static let defaultValue: UIColor? = nil
+}
+
+internal struct PBPopupBarBarTintColorKey: EnvironmentKey {
+    static let defaultValue: UIColor? = nil
+}
+
 internal struct PBPopupCloseButtonStyleKey: EnvironmentKey {
     static let defaultValue: PBPopupCloseButtonStyle = .default
 }
@@ -52,6 +81,10 @@ internal struct PBPopupIgnoreDropShadowViewKey: EnvironmentKey {
     static let defaultValue: Bool = true
 }
 
+internal struct PBPopupShouldExtendCustomBarUnderSafeAreaKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
 @available(iOS 14.0, *)
 internal struct PBPopupBarCustomViewKey: EnvironmentKey {
     static let defaultValue: PBPopupBarCustomView? = nil
@@ -67,6 +100,41 @@ internal extension EnvironmentValues {
     var popupBarStyle: PBPopupBarStyle {
         get { self[PBPopupBarStyleKey.self] }
         set { self[PBPopupBarStyleKey.self] = newValue }
+    }
+    
+    var barStyle: UIBarStyle {
+        get { self[PBPopupBarBarStyleKey.self] }
+        set { self[PBPopupBarBarStyleKey.self] = newValue }
+    }
+    
+    var backgroundStyle: UIBlurEffect.Style {
+        get { self[PBPopupBarBackgroundStyleKey.self] }
+        set { self[PBPopupBarBackgroundStyleKey.self] = newValue }
+    }
+    
+    var backgroundEffect: UIBlurEffect? {
+        get { self[PBPopupBarBackgroundEffectKey.self] }
+        set { self[PBPopupBarBackgroundEffectKey.self] = newValue }
+    }
+    
+    var inheritsVisualStyleFromBottomBar: Bool {
+        get { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] }
+        set { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] = newValue }
+    }
+    
+    var isTranslucent: Bool {
+        get { self[PBPopupBarIsTranslucentKey.self] }
+        set { self[PBPopupBarIsTranslucentKey.self] = newValue }
+    }
+    
+    var backgroundColor: UIColor? {
+        get { self[PBPopupBarBackgroundColorKey.self] }
+        set { self[PBPopupBarBackgroundColorKey.self] = newValue }
+    }
+    
+    var barTintColor: UIColor? {
+        get { self[PBPopupBarBarTintColorKey.self] }
+        set { self[PBPopupBarBarTintColorKey.self] = newValue }
     }
     
     var popupBarProgressViewStyle: PBPopupBarProgressViewStyle {
@@ -114,9 +182,13 @@ internal extension EnvironmentValues {
         set { self[PBPopupIgnoreDropShadowViewKey.self] = newValue }
     }
     
+    var shouldExtendCustomBarUnderSafeArea: Bool {
+        get { self[PBPopupShouldExtendCustomBarUnderSafeAreaKey.self] }
+        set { self[PBPopupShouldExtendCustomBarUnderSafeAreaKey.self] = newValue }
+    }
+    
     var popupBarCustomBarView: PBPopupBarCustomView? {
         get { self[PBPopupBarCustomViewKey.self] }
         set { self[PBPopupBarCustomViewKey.self] = newValue }
     }
-    
 }

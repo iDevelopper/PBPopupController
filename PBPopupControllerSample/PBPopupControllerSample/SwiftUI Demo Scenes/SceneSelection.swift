@@ -70,12 +70,12 @@ struct SceneSelection: View {
                 }
                 Section(header: Text("Custom Popup Bar")) {
                     Button("Custom Popup Bar + UIKit Popup Content Controller") {
-                        viewPresented.toggle()
+                        mapSheetPresented.toggle()
                     }
                     .foregroundColor(Color(.label))
-                    .fullScreenCover(isPresented: $viewPresented, content: {
+                    .fullScreenCover(isPresented: $mapSheetPresented, content: {
                         CustomBarView {
-                            viewPresented.toggle()
+                            mapSheetPresented.toggle()
                         }
                     })
                 }

@@ -109,6 +109,34 @@ public extension View {
         return environment(\.popupBarStyle, style)
     }
     
+    func barStyle(_ style: UIBarStyle) -> some View {
+        return environment(\.barStyle, style)
+    }
+    
+    func backgroundStyle(_ style: UIBlurEffect.Style) -> some View {
+        return environment(\.backgroundStyle, style)
+    }
+    
+    func backgroundEffect(_ effect: UIBlurEffect) -> some View {
+        return environment(\.backgroundEffect, effect)
+    }
+    
+    func inheritsVisualStyleFromBottomBar(_ inherits: Bool) -> some View {
+        return environment(\.inheritsVisualStyleFromBottomBar, inherits)
+    }
+    
+    func isTranslucent(_ translucent: Bool) -> some View {
+        return environment(\.isTranslucent, translucent)
+    }
+    
+    func backgroundColor(_ color: UIColor) -> some View {
+        return environment(\.backgroundColor, color)
+    }
+    
+    func barTintColor(_ color: UIColor) -> some View {
+        return environment(\.barTintColor, color)
+    }
+    
     func popupBarProgressViewStyle(_ style: PBPopupBarProgressViewStyle) -> some View {
         return environment(\.popupBarProgressViewStyle, style)
     }
@@ -136,9 +164,13 @@ public extension View {
     func popupContentSize(_ size: CGSize) -> some View {
         return environment(\.popupContentSize, size)
     }
-
+    
     func popupIgnoreDropShadowView(_ ignore: Bool) -> some View {
         return environment(\.popupIgnoreDropShadowView, ignore)
+    }
+    
+    func shouldExtendCustomBarUnderSafeArea(_ should: Bool) -> some View {
+        return environment(\.shouldExtendCustomBarUnderSafeArea, should)
     }
 }
 

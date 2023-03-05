@@ -287,6 +287,13 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     /**
+     Set this property to `true` if you want the custom popup bar extend under the safe area, to the bottom of the screen.
+
+     When a popup bar is presented on a view controller with the system bottom docking view, or a navigation controller with hidden toolbar, the popup bar's background view will extend under the safe area.
+     */
+    @objc public var shouldExtendCustomBarUnderSafeArea: Bool = true
+    
+    /**
      If `true`, the popup bar will automatically inherit its style from the bottom bar.
      */
     @objc public var inheritsVisualStyleFromBottomBar: Bool = true {
@@ -371,6 +378,17 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     /**
+     The custom popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
+     */
+    public var backgroundEffect: UIBlurEffect? {
+        didSet {
+            if popupBarStyle == .custom, backgroundEffect != nil {
+                self.backgroundView.effect = backgroundEffect
+            }
+        }
+    }
+    
+    /**
      The popup bar background style that specifies its visual effect appearance.
      
      - SeeAlso: `UIBlurEffect.Style`
@@ -408,7 +426,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                 self.toolbar.isTranslucent = newValue
                 self.backgroundView.isHidden = (newValue == false)
                 self.safeAreaToolbar?.isTranslucent = newValue
-                if self.inheritsVisualStyleFromBottomBar == true {
+                if self.inheritsVisualStyleFromBottomBar == true || isTranslucent == false {
                     self.backgroundView.effect = nil
                     self.backgroundView.isHidden = true
                 }
@@ -672,7 +690,9 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     private var toolbar: PBPopupToolbar!
 
     private var toolbarBottomConstraint: NSLayoutConstraint!
-    
+
+    private var customBarBottomConstraint: NSLayoutConstraint!
+
     private var safeAreaBackgroundViewHeightConstraint: NSLayoutConstraint?
     
     private var safeAreaToolbar: UIToolbar!
@@ -979,10 +999,16 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         if self.popupBarStyle == .custom && self.customPopupBarViewController != nil {
             self.addSubview(customPopupBarViewController!.view)
             self.bringSubviewToFront(self.highlightView)
+            customPopupBarViewController!.view.autoresizingMask = [.flexibleWidth]
+            self.frame.size.height = customPopupBarViewController!.preferredContentSize.height
+            customPopupBarViewController!.view.frame = frame
+            self.customBarBottomConstraint = nil
         }
-        self.backgroundView.isHidden = hidden
-        self.toolbar.isHidden = hidden
-        self.safeAreaToolbar?.isHidden = hidden
+        self.backgroundView.isHidden = !self.isTranslucent
+        self.toolbar.isHidden = !self.isTranslucent
+        if !self.shouldExtendCustomBarUnderSafeArea {
+            self.safeAreaToolbar?.isHidden = hidden
+        }
         self.titlesView.isHidden = hidden
     }
     
@@ -990,14 +1016,25 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         if self.customPopupBarViewController != nil {
             
             self.customPopupBarViewController?.view.preservesSuperviewLayoutMargins = true
-            
-            self.customPopupBarViewController?.view.translatesAutoresizingMaskIntoConstraints = false
-            
-            NSLayoutConstraint.activate([
-                self.topAnchor.constraint(equalTo:(customPopupBarViewController?.view.topAnchor)!),
-                self.leftAnchor.constraint(equalTo: (customPopupBarViewController?.view.leftAnchor)!),
-                self.rightAnchor.constraint(equalTo: (customPopupBarViewController?.view.rightAnchor)!),
-                self.bottomAnchor.constraint(equalTo: (customPopupBarViewController?.view.bottomAnchor)!)])
+                        
+            if self.customPopupBarViewController?.view.translatesAutoresizingMaskIntoConstraints == false
+            {
+                NSLayoutConstraint.activate([
+                    self.topAnchor.constraint(equalTo:customPopupBarViewController!.view.topAnchor),
+                    self.leftAnchor.constraint(equalTo: customPopupBarViewController!.view.leftAnchor),
+                    self.rightAnchor.constraint(equalTo: customPopupBarViewController!.view.rightAnchor)
+                ])
+                
+                if let bottomBar = self.popupController.containerViewController.bottomBar {
+                    if let bottomConstraint = self.customBarBottomConstraint {
+                        bottomConstraint.constant = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? (self.shouldExtendCustomBarUnderSafeArea ? -self.safeBottom() : 0.0) : 0.0
+                    }
+                    else {
+                        self.customBarBottomConstraint = self.customPopupBarViewController!.view.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: (bottomBar.frame.height == 0 || bottomBar.isHidden) ? (self.shouldExtendCustomBarUnderSafeArea ? -self.safeBottom() : 0.0) : 0.0)
+                    }
+                    self.customBarBottomConstraint.isActive = true
+                }
+            }
         }
     }
     
@@ -1128,7 +1165,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             self.imageViewHeightConstraint.isActive = true
         }
         
-        self.shadowImageView.isHidden = ((self.image == nil && self.imageController == nil) || self.popupBarStyle == .compact)
+        self.shadowImageView.isHidden = ((self.image == nil && self.imageController == nil) ||/* self.popupBarStyle == .compact*/ self.popupBarStyle != .prominent)
         
         self.shadowImageView.layoutIfNeeded()
     }

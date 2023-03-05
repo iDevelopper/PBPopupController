@@ -303,6 +303,8 @@ internal class PBPopupPresentationController: UIPresentationController
         
         self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
         
+        self.popupBarView.isHidden = true
+        
         coordinator.animate { context in
             self.animateBackingViewToDeck(false, animated: true)
             if !context.isInteractive {
@@ -317,6 +319,7 @@ internal class PBPopupPresentationController: UIPresentationController
 
             containerView.layoutIfNeeded()
         } completion: { _ in
+            self.popupBarView.isHidden = false
             self.popupContentView.popupImageView?.isHidden = false
             self.popupContentView.popupImageModule?.isHidden = false
         }
@@ -699,11 +702,11 @@ extension PBPopupPresentationController
         let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
         
         var cornerRadius: CGFloat = 0.0
-#if targetEnvironment(macCatalyst)
-        cornerRadius = defaultCornerRadius
-#else
+//#if targetEnvironment(macCatalyst)
+//        cornerRadius = defaultCornerRadius
+//#else
         cornerRadius = open ? 10.0 : defaultCornerRadius
-#endif
+//#endif
         if #available(iOS 13.0, *) {
             backingView.layer.cornerCurve = .continuous
         }
@@ -716,9 +719,9 @@ extension PBPopupPresentationController
         let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
         
         var cornerRadius: CGFloat = 0.0
-#if targetEnvironment(macCatalyst)
-        cornerRadius = defaultCornerRadius
-#else
+//#if targetEnvironment(macCatalyst)
+//        cornerRadius = defaultCornerRadius
+//#else
         switch self.popupPresentationStyle {
         case .deck:
             cornerRadius = open ? (self.isCompactOrPhoneInLandscape() ? defaultCornerRadius : 10.0) : 0.0
@@ -737,6 +740,7 @@ extension PBPopupPresentationController
         if #available(iOS 13.0, *) {
             self.popupContentView.layer.cornerCurve = .continuous
         }
+#if !targetEnvironment(macCatalyst)
         if let dropShadowView = self.popupController.dropShadowViewFor(self.presentingVC.view) {
             cornerRadius = open ? dropShadowView.layer.cornerRadius : 0.0
             if #available(iOS 13.0, *) {
@@ -744,6 +748,7 @@ extension PBPopupPresentationController
             }
         }
 #endif
+//#endif
 
         /// splitViewController master or detail
         if let svc = self.presentingVC.splitViewController, self.traitCollection.horizontalSizeClass == .regular {

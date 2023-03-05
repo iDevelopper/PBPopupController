@@ -24,6 +24,13 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     
     @Environment(\.popupCloseButtonStyle) var popupCloseButtonStyle: PBPopupCloseButtonStyle
     @Environment(\.popupBarStyle) var popupBarStyle: PBPopupBarStyle
+    @Environment(\.barStyle) var barStyle: UIBarStyle
+    @Environment(\.backgroundStyle) var backgroundStyle: UIBlurEffect.Style
+    @Environment(\.backgroundEffect) var backgroundEffect: UIBlurEffect?
+    @Environment(\.inheritsVisualStyleFromBottomBar) var inheritsVisualStyleFromBottomBar: Bool
+    @Environment(\.isTranslucent) var isTranslucent: Bool
+    @Environment(\.backgroundColor) var backgroundColor: UIColor?
+    @Environment(\.barTintColor) var barTintColor: UIColor?
     @Environment(\.popupBarProgressViewStyle) var popupBarProgressViewStyle: PBPopupBarProgressViewStyle
     @Environment(\.popupBarBorderViewStyle) var popupBarBorderViewStyle: PBPopupBarBorderViewStyle
     @Environment(\.popupPresentationStyle) var popupPresentationStyle: PBPopupPresentationStyle
@@ -33,6 +40,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupCompletionFlickMagnitude) var popupCompletionFlickMagnitude: CGFloat
     @Environment(\.popupContentSize) var popupContentSize: CGSize
     @Environment(\.popupIgnoreDropShadowView) var popupIgnoreDropShadowView: Bool
+    @Environment(\.shouldExtendCustomBarUnderSafeArea) var shouldExtendCustomBarUnderSafeArea: Bool
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
     
     init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
@@ -61,8 +69,16 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  isHidden: _isHidden,
                                  closeButtonStyle: popupCloseButtonStyle,
                                  popupBarStyle: popupBarStyle,
+                                 barStyle: barStyle,
+                                 backgroundStyle: backgroundStyle,
+                                 backgroundEffect: backgroundEffect,
+                                 inheritsVisualStyleFromBottomBar: inheritsVisualStyleFromBottomBar,
+                                 isTranslucent: isTranslucent,
+                                 backgroundColor: backgroundColor,
+                                 barTintColor: barTintColor,
                                  progressViewStyle: popupBarProgressViewStyle,
                                  borderViewStyle: popupBarBorderViewStyle,
+                                 shouldExtendCustomBarUnderSafeArea: shouldExtendCustomBarUnderSafeArea,
                                  customBarView: popupBarCustomBarView,
                                  popupPresentationStyle: popupPresentationStyle,
                                  popupPresentationDuration: popupPresentationDuration,

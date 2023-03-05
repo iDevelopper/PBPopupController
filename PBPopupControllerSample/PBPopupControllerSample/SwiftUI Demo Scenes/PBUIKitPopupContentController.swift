@@ -8,15 +8,28 @@
 
 import UIKit
 
+@available(iOS 14.0, *)
 class PBUIKitPopupContentController : UIViewController {
+
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let popupContentView = containerVC.popupContentView else {return .default}
+        
+        if popupContentView.popupPresentationStyle != .deck {
+            return .default
+        }
+        return containerVC.popupController.popupStatusBarStyle
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .clear
+        self.view.backgroundColor = .systemBackground
         
         let label = UILabel()
         label.numberOfLines = 0
-        label.text = "UIKit Popup Content Controller"
+        label.textAlignment = .center
+        label.text = "UIKit\nPopup Content Controller"
         label.font = .preferredFont(forTextStyle: .title1)
         label.translatesAutoresizingMaskIntoConstraints = false
         

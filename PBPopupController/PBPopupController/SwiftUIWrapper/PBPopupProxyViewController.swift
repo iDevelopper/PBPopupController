@@ -182,9 +182,15 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             if self.target.popupBar.popupBarStyle != .custom {
                 self.target.popupBar.popupBarStyle = self.currentPopupState.popupBarStyle
             }
-            self.target.popupContentView.popupCloseButtonStyle = self.currentPopupState.closeButtonStyle
+            self.target.popupBar.barStyle = self.currentPopupState.barStyle
+            self.target.popupBar.backgroundStyle = self.currentPopupState.backgroundStyle
+            self.target.popupBar.inheritsVisualStyleFromBottomBar = self.currentPopupState.inheritsVisualStyleFromBottomBar
+            self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
+            self.target.popupBar.backgroundColor = self.currentPopupState.backgroundColor
+            self.target.popupBar.barTintColor = self.currentPopupState.barTintColor
             self.target.popupBar.progressViewStyle = self.currentPopupState.progressViewStyle
             self.target.popupBar.borderViewStyle = self.currentPopupState.borderViewStyle
+            self.target.popupContentView.popupCloseButtonStyle = self.currentPopupState.closeButtonStyle
             self.target.popupContentView.popupPresentationStyle = self.currentPopupState.popupPresentationStyle
             self.target.popupContentView.popupPresentationDuration = self.currentPopupState.popupPresentationDuration
             self.target.popupContentView.popupDismissalDuration = self.currentPopupState.popupDismissalDuration
@@ -192,11 +198,13 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             self.target.popupContentView.popupCompletionFlickMagnitude = self.currentPopupState.popupCompletionFlickMagnitude
             self.target.popupContentView.popupContentSize = self.currentPopupState.popupContentSize
             self.target.popupContentView.popupIgnoreDropShadowView = self.currentPopupState.popupIgnoreDropShadowView
+            self.target.popupBar.shouldExtendCustomBarUnderSafeArea = self.currentPopupState.shouldExtendCustomBarUnderSafeArea
             if let customBarView = self.currentPopupState.customBarView {
                 let rv: PBPopupUICustomBarViewController
                 if let customController = self.target.popupBar.customPopupBarViewController as? PBPopupUICustomBarViewController {
                     rv = customController
                     rv.setAnyView(customBarView.popupBarCustomBarView)
+                    self.target.popupBar.backgroundEffect = self.currentPopupState.backgroundEffect
                 } else {
                     rv = PBPopupUICustomBarViewController(anyView: customBarView.popupBarCustomBarView)
                     self.target.popupBar.customPopupBarViewController = rv
@@ -216,6 +224,12 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                     self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated, completion: nil)
                 }
                 else {
+                    if self.currentPopupState.isOpen == true {
+                        self.target.openPopup(animated: true, completion: nil)
+                    }
+                    else {
+                        self.target.closePopup(animated: true, completion: nil)
+                    }
                     if self.currentPopupState.isHidden == true {
                         if !self.target.popupBarIsHidden {
                             self.target.hidePopupBar(animated: true)

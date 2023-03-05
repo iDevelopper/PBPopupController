@@ -308,6 +308,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if self.popupBarStyle == .custom {
                 if let customPopupBarVC = storyboard?.instantiateViewController(withIdentifier: "CustomPopupBarViewController") as? CustomPopupBarViewController {
                     customPopupBarVC.view.backgroundColor = UIColor.clear
+                    popupBar.shouldExtendCustomBarUnderSafeArea = false
+                    popupBar.isTranslucent = false
                     popupBar.customPopupBarViewController = customPopupBarVC
 
                     customPopupBarVC.imageView.image = popupBar.image
@@ -321,6 +323,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     func setupPopupBar() {
         if let popupBar = self.containerVC.popupBar {
             popupBar.PBPopupBarShowColors = false
+            popupBar.shouldExtendCustomBarUnderSafeArea = true
+            popupBar.isTranslucent = true
             popupBar.dataSource = self
             popupBar.previewingDelegate = self
             
@@ -483,6 +487,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             return
         }
 
+        self.setupPopupBar()
         if let popupBar = self.containerVC.popupBar {
             popupBar.popupBarStyle = self.popupBarStyle
             self.configureBarButtonItems()

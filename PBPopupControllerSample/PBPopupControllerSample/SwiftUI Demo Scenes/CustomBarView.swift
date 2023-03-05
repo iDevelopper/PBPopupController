@@ -76,6 +76,12 @@ struct CustomBarView: View {
             .padding()
         }
         .popup(isPresented: Binding.constant(true), isOpen: $isOpen, popupContentController: popupContentController)
+        .inheritsVisualStyleFromBottomBar(false)
+        //.isTranslucent(false)
+        //.backgroundColor(.white)
+        //.barTintColor(UIColor(.white))
+        //.backgroundEffect(UIBlurEffect(style: .systemUltraThinMaterialDark))
+        .shouldExtendCustomBarUnderSafeArea(true)
         .popupBarCustomView() {
             ZStack(alignment: .trailing) {
                 HStack {
@@ -84,7 +90,6 @@ struct CustomBarView: View {
                         self.region = pressing ? CustomBarView.zoomedRegion : CustomBarView.defaultRegion
                     }.padding()
                     Spacer()
-                    
                 }
                 Button(action: {
                     isOpen.toggle()
@@ -95,7 +100,7 @@ struct CustomBarView: View {
                 .buttonStyle(MyButtonStyle(colorScheme: colorScheme))
                 .padding()
             }
-            .background(Color.white)
+            //.background(Color.white)
         }
     }
 }

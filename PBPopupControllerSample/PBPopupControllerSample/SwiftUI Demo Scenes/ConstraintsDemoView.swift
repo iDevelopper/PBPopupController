@@ -62,11 +62,11 @@ extension View {
         return self.popup(isPresented: isPresented, isHidden: isHidden, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
             SafeAreaDemoView(offset: true)
                 .popupLabel(MarqueeLabel(), sublabel: MarqueeLabel())
-                
+            
                 .popupTitle(LoremIpsum.title, subtitle: LoremIpsum.sentence)
-                
+            
                 .popupImage(Image("Cover23").resizable())
-                
+            
                 .popupBarItems(trailing: {
                     HStack(spacing: 20) {
                         Button(action: {

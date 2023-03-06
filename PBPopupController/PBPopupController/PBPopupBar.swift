@@ -226,7 +226,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
 }
 
 /**
- A popup bar presented with a content view controller such as a `UITabBarController`, a `UINavigationController`, a `UIViewController` or a custom container view controller. The user can swipe or tap the popup bar at any point to present the popup content view controller. After presenting, the user dismisses the popup content view controller by either swiping or tapping an optional popup close button. The contents of the popup bar is built dynamically using its own properties. The popup bar may be a custom one if `PBPopupBar.customPopupBarViewController` is set.
+ A popup bar presented with a container view controller such as a `UITabBarController`, a `UINavigationController`, a `UIViewController` or a custom container view controller. The user can swipe or tap the popup bar at any point to present the popup content view controller. After presenting, the user dismisses the popup content view controller by either swiping or tapping an optional popup close button. The contents of the popup bar is built dynamically using its own properties. The popup bar may be a custom one if `PBPopupBar.customPopupBarViewController` is set.
  
  */
 @objc public class PBPopupBar: UIView {
@@ -346,7 +346,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     /**
-     The bar style of the popup bar' toolbar.
+     The bar style of the popup bar toolbar.
      */
     @objc public var barStyle: UIBarStyle {
         get {
@@ -380,7 +380,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     /**
      The custom popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
      */
-    public var backgroundEffect: UIBlurEffect? {
+    @objc public var backgroundEffect: UIBlurEffect? {
         didSet {
             if popupBarStyle == .custom, backgroundEffect != nil {
                 self.backgroundView.effect = backgroundEffect
@@ -435,7 +435,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     /**
-     The background color of the popup bar' toolbar.
+     The background color of the popup bar toolbar.
      */
     @objc override public var backgroundColor: UIColor? {
         get {
@@ -501,7 +501,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     @objc public internal(set) var imageView: UIImageView!
     
     /**
-     The view providing a shadow' layer to the popup bar image view.
+     The view providing a shadow layer to the popup bar image view.
      
      - Note: Read-only, but its properties can be set. For example for no shadow, use `popupBar.shadowImageView.shadowOpacity = 0`.
      */

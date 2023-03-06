@@ -28,6 +28,7 @@ internal struct PBPopupState<PopupContent: View> {
     let isTranslucent: Bool
     let backgroundColor: UIColor?
     let barTintColor: UIColor?
+    let tintColor: UIColor?
     let progressViewStyle: PBPopupBarProgressViewStyle
     let borderViewStyle: PBPopupBarBorderViewStyle
     let shouldExtendCustomBarUnderSafeArea: Bool
@@ -41,6 +42,7 @@ internal struct PBPopupState<PopupContent: View> {
     let popupIgnoreDropShadowView: Bool
     let popupContent: (() -> PopupContent)?
     let popupContentViewController: UIViewController?
+    let barCustomizer: ((PBPopupBar) -> Void)?
     let onPresent: (() -> Void)?
     let onDismiss: (() -> Void)?
     let onOpen: (() -> Void)?

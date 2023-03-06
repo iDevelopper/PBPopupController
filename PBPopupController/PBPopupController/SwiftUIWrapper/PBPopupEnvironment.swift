@@ -41,6 +41,10 @@ internal struct PBPopupBarBarTintColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
 }
 
+internal struct PBPopupBarTintColorKey: EnvironmentKey {
+    static let defaultValue: UIColor? = nil
+}
+
 internal struct PBPopupCloseButtonStyleKey: EnvironmentKey {
     static let defaultValue: PBPopupCloseButtonStyle = .default
 }
@@ -90,6 +94,10 @@ internal struct PBPopupBarCustomViewKey: EnvironmentKey {
     static let defaultValue: PBPopupBarCustomView? = nil
 }
 
+internal struct PBPopupBarCustomizer: EnvironmentKey {
+    static let defaultValue: ((PBPopupBar) -> Void)? = nil
+}
+
 @available(iOS 14.0, *)
 internal extension EnvironmentValues {
     var popupCloseButtonStyle: PBPopupCloseButtonStyle {
@@ -135,6 +143,11 @@ internal extension EnvironmentValues {
     var barTintColor: UIColor? {
         get { self[PBPopupBarBarTintColorKey.self] }
         set { self[PBPopupBarBarTintColorKey.self] = newValue }
+    }
+    
+    var tintColor: UIColor? {
+        get { self[PBPopupBarTintColorKey.self] }
+        set { self[PBPopupBarTintColorKey.self] = newValue }
     }
     
     var popupBarProgressViewStyle: PBPopupBarProgressViewStyle {
@@ -190,5 +203,10 @@ internal extension EnvironmentValues {
     var popupBarCustomBarView: PBPopupBarCustomView? {
         get { self[PBPopupBarCustomViewKey.self] }
         set { self[PBPopupBarCustomViewKey.self] = newValue }
+    }
+    
+    var popupBarCustomizer: ((PBPopupBar) -> Void)? {
+        get { self[PBPopupBarCustomizer.self] }
+        set { self[PBPopupBarCustomizer.self] = newValue }
     }
 }

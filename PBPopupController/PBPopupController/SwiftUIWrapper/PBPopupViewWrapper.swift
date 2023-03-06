@@ -31,6 +31,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.isTranslucent) var isTranslucent: Bool
     @Environment(\.backgroundColor) var backgroundColor: UIColor?
     @Environment(\.barTintColor) var barTintColor: UIColor?
+    @Environment(\.tintColor) var tintColor: UIColor?
     @Environment(\.popupBarProgressViewStyle) var popupBarProgressViewStyle: PBPopupBarProgressViewStyle
     @Environment(\.popupBarBorderViewStyle) var popupBarBorderViewStyle: PBPopupBarBorderViewStyle
     @Environment(\.popupPresentationStyle) var popupPresentationStyle: PBPopupPresentationStyle
@@ -42,7 +43,8 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupIgnoreDropShadowView) var popupIgnoreDropShadowView: Bool
     @Environment(\.shouldExtendCustomBarUnderSafeArea) var shouldExtendCustomBarUnderSafeArea: Bool
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
-    
+    @Environment(\.popupBarCustomizer) var popupBarCustomizer: ((PBPopupBar) -> Void)?
+
     init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen
@@ -76,6 +78,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  isTranslucent: isTranslucent,
                                  backgroundColor: backgroundColor,
                                  barTintColor: barTintColor,
+                                 tintColor: tintColor,
                                  progressViewStyle: popupBarProgressViewStyle,
                                  borderViewStyle: popupBarBorderViewStyle,
                                  shouldExtendCustomBarUnderSafeArea: shouldExtendCustomBarUnderSafeArea,
@@ -89,6 +92,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  popupIgnoreDropShadowView: popupIgnoreDropShadowView,
                                  popupContent: popupContent,
                                  popupContentViewController: popupContentController,
+                                 barCustomizer: popupBarCustomizer,
                                  onPresent: onPresent,
                                  onDismiss: onDismiss,
                                  onOpen: onOpen,

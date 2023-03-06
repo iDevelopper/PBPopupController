@@ -188,6 +188,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
             self.target.popupBar.backgroundColor = self.currentPopupState.backgroundColor
             self.target.popupBar.barTintColor = self.currentPopupState.barTintColor
+            self.target.popupBar.tintColor = self.currentPopupState.tintColor
             self.target.popupBar.progressViewStyle = self.currentPopupState.progressViewStyle
             self.target.popupBar.borderViewStyle = self.currentPopupState.borderViewStyle
             self.target.popupContentView.popupCloseButtonStyle = self.currentPopupState.closeButtonStyle
@@ -214,6 +215,8 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                 self.target.popupBar.popupBarStyle = self.currentPopupState.popupBarStyle
             }
             
+            self.currentPopupState.barCustomizer?(self.target.popupBar)
+
             self.target.popupController.delegate = self
             
             if self.currentPopupState.isPresented == true {

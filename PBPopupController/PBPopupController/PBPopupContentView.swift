@@ -35,7 +35,7 @@ import UIKit
     @objc public var popupPresentationStyle = PBPopupPresentationStyle.default
     
     /**
-     The popup content view presentation duration when presenting from closed to open state, or dismissing.
+     The popup content view presentation duration when presenting from closed to open state.
      */
     @objc public var popupPresentationDuration: TimeInterval = 0.5
     

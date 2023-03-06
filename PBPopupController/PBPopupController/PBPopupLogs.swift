@@ -8,10 +8,13 @@
 
 import Foundation
 
+/// A singleton to enable or disable logging to the Apple System Log facility.
 @objc public class PBPopupLogs: NSObject {
     
+    /// Returns the shared instance of PBPopupLogs, creating it if necessary.
     public static var instance = PBPopupLogs()
     
+    /// A Boolean value that indicates whether the logs are enabled for the framework.
     public var isEnabled: Bool = true
 }
 

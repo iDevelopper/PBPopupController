@@ -71,27 +71,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupLogs.swift",
-      "line": 11,
-      "symbol": "PBPopupLogs",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupLogs.swift",
-      "line": 13,
-      "symbol": "PBPopupLogs.instance",
-      "symbol_kind": "source.lang.swift.decl.var.static",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupLogs.swift",
-      "line": 15,
-      "symbol": "PBPopupLogs.isEnabled",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupRoundShadowImageView.swift",
       "line": 18,
       "symbol": "PBPopupRoundShadowImageView.imageView",
@@ -226,14 +205,14 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 277,
+      "line": 282,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 281,
+      "line": 286,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

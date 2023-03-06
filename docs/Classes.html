@@ -17,19 +17,19 @@
     <a title="Classes  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">PBPopupController 3.4.7 Docs</a> (81% documented)</p>
-        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="img/gh.png"/>View on GitHub</a></p>
-        <p class="header-right">
+        <p><a href="index.html">PBPopupController 3.6.13 Docs</a> (83% documented)</p>
+        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
           <form role="search" action="search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
           </form>
-        </p>
+        </div>
       </div>
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
         <a href="index.html">PBPopupController Reference</a>
-        <img id="carat" src="img/carat.png" />
+        <img id="carat" src="img/carat.png" alt=""/>
         Classes  Reference
       </p>
     </div>
@@ -52,7 +52,13 @@
                 <a href="Classes/PBPopupController.html">PBPopupController</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/PBPopupLogs.html">PBPopupLogs</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/RoundShadowImageView.html">RoundShadowImageView</a>
               </li>
             </ul>
           </li>
@@ -121,6 +127,14 @@
               </li>
             </ul>
           </li>
+          <li class="nav-group-name">
+            <a href="Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Structs/RoundShadowImage.html">RoundShadowImage</a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <article class="main-content">
@@ -137,7 +151,7 @@
                 <a name="//apple_ref/swift/Section/Public Protocols" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Public%20Protocols"></a>
-                  <h3 class="section-name"><p>Public Protocols</p>
+                  <h3 class="section-name"><span>Public Protocols</span>
 </h3>
                 </div>
               </div>
@@ -155,7 +169,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A popup bar presented with a content view controller such as a <code>UITabBarController</code>, a <code>UINavigationController</code>, a <code>UIViewController</code> or a custom container view controller. The user can swipe or tap the popup bar at any point to present the popup content view controller. After presenting, the user dismisses the popup content view controller by either swiping or tapping an optional popup close button. The contents of the popup bar is built dynamically using its own properties. The popup bar may be a custom one if <code><a href="Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">PBPopupBar.customPopupBarViewController</a></code> is set.</p>
+                        <p>A popup bar presented with a container view controller such as a <code>UITabBarController</code>, a <code>UINavigationController</code>, a <code>UIViewController</code> or a custom container view controller. The user can swipe or tap the popup bar at any point to present the popup content view controller. After presenting, the user dismisses the popup content view controller by either swiping or tapping an optional popup close button. The contents of the popup bar is built dynamically using its own properties. The popup bar may be a custom one if <code><a href="Classes/PBPopupBar.html#/c:@M@PBPopupController@objc(cs)PBPopupBar(py)customPopupBarViewController">PBPopupBar.customPopupBarViewController</a></code> is set.</p>
 
                         <a href="Classes/PBPopupBar.html" class="slightly-smaller">See more</a>
                       </div>
@@ -251,9 +265,38 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupController</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+<span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupController</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">PBPopupController</span><span class="p">:</span> <span class="kt">UIViewControllerTransitioningDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">PBPopupController</span><span class="p">:</span> <span class="kt">UIViewControllerPreviewingDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupLogs"></a>
+                    <a name="//apple_ref/swift/Class/PBPopupLogs" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupLogs">PBPopupLogs</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Classes/PBPopupLogs.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupLogs</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
 
                         </div>
                       </div>
@@ -282,7 +325,35 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupRoundShadowImageView</span> <span class="p">:</span> <span class="kt">UIView</span></code></pre>
+<span class="kd">open</span> <span class="kd">class</span> <span class="kt">PBPopupRoundShadowImageView</span> <span class="p">:</span> <span class="kt">UIView</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)RoundShadowImageView"></a>
+                    <a name="//apple_ref/swift/Class/RoundShadowImageView" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)RoundShadowImageView">RoundShadowImageView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Classes/RoundShadowImageView.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">RoundShadowImageView</span> <span class="p">:</span> <span class="kt"><a href="Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a></span></code></pre>
 
                         </div>
                       </div>
@@ -294,11 +365,10 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2022 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2022-01-12)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-03-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
   </body>
-</div>
 </html>

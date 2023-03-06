@@ -17,19 +17,19 @@
     <a title="View Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.4.7 Docs</a> (81% documented)</p>
-        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png"/>View on GitHub</a></p>
-        <p class="header-right">
+        <p><a href="../index.html">PBPopupController 3.6.13 Docs</a> (83% documented)</p>
+        <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
+        <div class="header-right">
           <form role="search" action="../search.json">
             <input type="text" placeholder="Search documentation" data-typeahead>
           </form>
-        </p>
+        </div>
       </div>
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
         <a href="../index.html">PBPopupController Reference</a>
-        <img id="carat" src="../img/carat.png" />
+        <img id="carat" src="../img/carat.png" alt=""/>
         View Extension Reference
       </p>
     </div>
@@ -52,7 +52,13 @@
                 <a href="../Classes/PBPopupController.html">PBPopupController</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/PBPopupLogs.html">PBPopupLogs</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RoundShadowImageView.html">RoundShadowImageView</a>
               </li>
             </ul>
           </li>
@@ -121,6 +127,14 @@
               </li>
             </ul>
           </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/RoundShadowImage.html">RoundShadowImage</a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <article class="main-content">
@@ -142,9 +156,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open9onPresent0J7Dismiss0jI00J5Close0F7ContentQrAA7BindingVySbG_AOSgyycSgA3Qqd__yctAaBRd__lF"></a>
-                    <a name="//apple_ref/swift/Method/popup(isPresented:isOpen:onPresent:onDismiss:onOpen:onClose:popupContent:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open9onPresent0J7Dismiss0jI00J5Close0F7ContentQrAA7BindingVySbG_AOSgyycSgA3Qqd__yctAaBRd__lF">popup(isPresented:<wbr>isOpen:<wbr>onPresent:<wbr>onDismiss:<wbr>onOpen:<wbr>onClose:<wbr>popupContent:<wbr>)</a>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open0G6Hidden9onPresent0K7Dismiss0kI00K5Close0F7ContentQrAA7BindingVySbG_APSgAQyycSgA3Rqd__yctAaBRd__lF"></a>
+                    <a name="//apple_ref/swift/Method/popup(isPresented:isOpen:isHidden:onPresent:onDismiss:onOpen:onClose:popupContent:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open0G6Hidden9onPresent0K7Dismiss0kI00K5Close0F7ContentQrAA7BindingVySbG_APSgAQyycSgA3Rqd__yctAaBRd__lF">popup(isPresented:<wbr>isOpen:<wbr>isHidden:<wbr>onPresent:<wbr>onDismiss:<wbr>onOpen:<wbr>onClose:<wbr>popupContent:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -152,16 +166,123 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Presents a popup bar with popup content.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">popup</span><span class="o">&lt;</span><span class="kt">PopupContent</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">isOpen</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onPresent</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onDismiss</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onOpen</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onClose</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="kd">@ViewBuilder</span> <span class="nv">popupContent</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">PopupContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">PopupContent</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">popup</span><span class="o">&lt;</span><span class="kt">PopupContent</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">isOpen</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">isHidden</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onPresent</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onDismiss</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onOpen</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onClose</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="kd">@ViewBuilder</span> <span class="nv">popupContent</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">PopupContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">PopupContent</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isPresented</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup bar is presented.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOpen</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup is open. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isHidden</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup is hidden. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onPresent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup bar is presented. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onDismiss</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup bar is dismissed. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onOpen</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup opens. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onClose</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup closes. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupContent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure returning the content of the popup.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A popup bar view.</p>
                       </div>
                     </section>
                   </div>
@@ -169,9 +290,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open9onPresent0J7Dismiss0jI00J5Close0f7ContentE0QrAA7BindingVySbG_AOSgyycSgA3QSo06UIViewE0CtF"></a>
-                    <a name="//apple_ref/swift/Method/popup(isPresented:isOpen:onPresent:onDismiss:onOpen:onClose:popupContentController:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open9onPresent0J7Dismiss0jI00J5Close0f7ContentE0QrAA7BindingVySbG_AOSgyycSgA3QSo06UIViewE0CtF">popup(isPresented:<wbr>isOpen:<wbr>onPresent:<wbr>onDismiss:<wbr>onOpen:<wbr>onClose:<wbr>popupContentController:<wbr>)</a>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open0G6Hidden9onPresent0K7Dismiss0kI00K5Close0f7ContentE0QrAA7BindingVySbG_APSgAQyycSgA3RSo06UIViewE0CtF"></a>
+                    <a name="//apple_ref/swift/Method/popup(isPresented:isOpen:isHidden:onPresent:onDismiss:onOpen:onClose:popupContentController:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE5popup11isPresented0G4Open0G6Hidden9onPresent0K7Dismiss0kI00K5Close0f7ContentE0QrAA7BindingVySbG_APSgAQyycSgA3RSo06UIViewE0CtF">popup(isPresented:<wbr>isOpen:<wbr>isHidden:<wbr>onPresent:<wbr>onDismiss:<wbr>onOpen:<wbr>onClose:<wbr>popupContentController:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -179,16 +300,123 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Presents a popup bar with UIKit popup content view controller.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popup</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">isOpen</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onPresent</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onDismiss</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onOpen</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onClose</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">popupContentController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popup</span><span class="p">(</span><span class="nv">isPresented</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">,</span> <span class="nv">isOpen</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">isHidden</span><span class="p">:</span> <span class="kt">Binding</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onPresent</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onDismiss</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onOpen</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">onClose</span><span class="p">:</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">popupContentController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isPresented</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup bar is presented.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isOpen</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup is open. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isHidden</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A binding to whether the popup is hidden. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onPresent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup bar is presented. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onDismiss</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup bar is dismissed. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onOpen</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup opens. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>onClose</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure executed when the popup closes. (optional)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupContentController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A UIKit view controller to use as the popup content controller.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A popup bar view.</p>
                       </div>
                     </section>
                   </div>
@@ -206,7 +434,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the popup close button style.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -216,6 +449,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupCloseButtonStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup close button style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -233,7 +485,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the popup bar style (see PBPopupBarStyle).</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -241,6 +498,290 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupBarStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupBarStyle.html">PBPopupBarStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE8barStyleyQrSo05UIBarG0VF"></a>
+                    <a name="//apple_ref/swift/Method/barStyle(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE8barStyleyQrSo05UIBarG0VF">barStyle(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the bar style of the popup bar&rsquo; toolbar..</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">barStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt">UIBarStyle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The bar style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE15backgroundStyleyQrSo012UIBlurEffectG0VF"></a>
+                    <a name="//apple_ref/swift/Method/backgroundStyle(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE15backgroundStyleyQrSo012UIBlurEffectG0VF">backgroundStyle(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the popup bar background style that specifies its visual effect appearance.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">backgroundStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt">UIBlurEffect</span><span class="o">.</span><span class="kt">Style</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The blur style of the effect.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE16backgroundEffectyQrSo06UIBlurG0CF"></a>
+                    <a name="//apple_ref/swift/Method/backgroundEffect(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE16backgroundEffectyQrSo06UIBlurG0CF">backgroundEffect(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Sets the custom popup bar&rsquo;s background effect. Use <code>nil</code> to use the most appropriate background style for the environment.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">backgroundEffect</span><span class="p">(</span><span class="n">_</span> <span class="nv">effect</span><span class="p">:</span> <span class="kt">UIBlurEffect</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>effect</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar&rsquo;s background effect.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE32inheritsVisualStyleFromBottomBaryQrSbF"></a>
+                    <a name="//apple_ref/swift/Method/inheritsVisualStyleFromBottomBar(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE32inheritsVisualStyleFromBottomBaryQrSbF">inheritsVisualStyleFromBottomBar(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, the popup bar will automatically inherit its style from the bottom bar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">inheritsVisualStyleFromBottomBar</span><span class="p">(</span><span class="n">_</span> <span class="nv">inherits</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>inherits</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>inherit style from the bottom bar.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE13isTranslucentyQrSbF"></a>
+                    <a name="//apple_ref/swift/Method/isTranslucent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE13isTranslucentyQrSbF">isTranslucent(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value that indicates whether the popup bar is translucent.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">isTranslucent</span><span class="p">(</span><span class="n">_</span> <span class="nv">translucent</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE15backgroundColoryQrSo7UIColorCF"></a>
+                    <a name="//apple_ref/swift/Method/backgroundColor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE15backgroundColoryQrSo7UIColorCF">backgroundColor(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The background color of the popup bar&rsquo; toolbar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">backgroundColor</span><span class="p">(</span><span class="n">_</span> <span class="nv">color</span><span class="p">:</span> <span class="kt">UIColor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE12barTintColoryQrSo7UIColorCF"></a>
+                    <a name="//apple_ref/swift/Method/barTintColor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE12barTintColoryQrSo7UIColorCF">barTintColor(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The bar tint color of the popup bar&rsquo; toolbar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">barTintColor</span><span class="p">(</span><span class="n">_</span> <span class="nv">color</span><span class="p">:</span> <span class="kt">UIColor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
                       </div>
@@ -260,7 +801,12 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the popup bar&rsquo;s progress view style.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -270,6 +816,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupBarProgressViewStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupBarProgressViewStyle.html">PBPopupBarProgressViewStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the popup bar&rsquo;s progress view style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -287,7 +852,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the popup bar&rsquo;s border view style.
+Usefull for iPad when the popup bar is the neighbour of another object.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/PBPopupBarBorderViewStyle.html">PBPopupBarBorderViewStyle</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -297,6 +868,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupBarBorderViewStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupBarBorderViewStyle.html">PBPopupBarBorderViewStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar&rsquo;s border view style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -314,7 +904,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the popup content view presentation style.
+Default presentation style is deck, was fullScreen for iOS 9 and above, otherwise deck.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></code>.
+
+</div>
 
                       </div>
                       <div class="declaration">
@@ -324,6 +920,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupPresentationStyle</span><span class="p">(</span><span class="n">_</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup content view presentation style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -341,7 +956,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The popup content view presentation duration when presenting from closed to open state.</p>
 
                       </div>
                       <div class="declaration">
@@ -351,6 +966,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupPresentationDuration</span><span class="p">(</span><span class="n">_</span> <span class="nv">duration</span><span class="p">:</span> <span class="kt">TimeInterval</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>duration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The total duration of the animations, measured in seconds.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -368,7 +1002,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The popup content view dismissal duration when dismissing from open to closed state.</p>
 
                       </div>
                       <div class="declaration">
@@ -379,15 +1013,34 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>duration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The total duration of the animations, measured in seconds.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE24popupCompletionThresholdyQr12CoreGraphics7CGFloatVF"></a>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE24popupCompletionThresholdyQr14CoreFoundation7CGFloatVF"></a>
                     <a name="//apple_ref/swift/Method/popupCompletionThreshold(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE24popupCompletionThresholdyQr12CoreGraphics7CGFloatVF">popupCompletionThreshold(_:<wbr>)</a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE24popupCompletionThresholdyQr14CoreFoundation7CGFloatVF">popupCompletionThreshold(_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -395,7 +1048,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The threshold value used to open or close the popup content view when dragging ends.</p>
 
                       </div>
                       <div class="declaration">
@@ -405,6 +1058,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupCompletionThreshold</span><span class="p">(</span><span class="n">_</span> <span class="nv">threshold</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>threshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The amount of progress.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -422,7 +1094,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>The popup content view size when popupPresentationStyle is set to custom.</p>
 
                       </div>
                       <div class="declaration">
@@ -432,6 +1104,118 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupContentSize</span><span class="p">(</span><span class="n">_</span> <span class="nv">size</span><span class="p">:</span> <span class="kt">CGSize</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>size</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup content view size.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE021popupIgnoreDropShadowC0yQrSbF"></a>
+                    <a name="//apple_ref/swift/Method/popupIgnoreDropShadowView(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE021popupIgnoreDropShadowC0yQrSbF">popupIgnoreDropShadowView(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, tells the popup content view presentation to ignore the form sheet presentation by default.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupIgnoreDropShadowView</span><span class="p">(</span><span class="n">_</span> <span class="nv">ignore</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>ignore</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Default is <code>true</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE34shouldExtendCustomBarUnderSafeAreayQrSbF"></a>
+                    <a name="//apple_ref/swift/Method/shouldExtendCustomBarUnderSafeArea(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE34shouldExtendCustomBarUnderSafeAreayQrSbF">shouldExtendCustomBarUnderSafeArea(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Set this property to <code>true</code> if you want the custom popup bar extend under the safe area, to the bottom of the screen.
+ When a popup bar is presented on a view controller with the system bottom docking view, or a navigation controller with hidden toolbar, the popup bar&rsquo;s background view will extend under the safe area.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">shouldExtendCustomBarUnderSafeArea</span><span class="p">(</span><span class="n">_</span> <span class="nv">should</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>should</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Extend the popup bar under safe area.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -449,7 +1233,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets a custom popup bar view, instead of the default system-provided bars.</p>
 
                       </div>
                       <div class="declaration">
@@ -459,6 +1243,85 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">popupBarCustomView</span><span class="o">&lt;</span><span class="kt">PopupBarContent</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">@ViewBuilder</span> <span class="nv">popupBarContent</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">PopupBarContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">PopupBarContent</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupBarContent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A closure returning the content of the popup bar custom view.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE18popupBarCustomizeryQryAD0dG0CcF"></a>
+                    <a name="//apple_ref/swift/Method/popupBarCustomizer(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE18popupBarCustomizeryQryAD0dG0CcF">popupBarCustomizer(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Gives a low-level access to the <code><a href="../Classes/PBPopupBar.html">PBPopupBar</a></code> object for customization, beyond what is exposed by LNPopupUI.</p>
+
+<p>The popup bar customization closure is called after all other popup bar modifiers have been applied.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupBarCustomizer</span><span class="p">(</span><span class="n">_</span> <span class="nv">customizer</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">popupBar</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupBar.html">PBPopupBar</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>customizer</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A customizing closure that is called to customize the popup bar object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupBar</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar to customize.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -476,7 +1339,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configures the view&rsquo;s popup bar title and subtitle.</p>
 
                       </div>
                       <div class="declaration">
@@ -486,6 +1349,37 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">popupTitle</span><span class="o">&lt;</span><span class="kt">S</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">localizedTitleKey</span><span class="p">:</span> <span class="kt">S</span><span class="p">,</span> <span class="n">subtitle</span> <span class="nv">localizedSubtitleKey</span><span class="p">:</span> <span class="kt">S</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">S</span> <span class="p">:</span> <span class="kt">StringProtocol</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>localizedTitleKey</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The localized title key to display.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>localizedSubtitleKey</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The localized subtitle key to display. Defaults to <code>nil</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -557,7 +1451,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configures the view&rsquo;s popup bar with custom label and sublabel.</p>
 
                       </div>
                       <div class="declaration">
@@ -567,6 +1461,143 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupLabel</span><span class="p">(</span><span class="n">_</span> <span class="nv">label</span><span class="p">:</span> <span class="kt">UILabel</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">sublabel</span><span class="p">:</span> <span class="kt">UILabel</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>label</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A <code>UIlabel</code> object to be used instead of the default one.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sublabel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A <code>UIlabel</code> object to be used instead of the default one.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7SwiftUI4ViewP17PBPopupControllerE21popupRoundShadowImage_12cornerRadius11shadowColor0L6Offset0L7Opacity0lK0QrSo7UIImageC_14CoreFoundation7CGFloatVSo7UIColorCSo6CGSizeVSfAOtF"></a>
+                    <a name="//apple_ref/swift/Method/popupRoundShadowImage(_:cornerRadius:shadowColor:shadowOffset:shadowOpacity:shadowRadius:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7SwiftUI4ViewP17PBPopupControllerE21popupRoundShadowImage_12cornerRadius11shadowColor0L6Offset0L7Opacity0lK0QrSo7UIImageC_14CoreFoundation7CGFloatVSo7UIColorCSo6CGSizeVSfAOtF">popupRoundShadowImage(_:<wbr>cornerRadius:<wbr>shadowColor:<wbr>shadowOffset:<wbr>shadowOpacity:<wbr>shadowRadius:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Configures the view&rsquo;s popup bar image.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupRoundShadowImage</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">UIImage</span><span class="p">,</span> <span class="nv">cornerRadius</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="nv">shadowColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="kt">UIColor</span><span class="o">.</span><span class="n">black</span><span class="p">,</span> <span class="nv">shadowOffset</span><span class="p">:</span> <span class="kt">CGSize</span> <span class="o">=</span> <span class="kt">CGSize</span><span class="p">(</span><span class="nv">width</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="nv">height</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">),</span> <span class="nv">shadowOpacity</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nv">shadowRadius</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>image</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The image to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cornerRadius</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The radius to use when drawing rounded corners for the image.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shadowColor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The color to use for the shadow.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shadowOffset</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The offset (in points) of the layer’s shadow.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shadowOpacity</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The opacity of the layer’s shadow.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>shadowRadius</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The blur radius (in points) used to render the layer’s shadow.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -584,7 +1615,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configures the view&rsquo;s popup bar image.</p>
 
                       </div>
                       <div class="declaration">
@@ -594,6 +1625,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupImage</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>image</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The image to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -611,7 +1661,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Configures the view&rsquo;s popup bar progress.
+The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the completion of the task. The default value is 0.0. Values less than 0.0 and greater than 1.0 are pinned to those limits.</p>
 
                       </div>
                       <div class="declaration">
@@ -621,6 +1672,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">popupProgress</span><span class="p">(</span><span class="n">_</span> <span class="nv">progress</span><span class="p">:</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>progress</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup bar progress.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -638,7 +1708,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Sets the bar button items to display on the popup bar.</p>
 
                       </div>
                       <div class="declaration">
@@ -648,6 +1718,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">popupBarItems</span><span class="o">&lt;</span><span class="kt">LeadingContent</span><span class="o">&gt;</span><span class="p">(</span><span class="kd">@ViewBuilder</span> <span class="nv">leading</span><span class="p">:</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">LeadingContent</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kd">some</span> <span class="kt">View</span> <span class="k">where</span> <span class="kt">LeadingContent</span> <span class="p">:</span> <span class="kt">View</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>leading</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>A view that appears on the leading edge of the popup bar.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -703,11 +1792,10 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2022 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external">Patrick Bodet</a>. All rights reserved. (Last updated: 2022-01-12)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-03-06)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>
   </body>
-</div>
 </html>

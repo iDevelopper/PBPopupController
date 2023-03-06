@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.6.14
+
+SwiftUI improvements.
+Update documentation.
+
 ## 3.6.13
 
 Pan gesture bug fixes and improvements for dismissal transition.

@@ -19,7 +19,7 @@ internal class PBPopupPresentationController: UIPresentationController
         return popupController.popupPresentationState
     }
     
-    private var backingView: UIView!
+    internal var backingView: UIView!
 
     private var shouldUpdateBackingView: Bool = true
     
@@ -225,8 +225,10 @@ internal class PBPopupPresentationController: UIPresentationController
         
         self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
         
-        self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
-        
+        if !coordinator.isInteractive {
+            self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
+        }
+
         coordinator.animate {context in
             self.animateBackingViewToDeck(true, animated: true)
             self.animateImageViewInFinalPosition()
@@ -238,7 +240,6 @@ internal class PBPopupPresentationController: UIPresentationController
                 self.popupContentView.popupCloseButton?.alpha = 1.0
             }
             self.popupContentView.updatePopupCloseButtonPosition()
-            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
 
             containerView.layoutIfNeeded()
         } completion: { _ in
@@ -301,8 +302,10 @@ internal class PBPopupPresentationController: UIPresentationController
         self.setupCornerRadiusForPopupContentViewAnimated(false, open: true)
         //
         
-        self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
-        
+        if !coordinator.isInteractive {
+            self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
+        }
+
         self.popupBarView.isHidden = true
         
         coordinator.animate { context in
@@ -315,8 +318,6 @@ internal class PBPopupPresentationController: UIPresentationController
             
             self.setupCornerRadiusForPopupContentViewAnimated(true, open: false)
     
-            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
-
             containerView.layoutIfNeeded()
         } completion: { _ in
             self.popupBarView.isHidden = false

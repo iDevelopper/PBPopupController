@@ -334,9 +334,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
             popupBar.image?.accessibilityLabel = NSLocalizedString("Cover", comment: "")
             
-            if #available(iOS 13.0, *) {
-                let interaction = UIContextMenuInteraction(delegate: self)
-                popupBar.addInteraction(interaction)
+            if self.containerVC is UITabBarController {
+                if #available(iOS 13.0, *) {
+                    let interaction = UIContextMenuInteraction(delegate: self)
+                    popupBar.addInteraction(interaction)
+                }
             }
             //popupBar.semanticContentAttribute = .forceRightToLeft
             //popupBar.barButtonItemsSemanticContentAttribute = .forceRightToLeft

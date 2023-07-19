@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 3.6.15
+
+Status bar appearance and animation improvements.
 
 ## 3.6.14
 

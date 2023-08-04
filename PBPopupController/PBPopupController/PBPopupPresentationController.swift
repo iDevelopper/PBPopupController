@@ -230,6 +230,7 @@ internal class PBPopupPresentationController: UIPresentationController
         }
 
         coordinator.animate {context in
+            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
             self.animateBackingViewToDeck(true, animated: true)
             self.animateImageViewInFinalPosition()
             
@@ -252,7 +253,7 @@ internal class PBPopupPresentationController: UIPresentationController
     {
         // Issue #23 - Reset the corner radius for the aesthetics of the animation of the control center presentation when state is open.
         let isFullScreen = self.popupContentView.popupContentSize.height == UIScreen.main.bounds.height
-        if self.popupPresentationStyle == .fullScreen ||  (self.popupPresentationStyle == .custom && isFullScreen) {
+        if self.popupPresentationStyle == .fullScreen && !self.popupController.isContainerPresentationSheet ||  (self.popupPresentationStyle == .custom && isFullScreen) {
             self.setupCornerRadiusForPopupContentViewAnimated(false, open: false)
         }
         //
@@ -302,13 +303,14 @@ internal class PBPopupPresentationController: UIPresentationController
         self.setupCornerRadiusForPopupContentViewAnimated(false, open: true)
         //
         
+        self.popupBarView.isHidden = true
+        
         if !coordinator.isInteractive {
             self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
         }
-
-        self.popupBarView.isHidden = true
         
         coordinator.animate { context in
+            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
             self.animateBackingViewToDeck(false, animated: true)
             if !context.isInteractive {
                 self.animateImageViewInFinalPosition()

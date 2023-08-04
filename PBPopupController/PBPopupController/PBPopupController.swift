@@ -390,7 +390,11 @@ extension PBPopupPresentationStyle
      The preferred status bar style for the container view controller.
      */
 
-    @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default
+    @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
+        didSet {
+            containerViewController.setNeedsStatusBarAppearanceUpdate()
+        }
+    }
 
     /**
      The preferred status bar style for the popup content view controller when `popupPresentationStyle` is set to `deck`.

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.6.16
+
+Status bar appearance and animation improvements.
+Configure TabBar, NavBar & Toolbar appearances.
+
 ## 3.6.15
 
 Status bar appearance and animation improvements.

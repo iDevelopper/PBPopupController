@@ -253,6 +253,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             navigationController.isToolbarHidden = true
             if navigationController.toolbarIsShown {
                 navigationController.isToolbarHidden = false
+                self.setupToolbarAppearance()
             }
             self.containerVC = navigationController
             if let containerController = navigationController.parent {
@@ -264,6 +265,22 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         else {
             self.containerVC = self
+        }
+    }
+    
+    func setupToolbarAppearance() {
+        if #available(iOS 13, *) {
+            if let navigationController = self.navigationController as? NavigationController {
+                let toolbarAppearance = UIToolbarAppearance()
+                toolbarAppearance.configureWithDefaultBackground()
+                
+                navigationController.toolbar.compactAppearance = toolbarAppearance
+                navigationController.toolbar.standardAppearance = toolbarAppearance
+                if #available(iOS 15.0, *) {
+                    navigationController.toolbar.scrollEdgeAppearance = toolbarAppearance
+                    navigationController.toolbar.compactScrollEdgeAppearance = toolbarAppearance
+                }
+            }
         }
     }
     
@@ -299,6 +316,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 popupContentView.popupCanDismissOnPassthroughViews = true
                 //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
             }
+            
+            self.containerVC.popupController.containerPreferredStatusBarStyle = .default
+            self.containerVC.popupController.popupPreferredStatusBarStyle = .lightContent
+
             self.tableView.reloadData()
         }
     }
@@ -1105,6 +1126,12 @@ extension FirstTableViewController: UITabBarControllerDelegate {
         }
         return true
     }
+    
+    /*
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        tabBarController.setNeedsStatusBarAppearanceUpdate()
+    }
+    */
 }
 
 // MARK: - PBPopupBarPreviewingDelegate

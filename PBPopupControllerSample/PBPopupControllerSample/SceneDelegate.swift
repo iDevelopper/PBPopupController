@@ -18,13 +18,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         self.window?.tintColor = UIColor.systemPink
+        
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithDefaultBackground()
+        
+        let newTabBarappearance = UITabBar.appearance()
+        newTabBarappearance.standardAppearance = tabBarAppearance
+        if #available(iOS 15.0, *) {
+            newTabBarappearance.scrollEdgeAppearance = tabBarAppearance
+        }
+        
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithDefaultBackground()
+        
+        let newNavBarAppearance = UINavigationBar.appearance()
+        newNavBarAppearance.scrollEdgeAppearance = navBarAppearance
+        newNavBarAppearance.compactAppearance = navBarAppearance
+        newNavBarAppearance.standardAppearance = navBarAppearance
+        if #available(iOS 15.0, *) {
+            newNavBarAppearance.compactScrollEdgeAppearance = navBarAppearance
+        }
 
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         guard let windowScene = (scene as? UIWindowScene) else { return }
         if let titlebar = windowScene.titlebar {
             titlebar.titleVisibility = .hidden
         }
-        #endif
+#endif
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

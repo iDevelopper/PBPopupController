@@ -1,5 +1,11 @@
 # CHANGELOG
 
+
+## 3.7.0
+
+iOS 17 Support.
+New “Floating" Popup Bar Style.
+
 ## 3.6.16
 
 Status bar appearance and animation improvements.

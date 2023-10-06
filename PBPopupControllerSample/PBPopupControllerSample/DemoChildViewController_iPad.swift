@@ -47,11 +47,7 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
         }
         
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             self.collectionView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
         } else {
             self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
@@ -127,12 +123,10 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
         cell.title.text = self.titles[indexPath.row]
         cell.subtitle.text = self.subtitles[indexPath.row]
         
-        #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             cell.title.textColor = UIColor.label
             cell.subtitle.textColor = UIColor.secondaryLabel
         }
-        #endif
 
         return cell
     }

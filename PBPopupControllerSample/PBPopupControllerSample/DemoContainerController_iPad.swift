@@ -69,7 +69,6 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
         self.popupBar.inheritsVisualStyleFromBottomBar = false
         self.popupBar.barStyle = self.tabBar.barStyle
         self.popupBar.barTintColor = self.tabBar.barTintColor
-        self.popupBar.isTranslucent = self.tabBar.isTranslucent
         self.popupBar.shadowImageView.shadowOpacity = 0
         self.popupBar.borderViewStyle = .left
     }

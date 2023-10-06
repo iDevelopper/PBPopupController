@@ -19,16 +19,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             self.window?.tintColor = UIColor.systemPink
-            #else
-            self.window?.tintColor = UIColor.red
-            #endif
         } else {
             self.window?.tintColor = UIColor.red
         }
         let font = UIFont.boldSystemFont(ofSize: UIFont.buttonFontSize)
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
+        if #available(iOS 13.0, *) {
+            UIBarButtonItem.appearance().tintColor = UIColor.systemPink
+        }
+        else {
+            UIBarButtonItem.appearance().tintColor = UIColor.red
+        }
         
         PBPopupLogs.instance.isEnabled = true // default, false will disable logging from the module PBPopupController
         

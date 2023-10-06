@@ -30,13 +30,9 @@ class DemoTableViewController: UITableViewController {
         }
         
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
-            self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            #else
-            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-            #endif
+            self.tableView.backgroundColor = .systemBackground
         } else {
-            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
+            self.tableView.backgroundColor = UIColor.white
         }
     
         self.tableView.tableFooterView = UIView()
@@ -79,6 +75,7 @@ class DemoTableViewController: UITableViewController {
     @objc func pushNext(_ sender: Any) {
         if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "DemoTableViewController") as? DemoTableViewController {
             nextVC.firstVC = self.firstVC
+            nextVC.title = self.title
             self.show(nextVC, sender: sender)
         }
     }
@@ -112,12 +109,10 @@ class DemoTableViewController: UITableViewController {
         cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         cell.albumNameLabel.adjustsFontForContentSizeCategory = true
         
-        #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             cell.songNameLabel.textColor = UIColor.label
             cell.albumNameLabel.textColor = UIColor.secondaryLabel
         }
-        #endif
         
         cell.backgroundColor = UIColor.clear
         

@@ -20,6 +20,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
     weak var containerVC: UIViewController!
     
+    var containerIsBarController: Bool {
+        return self.containerVC is UITabBarController || self.containerVC is UINavigationController
+    }
+    
     var demoViewController: DemoViewController!
 
     var popupPlayButtonItem: UIBarButtonItem!
@@ -27,6 +31,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     var popupPrevButtonItem: UIBarButtonItem!
     var popupMoreButtonItem: UIBarButtonItem!
 
+    var popupBarIsFloating: Bool!
     var popupBarStyle: PBPopupBarStyle!
     var progressViewStyle: PBPopupBarProgressViewStyle!
     var popupPresentationStyle: PBPopupPresentationStyle!
@@ -64,7 +69,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        for idx in 1...self.tableView(tableView, numberOfRowsInSection: 2) {
+        for idx in 1...self.tableView(tableView, numberOfRowsInSection: 3) {
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
             titles += [LoremIpsum.title]
@@ -72,11 +77,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         
         if #available(iOS 13.0, *) {
-#if compiler(>=5.1)
             self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-#else
-            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-#endif
         } else {
             self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
         }
@@ -93,13 +94,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         
         self.setupContainerVC()
         
-        //self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-        //self.popupContentVC.images = self.images
-        //self.popupContentVC.titles = self.titles
-        //self.popupContentVC.subtitles = self.subtitles
-        
-        //self.commonSetup()
-        //self.createBarButtonItems()
+        if #available(iOS 17.0, *) {
+            if let popupBar = self.containerVC?.popupBar {
+                popupBar.isFloating = true
+                self.popupBarIsFloating = true
+            }
+        }
+        self.firstSetup()
     }
     
     override func viewDidLayoutSubviews() {
@@ -119,14 +120,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.popupContentVC.images = self.images
         self.popupContentVC.titles = self.titles
         self.popupContentVC.subtitles = self.subtitles
-        
-        self.commonSetup()
-        self.createBarButtonItems()
-
-        if self.containerVC.popupController.popupPresentationState == .closed {
-            // Present the popup bar with another popup
-            self.presentPopupBar(self)
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -284,8 +277,18 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
     }
     
+    func firstSetup() {
+        self.setupPopupBar()
+                
+        self.commonSetup()
+
+        self.setupBarButtonItems()
+    }
+    
     func commonSetup() {
         if let popupBar = self.containerVC?.popupBar {
+            self.popupBarIsFloating = popupBar.isFloating
+            
             self.popupBarStyle = popupBar.popupBarStyle
             
             self.progressViewStyle = popupBar.progressViewStyle
@@ -309,7 +312,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 }
             }
             #endif
-
+            /*
             if let popupContentView = self.containerVC.popupContentView {
                 popupContentView.popupIgnoreDropShadowView = false
                 popupContentView.popupPresentationDuration = 0.4
@@ -319,7 +322,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             
             self.containerVC.popupController.containerPreferredStatusBarStyle = .default
             self.containerVC.popupController.popupPreferredStatusBarStyle = .lightContent
-
+            */
             self.tableView.reloadData()
         }
     }
@@ -330,7 +333,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 if let customPopupBarVC = storyboard?.instantiateViewController(withIdentifier: "CustomPopupBarViewController") as? CustomPopupBarViewController {
                     customPopupBarVC.view.backgroundColor = UIColor.clear
                     popupBar.shouldExtendCustomBarUnderSafeArea = false
-                    popupBar.isTranslucent = false
+                    //popupBar.isTranslucent = false
                     popupBar.customPopupBarViewController = customPopupBarVC
 
                     customPopupBarVC.imageView.image = popupBar.image
@@ -344,18 +347,21 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     func setupPopupBar() {
         if let popupBar = self.containerVC.popupBar {
             popupBar.PBPopupBarShowColors = false
-            popupBar.shouldExtendCustomBarUnderSafeArea = true
-            popupBar.isTranslucent = true
+            if #available(iOS 17.0, *) {
+                popupBar.isFloating = self.popupBarIsFloating
+            }
+            popupBar.shouldExtendCustomBarUnderSafeArea = true // Default, but not for floating bar
             popupBar.dataSource = self
             popupBar.previewingDelegate = self
             
-            popupBar.inheritsVisualStyleFromBottomBar = true
+            //popupBar.inheritsVisualStyleFromBottomBar = true
+            popupBar.inheritsVisualStyleFromBottomBar = self.containerIsBarController ? true : false
             popupBar.shadowImageView.shadowOpacity = 0
             popupBar.borderViewStyle = .none
 
             popupBar.image?.accessibilityLabel = NSLocalizedString("Cover", comment: "")
             
-            if self.containerVC is UITabBarController {
+            if self.containerVC is UITabBarController, self.navigationController == nil {
                 if #available(iOS 13.0, *) {
                     let interaction = UIContextMenuInteraction(delegate: self)
                     popupBar.addInteraction(interaction)
@@ -369,20 +375,44 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             //paragraphStyle.alignment = .center
             //paragraphStyle.lineBreakMode = .byTruncatingTail
             //containerVC.popupBar.titleTextAttributes = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.backgroundColor: UIColor.clear, NSAttributedString.Key.foregroundColor: UIColor.red, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
+            
+            if let popupContentView = self.containerVC.popupContentView {
+                popupContentView.popupIgnoreDropShadowView = false
+                popupContentView.popupPresentationDuration = 0.4
+                popupContentView.popupCanDismissOnPassthroughViews = true
+                //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
+            }
+            
+            self.containerVC.popupController.containerPreferredStatusBarStyle = .default
+            self.containerVC.popupController.popupPreferredStatusBarStyle = .lightContent
         }
     }
     
-    func createBarButtonItems() {
-        self.popupPlayButtonItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: nil, action: nil)
+    func setupBarButtonItems() {
+        if #available(iOS 13.0, *) {
+            let scaleConfig = UIImage.SymbolConfiguration(scale: self.popupBarIsFloating || self.popupBarStyle == .compact ? .medium : .large)
+            let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
+            let config = scaleConfig.applying(weightConfig)
+            
+            var image: UIImage!
+            image = UIImage(systemName: "play.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+            self.popupPlayButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+            image = UIImage(systemName: "forward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+            self.popupNextButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+            image = UIImage(systemName: "ellipsis", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+            self.popupMoreButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+            image = UIImage(systemName: "backward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+            self.popupPrevButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        }
+        else {
+            self.popupPlayButtonItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: nil, action: nil)
+            self.popupNextButtonItem = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: nil, action: nil)
+            self.popupMoreButtonItem = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: nil, action: nil)
+            self.popupPrevButtonItem = UIBarButtonItem(image: UIImage(named: "prev-small"), style: .plain, target: nil, action: nil)
+        }
         self.popupPlayButtonItem.accessibilityLabel = NSLocalizedString("Play", comment: "")
-
-        self.popupNextButtonItem = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: nil, action: nil)
         self.popupNextButtonItem.accessibilityLabel = NSLocalizedString("Next track", comment: "")
-
-        self.popupMoreButtonItem = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: nil, action: nil)
         self.popupMoreButtonItem.accessibilityLabel = NSLocalizedString("More", comment: "")
-
-        self.popupPrevButtonItem = UIBarButtonItem(image: UIImage(named: "prev-small"), style: .plain, target: nil, action: nil)
         self.popupPrevButtonItem.accessibilityLabel = NSLocalizedString("Previous track", comment: "")
         
         self.configureBarButtonItems()
@@ -446,7 +476,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
 
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
                 navigationController?.toolbar.tintColor = aColor
             }
@@ -454,15 +483,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
                 navigationController?.toolbar.barTintColor = aColor
             }
-            #else
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
-                navigationController?.toolbar.tintColor = aColor
-            }
-            
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
-                navigationController?.toolbar.barTintColor = aColor
-            }
-            #endif
         }
         else {
             if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
@@ -491,6 +511,20 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     // MARK: - Setup Styles Actions
+    
+    @IBAction func barIsFloatingChanged(_ sender: UISwitch) {
+        self.popupBarIsFloating = sender.isOn
+                        
+        if let popupBar = self.containerVC?.popupBar {
+            popupBar.isFloating = self.popupBarIsFloating
+            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 13 {
+                self.tabBarController?.tabBar.clipsToBounds = self.popupBarIsFloating ? true : false
+            }
+        }
+        self.setupBarButtonItems()
+
+        self.commonSetup()
+    }
 
     @IBAction func popupBarStyleChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
@@ -505,16 +539,18 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         default:
             break
         }
+        
         if self.popupBarStyle == .custom {
             self.setupCustomPopupBar()
             return
         }
 
         self.setupPopupBar()
+        
         if let popupBar = self.containerVC.popupBar {
             popupBar.popupBarStyle = self.popupBarStyle
-            self.configureBarButtonItems()
         }
+        self.setupBarButtonItems()
         
         self.commonSetup()
     }
@@ -593,9 +629,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.popupContentVC.images = self.images
             self.popupContentVC.titles = self.titles
             self.popupContentVC.subtitles = self.subtitles
-            //self.popupContentVC.albumArtImage = self.containerVC.popupBar.image
-            //self.popupContentVC.songTitle = self.containerVC.popupBar.title
-            //self.popupContentVC.albumTitle = self.containerVC.popupBar.subtitle
             self.popupContentTVC = nil
         case 1:
             self.isPopupContentTableView = true
@@ -603,9 +636,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.popupContentTVC.images = self.images
             self.popupContentTVC.titles = self.titles
             self.popupContentTVC.subtitles = self.subtitles
-            //self.popupContentTVC.albumArtImage = self.containerVC.popupBar.image
-            //self.popupContentTVC.songTitle = self.containerVC.popupBar.title
-            //self.popupContentTVC.albumTitle = self.containerVC.popupBar.subtitle
             self.popupContentVC = nil
         default:
             break
@@ -629,9 +659,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 }
             }
         }
-        self.commonSetup()
-        self.setupPopupBar()
-        self.setupCustomPopupBar()
         self.configureBarButtonItems()
 
         // If sender is the present item of the navigation controller toolbar
@@ -656,6 +683,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         //
         self.containerVC.dismissPopupBar(animated: true, completion: {
             PBLog("Popup Bar Dismissed")
+            self.firstSetup()
         })
         //
     }
@@ -718,7 +746,7 @@ extension FirstTableViewController {
 extension FirstTableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         if self.containerVC != nil {
-            return 3
+            return 4
         }
         return 0
     }
@@ -726,10 +754,12 @@ extension FirstTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 5
+            return 1
         case 1:
-            return 3
+            return 5
         case 2:
+            return 3
+        case 3:
             return 22
         default:
             break
@@ -740,6 +770,22 @@ extension FirstTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
+            // Floating Popup Bar
+            let cell = tableView.dequeueReusableCell(withIdentifier: "switchTableViewCell", for: indexPath) as! SwitchTableViewCell
+            cell.switchLabel.text = "Floating Popup Bar"
+            cell.switchSwitch.isOn = self.containerVC.popupBar.isFloating
+            cell.switchSwitch.addTarget(self, action: #selector(barIsFloatingChanged(_:)), for: .valueChanged)
+            cell.switchLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            
+            if #available(iOS 13.0, *) {
+                cell.switchLabel.textColor = UIColor.label
+            }
+
+            cell.switchLabel.adjustsFontForContentSizeCategory = true
+            
+            return cell
+
+        case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "segmentedTableViewCell", for: indexPath) as! SegmentedTableViewCell
             switch indexPath.row {
             case 0:
@@ -815,17 +861,15 @@ extension FirstTableViewController {
             
             cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
             
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 cell.titleLabel.textColor = UIColor.label
             }
-            #endif
 
             cell.titleLabel.adjustsFontForContentSizeCategory = true
             
             return cell
             
-        case 1:
+        case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "buttonTableViewCell", for: indexPath) as! ButtonTableViewCell
             switch indexPath.row {
             case 0:
@@ -848,7 +892,7 @@ extension FirstTableViewController {
             
             return cell
             
-        case 2:
+        case 3:
             let cell = tableView.dequeueReusableCell(withIdentifier: "musicTableViewCell", for: indexPath) as! MusicTableViewCell
             cell.albumArtImageView.image = images[indexPath.row]
             cell.songNameLabel.text = titles[indexPath.row]
@@ -864,13 +908,8 @@ extension FirstTableViewController {
             cell.albumNameLabel.adjustsFontForContentSizeCategory = true
             
             if #available(iOS 13.0, *) {
-                #if compiler(>=5.1)
                 cell.songNameLabel.textColor = UIColor.label
                 cell.albumNameLabel.textColor = UIColor.secondaryLabel
-                #else
-                cell.songNameLabel.textColor = UIColor.darkText
-                cell.albumNameLabel.textColor = UIColor.darkGray
-                #endif
             }
             else {
                 cell.songNameLabel.textColor = UIColor.darkText
@@ -894,7 +933,7 @@ extension FirstTableViewController {
         cell.backgroundColor = UIColor.clear
         
         switch indexPath.section {
-        case 1:
+        case 2:
             if let cell = cell as? ButtonTableViewCell {
                 switch indexPath.row {
                 case 0:
@@ -925,10 +964,13 @@ extension FirstTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        if indexPath.section == 2 {
+        tableView.deselectRow(at: indexPath, animated: false)
+
+        if indexPath.section == 3 {
             self.updatePopupBar(forRowAt: indexPath.row)
+            if self.popupBarStyle == .custom {
+                self.setupCustomPopupBar()
+            }
             self.presentPopupBar(self)
         }
     }
@@ -1009,12 +1051,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             }
         }
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
             popupContentViewController.view.alpha = 1
-            #else
-            popupContentViewController.view.backgroundColor = UIColor.white
-            #endif
         }
         else {
             popupContentViewController.view.backgroundColor = UIColor.white
@@ -1067,13 +1105,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
 
             let alpha = (0.30 - progress) / 0.30
             if #available(iOS 13.0, *) {
-                #if compiler(>=5.1)
                 popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
                 popupContentViewController.view.alpha = 1 - alpha
-                #else
-                popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
-                popupContentViewController.view.alpha = 1 - alpha
-                #endif
             }
             else {
                 #if !targetEnvironment(macCatalyst)

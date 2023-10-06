@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 16/03/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import Foundation
@@ -30,6 +30,10 @@ public extension UIViewController
     internal struct AssociatedKeys {
         static var popupBar: PBPopupBar?
         static var bottomBar: UIView?
+        
+        @available(iOS 13.0, *)
+        static var bottomBarAppearance: UIBarAppearance?
+        
         static var popupController: PBPopupController?
         static var popupContainerViewController: UIViewController?
         static var popupContentViewController: UIViewController?
@@ -42,14 +46,46 @@ public extension UIViewController
         static var popupAdditionalSafeAreaInsets = "popupAdditionalSafeAreaInsets"
     }
     
+    // https://github.com/atrick/swift-evolution/blob/diagnose-implicit-raw-bitwise/proposals/nnnn-implicit-raw-bitwise-conversion.md#workarounds-for-common-cases
+    
+    internal func getAssociatedPopupBarFor(_ controller: UIViewController) -> PBPopupBar? {
+        let rv = withUnsafePointer(to: &AssociatedKeys.popupBar) {
+                objc_getAssociatedObject(controller, $0) as? PBPopupBar
+        }
+        return rv
+    }
+    
+    internal func getAssociatedBottomBarFor(_ controller: UIViewController) -> UIView? {
+        let rv = withUnsafePointer(to: &AssociatedKeys.bottomBar) {
+                objc_getAssociatedObject(controller, $0) as? UIView
+        }
+        return rv
+    }
+    
+    internal func getAssociatedPopupControllerFor(_ controller: UIViewController) -> PBPopupController? {
+        let rv = withUnsafePointer(to: &AssociatedKeys.popupController) {
+                objc_getAssociatedObject(controller, $0) as? PBPopupController
+        }
+        return rv
+    }
+    
     internal var isTabBarHiddenDuringTransition: Bool! {
         get {
-            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.isTabBarHiddenDuringTransition) as? NSNumber
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
             return isHidden?.boolValue ?? false
         }
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(self, &AssociatedKeys.isTabBarHiddenDuringTransition, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        NSNumber(value: newValue),
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
@@ -61,31 +97,58 @@ public extension UIViewController
      */
     @objc var hidesPopupBarWhenPushed: Bool {
         get {
-            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.hidesPopupBarWhenPushed) as? NSNumber
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
             return isHidden?.boolValue ?? false
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.hidesPopupBarWhenPushed, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
         }
     }
     
     @objc internal var popupBarIsHidden: Bool {
         get {
-            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.popupBarIsHidden) as? NSNumber
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
             return isHidden?.boolValue ?? false
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.popupBarIsHidden, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
         }
     }
     
     @objc internal var popupBarWasHidden: Bool {
         get {
-            let isHidden = objc_getAssociatedObject(self, &AssociatedKeys.popupBarWasHidden) as? NSNumber
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
             return isHidden?.boolValue ?? false
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.popupBarWasHidden, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
         }
     }
     
@@ -96,26 +159,29 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupBar: PBPopupBar! {
         get {
-            if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
-                return objc_getAssociatedObject(self, &AssociatedKeys.popupBar) as? PBPopupBar
+            let rv = withUnsafePointer(to: &AssociatedKeys.popupBar) {
+                    objc_getAssociatedObject(self, $0) as? PBPopupBar
             }
-            else {
+            if rv == nil {
                 return self.popupController.pb_popupBar()
             }
+            return rv
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.popupBar,
-                    newValue as PBPopupBar,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.popupBar) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as PBPopupBar,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
-    
+
     /**
      Returns a view to attach the popup bar to.
      
@@ -124,22 +190,48 @@ public extension UIViewController
      */
     @objc internal(set) weak var bottomBar: UIView! {
         get {
-            if objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) != nil {
-                return objc_getAssociatedObject(self, &AssociatedKeys.bottomBar) as? UIView
+            let rv = withUnsafePointer(to: &AssociatedKeys.bottomBar) {
+                    objc_getAssociatedObject(self, $0) as? UIView
             }
-            else {
+            if rv == nil {
                 return self.popupController.pb_bottomBar()
             }
+            return rv
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.bottomBar,
-                    newValue as UIView,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.bottomBar) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as UIView,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
+            }
+        }
+    }
+
+    @available(iOS 13.0, *)
+    @objc internal var bottomBarAppearance: UIBarAppearance! {
+        get {
+            let rv = withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
+                    objc_getAssociatedObject(self, $0) as? UIBarAppearance
+            }
+            return rv
+        }
+        
+        set {
+            if let newValue = newValue {
+                withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as UIBarAppearance,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
@@ -154,22 +246,25 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupController: PBPopupController! {
         get {
-            if objc_getAssociatedObject(self, &AssociatedKeys.popupController) != nil {
-                return objc_getAssociatedObject(self, &AssociatedKeys.popupController) as? PBPopupController
+            let rv = withUnsafePointer(to: &AssociatedKeys.popupController) {
+                    objc_getAssociatedObject(self, $0) as? PBPopupController
             }
-            else {
+            if rv == nil {
                 return pb_popupController()
             }
+            return rv
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.popupController,
-                    newValue as PBPopupController,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.popupController) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as PBPopupController,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
@@ -181,21 +276,25 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupContainerViewController: UIViewController! {
         get {
-            //return objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController
-            if let rv = objc_getAssociatedObject(self, &AssociatedKeys.popupContainerViewController) as? UIViewController {
-                return rv
+            let rv = withUnsafePointer(to: &AssociatedKeys.popupContainerViewController) {
+                    objc_getAssociatedObject(self, $0) as? UIViewController
             }
-            return self.popupContainerViewController()
+            if rv == nil {
+                return self.popupContainerViewController()
+            }
+            return rv
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.popupContainerViewController,
-                    newValue as UIViewController,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.popupContainerViewController) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as UIViewController,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
@@ -205,17 +304,21 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupContentViewController: UIViewController! {
         get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.popupContentViewController) as? UIViewController
+            return withUnsafePointer(to: &AssociatedKeys.popupContentViewController) {
+                    objc_getAssociatedObject(self, $0) as? UIViewController
+            }
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.popupContentViewController,
-                    newValue as UIViewController?,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.popupContentViewController) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as UIViewController?,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
                 newValue.popupContainerViewController = self
                 self.popupController.preparePopupContentViewControllerForPresentation()
             }
@@ -229,22 +332,25 @@ public extension UIViewController
      */
     @objc internal(set) weak var popupContentView: PBPopupContentView! {
         get {
-            if objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) != nil {
-                return objc_getAssociatedObject(self, &AssociatedKeys.popupContentView) as? PBPopupContentView
+            let rv = withUnsafePointer(to: &AssociatedKeys.popupContentView) {
+                    objc_getAssociatedObject(self, $0) as? PBPopupContentView
             }
-            else {
+            if rv == nil {
                 return self.popupController.pb_popupContentView()
             }
+            return rv
         }
         
         set {
             if let newValue = newValue {
-                objc_setAssociatedObject(
-                    self,
-                    &AssociatedKeys.popupContentView,
-                    newValue as PBPopupContentView?,
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
+                withUnsafePointer(to: &AssociatedKeys.popupContentView) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as PBPopupContentView?,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
             }
         }
     }
@@ -254,25 +360,45 @@ public extension UIViewController
      */
     @objc var additionalSafeAreaInsetsBottomForContainer: CGFloat {
         get {
-            if let height = objc_getAssociatedObject(self, &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer) as? NSNumber {
+            let height = withUnsafePointer(to: &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            if let height = height {
                 return CGFloat(height.floatValue)
             }
             return 0
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer, NSNumber(value: Float(newValue)), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            withUnsafePointer(to: &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: Float(newValue)),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
         }
     }
     
     @objc internal var popupAdditionalSafeAreaInsets: UIEdgeInsets {
         get {
-            if let insets = objc_getAssociatedObject(self, &AssociatedKeys.popupAdditionalSafeAreaInsets) as? NSValue {
+            let insets = withUnsafePointer(to: &AssociatedKeys.popupAdditionalSafeAreaInsets) {
+                    objc_getAssociatedObject(self, $0) as? NSValue
+            }
+            if let insets = insets {
                 return insets.uiEdgeInsetsValue
             }
             return UIEdgeInsets.zero
         }
         set {
-            objc_setAssociatedObject(self, &AssociatedKeys.popupAdditionalSafeAreaInsets, NSValue(uiEdgeInsets: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            withUnsafePointer(to: &AssociatedKeys.popupAdditionalSafeAreaInsets) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSValue(uiEdgeInsets: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
         }
     }
     
@@ -360,7 +486,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func dismissPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
+        if self.getAssociatedPopupBarFor(self) != nil {
             self.popupController._closePopupAnimated(false) {
                 self.popupController._dismissPopupBarAnimated(animated) {
                     self.popupController.popupPresentationController = nil
@@ -385,7 +511,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func hidePopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
+        if self.getAssociatedPopupBarFor(self) != nil {
             self.popupController._hidePopupBarAnimated(animated) {
                 completion?()
             }
@@ -403,7 +529,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func showPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if objc_getAssociatedObject(self, &AssociatedKeys.popupBar) != nil {
+        if self.getAssociatedPopupBarFor(self) != nil {
             self.popupController._showPopupBarAnimated(animated) {
                 completion?()
             }
@@ -455,7 +581,7 @@ public extension UIViewController
 {
     func popupContainerViewController(for viewController: UIViewController? = nil) -> UIViewController? {
         let controller = viewController ?? self
-        if let rv = (objc_getAssociatedObject(controller, &AssociatedKeys.popupController) as? PBPopupController) {
+        if let rv = self.getAssociatedPopupControllerFor(controller) {
             return rv.containerViewController
         }
         if controller.parent == nil {

@@ -22,6 +22,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithDefaultBackground()
         
+        if #available(iOS 17.0, *) {
+            tabBarAppearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterial)
+        }
         let newTabBarappearance = UITabBar.appearance()
         newTabBarappearance.standardAppearance = tabBarAppearance
         if #available(iOS 15.0, *) {

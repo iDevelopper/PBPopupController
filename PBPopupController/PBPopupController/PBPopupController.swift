@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 14/04/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ import UIKit.UIGestureRecognizerSubclass
 import ObjectiveC
 
 
-internal class PBPopupBarView: UIView {
+internal class _PBPopupBarView: UIView {
     
     var popupController: PBPopupController! = nil
     
@@ -413,7 +413,6 @@ extension PBPopupPresentationStyle
     internal var barStyle: UIBarStyle! {
         didSet {
             if let popupContentView = self.containerViewController.popupContentView, let popupEffectView = popupContentView.popupEffectView, popupEffectView.effect != nil {
-                #if compiler(>=5.1)
                 #if targetEnvironment(macCatalyst)
                 if barStyle == .black {
                     popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterialDark)
@@ -430,12 +429,11 @@ extension PBPopupPresentationStyle
                     popupContentView.popupEffectView.effect = barStyle == .black ? UIBlurEffect(style: .dark) : UIBlurEffect(style: .light)
                 }
                 #endif
-                #endif
             }
         }
     }
     
-    internal var popupBarView: PBPopupBarView!
+    internal var popupBarView: _PBPopupBarView!
     
     internal var bottomBarHeight: CGFloat
     {
@@ -519,6 +517,7 @@ extension PBPopupPresentationStyle
             UIViewController.vc_swizzle()
             UITabBarController.tbc_swizzle()
             UINavigationController.nc_swizzle()
+            UISplitViewController.svc_swizzle()
         }
         
         self.popupPresentationState = .hidden
@@ -544,13 +543,10 @@ extension PBPopupPresentationStyle
     internal func pb_popupBar() -> PBPopupBar
     {
         let rv = PBPopupBar(frame: CGRect(x: 0, y: 0, width: self.containerViewController.view.bounds.width, height: PBPopupBarHeightProminent))
-        self.popupBarView = PBPopupBarView()
+        self.popupBarView = _PBPopupBarView()
         self.popupBarView.frame = CGRect(x: 0, y: 0, width: self.containerViewController.view.bounds.width, height: rv.popupBarHeight)
         rv.isHidden = true
         self.popupPresentationState = .hidden
-        
-        //rv.popupTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.popupTapGestureRecognized(tgr:)))
-        //rv.addGestureRecognizer(rv.popupTapGestureRecognizer)
         
         self.popupBarView.addSubview(rv)
         
@@ -732,15 +728,24 @@ extension PBPopupPresentationStyle
         
         let contentFrame = self.popupBarViewFrameForPopupStateHidden()
         
-        UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveLinear, .layoutSubviews], animations: {
-            
+        let block = {
             self.popupBarView.frame = contentFrame
             self.popupBarView.alpha = 0.0
             
             self.fixInsetsForContainerIfNeeded(addInsets: false)
-        }) { (success) in
+        }
+        
+        if animated {
+            UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveLinear, .layoutSubviews], animations: {
+                block()
+            }) { (success) in
+                self.popupPresentationState = .hidden
+                completionBlock?()
+            }
+        }
+        else {
+            block()
             self.popupPresentationState = .hidden
-            completionBlock?()
         }
     }
     
@@ -777,29 +782,9 @@ extension PBPopupPresentationStyle
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
-            //self.setGesturesEnabled(false)
             vc.popupBar.setHighlighted(true, animated: false)
             self._openPopupAnimated(true) {
                 vc.popupBar.setHighlighted(false, animated: false)
-                //self.setGesturesEnabled(true)
-            }
-        }
-    }
-
-    internal func setGesturesEnabled(_ enabled: Bool, onlyTap: Bool = false)
-    {
-        if enabled == false {
-            self.popupBarTapGestureRecognizer.isEnabled = false
-            if !onlyTap {
-                self.popupBarPanGestureRecognizer.isEnabled = false
-                self.popupContentPanGestureRecognizer.isEnabled = false
-            }
-        }
-        else {
-            DispatchQueue.main.async {
-                self.popupBarTapGestureRecognizer.isEnabled = true
-                self.popupBarPanGestureRecognizer.isEnabled = true
-                self.popupContentPanGestureRecognizer.isEnabled = true
             }
         }
     }
@@ -850,11 +835,6 @@ extension PBPopupPresentationStyle
             return
         }
         
-        //self.setGesturesEnabled(false)
-        
-        //self._closePopupAnimated(true) {
-        //    self.setGesturesEnabled(true)
-        //}
         self._closePopupAnimated(true)
     }
     
@@ -1042,6 +1022,10 @@ extension PBPopupPresentationStyle
         var frame = CGRect(x: defaultFrame.origin.x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: defaultFrame.size.width, height: height)
         if vc is UINavigationController || vc is UITabBarController {
             frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
+            if let svc = vc.splitViewController, vc === svc.viewControllers.first {
+                frame.origin.x += abs(vc.view.frame.minX)
+                frame.size.width -= abs(vc.view.frame.minX)
+            }
         }
 
         PBLog("\(frame)")
@@ -1124,9 +1108,6 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             
-            //vc.popupBar.setHighlighted(true, animated: false)
-            //self.setGesturesEnabled(false, onlyTap: true)
-
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
@@ -1136,10 +1117,8 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                     vc.popupContentView.removeFromSuperview()
                 }
             }
-            //
+
             vc.present(vc.popupContentViewController, animated: true) {
-                //vc.popupBar.setHighlighted(false, animated: false)
-                //self.setGesturesEnabled(true)
                 if self.popupPresentationState == .opening {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                         self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
@@ -1151,6 +1130,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                 }
                 // TODO: SwiftUI
                 else {
+                    self.popupPresentationController = nil
                     if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                         vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
                         vc.view.insertSubview(vc.popupContentView, at: 0)
@@ -1171,13 +1151,11 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             
-            //self.setGesturesEnabled(false, onlyTap: true)
-            
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
+            
             vc.popupContentViewController.dismiss(animated: true) {
-                //self.setGesturesEnabled(true)
                 if self.popupPresentationState == .closing {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                         self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset

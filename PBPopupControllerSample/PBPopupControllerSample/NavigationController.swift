@@ -30,6 +30,10 @@ class NavigationController: UINavigationController {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+    }
+    
     deinit {
         PBLog("Deinit: \(self)")
     }

@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 29/03/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -172,6 +172,7 @@ internal let PBPopupBarHeightCompact: CGFloat = 48.0
 internal let PBPopupBarHeightProminent: CGFloat = 64.5
 internal let PBPopupBarImageHeightProminent: CGFloat = 48.0
 internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
+internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
 
 // MARK: - Public Protocols
 
@@ -288,7 +289,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     
     /**
      Set this property to `true` if you want the custom popup bar extend under the safe area, to the bottom of the screen.
-
+     
      When a popup bar is presented on a view controller with the system bottom docking view, or a navigation controller with hidden toolbar, the popup bar's background view will extend under the safe area.
      */
     @objc public var shouldExtendCustomBarUnderSafeArea: Bool = true
@@ -305,16 +306,35 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     /**
+     A Boolean value that indicates whether the popup bar is floating like in iOS 17 (`true`) or not (`false`).
+     */
+    @objc public var isFloating: Bool {
+        get {
+            return self.popupBarIsFloating
+        }
+        set {
+            self.popupBarIsFloating = newValue
+        }
+    }
+    
+    /**
      The popup bar style (see PBPopupBarStyle).
      */
     @objc public var popupBarStyle: PBPopupBarStyle = .default {
         willSet {
             PBLog("The value of popupBarStyle will change from \(popupBarStyle.description) to \(newValue.description)")
-            customPopupBarViewController?.view.removeFromSuperview()
+            if self.popupController.popupPresentationState != .hidden, popupBarStyle != newValue {
+                if let vc = self.popupController.containerViewController {
+                    vc.hidePopupBar(animated: false)
+                }
+                self.popupController.popupPresentationState = .closed
+                self.customPopupBarViewController?.view.removeFromSuperview()
+            }
         }
         didSet {
             PBLog("The value of popupBarStyle changed from \(oldValue.description) to \(popupBarStyle.description)")
             if popupBarStyle == .custom {
+                self.isFloating = false
                 if self.customPopupBarViewController == nil {
                     PBLog("Custom popuBar view controller cannot be nil.", error: true)
                 }
@@ -325,21 +345,10 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             }
             self.setupCustomPopupBarView()
             
-            self.layoutIfNeeded()
-            
-            let effect = UIBlurEffect(style: self.backgroundStyle)
-            self.backgroundView.effect = effect
-            
-            self.layoutToolbarItems()
-            self.configureTitleLabels()
-            
-            if self.popupController.popupPresentationState != .hidden && oldValue != popupBarStyle {
-                self.popupController.popupPresentationState = .hidden
+            if self.popupController.popupPresentationState == .closed {
                 if let vc = self.popupController.containerViewController {
-                    let height = oldValue == .custom ? -(customPopupBarViewController?.preferredContentSize.height ?? 0) : oldValue == .prominent ? -PBPopupBarHeightProminent : -PBPopupBarHeightCompact
-                    let additionalInsets = UIEdgeInsets(top: self.popupController.wantsAdditionalSafeAreaInsetTop ? height : 0, left: 0, bottom: self.popupController.wantsAdditionalSafeAreaInsetBottom ? height : 0, right: 0)
-                    PBPopupFixInsetsForViewController(vc, false, additionalInsets)
-                    self.popupController._presentPopupBarAnimated(false)
+                    self.popupController.popupPresentationState = .hidden
+                    vc.showPopupBar(animated: false)
                 }
             }
         }
@@ -356,35 +365,40 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             self.systemBarStyle = newValue
             self.popupController.barStyle = newValue
             
-            #if targetEnvironment(macCatalyst)
-            self.backgroundView.backgroundColor = nil
-            #else
+#if targetEnvironment(macCatalyst)
+            self.backgroundView?.backgroundColor = nil
+#else
             if #available(iOS 13.0, *) {
-                self.backgroundView.backgroundColor = nil
+                self.backgroundView?.backgroundColor = nil
             }
             else {
                 if newValue == .black {
-                    self.backgroundView.backgroundColor = UIColor.clear
+                    self.backgroundView?.backgroundColor = UIColor.clear
                 }
                 else {
-                    // Drop iOS 11- look
-                    self.backgroundView.backgroundColor = nil
-                    //self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.65)
+                    self.backgroundView?.backgroundColor = nil
                 }
             }
-            #endif
+#endif
             self.toolbar.barStyle = newValue
         }
     }
     
     /**
-     The custom popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
+     The popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
      */
     @objc public var backgroundEffect: UIBlurEffect? {
         didSet {
-            if popupBarStyle == .custom, backgroundEffect != nil {
-                self.backgroundView.effect = backgroundEffect
-            }
+            self.backgroundView?.effect = backgroundEffect
+        }
+    }
+    
+    /**
+     The floating popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
+     */
+    @objc public var floatingBackgroundEffect: UIBlurEffect? {
+        didSet {
+            self.contentView.effect = floatingBackgroundEffect
         }
     }
     
@@ -395,21 +409,17 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
      */
     @objc public var backgroundStyle: UIBlurEffect.Style {
         get {
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 if self.systemBarStyle == .black {
                     return .systemChromeMaterialDark
                 }
                 return .systemChromeMaterial
             }
-            #endif
-            // Drop iOS 11- look
-            //return self.systemBarStyle == .black ? .dark : popupBarStyle == .compact ? .extraLight : .light
             return self.systemBarStyle == .black ? .dark : .extraLight
         }
         set {
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-            self.backgroundView.effect = UIBlurEffect(style: newValue)
+            self.backgroundView?.effect = UIBlurEffect(style: newValue)
             self.safeAreaToolbar?.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         }
     }
@@ -424,38 +434,99 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         set {
             if self.toolbar.isTranslucent != newValue {
                 self.toolbar.isTranslucent = newValue
-                self.backgroundView.isHidden = (newValue == false)
                 self.safeAreaToolbar?.isTranslucent = newValue
-                if self.inheritsVisualStyleFromBottomBar == true || isTranslucent == false {
-                    self.backgroundView.effect = nil
-                    self.backgroundView.isHidden = true
-                }
+                self.backgroundView?.effect = newValue == false ? nil : self.backgroundEffect
+                self.contentView?.effect =  newValue == false ? nil : self.floatingBackgroundEffect
             }
         }
     }
     
     /**
-     The background color of the popup bar toolbar.
+     The background color of the popup bar's background view.
      */
     @objc override public var backgroundColor: UIColor? {
         get {
-            return self.toolbar.backgroundColor
+            return self.userBackgroundColor
         }
         set {
-            if self.toolbar.backgroundColor != newValue {
-                self.toolbar.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
-                self.toolbar.backgroundColor = newValue
-                self.safeAreaToolbar?.setBackgroundImage(newValue == nil ? UIImage() : nil, forToolbarPosition: .any, barMetrics: .default)
-                self.safeAreaToolbar?.backgroundColor = newValue
+            if self.userBackgroundColor != newValue {
+                self.userBackgroundColor = newValue
+                self.backgroundView.colorView.backgroundColor = newValue
             }
+        }
+    }
+    
+    /**
+     The floating popup bar's background color. Use `nil` to use the most appropriate background style for the environment.
+     This color is composited over `floatingBackgroundEffect`.
+     */
+    @objc public var floatingBackgroundColor: UIColor? {
+        get {
+            return self.userFloatingBackgroundColor
+        }
+        set {
+            if self.userFloatingBackgroundColor != newValue {
+                self.userFloatingBackgroundColor = newValue
+                self.contentView.colorView.backgroundColor = newValue
+            }
+        }
+    }
+    
+    /**
+     The popup bar's background image. Use `nil` to use the most appropriate background style for the environment.
+     This image is composited over the `floatingBackgroundColor`, and resized per the `floatingBackgroundImageContentMode`.
+     */
+    @objc public var backgroundImage: UIImage? {
+        get {
+            return self.userBackgroundImage
+        }
+        set {
+            if self.userBackgroundImage != newValue {
+                self.userBackgroundImage = newValue
+                self.backgroundView.imageView.image = newValue
+            }
+        }
+    }
+    
+    /**
+     The content mode to use when rendering the `backgroundImage`. Defaults to `UIViewContentModeScaleToFill`. `UIViewContentModeRedraw` will be reinterpreted as `UIViewContentModeScaleToFill`.
+     */
+    @objc public var backgroundImageContentMode: UIView.ContentMode = .scaleToFill {
+        didSet {
+            self.backgroundView.imageView.contentMode = backgroundImageContentMode
+        }
+    }
+    
+    /**
+     The floating popup bar's background image. Use `nil` to use the most appropriate background style for the environment.
+     This image is composited over the `floatingBackgroundColor`, and resized per the `floatingBackgroundImageContentMode`.
+     */
+    @objc public var floatingBackgroundImage: UIImage? {
+        get {
+            return self.userFloatingBackgroundImage
+        }
+        set {
+            if self.userFloatingBackgroundImage != newValue {
+                self.userFloatingBackgroundImage = newValue
+                self.contentView.imageView.image = newValue
+            }
+        }
+    }
+    
+    /**
+     The content mode to use when rendering the `floatingBackgroundImage`. Defaults to `UIViewContentModeScaleToFill`. `UIViewContentModeRedraw` will be reinterpreted as `UIViewContentModeScaleToFill`.
+     */
+    @objc public var floatingBackgroundImageContentMode: UIView.ContentMode = .scaleToFill {
+        didSet {
+            self.contentView.imageView.contentMode = floatingBackgroundImageContentMode
         }
     }
     
     /**
      The tint color to apply to the popup bar background.
      */
+    @available(iOS, obsoleted: 13.0, message: "Use backgroundColor and floatingBackgroundColor instead")
     @objc public var barTintColor: UIColor! {
-        
         get {
             return self.toolbar.barTintColor
         }
@@ -492,6 +563,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         didSet {
             self.shadowImageView.imageView.image = image
             self.layoutImageView()
+            
+            self.setNeedsLayout()
         }
     }
     
@@ -589,10 +662,13 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
      */
     @objc override public var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
+            super.semanticContentAttribute = semanticContentAttribute
             self.toolbar.semanticContentAttribute = semanticContentAttribute
             
             self.layoutToolbarItems()
             self.configureTitleLabels()
+
+            self.setNeedsLayout()
         }
     }
     
@@ -603,6 +679,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         didSet {
             self.layoutToolbarItems()
             self.configureTitleLabels()
+
+            self.setNeedsLayout()
         }
     }
     
@@ -613,6 +691,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         didSet {
             self.layoutToolbarItems()
             self.configureTitleLabels()
+
+            self.setNeedsLayout()
         }
     }
     
@@ -625,6 +705,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         didSet {
             self.layoutToolbarItems()
             self.configureTitleLabels()
+
+            self.setNeedsLayout()
         }
     }
     
@@ -672,6 +754,8 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     
     // MARK: - Private Properties
     
+    private var PBPopupBarShowLayers: Bool = true
+    
     internal weak var popupController: PBPopupController!
     
     internal var ignoreLayoutDuringTransition: Bool = false
@@ -685,14 +769,93 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     
     private var systemBarStyle: UIBarStyle!
     
-    private var backgroundView: UIVisualEffectView!
+    private var popupBarIsFloating: Bool = false {
+        didSet {
+            self.updatePopupBarAppearance()
+            
+            self.safeAreaToolbar?.isHidden = true
+            
+            self.backgroundView?.layer.mask = popupBarIsFloating ? (PBPopupBarShowLayers ? self.gradientLayer : nil) : nil
+            
+            self.contentView.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
+            self.contentView.castsShadow = popupBarIsFloating ? (PBPopupBarShowLayers ? true : false) : false
+
+            self.shadowImageView.cornerRadius = popupBarIsFloating ? self.floatingRadius / 2 : 3.0
+            self.highlightView.layer.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
+            
+            self.contentView.preservesSuperviewLayoutMargins = !popupBarIsFloating
+            self.contentView.layer.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
+            if #available(iOS 13.0, *) {
+                self.contentView.layer.cornerCurve = .continuous
+            }
+            
+            self.toolbar.popupBarIsFloating = popupBarIsFloating
+            
+            if #available(iOS 13.0, *) {
+                self.toolbar.backgroundImage = nil
+                self.toolbar.shadowImage = nil
+            }
+            else {
+                self.toolbar.backgroundImage = UIImage()
+                self.toolbar.shadowImage = popupBarIsFloating ? UIImage() : nil
+            }
+            
+            self.contentView.effect = popupBarIsFloating ? self.floatingBackgroundEffect : nil
+            
+            self.contentView.imageView.image = popupBarIsFloating ? self.floatingBackgroundImage : nil
+            self.contentView.colorView.backgroundColor = popupBarIsFloating ? self.floatingBackgroundColor : nil
+
+            self.backgroundView.imageView.image = popupBarIsFloating ? nil : self.backgroundImage
+            self.backgroundView.colorView.backgroundColor = popupBarIsFloating ? nil : self.backgroundColor
+
+            self.setNeedsLayout()
+        }
+    }
     
-    private var toolbar: PBPopupToolbar!
+    // The corner radius for the floating popup bar
+    internal var floatingRadius: CGFloat = 14
+    
+    // The default inset for the floating popup bar
+    internal var floatingInsets: UIEdgeInsets = UIEdgeInsets(top: 3.0, left: 12, bottom: 5.0, right: 12)
+    
+    internal var backgroundView: _PBPopupBackgroundShadowView!
+    
+    private var gradientLayer: CAGradientLayer!
+        
+    internal var effectGroupingIdentifier: String!
+    
+    private var effectGroupingIdentifierKey: String?
+    {
+        let gN = "Z3JvdXBOYW1l"
+        var rv: String? = nil
+        rv = _PBPopupDecodeBase64String(base64String: gN)
+        return rv
+    }
+    
+    private var userBackgroundColor: UIColor?
+    private var userBackgroundImage: UIImage?
+    
+    private var userFloatingBackgroundColor: UIColor?
+    private var userFloatingBackgroundImage: UIImage?
 
-    private var toolbarBottomConstraint: NSLayoutConstraint!
-
+    private var contentView: _PBPopupBarContentView!
+    private var toolbar: _PBPopupToolbar!
+    
+    internal var shadowColor: UIColor! {
+        didSet {
+            self.toolbar.shadowColor = shadowColor
+        }
+    }
+    
+    private var contentViewTopConstraint: NSLayoutConstraint!
+    private var contentViewLeftConstraint: NSLayoutConstraint!
+    private var contentViewRightConstraint: NSLayoutConstraint!
+    private var contentViewBottomConstraint: NSLayoutConstraint!
+    
+    private var toolbarTopConstraint: NSLayoutConstraint!
+    
     private var customBarBottomConstraint: NSLayoutConstraint!
-
+    
     private var safeAreaBackgroundViewHeightConstraint: NSLayoutConstraint?
     
     private var safeAreaToolbar: UIToolbar!
@@ -706,7 +869,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     private var imageController: UIViewController?
     
     internal var imageShadowOpacity: Float = 0.0
-
+    
     internal var swiftUIImageController: UIViewController? {
         set {
             if let imageController = imageController {
@@ -741,7 +904,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     // The container view for titleLabel and subtitleLabel
-    @objc dynamic private var titlesView: PBPopupBarTitlesView!
+    @objc dynamic private var titlesView: _PBPopupBarTitlesView!
     
     private var titlesViewLeftConstraint: NSLayoutConstraint!
     private var titlesViewRightConstraint: NSLayoutConstraint!
@@ -764,20 +927,19 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     private var subtitleLabelHeightConstraint: NSLayoutConstraint!
     
     // The progress view (see PBPopupBarProgressViewStyle and progress property)
-    @objc dynamic private var progressView: PBPopupBarProgressView!
+    @objc dynamic private var progressView: _PBPopupBarProgressView!
     
     private var progressViewVerticalConstraints: [NSLayoutConstraint]!
     private var progressViewHorizontalConstraints: [NSLayoutConstraint]!
     
     // Highlighted view when taping or paning the popupBar
-    @objc dynamic internal var highlightView: PBPopupBarHighlightView!
+    @objc dynamic internal var highlightView: _PBPopupBarHighlightView!
     
     // Border view for iPad when the popup bar is the neighbour of another object
-    @objc dynamic internal var borderView: PBPopupBarBorderView!
+    @objc dynamic internal var borderView: _PBPopupBarBorderView!
     
     private var borderViewVerticalConstraints: [NSLayoutConstraint]!
     private var borderViewHorizontalConstraints: [NSLayoutConstraint]!
-    
     
     // MARK: - Private Init
     
@@ -794,62 +956,66 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         self.autoresizingMask = []
         
         let effect = UIBlurEffect(style: self.backgroundStyle)
-        self.backgroundView = UIVisualEffectView(effect: effect)
-        self.backgroundView.clipsToBounds = false
+        
+        self.backgroundView = _PBPopupBackgroundShadowView(effect: !PBPopupBarShowLayers ? nil : effect)
+        self.backgroundView.frame = self.bounds
         self.backgroundView.autoresizingMask = []
         self.backgroundView.isUserInteractionEnabled = false
-        if #available(iOS 13.0, *) {
-            self.backgroundView.backgroundColor = nil
-        }
-        else {
-            // Drop iOS 11- look
-            self.backgroundView.backgroundColor = nil
-            //self.backgroundView.backgroundColor = UIColor(white: 230.0 / 255.0, alpha: 0.65)
-        }
-        self.addSubview(self.backgroundView)
+        self.backgroundView.floatingInset = self.floatingInsets
+        self.backgroundView.castsShadow = false
         
+        self.addSubview(self.backgroundView)
+
+        self.backgroundEffect = !PBPopupBarShowLayers ? nil : effect
+
+        self.gradientLayer = CAGradientLayer()
+        self.gradientLayer.colors = [UIColor.clear.cgColor, UIColor.white.cgColor]
+        self.gradientLayer.locations = [0.0, 0.85]
+        
+        /*
         #if !targetEnvironment(macCatalyst)
         self.safeAreaToolbar = UIToolbar()
         self.safeAreaToolbar.autoresizingMask = []
         self.safeAreaToolbar.isTranslucent = true
-        
+         
         self.safeAreaToolbar.setBackgroundImage(UIImage(), forToolbarPosition: .bottom, barMetrics: .default)
         self.safeAreaToolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
-        
+         
         self.safeAreaToolbar.clipsToBounds = false
-        
+         
         self.addSubview(self.safeAreaToolbar)
         #endif
+        */
         
-        self.toolbar = PBPopupToolbar(frame: self.bounds)
+        self.contentView = _PBPopupBarContentView(effect: nil)
+        self.contentView.frame = self.bounds
+        self.contentView.autoresizingMask = []
+        self.contentView.castsShadow = false
+        self.contentView.floatingInset = self.floatingInsets
+        if #available(iOS 13.0, *) {
+            self.contentView.layer.cornerCurve = .continuous
+        }
+        
+        self.addSubview(self.contentView)
+
+        self.floatingBackgroundEffect = !PBPopupBarShowLayers ? nil : effect
+
+        // The toolbar frame must not be zero for configuring items.
+        // See pb_popupBar() -> PBPopupBar in PBPopupController.swift
+        self.toolbar = _PBPopupToolbar(frame: self.bounds)
         self.toolbar.autoresizingMask = []
         self.toolbar.isTranslucent = true
         
-        // For background color, we have to replace the system image.
-        // -- > self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        // The backgroundColor is not translucent.
+        if #available(iOS 13.0, *) {
+            self.toolbar.shadowImage = nil
+            self.toolbar.backgroundImage = nil
+        }
+        else {
+            self.toolbar.backgroundImage = UIImage()
+            self.toolbar.shadowImage = UIImage()
+        }
         
-        // For barTintColor, do not replace the system image.
-        // --> self.toolbar.setBackgroundImage(nil, forToolbarPosition: .any, barMetrics: .default)
-        // The barTintColor is translucent if the toolbar is translucent.
-        
-        // For effect view, replace the system image.
-        // --> self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        
-        self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        
-        // To remove the top line:
-        // --> self.toolbar.clipsToBounds = true
-        // Or if toolbar.clipsToBounds = false
-        // --> self.toolbar.setShadowImage(UIImage(), forToolbarPosition: .topAttached)
-        
-        // 1 - Must be called before clipsToBounds else the shadow line not shown
-        self.toolbar.layer.masksToBounds = true
-        
-        // 2 - For the shadow image (top line)
-        self.toolbar.clipsToBounds = false
-        
-        self.addSubview(self.toolbar)
+        self.contentView.addSubview(self.toolbar)
         
         self.shadowImageView = PBPopupRoundShadowImageView(frame: .zero)
         self.shadowImageView.cornerRadius = 3.0
@@ -863,12 +1029,12 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         
         self.shadowImageView.imageView.contentMode = .scaleAspectFit
         self.shadowImageView.contentMode = .scaleAspectFit
-
+        
         self.shadowImageView.translatesAutoresizingMaskIntoConstraints = false
         
         self.toolbar.addSubview(self.shadowImageView)
         
-        self.titlesView = PBPopupBarTitlesView()
+        self.titlesView = _PBPopupBarTitlesView()
         self.titlesView.isAccessibilityElement = true
         self.titlesView.accessibilityTraits = .button
         self.titlesView.accessibilityLabel = NSLocalizedString("Popup bar", comment: "")
@@ -893,14 +1059,14 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         
         self.titlesView.addArrangedSubview(self.subtitleLabel)
         
-        self.progressView = PBPopupBarProgressView(progressViewStyle: .default)
+        self.progressView = _PBPopupBarProgressView(progressViewStyle: .default)
         self.progressView.trackImage = UIImage()
         
         self.toolbar.addSubview(self.progressView)
         
         self.progressView.setProgress(0.0, animated: false)
         
-        self.highlightView = PBPopupBarHighlightView()
+        self.highlightView = _PBPopupBarHighlightView()
         self.highlightView.autoresizingMask = []
         self.highlightView.isUserInteractionEnabled = false
         self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
@@ -910,19 +1076,19 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             }
         }
         self.highlightView.alpha = 0.0
+        
         self.addSubview(self.highlightView)
         
-        self.borderView = PBPopupBarBorderView()
+        self.borderView = _PBPopupBarBorderView()
         self.borderView.backgroundColor = UIColor.lightGray
         
         self.addSubview(borderView)
         
         self.isAccessibilityElement = false
+        
         self.configureAccessibility()
         
         self.semanticContentAttribute = .unspecified
-        
-        self.clipsToBounds = false // Important for shadow line.
         
         NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: .main) { [weak self] notification in
             self?.configureTitleLabels()
@@ -946,6 +1112,27 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         self.popupController.containerViewController.configurePopupBarFromBottomBar()
     }
     
+    internal func applyGroupingIdentifier(fromBottomBar: Bool) {
+        guard let backgroundView = self.backgroundView,
+              let effectView = backgroundView.effectView
+        else {
+            return
+        }
+        let popBarIdentifier = effectView.value(forKey: self.effectGroupingIdentifierKey!)
+        PBLog("popBarIdentifier: \(String(describing: popBarIdentifier))")
+        let identifier = String(format: "<%@:%p> Backdrop Group", NSStringFromClass(type(of: self)), self)
+        PBLog("Identifier: \(identifier)")
+        PBLog("groupingIdentifier: \(String(describing: self.effectGroupingIdentifier))")
+        if let effectGroupingIdentifierKey = self.effectGroupingIdentifierKey {
+            PBLog("effectGroupingIdentifierKey: \(effectGroupingIdentifierKey)")
+            if !fromBottomBar {
+                effectView.setValue(nil, forKey: effectGroupingIdentifierKey)
+                return
+            }
+            effectView.setValue(self.effectGroupingIdentifier ?? nil, forKey: effectGroupingIdentifierKey)
+        }
+    }
+    
     /**
      :nodoc:
      */
@@ -957,19 +1144,29 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         if self.ignoreLayoutDuringTransition {
             return
         }
+        self.frame.size = popupBarView.frame.size
         
-        UIView.performWithoutAnimation({() -> Void in
-            self.frame.size = popupBarView.frame.size
-            
-            self.layoutToolbar()
-            self.toolbar.layoutIfNeeded()
-            
-            self.layoutAllViews()
-            
-            if popupBarStyle == .custom {self.layoutCustomPopupBarView()}
-        })
+        self.layoutContentView()
+        self.contentView.layoutIfNeeded()
+
+        self.layoutToolbar()
+        self.toolbar.layoutIfNeeded()
+
+        self.layoutAllViews()
+        
+        if self.popupBarStyle == .custom {self.layoutCustomPopupBarView()}
+
     }
     
+    /**
+     :nodoc:
+     */
+    override public func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+        
+        self.gradientLayer.frame = self.backgroundView.bounds
+    }
+        
     /**
      :nodoc:
      */
@@ -983,6 +1180,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     // MARK: - Private Methods
     
     internal func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        if self.isFloating { return }
         let block = {
             self.highlightView.alpha = highlighted ? 1.0 : 0.0
         }
@@ -1004,8 +1202,10 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             customPopupBarViewController!.view.frame = frame
             self.customBarBottomConstraint = nil
         }
-        self.backgroundView.isHidden = !self.isTranslucent
-        self.toolbar.isHidden = !self.isTranslucent
+        self.backgroundView.isHidden = hidden
+        self.contentView.effect = self.isFloating ? self.floatingBackgroundEffect : nil
+        self.contentView.isHidden = hidden
+        self.toolbar.isHidden = hidden
         if !self.shouldExtendCustomBarUnderSafeArea {
             self.safeAreaToolbar?.isHidden = hidden
         }
@@ -1061,109 +1261,165 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
     }
     
     private func layoutSafeAreaBackgroundView() {
-        if PBPopupBarShowColors == true {
-            self.safeAreaToolbar.setBackgroundImage(nil, forToolbarPosition: .bottom, barMetrics: .default)
-            self.safeAreaToolbar.setShadowImage(nil, forToolbarPosition: .topAttached)
-            self.safeAreaToolbar.barTintColor = UIColor.blue
+        if let safeAreaToolbar = self.safeAreaToolbar {
+            if PBPopupBarShowColors == true {
+                safeAreaToolbar.barTintColor = UIColor.blue
+            }
+            
+            if safeAreaToolbar.translatesAutoresizingMaskIntoConstraints == true {
+                safeAreaToolbar.translatesAutoresizingMaskIntoConstraints = false
+                safeAreaToolbar.preservesSuperviewLayoutMargins = false
+                safeAreaToolbar.topAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
+                safeAreaToolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+                safeAreaToolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+                safeAreaToolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+            }
         }
-        
-        if self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints == true {
-            self.safeAreaToolbar.translatesAutoresizingMaskIntoConstraints = false
-            self.safeAreaToolbar.preservesSuperviewLayoutMargins = false
-            self.safeAreaToolbar.topAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
-            self.safeAreaToolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+    }
+
+    private func layoutBackgroundView() {
+        if let backgroundView = self.backgroundView {
+            if PBPopupBarShowColors == true {
+                backgroundView.backgroundColor = UIColor.yellow
+            }
+            if backgroundView.translatesAutoresizingMaskIntoConstraints == true {
+                backgroundView.translatesAutoresizingMaskIntoConstraints = false
+                self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
+                self.backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+                self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
+                self.backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+            }
         }
     }
     
-    private func layoutBackgroundView() {
+    private func layoutContentView() {
         if PBPopupBarShowColors == true {
-            self.toolbar.setBackgroundImage(nil, forToolbarPosition: .bottom, barMetrics: .default)
-            self.toolbar.setShadowImage(nil, forToolbarPosition: .topAttached)
-            self.toolbar.barTintColor = UIColor.orange
+            self.contentView.backgroundColor = UIColor.brown
         }
-        if self.backgroundView.translatesAutoresizingMaskIntoConstraints == true {
-            self.backgroundView.translatesAutoresizingMaskIntoConstraints = false
-            self.backgroundView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
-            self.backgroundView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-            self.backgroundView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
-            self.backgroundView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        self.contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let topConstraint = self.contentViewTopConstraint {
+            topConstraint.constant = self.isFloating ? self.floatingInsets.top : 0.0
+        }
+        else {
+            self.contentViewTopConstraint = self.contentView.topAnchor.constraint(equalTo: self.topAnchor, constant: self.isFloating ? self.floatingInsets.top : 0.0)
+            self.contentViewTopConstraint.isActive = true
+        }
+        
+        if let leftConstraint = self.contentViewLeftConstraint {
+            leftConstraint.constant = self.isFloating ? self.floatingInsets.left : 0.0
+        }
+        else {
+            self.contentViewLeftConstraint = self.contentView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: self.isFloating ? self.floatingInsets.left : 0.0)
+            self.contentViewLeftConstraint.isActive = true
+        }
+        
+        if let rightConstraint = self.contentViewRightConstraint {
+            rightConstraint.constant = self.isFloating ? -self.floatingInsets.right : 0.0
+        }
+        else {
+            self.contentViewRightConstraint = self.contentView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: self.isFloating ? -self.floatingInsets.right : 0.0)
+            self.contentViewRightConstraint.isActive = true
+        }
+        
+        if let bottomBar = self.popupController.containerViewController.bottomBar {
+            if let bottomConstraint = self.contentViewBottomConstraint {
+                bottomConstraint.constant = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0
+                if self.isFloating {
+                    bottomConstraint.constant -= (self.floatingInsets.bottom)
+                }
+            }
+            else {
+                var constant = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0
+                if self.isFloating {
+                    constant -= (self.floatingInsets.bottom)
+                }
+                self.contentViewBottomConstraint = self.contentView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: (constant))
+            }
+            self.contentViewBottomConstraint.isActive = true
         }
     }
     
     private func layoutToolbar() {
-        if self.toolbar.translatesAutoresizingMaskIntoConstraints == true {
-            self.toolbar.translatesAutoresizingMaskIntoConstraints = false
-            self.toolbar.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.5).isActive = true
-            self.toolbar.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-            self.toolbar.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        if PBPopupBarShowColors == true {
+            self.toolbar.barTintColor = UIColor.orange
         }
-        if let bottomBar = self.popupController.containerViewController.bottomBar {
-            if let bottomConstraint = self.toolbarBottomConstraint {
-                bottomConstraint.constant = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0
-            }
-            else {
-                self.toolbarBottomConstraint = self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: (bottomBar.frame.height == 0 || bottomBar.isHidden) ? -self.safeBottom() : 0.0)
-            }
-            self.toolbarBottomConstraint.isActive = true
+        self.toolbar.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.toolbar.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: 0.0).isActive = true
+        self.toolbar.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 0.0).isActive = true
+        self.toolbar.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: 0.0).isActive = true
+        
+        if let topConstraint = self.toolbarTopConstraint {
+            topConstraint.constant = self.isFloating ? 0.0 : 0.5
+        }
+        else {
+            self.toolbarTopConstraint = self.toolbar.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: self.isFloating ? 0.0 : 0.5)
+            self.toolbarTopConstraint.isActive = true
         }
     }
     
     private func layoutImageView() {
         let safeLeading = self.safeLeading()
         let safeTrailing = self.safeTrailing()
-        let height = self.popupBarHeight
-        let imageHeight = (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
-        
-        if self.shadowImageView.translatesAutoresizingMaskIntoConstraints == false {
-            
-            if let topConstraint = self.imageViewTopConstraint {
-                topConstraint.constant = (height - imageHeight) / 2
-            }
-            else {
-                self.imageViewTopConstraint = self.shadowImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: (height - imageHeight) / 2)
-            }
-            self.imageViewTopConstraint.isActive = true
-            
-            self.imageViewLeftConstraint?.isActive = false
-            self.imageViewRightConstraint?.isActive = false
-            
-            if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
-                if let leftConstraint = self.imageViewLeftConstraint {
-                    leftConstraint.constant = 16.0 + safeLeading
-                }
-                else {
-                    self.imageViewLeftConstraint = self.shadowImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16.0 + safeLeading)
-                }
-                self.imageViewLeftConstraint.isActive = true
-            }
-            else {
-                if let rightConstraint = self.imageViewRightConstraint {
-                    rightConstraint.constant = -(16.0 + safeLeading + safeTrailing)
-                }
-                else {
-                    self.imageViewRightConstraint = self.shadowImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing))
-                }
-                self.imageViewRightConstraint.isActive = true
-            }
-            
-            if let widthConstraint = self.imageViewWidthConstraint {
-                widthConstraint.constant = imageHeight
-            }
-            else {
-                self.imageViewWidthConstraint = self.shadowImageView.widthAnchor.constraint(equalToConstant: imageHeight)
-            }
-            self.imageViewWidthConstraint.isActive = true
-            
-            if let heightConstraint = self.imageViewHeightConstraint {
-                heightConstraint.constant = imageHeight
-            }
-            else {
-                self.imageViewHeightConstraint = self.shadowImageView.heightAnchor.constraint(equalToConstant: imageHeight)
-            }
-            self.imageViewHeightConstraint.isActive = true
+        var height = self.popupBarHeight
+        if self.isFloating {
+            height -= (self.floatingInsets.top + self.floatingInsets.bottom)
         }
+        let imageHeight = self.isFloating ? PBPopupBarImageHeightFloating : (self.popupBarStyle == .prominent || self.popupBarStyle == .custom) ? PBPopupBarImageHeightProminent : PBPopupBarImageHeightCompact
+        
+        if let topConstraint = self.imageViewTopConstraint {
+            topConstraint.constant = (height - imageHeight) / 2
+            if self.isFloating {
+                topConstraint.constant += self.floatingInsets.top
+            }
+        }
+        else {
+            var constant = (height - imageHeight) / 2
+            if self.isFloating {
+                constant += self.floatingInsets.top
+            }
+            self.imageViewTopConstraint = self.shadowImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: constant)
+        }
+        self.imageViewTopConstraint.isActive = true
+        
+        self.imageViewLeftConstraint?.isActive = false
+        self.imageViewRightConstraint?.isActive = false
+        
+        if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
+            if let leftConstraint = self.imageViewLeftConstraint {
+                leftConstraint.constant = 16.0 + safeLeading + (self.isFloating ? self.floatingInsets.right : 0.0)
+            }
+            else {
+                self.imageViewLeftConstraint = self.shadowImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 16.0 + safeLeading + (self.isFloating ? self.floatingInsets.right : 0.0))
+            }
+            self.imageViewLeftConstraint.isActive = true
+        }
+        else {
+            if let rightConstraint = self.imageViewRightConstraint {
+                rightConstraint.constant = -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.right + self.floatingInsets.left : 0.0))
+            }
+            else {
+                self.imageViewRightConstraint = self.shadowImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.right + self.floatingInsets.left : 0.0)))
+            }
+            self.imageViewRightConstraint.isActive = true
+        }
+        
+        if let widthConstraint = self.imageViewWidthConstraint {
+            widthConstraint.constant = imageHeight
+        }
+        else {
+            self.imageViewWidthConstraint = self.shadowImageView.widthAnchor.constraint(equalToConstant: imageHeight)
+        }
+        self.imageViewWidthConstraint.isActive = true
+        
+        if let heightConstraint = self.imageViewHeightConstraint {
+            heightConstraint.constant = imageHeight
+        }
+        else {
+            self.imageViewHeightConstraint = self.shadowImageView.heightAnchor.constraint(equalToConstant: imageHeight)
+        }
+        self.imageViewHeightConstraint.isActive = true
         
         self.shadowImageView.isHidden = ((self.image == nil && self.imageController == nil) ||/* self.popupBarStyle == .compact*/ self.popupBarStyle != .prominent)
         
@@ -1198,7 +1454,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
             
             if self.popupBarStyle == .prominent || self.popupBarStyle == .custom {
                 if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
-                    left = hasImage ? 16 + safeLeading + PBPopupBarImageHeightProminent + 16.0 : 16.0 + safeLeading
+                    left = hasImage ? 16 + safeLeading + (self.isFloating ? PBPopupBarImageHeightFloating : PBPopupBarImageHeightProminent) + 16.0 : 16.0 + safeLeading
                     right = self.toolbar.frame.size.width - right - safeLeading
                 }
                 else {
@@ -1324,7 +1580,7 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 18 : 14, weight: .regular)
         font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         self.titleLabel.adjustsFontForContentSizeCategory = true
-        
+
         let defaultTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: font]
         
         if (self.titleTextAttributes != nil) {
@@ -1377,8 +1633,6 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
                 self.toolbar.setItems([flexibleBarButtonItem] + (!isReversed ? rightBarButtonItems : rightBarButtonItems.reversed()), animated: false)
             }
         }
-        self.toolbar.layoutIfNeeded()
-        self.setNeedsLayout()
     }
     
     private func layoutProgressView() {
@@ -1402,12 +1656,18 @@ internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
         if let horizontalConstraints = self.progressViewHorizontalConstraints {
             NSLayoutConstraint.deactivate(horizontalConstraints)
         }
-        self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views)
+        if self.isFloating {
+            let format = String(format: "H:|-%f-[view]-%f-|", self.floatingRadius / 2.5, self.floatingRadius / 2.5)
+            self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: format, options: [], metrics: nil, views: views)
+        }
+        else {
+            self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[view]|", options: [], metrics: nil, views: views)
+        }
         NSLayoutConstraint.activate(self.progressViewHorizontalConstraints)
     }
     
     private func layoutHighlightView() {
-        if self.highlightView.translatesAutoresizingMaskIntoConstraints == true {
+        if self.highlightView.window != nil, self.highlightView.translatesAutoresizingMaskIntoConstraints == true {
             self.highlightView.translatesAutoresizingMaskIntoConstraints = false
             
             self.highlightView.topAnchor.constraint(equalTo: (self.superview?.topAnchor)!, constant: 0.0).isActive = true
@@ -1610,7 +1870,7 @@ extension PBPopupBar
     /**
      Custom views For Debug View Hierarchy Names
      */
-    internal class PBPopupBarTitlesView: UIStackView {
+    internal class _PBPopupBarTitlesView: UIStackView {
         override init(frame: CGRect) {
             super.init(frame: frame)
             self.axis = .vertical
@@ -1622,7 +1882,7 @@ extension PBPopupBar
         }
     }
     
-    internal class PBPopupBarProgressView: UIProgressView {
+    internal class _PBPopupBarProgressView: UIProgressView {
         override init(frame: CGRect) {
             super.init(frame: frame)
         }
@@ -1632,7 +1892,7 @@ extension PBPopupBar
         }
     }
     
-    internal class PBPopupBarHighlightView: UIView {
+    internal class _PBPopupBarHighlightView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)
         }
@@ -1642,7 +1902,7 @@ extension PBPopupBar
         }
     }
     
-    internal class PBPopupBarBorderView: UIView {
+    internal class _PBPopupBarBorderView: UIView {
         override init(frame: CGRect) {
             super.init(frame: frame)
         }
@@ -1651,8 +1911,122 @@ extension PBPopupBar
             fatalError("init(coder:) has not been implemented")
         }
     }
+    /*
+    internal class _PBPopupBarContentView: UIView {
+        override init(frame: CGRect) {
+            super.init(frame: frame)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+    */
+    internal class _PBPopupBarContentView: _PBPopupBackgroundShadowView {
+        //override init(frame: CGRect) {
+        //    super.init(frame: frame)
+        //}
+        override init(effect: UIVisualEffect?) {
+            super.init(effect: effect)
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
     
-    internal class PBPopupSafeAreaBackgroundView: UIVisualEffectView {
+    internal class _PBPopupBackgroundShadowView: UIView {
+        var effectView: UIVisualEffectView!
+        var effect: UIVisualEffect! {
+            didSet {
+                if let effectView = self.effectView {
+                    effectView.effect = effect
+                }
+            }
+        }
+        
+        var floatingInset: UIEdgeInsets!
+        
+        var contentView: UIView!
+
+        var colorView: UIView!
+        var imageView: UIImageView!
+        
+        var cornerRadius: CGFloat = 0 {
+            didSet {
+                self.layer.cornerRadius = cornerRadius
+                if #available(iOS 13.0, *) {
+                    self.layer.cornerCurve = .continuous
+                }
+                
+                if let effectView = self.effectView {
+                    effectView.layer.cornerRadius = cornerRadius
+                    if #available(iOS 13.0, *) {
+                        effectView.layer.cornerCurve = .continuous
+                    }
+                }
+            }
+        }
+        
+        var castsShadow: Bool = false {
+            didSet {
+                if castsShadow
+                {
+                    self.layer.shadowColor = UIColor.black.cgColor
+                    self.layer.shadowOffset = CGSize(width: 0.0, height: 1.0)
+                    self.layer.shadowOpacity = 0.15
+                    self.layer.shadowRadius = self.floatingInset.bottom - 1.0
+                }
+                else
+                {
+                    self.layer.shadowColor = nil
+                    self.layer.shadowOffset = .zero
+                    self.layer.shadowOpacity = 0.0
+                    self.layer.shadowRadius = 0.0
+                }
+            }
+        }
+
+        init(effect: UIVisualEffect?) {
+            super.init(frame: .zero)
+            
+            self.effectView = UIVisualEffectView(effect: effect)
+            self.effectView.clipsToBounds = true
+            
+            self.colorView = UIView()
+            self.imageView = UIImageView()
+            
+            self.cornerRadius = 0
+            self.castsShadow = false
+            self.layer.masksToBounds = false
+            
+            if let effectView = self.effectView {
+                effectView.contentView.addSubview(self.colorView)
+                effectView.contentView.addSubview(self.imageView)
+                self.addSubview(effectView)
+            }
+        }
+        
+        required init(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        override  func layoutSubviews() {
+            super.layoutSubviews()
+            
+            if let effectView = self.effectView {
+                effectView.frame = self.bounds;
+                
+                self.imageView.frame = effectView.contentView.bounds
+                self.colorView.frame = effectView.contentView.bounds
+                
+                effectView.contentView.sendSubviewToBack(self.imageView)
+                effectView.contentView.sendSubviewToBack(self.colorView)
+            }
+        }
+    }
+
+    internal class _PBPopupSafeAreaBackgroundView: UIVisualEffectView {
         override init(effect: UIVisualEffect?) {
             super.init(effect: effect)
         }
@@ -1662,3 +2036,4 @@ extension PBPopupBar
         }
     }
 }
+

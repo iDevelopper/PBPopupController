@@ -3,13 +3,37 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 21/12/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
 
-internal class PBPopupToolbar: UIToolbar {
+internal class _PBPopupToolbar: UIToolbar {
     
+    internal var popupBarIsFloating: Bool = false {
+        didSet {
+            self.setupAppearance()
+        }
+    }
+    
+    internal var shadowColor: UIColor! {
+        didSet {
+             self.setupAppearance()
+         }
+    }
+    
+    internal var shadowImage: UIImage! {
+        didSet {
+             self.setupAppearance()
+         }
+    }
+    
+    internal var backgroundImage: UIImage! {
+        didSet {
+             self.setupAppearance()
+         }
+    }
+
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let rv: UIView? = super.hitTest(point, with: event)
         
@@ -55,6 +79,28 @@ internal class PBPopupToolbar: UIToolbar {
             } else {
                 super.semanticContentAttribute = semanticContentAttribute
             }
+        }
+    }
+    
+    func setupAppearance() {
+        if #available(iOS 13, *) {
+            let toolbarAppearance = self.standardAppearance
+            toolbarAppearance.configureWithDefaultBackground()
+            toolbarAppearance.shadowColor = self.popupBarIsFloating ? nil : self.shadowColor
+            toolbarAppearance.shadowImage = self.shadowImage
+            toolbarAppearance.backgroundImage = self.backgroundImage
+            toolbarAppearance.backgroundEffect = nil
+            
+            self.compactAppearance = toolbarAppearance
+            self.standardAppearance = toolbarAppearance
+            if #available(iOS 15.0, *) {
+                self.scrollEdgeAppearance = toolbarAppearance
+                self.compactScrollEdgeAppearance = toolbarAppearance
+            }
+        }
+        else {
+            self.setBackgroundImage(self.backgroundImage, forToolbarPosition: .any, barMetrics: .default)
+            self.setShadowImage(self.shadowImage, forToolbarPosition: .topAttached)
         }
     }
 }

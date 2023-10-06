@@ -56,11 +56,9 @@ class PopupContentTableViewController: UITableViewController {
         
         self.tableView.tableFooterView = UIView()
         
-#if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.tableView.backgroundColor = UIColor.secondarySystemBackground
         }
-#endif
         self.tableView.insetsContentViewsToSafeArea = true
         self.tableView.contentInsetAdjustmentBehavior = .never
     }
@@ -166,12 +164,10 @@ class PopupContentTableViewController: UITableViewController {
             cell.songNameLabel.text = self.titles[indexPath.row]
             cell.albumNameLabel.text = self.subtitles[indexPath.row]
 
-#if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 cell.songNameLabel.textColor = UIColor.label
                 cell.albumNameLabel.textColor = UIColor.secondaryLabel
             }
-#endif
             
             cell.selectionStyle = .default
             

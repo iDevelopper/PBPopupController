@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 18/11/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -35,6 +35,9 @@ import UIKit
     @objc public var cornerRadius: CGFloat = 3.0 {
         didSet {
             imageView.layer.cornerRadius = cornerRadius
+            if #available(iOS 13.0, *) {
+                imageView.layer.cornerCurve = .continuous
+            }
             imageView.layer.masksToBounds = true
         }
     }

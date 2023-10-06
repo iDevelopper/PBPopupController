@@ -35,6 +35,7 @@
 		32C0B675216C71BC00E0AC2B /* Custom.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32C0B673216C71BC00E0AC2B /* Custom.storyboard */; };
 		32C0B67B216C82C100E0AC2B /* MusicTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C0B67A216C82C100E0AC2B /* MusicTableViewCell.swift */; };
 		32C0B67F216C886200E0AC2B /* LoremIpsum.m in Sources */ = {isa = PBXBuildFile; fileRef = 32C0B67D216C886200E0AC2B /* LoremIpsum.m */; };
+		32C5DE5B2AA88BB500680F6A /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C5DE592AA88BB500680F6A /* SwitchTableViewCell.swift */; };
 		32DB35BD2534977F0099EB80 /* SceneSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B52534977F0099EB80 /* SceneSelection.swift */; };
 		32DB35BE2534977F0099EB80 /* ConstraintsDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B62534977F0099EB80 /* ConstraintsDemoView.swift */; };
 		32DB35BF2534977F0099EB80 /* NavDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32DB35B72534977F0099EB80 /* NavDemoView.swift */; };
@@ -133,6 +134,7 @@
 		32C0B67D216C886200E0AC2B /* LoremIpsum.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoremIpsum.m; sourceTree = "<group>"; };
 		32C0B67E216C886200E0AC2B /* LoremIpsum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoremIpsum.h; sourceTree = "<group>"; };
 		32C0B686216C8D0900E0AC2B /* PBPopupControllerSample-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "PBPopupControllerSample-Bridging-Header.h"; path = "PBPopupControllerSample/PBPopupControllerSample-Bridging-Header.h"; sourceTree = SOURCE_ROOT; };
+		32C5DE592AA88BB500680F6A /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
 		32DB35B52534977F0099EB80 /* SceneSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneSelection.swift; sourceTree = "<group>"; };
 		32DB35B62534977F0099EB80 /* ConstraintsDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConstraintsDemoView.swift; sourceTree = "<group>"; };
 		32DB35B72534977F0099EB80 /* NavDemoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavDemoView.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				324639792197F96D0036E3B3 /* PlayerTableViewCell.swift */,
 				32C0B67A216C82C100E0AC2B /* MusicTableViewCell.swift */,
 				3257A60D219B0B1C00A0B3CD /* MusicCollectionViewCell.swift */,
+				32C5DE592AA88BB500680F6A /* SwitchTableViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -400,6 +403,7 @@
 				32080BDC2087141A0017FECD /* PopupContentViewController.swift in Sources */,
 				32DB35C42534977F0099EB80 /* TabDemoView.swift in Sources */,
 				32DB35BE2534977F0099EB80 /* ConstraintsDemoView.swift in Sources */,
+				32C5DE5B2AA88BB500680F6A /* SwitchTableViewCell.swift in Sources */,
 				3257A60E219B0B1C00A0B3CD /* MusicCollectionViewCell.swift in Sources */,
 				32E0EC2D217DF78D009C3DA9 /* SegmentedTableViewCell.swift in Sources */,
 				32080BC82087130E0017FECD /* AppDelegate.swift in Sources */,

@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 03/05/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -42,7 +42,6 @@ public extension UIColor
         return UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1)
     }
     
-    #if compiler(>=5.1)
     @available(iOS 13.0, *)
     @objc class func PBRandomAdaptiveColor() -> UIColor {
         let lightColor = UIColor.PBRandomLightColor()
@@ -57,9 +56,7 @@ public extension UIColor
             }
         }
     }
-    #endif
     
-    #if compiler(>=5.1)
     @available(iOS 13.0, *)
     @objc class func PBRandomAdaptiveInvertedColor() -> UIColor {
         let lightColor = UIColor.PBRandomLightColor()
@@ -74,5 +71,4 @@ public extension UIColor
             }
         }
     }
-    #endif
 }

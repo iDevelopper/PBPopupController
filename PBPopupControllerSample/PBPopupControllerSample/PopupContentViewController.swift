@@ -59,6 +59,14 @@ class PopupContentViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var albumArtImageViewTrailingConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var albumArtImageViewLeadingConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var albumArtImageViewBottomConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var albumArtImageViewTopConstraint: NSLayoutConstraint!
+    
     @IBOutlet weak var topModule: UIView! {
         didSet {
             if let containerVC = self.popupContainerViewController {
@@ -96,11 +104,9 @@ class PopupContentViewController: UIViewController {
         didSet {
             songNameLabel.animationDelay = 2
             songNameLabel.speed = .rate(15)
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 songNameLabel.textColor = UIColor.label
             }
-            #endif
         }
     }
 
@@ -117,51 +123,41 @@ class PopupContentViewController: UIViewController {
             albumNameLabel.textColor = UIColor.red
             albumNameLabel.animationDelay = 2
             albumNameLabel.speed = .rate(20)
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 albumNameLabel.textColor = UIColor.systemPink
             }
-            #endif
         }
     }
     
     @IBOutlet weak var prevButton: UIButton! {
         didSet {
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 prevButton.tintColor = UIColor.label
             }
-            #endif
         }
     }
     
     @IBOutlet weak var playPauseButton: UIButton! {
         didSet {
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 playPauseButton.tintColor = UIColor.label
             }
-            #endif
         }
     }
     
     @IBOutlet weak var nextButton: UIButton! {
         didSet {
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 nextButton.tintColor = UIColor.label
             }
-            #endif
         }
     }
     
     @IBOutlet weak var volumeSlider: UISlider! {
         didSet {
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 volumeSlider.tintColor = UIColor.label
             }
-            #endif
         }
     }
     
@@ -197,11 +193,9 @@ class PopupContentViewController: UIViewController {
             containerVC.popupContentView.popupImageView = self.albumArtImageView
         }
 
-        #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
         }
-        #endif
         
         self.setupImageViewForPlaying()
 
@@ -236,11 +230,9 @@ class PopupContentViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
-        #if compiler(>=5.1)
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.secondarySystemBackground
         }
-        #endif
     }
     
     override func viewWillLayoutSubviews() {
@@ -265,11 +257,7 @@ class PopupContentViewController: UIViewController {
         var blurEffect: UIBlurEffect!
         
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             blurEffect = UIBlurEffect(style: .systemMaterial)
-            #else
-            blurEffect = UIBlurEffect(style: .extraLight)
-            #endif
         }
         else {
             blurEffect = UIBlurEffect(style: .extraLight)
@@ -313,9 +301,15 @@ class PopupContentViewController: UIViewController {
     func setupImageViewForPlaying() {
         if self.isPlaying == true
         {
-            self.imageModuleTopConstraint.constant -= 20;
-            self.imageModuleLeadingConstraint.constant -= 20
-            self.imageModuleTrailingConstraint.constant -= 20
+            //self.imageModuleTopConstraint.constant -= 10
+            //self.imageModuleLeadingConstraint.constant -= 10
+            //self.imageModuleTrailingConstraint.constant -= 10
+            
+            self.albumArtImageViewTopConstraint.constant -= 10
+            self.albumArtImageViewLeadingConstraint.constant -= 10
+            self.albumArtImageViewTrailingConstraint.constant -= 10
+            
+            self.bottomModuleTopConstraint.constant -= 10
             
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
@@ -330,10 +324,16 @@ class PopupContentViewController: UIViewController {
         }
         else
         {
-            self.imageModuleTopConstraint.constant += 20;
-            self.imageModuleLeadingConstraint.constant += 20
-            self.imageModuleTrailingConstraint.constant += 20
+            //self.imageModuleTopConstraint.constant += 10
+            //self.imageModuleLeadingConstraint.constant += 10
+            //self.imageModuleTrailingConstraint.constant += 10
 
+            self.albumArtImageViewTopConstraint.constant += 10
+            self.albumArtImageViewLeadingConstraint.constant += 10
+            self.albumArtImageViewTrailingConstraint.constant += 10
+            
+            self.bottomModuleTopConstraint.constant += 10
+            
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
             }) { (_ ) in
@@ -366,11 +366,29 @@ class PopupContentViewController: UIViewController {
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
         
+        var image: UIImage!
+        if #available(iOS 13.0, *) {
+            let scaleConfig = UIImage.SymbolConfiguration(scale: popupBar.isFloating || popupBar.popupBarStyle == .compact ? .medium : .large)
+            let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
+            let config = scaleConfig.applying(weightConfig)
+            
+            image = self.isPlaying ? UIImage(systemName: "pause.fill") :  UIImage(systemName: "play.fill")
+            image = image.applyingSymbolConfiguration(config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+        }
+        else {
+            image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+        }
         if popupBar.popupBarStyle == .prominent {
-            popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+            //popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+            popupBar.rightBarButtonItems?.first?.image = image
         }
         let dev = UIDevice.current.userInterfaceIdiom
-        popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+        if #available(iOS 13.0, *) {
+            popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = image
+        }
+        else {
+            popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
+        }
         popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
         self.setupImageViewForPlaying()
         if self.isPlaying {

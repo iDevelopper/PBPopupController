@@ -34,11 +34,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         
         if let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
             if #available(iOS 13.0, *) {
-                #if compiler(>=5.1)
                 childVC1.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-                #else
-                childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-                #endif
             } else {
                 childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }
@@ -48,11 +44,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         
         if let childVC2 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
             if #available(iOS 13.0, *) {
-                #if compiler(>=5.1)
                 childVC2.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-                #else
-                childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-                #endif
             } else {
                 childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }
@@ -62,11 +54,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         
         if let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
             if #available(iOS 13.0, *) {
-                #if compiler(>=5.1)
                 childVC3.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-                #else
-                childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-                #endif
             } else {
                 childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
             }

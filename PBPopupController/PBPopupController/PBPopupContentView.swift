@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 19/10/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -292,7 +292,7 @@ import UIKit
             
             if let vc = self.popupController.containerViewController.popupContentViewController {
                 if self.popupCloseButtonStyle == .round {
-                    self.popupCloseButtonHorizontalConstraint = popupCloseButton.leadingAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.leadingAnchor, constant: 12)
+                    self.popupCloseButtonHorizontalConstraint = popupCloseButton.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 12)
                 } else {
                     if #available(iOS 13, *) {
                         self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)

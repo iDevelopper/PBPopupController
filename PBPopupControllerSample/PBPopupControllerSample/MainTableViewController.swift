@@ -22,9 +22,7 @@ class MainTableViewController: UITableViewController {
         super.viewDidLoad()
 
         if #available(iOS 13.0, *) {
-            #if compiler(>=5.1)
             self.tableView.backgroundColor = UIColor.systemBackground
-            #endif
             
             self.presentationStyle = .fullScreen
             let presentation = UIBarButtonItem(title: "Page Sheet", style: .plain, target: self, action: #selector(presentationChanged(_:)))
@@ -87,9 +85,7 @@ class MainTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         if let vc = animator.previewViewController {
             vc.modalPresentationStyle = .fullScreen
-            #if compiler(>=5.1)
             vc.isModalInPresentation = true
-            #endif
             
             animator.addCompletion {
                 self.present(vc, animated: true, completion: nil)
@@ -102,12 +98,10 @@ class MainTableViewController: UITableViewController {
         
         if let vc = self.viewControllerForIndexPath(indexPath) {
             vc.modalPresentationStyle = .fullScreen
-            #if compiler(>=5.1)
             if #available(iOS 13.0, *) {
                 vc.modalPresentationStyle = self.presentationStyle
                 vc.isModalInPresentation = true
             }
-            #endif
             
             self.present(vc, animated: true, completion: nil)
             // TODO: for internal tests (comment the line above & decomment the 2 lines below)
@@ -141,7 +135,6 @@ class MainTableViewController: UITableViewController {
         }
         else if indexPath.row == 5 {
             let vc = DemoViewControllerNoChild()
-            //vc.view.backgroundColor = .white
             return vc
         }
         else if let vc = self.storyboard?.instantiateViewController(withIdentifier: self.identifiers[indexPath.row]) {

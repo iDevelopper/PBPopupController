@@ -78,7 +78,6 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
             customYTBar.view.backgroundColor = .clear
             containerVC.popupController.dataSource = containerVC
             containerVC.popupController.delegate = containerVC
-            containerVC.popupBar.isTranslucent = false
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.customPopupBarViewController = customYTBar
             containerVC.popupBar.image = customYTBar.imageView.image

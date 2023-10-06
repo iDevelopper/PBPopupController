@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 01/07/2018.
-//  Copyright © 2018-2022 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
 //
 
 import UIKit
@@ -25,9 +25,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     internal var contentOffset: CGPoint!
     
     private var gesture: UIPanGestureRecognizer!
-    
-    //private var panDirection: UIPanGestureRecognizer.PanDirection!
-    
+        
     private var animator: UIViewPropertyAnimator!
     
     private var availableHeight: CGFloat = 0
@@ -89,7 +87,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             return
         }
         self.availableHeight = self.popupContainerViewAvailableHeight()
-        //self.panDirection = .right
         self.progress = 0.0
         animator.fractionComplete = self.progress
         self.update(self.progress)
@@ -154,10 +151,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             
             self.progress = translation.y / self.availableHeight
 
-            if (self.progress >= 1 || self.progress <= 0) {
-                self.progress = self.progress >= 1 ? 1 : 0
-            }
+            let actualCornerRadius = (vc.popupContentView.layer.presentation()?.cornerRadius ?? 0) / 1.5
+            let maxProgress = self.isPresenting ? 1 : vc.popupBar.isFloating ? (self.availableHeight - vc.popupBar.floatingInsets.top - actualCornerRadius) / self.popupController.popupBarView.frame.maxY : 1
             
+            if (self.progress >= maxProgress || self.progress <= 0) {
+                self.progress = self.progress >= maxProgress ? maxProgress : 0
+            }
+
             if self.isPresenting {
                 var alpha = (0.30 - self.progress) / 0.30
                 alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha
@@ -221,9 +221,10 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
                         self.popupController.popupBarPanGestureRecognizer.isEnabled = true
                     }
+                    
                     self.presentationController.popupBarForPresentation?.alpha = 1.0
                     
-                    animator.continueAnimation(withTimingParameters: nil, durationFactor: self.progress == 0 ? 0.0 : 1.0)
+                    animator.continueAnimation(withTimingParameters: animator.timingParameters, durationFactor: self.progress == 0 ? 0.0 : animator.fractionComplete)
                 }
                 else {
                     self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
@@ -287,7 +288,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
     }
     
-    private func continueDismissalAnimation(_ durationFactor: CGFloat = 0.0)
+    private func continueDismissalAnimation(_ durationFactor: CGFloat = 1.0)
     {
         guard let vc = self.popupController.containerViewController else { return }
 
@@ -302,8 +303,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         vc.popupContentView.popupImageModule?.isHidden = true
         
         self.popupController.popupBarPanGestureRecognizer.isEnabled = false
-        self.presentationController.continueDismissalAnimationWithDurationFactor(1.0)
         
+        self.presentationController.continueDismissalAnimationWithDurationFactor(durationFactor)
+
         let previousState = self.popupController.popupPresentationState
         self.popupController.popupPresentationState = .closing
         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)

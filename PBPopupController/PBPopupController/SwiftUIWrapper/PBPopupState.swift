@@ -25,7 +25,8 @@ internal struct PBPopupState<PopupContent: View> {
     var backgroundStyle: UIBlurEffect.Style
     var backgroundEffect: UIBlurEffect?
     let inheritsVisualStyleFromBottomBar: Bool
-    let isTranslucent: Bool
+    // TODO:
+    //let isTranslucent: Bool
     let backgroundColor: UIColor?
     let barTintColor: UIColor?
     let tintColor: UIColor?

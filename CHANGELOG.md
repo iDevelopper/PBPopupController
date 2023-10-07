@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.7.1
+
+SPM Update.
+
 ## 3.7.0
 
 iOS 17 Support.

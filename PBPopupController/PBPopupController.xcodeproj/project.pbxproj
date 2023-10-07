@@ -117,6 +117,40 @@
 		32080BEB208715920017FECD /* PBPopupController */ = {
 			isa = PBXGroup;
 			children = (
+				32080BED208715920017FECD /* Info.plist */,
+				320D0FC42AD15ED000746B30 /* PBPopupController-Swift */,
+				320D0FC12AD148DA00746B30 /* PBPopupController-ObjC */,
+			);
+			path = PBPopupController;
+			sourceTree = "<group>";
+		};
+		32080C2F208735FD0017FECD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		320D0FC12AD148DA00746B30 /* PBPopupController-ObjC */ = {
+			isa = PBXGroup;
+			children = (
+				32026BEE2AB593FB00FA6BDB /* UIView+PBPopupSupportPrivate.h */,
+				320D0FC32AD1561400746B30 /* Private */,
+			);
+			path = "PBPopupController-ObjC";
+			sourceTree = "<group>";
+		};
+		320D0FC32AD1561400746B30 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				32026BED2AB593FB00FA6BDB /* UIView+PBPopupSupportPrivate.m */,
+			);
+			path = Private;
+			sourceTree = "<group>";
+		};
+		320D0FC42AD15ED000746B30 /* PBPopupController-Swift */ = {
+			isa = PBXGroup;
+			children = (
 				321DE7962593137000F80BF7 /* CGMath.swift */,
 				321DE77A2593136F00F80BF7 /* CGPoint.swift */,
 				321DE7972593137000F80BF7 /* CGRect.swift */,
@@ -131,7 +165,6 @@
 				321DE7932593137000F80BF7 /* PBPopupPresentationController.swift */,
 				321DE77F2593136F00F80BF7 /* PBPopupRoundShadowImageView.swift */,
 				321DE78F2593137000F80BF7 /* PBPopupToolbar.swift */,
-				321DE7842593137000F80BF7 /* SwiftUIWrapper */,
 				32DE1321272BDFBD00BEC209 /* DispatchQueue+Private.swift */,
 				32DE132B272D107000BEC209 /* PBPopupController+Utils.swift */,
 				32D9939E26FEFA8300EC771F /* UIScreen+ScreenCorners.swift */,
@@ -140,20 +173,11 @@
 				321DE77B2593136F00F80BF7 /* UIView+CornerRadius.swift */,
 				329A45C32895A33D00D80136 /* UIView+Private.swift */,
 				321DE7942593137000F80BF7 /* UIView+Snapshot.swift */,
-				32026BEE2AB593FB00FA6BDB /* UIView+PBPopupSupportPrivate.h */,
-				32026BED2AB593FB00FA6BDB /* UIView+PBPopupSupportPrivate.m */,
 				321DE7902593137000F80BF7 /* UIViewController+Private.swift */,
 				321DE7812593136F00F80BF7 /* UIViewController+Support.swift */,
-				32080BED208715920017FECD /* Info.plist */,
+				321DE7842593137000F80BF7 /* SwiftUIWrapper */,
 			);
-			path = PBPopupController;
-			sourceTree = "<group>";
-		};
-		32080C2F208735FD0017FECD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
+			path = "PBPopupController-Swift";
 			sourceTree = "<group>";
 		};
 		321DE7842593137000F80BF7 /* SwiftUIWrapper */ = {

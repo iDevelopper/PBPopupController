@@ -185,8 +185,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             self.target.popupBar.barStyle = self.currentPopupState.barStyle
             self.target.popupBar.backgroundStyle = self.currentPopupState.backgroundStyle
             self.target.popupBar.inheritsVisualStyleFromBottomBar = self.currentPopupState.inheritsVisualStyleFromBottomBar
-            // TODO:
-            //self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
+            self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
             self.target.popupBar.backgroundColor = self.currentPopupState.backgroundColor
             self.target.popupBar.barTintColor = self.currentPopupState.barTintColor
             self.target.popupBar.tintColor = self.currentPopupState.tintColor

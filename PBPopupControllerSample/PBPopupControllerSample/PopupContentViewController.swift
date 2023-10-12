@@ -107,6 +107,8 @@ class PopupContentViewController: UIViewController {
             if #available(iOS 13.0, *) {
                 songNameLabel.textColor = UIColor.label
             }
+            songNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            songNameLabel.adjustsFontForContentSizeCategory = true
         }
     }
 
@@ -126,12 +128,17 @@ class PopupContentViewController: UIViewController {
             if #available(iOS 13.0, *) {
                 albumNameLabel.textColor = UIColor.systemPink
             }
+            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            albumNameLabel.adjustsFontForContentSizeCategory = true
         }
     }
     
     @IBOutlet weak var prevButton: UIButton! {
         didSet {
             if #available(iOS 13.0, *) {
+                let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+                prevButton.setImage(UIImage(systemName: "backward.fill", withConfiguration: config), for: .normal)
                 prevButton.tintColor = UIColor.label
             }
         }
@@ -140,6 +147,8 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var playPauseButton: UIButton! {
         didSet {
             if #available(iOS 13.0, *) {
+                let config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
+                self.playPauseButton.setImage(UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
                 playPauseButton.tintColor = UIColor.label
             }
         }
@@ -148,6 +157,8 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var nextButton: UIButton! {
         didSet {
             if #available(iOS 13.0, *) {
+                let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+                nextButton.setImage(UIImage(systemName: "forward.fill", withConfiguration: config), for: .normal)
                 nextButton.tintColor = UIColor.label
             }
         }
@@ -301,10 +312,6 @@ class PopupContentViewController: UIViewController {
     func setupImageViewForPlaying() {
         if self.isPlaying == true
         {
-            //self.imageModuleTopConstraint.constant -= 10
-            //self.imageModuleLeadingConstraint.constant -= 10
-            //self.imageModuleTrailingConstraint.constant -= 10
-            
             self.albumArtImageViewTopConstraint.constant -= 10
             self.albumArtImageViewLeadingConstraint.constant -= 10
             self.albumArtImageViewTrailingConstraint.constant -= 10
@@ -324,10 +331,6 @@ class PopupContentViewController: UIViewController {
         }
         else
         {
-            //self.imageModuleTopConstraint.constant += 10
-            //self.imageModuleLeadingConstraint.constant += 10
-            //self.imageModuleTrailingConstraint.constant += 10
-
             self.albumArtImageViewTopConstraint.constant += 10
             self.albumArtImageViewLeadingConstraint.constant += 10
             self.albumArtImageViewTrailingConstraint.constant += 10
@@ -361,7 +364,13 @@ class PopupContentViewController: UIViewController {
         PBLog("playPauseAction")
         
         self.isPlaying = !self.isPlaying
-        self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
+        if #available(iOS 13.0, *) {
+            let config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
+            self.playPauseButton.setImage(self.isPlaying ? UIImage(systemName: "pause.fill", withConfiguration: config) : UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
+        }
+        else {
+            self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
+        }
         
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
@@ -379,7 +388,6 @@ class PopupContentViewController: UIViewController {
             image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
         }
         if popupBar.popupBarStyle == .prominent {
-            //popupBar.rightBarButtonItems?.first?.image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
             popupBar.rightBarButtonItems?.first?.image = image
         }
         let dev = UIDevice.current.userInterfaceIdiom

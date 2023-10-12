@@ -129,13 +129,12 @@ internal extension EnvironmentValues {
         get { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] }
         set { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] = newValue }
     }
-    // TODO:
-    /*
+
     var isTranslucent: Bool {
         get { self[PBPopupBarIsTranslucentKey.self] }
         set { self[PBPopupBarIsTranslucentKey.self] = newValue }
     }
-    */
+
     var backgroundColor: UIColor? {
         get { self[PBPopupBarBackgroundColorKey.self] }
         set { self[PBPopupBarBackgroundColorKey.self] = newValue }

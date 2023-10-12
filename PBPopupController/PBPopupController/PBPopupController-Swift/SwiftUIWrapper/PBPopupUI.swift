@@ -163,13 +163,11 @@ public extension View {
         return environment(\.inheritsVisualStyleFromBottomBar, inherits)
     }
     
-    // TODO:
-    /*
     /// A Boolean value that indicates whether the popup bar is translucent.
     func isTranslucent(_ translucent: Bool) -> some View {
         return environment(\.isTranslucent, translucent)
     }
-    */
+
     /// The background color of the popup bar toolbar.
     func backgroundColor(_ color: UIColor) -> some View {
         return environment(\.backgroundColor, color)

@@ -19,8 +19,8 @@ struct ViewDemoView : View {
                 paragraphStyle.alignment = .right
                 paragraphStyle.lineBreakMode = .byTruncatingTail
                 
-                popupBar.titleTextAttributes = [ .paragraphStyle: paragraphStyle, .font: UIFont(name: "Chalkduster", size: 14)!, .foregroundColor: UIColor.green ]
-                popupBar.subtitleTextAttributes = [ .paragraphStyle: paragraphStyle, .font: UIFont(name: "Chalkduster", size: 12)!, .foregroundColor: UIColor.cyan ]
+                popupBar.titleTextAttributes = [ .paragraphStyle: paragraphStyle, .font: UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont(name: "Chalkduster", size: 14)!), .foregroundColor: UIColor.green ]
+                popupBar.subtitleTextAttributes = [ .paragraphStyle: paragraphStyle, .font: UIFontMetrics(forTextStyle: .subheadline).scaledFont(for: UIFont(name: "Chalkduster", size: 12)!), .foregroundColor: UIColor.cyan ]
                 popupBar.tintColor = .systemGreen
             }
     }

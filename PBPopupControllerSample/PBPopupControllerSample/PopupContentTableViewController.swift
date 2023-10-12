@@ -61,6 +61,9 @@ class PopupContentTableViewController: UITableViewController {
         }
         self.tableView.insetsContentViewsToSafeArea = true
         self.tableView.contentInsetAdjustmentBehavior = .never
+
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 80.0
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -151,6 +154,13 @@ class PopupContentTableViewController: UITableViewController {
                 containerVC.popupContentView.popupImageView = cell.albumArtImageView
             }
             
+            cell.songNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            cell.songNameLabel.adjustsFontForContentSizeCategory = true
+            
+            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            cell.albumNameLabel.adjustsFontForContentSizeCategory = true
+            
             cell.selectionStyle = .none
             
             cell.backgroundColor = UIColor.clear
@@ -169,6 +179,14 @@ class PopupContentTableViewController: UITableViewController {
                 cell.albumNameLabel.textColor = UIColor.secondaryLabel
             }
             
+            var font = UIFont.systemFont(ofSize: 17, weight: .regular)
+            cell.songNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            cell.songNameLabel.adjustsFontForContentSizeCategory = true
+            
+            font = UIFont.systemFont(ofSize: 13, weight: .regular)
+            cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            cell.albumNameLabel.adjustsFontForContentSizeCategory = true
+            
             cell.selectionStyle = .default
             
             cell.backgroundColor = UIColor.clear
@@ -183,7 +201,7 @@ class PopupContentTableViewController: UITableViewController {
         if indexPath.section == 0 {
             return self.view.bounds.height
         }
-        return 60
+        return UITableView.automaticDimension
     }
     
     // MARK: - Table view delegate

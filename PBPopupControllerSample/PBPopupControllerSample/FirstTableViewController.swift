@@ -44,7 +44,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     var subtitles = [String]()
     
     // Labels for popup bar data source
-    var label: MarqueeLabel = {
+    var label: MarqueeLabel? = {
         let marqueeLabel = MarqueeLabel(frame: .zero, rate: 15, fadeLength: 10)
         marqueeLabel.leadingBuffer = 0.0   // 0
         marqueeLabel.trailingBuffer = 5.0  // 5
@@ -53,7 +53,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         return marqueeLabel
     }()
     
-    var sublabel: MarqueeLabel = {
+    var sublabel: MarqueeLabel? = {
         let marqueeLabel = MarqueeLabel(frame: .zero, rate: 20, fadeLength: 10)
         marqueeLabel.leadingBuffer = 0.0
         marqueeLabel.trailingBuffer = 5.0
@@ -61,7 +61,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         marqueeLabel.type = .continuous
         return marqueeLabel
     }()
-    
+
     var effectView: UIVisualEffectView!
 
     // MARK: - View lifecycle
@@ -350,8 +350,11 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if #available(iOS 17.0, *) {
                 popupBar.isFloating = self.popupBarIsFloating
             }
+            //if #available(iOS 15.0, *) {
+            //    popupBar.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : .small
+            //}
             popupBar.shouldExtendCustomBarUnderSafeArea = true // Default, but not for floating bar
-            popupBar.dataSource = self
+            popupBar.dataSource = self.isPopupContentTableView ? nil : self
             popupBar.previewingDelegate = self
             
             //popupBar.inheritsVisualStyleFromBottomBar = true
@@ -456,11 +459,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     // MARK: - Toolbar container actions
     
+    // TODO: BarAppearance for iOS 13
     @IBAction func defaultToolbarStyle(_ sender: UIBarButtonItem) {
         navigationController?.navigationBar.barStyle = .default
         navigationController?.toolbar.barStyle = .default
         navigationController?.navigationBar.barTintColor = nil
         navigationController?.toolbar.barTintColor = nil
+        navigationController?.toolbar.backgroundColor = nil
         navigationController?.navigationBar.tintColor = self.view.tintColor
         navigationController?.toolbar.tintColor = self.view.tintColor
         (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
@@ -470,6 +475,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         navigationController?.updatePopupBarAppearance()
     }
 
+    // TODO: BarAppearance for iOS 13
     @IBAction func changeToolbarStyle(_ sender: Any) {
         if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
             navigationController?.toolbar.barStyle = aStyle
@@ -482,6 +488,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             
             if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
                 navigationController?.toolbar.barTintColor = aColor
+                navigationController?.toolbar.backgroundColor = aColor
             }
         }
         else {
@@ -505,6 +512,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         if let aColor = navigationController?.toolbar.barTintColor {
             navigationController?.navigationBar.barTintColor = aColor
+            navigationController?.navigationBar.backgroundColor = aColor
         }
         
         navigationController?.updatePopupBarAppearance()
@@ -544,7 +552,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.setupCustomPopupBar()
             return
         }
-
+        
         self.setupPopupBar()
         
         if let popupBar = self.containerVC.popupBar {
@@ -640,6 +648,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         default:
             break
         }
+        
+        self.setupPopupBar()
         
         self.commonSetup()
         
@@ -1080,11 +1090,11 @@ extension FirstTableViewController: PBPopupControllerDelegate {
         PBLog("stateChanged state: \(state.description) - previousState: \(previousState.description)", error: true)
         switch state {
         case .transitioning, .opening:
-            self.label.pauseLabel()
-            self.sublabel.pauseLabel()
+            self.label?.pauseLabel()
+            self.sublabel?.pauseLabel()
         case .closed:
-            self.label.unpauseLabel()
-            self.sublabel.unpauseLabel()
+            self.label?.unpauseLabel()
+            self.sublabel?.unpauseLabel()
         default:
             break
         }

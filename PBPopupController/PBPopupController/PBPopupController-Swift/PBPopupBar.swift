@@ -242,6 +242,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     @objc weak public var dataSource: PBPopupBarDataSource? {
         didSet {
             self.askForLabels = true
+            self.removeTitleLabels()
+            self.configureTitleLabels()
         }
     }
     
@@ -333,6 +335,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
         didSet {
             PBLog("The value of popupBarStyle changed from \(oldValue.description) to \(popupBarStyle.description)")
+            self.removeTitleLabels()
             if popupBarStyle == .custom {
                 self.isFloating = false
                 if self.customPopupBarViewController == nil {
@@ -343,8 +346,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                     NSException.raise(NSExceptionName.internalInconsistencyException, format: "Custom popuBar view controller cannot be nil.", arguments: getVaList([]))
                 }
             }
+            else {
+                self.configureContentSizeCategory()
+            }
             self.setupCustomPopupBarView()
-            
+                        
             if self.popupController.popupPresentationState == .closed {
                 if let vc = self.popupController.containerViewController {
                     self.popupController.popupPresentationState = .hidden
@@ -587,7 +593,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      */
     @objc public var title: String? {
         didSet {
-            self.titleLabel.isHidden = title == nil
+            self.titleLabel?.isHidden = title == nil
             self.configureTitleLabels()
             self.configureAccessibility()
         }
@@ -611,7 +617,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      */
     @objc public var subtitle: String? {
         didSet {
-            self.subtitleLabel.isHidden = subtitle == nil
+            self.subtitleLabel?.isHidden = subtitle == nil
             
             self.configureTitleLabels()
             self.configureAccessibility()
@@ -808,6 +814,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.backgroundView.imageView.image = popupBarIsFloating ? nil : self.backgroundImage
             self.backgroundView.colorView.backgroundColor = popupBarIsFloating ? nil : self.backgroundColor
 
+            self.configureContentSizeCategory()
+            
             self.setNeedsLayout()
         }
     }
@@ -913,19 +921,29 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private var askForLabels: Bool = false
     
     // The label containing the title text
-    internal var titleLabel: UILabel!
-    
-    private var titleLabelCenterConstraint: NSLayoutConstraint!
-    private var titleLabelTopConstraint: NSLayoutConstraint!
-    private var titleLabelHeightConstraint: NSLayoutConstraint!
-    
+    internal var titleLabel: UILabel? {
+        didSet {
+            titleLabel?.backgroundColor = UIColor.clear
+            titleLabel?.font = self.titleFont()
+            titleLabel?.textColor = self.titleColor()
+            titleLabel?.isAccessibilityElement = true
+            titleLabel?.adjustsFontForContentSizeCategory = true
+            titleLabel?.setContentHuggingPriority(.required, for: .vertical)
+        }
+    }
+
     // The label containing the subtitle text
-    internal var subtitleLabel: UILabel!
-    
-    private var subtitleLabelCenterConstraint: NSLayoutConstraint!
-    private var subtitleLabelBottomConstraint: NSLayoutConstraint!
-    private var subtitleLabelHeightConstraint: NSLayoutConstraint!
-    
+    internal var subtitleLabel: UILabel? {
+        didSet {
+            subtitleLabel?.backgroundColor = UIColor.clear
+            subtitleLabel?.font = self.subtitleFont()
+            subtitleLabel?.textColor = self.subtitleColor()
+            subtitleLabel?.isAccessibilityElement = true
+            subtitleLabel?.adjustsFontForContentSizeCategory = true
+            subtitleLabel?.setContentHuggingPriority(.required, for: .vertical)
+        }
+    }
+
     // The progress view (see PBPopupBarProgressViewStyle and progress property)
     @objc dynamic private var progressView: _PBPopupBarProgressView!
     
@@ -1043,21 +1061,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         
         self.toolbar.addSubview(self.titlesView)
         
-        self.titleLabel = UILabel()
-        self.titleLabel.isAccessibilityElement = true
-        self.titleLabel.backgroundColor = UIColor.clear
-        self.titleLabel.isHidden = true
-        self.titleLabel.setContentHuggingPriority(.required, for: .vertical)
-        
-        self.titlesView.addArrangedSubview(self.titleLabel)
-        
-        self.subtitleLabel = UILabel()
-        self.subtitleLabel.isAccessibilityElement = true
-        self.subtitleLabel.backgroundColor = UIColor.clear
-        self.subtitleLabel.isHidden = true
-        self.subtitleLabel.setContentHuggingPriority(.required, for: .vertical)
-        
-        self.titlesView.addArrangedSubview(self.subtitleLabel)
+        self.configureContentSizeCategory()
         
         self.progressView = _PBPopupBarProgressView(progressViewStyle: .default)
         self.progressView.trackImage = UIImage()
@@ -1397,10 +1401,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
         else {
             if let rightConstraint = self.imageViewRightConstraint {
-                rightConstraint.constant = -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.right + self.floatingInsets.left : 0.0))
+                rightConstraint.constant = -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.left : 0.0))
             }
             else {
-                self.imageViewRightConstraint = self.shadowImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.right + self.floatingInsets.left : 0.0)))
+                self.imageViewRightConstraint = self.shadowImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -(16.0 + safeLeading + safeTrailing + (self.isFloating ? self.floatingInsets.left : 0.0)))
             }
             self.imageViewRightConstraint.isActive = true
         }
@@ -1522,96 +1526,203 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
     }
     
+    private func removeTitleLabels() {
+        if let titleLabel = self.titleLabel {
+            titleLabel.removeFromSuperview()
+            self.titlesView.removeArrangedSubview(titleLabel)
+            self.titleLabel = nil
+        }
+        if let subtitleLabel = self.subtitleLabel {
+            subtitleLabel.removeFromSuperview()
+            self.titlesView.removeArrangedSubview(subtitleLabel)
+            self.subtitleLabel = nil
+        }
+        
+        self.setNeedsLayout()
+                
+        self.askForLabels = true
+    }
+
     private func configureTitleLabels() {
         if self.askForLabels {
             self.askForLabels = false
             if let titleLabel = self.dataSource?.titleLabel?(for: self) {
-                NSLayoutConstraint.deactivate(self.titleLabel.constraints)
-                self.titleLabel.translatesAutoresizingMaskIntoConstraints = true
-                self.titleLabelTopConstraint = nil
-                self.titleLabelHeightConstraint = nil
-                self.titleLabelCenterConstraint = nil
-                self.titleLabel.removeFromSuperview()
-                self.titlesView.removeArrangedSubview(self.titleLabel)
-                self.titleLabel = titleLabel
-                if PBPopupBarShowColors == true {
-                    self.titleLabel.backgroundColor = UIColor.magenta
+                if let oldTitleLabel = self.titleLabel {
+                    oldTitleLabel.removeFromSuperview()
+                    self.titlesView.removeArrangedSubview(oldTitleLabel)
                 }
-                self.titlesView.insertArrangedSubview(self.titleLabel, at: 0)
+                if PBPopupBarShowColors == true {
+                    titleLabel.backgroundColor = UIColor.magenta
+                }
+                self.titlesView.insertArrangedSubview(titleLabel, at: 0)
+                self.titleLabel = titleLabel
             }
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
-                NSLayoutConstraint.deactivate(self.subtitleLabel.constraints)
-                self.subtitleLabel.translatesAutoresizingMaskIntoConstraints = true
-                self.subtitleLabelBottomConstraint = nil
-                self.subtitleLabelHeightConstraint = nil
-                self.subtitleLabelCenterConstraint = nil
-                self.subtitleLabel.removeFromSuperview()
-                self.titlesView.removeArrangedSubview(self.subtitleLabel)
-                self.subtitleLabel = subtitleLabel
-                if PBPopupBarShowColors == true {
-                    self.subtitleLabel.backgroundColor = UIColor.cyan
+                if let oldSubtitleLabel = self.subtitleLabel {
+                    oldSubtitleLabel.removeFromSuperview()
+                    self.titlesView.removeArrangedSubview(oldSubtitleLabel)
                 }
-                self.titlesView.addArrangedSubview(self.subtitleLabel)
+                if PBPopupBarShowColors == true {
+                    subtitleLabel.backgroundColor = UIColor.cyan
+                }
+                self.titlesView.addArrangedSubview(subtitleLabel)
+                self.subtitleLabel = subtitleLabel
             }
         }
         
+        if self.titleLabel == nil {
+            self.titleLabel = newTitleLabel()
+            self.titlesView.insertArrangedSubview(self.titleLabel!, at: 0)
+        }
+        self.titleLabel?.isHidden = self.title == nil
+        
+        if self.subtitleLabel == nil {
+            self.subtitleLabel = newTitleLabel()
+            self.titlesView.addArrangedSubview(self.subtitleLabel!)
+        }
+        self.subtitleLabel?.isHidden = self.subtitle == nil
+
         let paragraphStyle = NSMutableParagraphStyle()
         
         if self.popupBarStyle == .compact {
             paragraphStyle.alignment = .center
-            self.titleLabel.textAlignment = .center
-            self.subtitleLabel.textAlignment = .center
+            self.titleLabel?.textAlignment = .center
+            self.subtitleLabel?.textAlignment = .center
         } else {
             paragraphStyle.alignment = .natural
-            self.titleLabel.textAlignment = .natural
-            self.subtitleLabel.textAlignment = .natural
+            self.titleLabel?.textAlignment = .natural
+            self.subtitleLabel?.textAlignment = .natural
             
             if self.semanticContentAttribute == .forceRightToLeft {
                 paragraphStyle.alignment = .right
-                self.titleLabel.textAlignment = .right
-                self.subtitleLabel.textAlignment = .right
+                self.titleLabel?.textAlignment = .right
+                self.subtitleLabel?.textAlignment = .right
             }
         }
         
         paragraphStyle.lineBreakMode = .byTruncatingTail
         
-        var font: UIFont
-        font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 18 : 14, weight: .regular)
-        font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-        self.titleLabel.adjustsFontForContentSizeCategory = true
-
-        let defaultTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: font]
-        
+        let defaultTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle]
         if (self.titleTextAttributes != nil) {
             defaultTitleAttribures.addEntries(from: self.titleTextAttributes!)
         }
-        
+                
         if (self.title != nil)
         {
-            self.titleLabel.attributedText = NSAttributedString(string: self.title!, attributes: (defaultTitleAttribures as! [NSAttributedString.Key : Any]))
+            self.titleLabel?.attributedText = NSAttributedString(string: self.title!, attributes: (defaultTitleAttribures as! [NSAttributedString.Key : Any]))
         }
         else {
-            self.titleLabel.text = nil
+            self.titleLabel?.text = nil
         }
-        
-        font = UIFont.systemFont(ofSize: self.popupBarStyle == .prominent ? 14 : 11/*12*/, weight: .regular)
-        font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
-        self.subtitleLabel.adjustsFontForContentSizeCategory = true
-        
-        let defaultSubTitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: font]
-        
+
+        let defaultSubtitleAttribures: NSMutableDictionary = [NSAttributedString.Key.paragraphStyle: paragraphStyle]
         if (self.subtitleTextAttributes != nil) {
-            defaultSubTitleAttribures.addEntries(from: self.subtitleTextAttributes!)
+            defaultSubtitleAttribures.addEntries(from: self.subtitleTextAttributes!)
         }
-        
+                
         if (self.subtitle != nil)
         {
-            self.subtitleLabel.attributedText = NSAttributedString(string: self.subtitle!, attributes: (defaultSubTitleAttribures as! [NSAttributedString.Key : Any]))
+            self.subtitleLabel?.attributedText = NSAttributedString(string: self.subtitle!, attributes: (defaultSubtitleAttribures as! [NSAttributedString.Key : Any]))
         }
         else {
-            self.subtitleLabel.text = nil
+            self.subtitleLabel?.text = nil
         }
+    }
+    
+    private func newTitleLabel() -> UILabel {
+        let titleLabel = UILabel()
+        titleLabel.isAccessibilityElement = true
+        titleLabel.backgroundColor = UIColor.clear
+        return titleLabel
+    }
+    
+    private func titleFont() -> UIFont {
+        var fontSize: CGFloat = 15
+        var fontWeight: UIFont.Weight = .medium
+        var textStyle: UIFont.TextStyle = .body
+        
+        switch self.popupBarStyle {
+        case .prominent:
+            fontSize = self.isFloating ? 15 : 15
+            fontWeight = self.isFloating ? .medium : .medium
+            textStyle = self.isFloating ? .headline : .body
+        case .compact:
+            fontSize = self.isFloating ? 13.5 : 13.5
+            fontWeight = self.isFloating ? .regular : .regular
+            textStyle = self.isFloating ? .subheadline : .subheadline
+        default:
+            break
+        }
+        //let font = self.preferredFontFor(textStyle: textStyle, weight: fontWeight)
+        
+        return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
+    }
+    
+    private func titleColor() -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor.label
+        } else {
+            return UIColor.darkText
+        }
+    }
+    
+    private func subtitleFont() -> UIFont {
+        var fontSize: CGFloat = 15
+        var fontWeight: UIFont.Weight = .regular
+        var textStyle: UIFont.TextStyle = .body
+        
+        switch self.popupBarStyle {
+        case .prominent:
+            fontSize = self.isFloating ? 12.5 : 15
+            fontWeight = self.isFloating ? .regular : .regular
+            textStyle = self.isFloating ? .subheadline : .body
+        case .compact:
+            fontSize = self.isFloating ? 12 : 12
+            fontWeight = self.isFloating ? .regular : .regular
+            textStyle = self.isFloating ? .subheadline : .subheadline
+        default:
+            break
+        }
+        return UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
+    }
+    
+    private func subtitleColor() -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor.secondaryLabel
+        }
+        else {
+            return UIColor.darkGray
+        }
+    }
+    
+    private func configureContentSizeCategory() {
+        if #available(iOS 15.0, *) {
+            self.minimumContentSizeCategory = self.popupBarStyle == .prominent ? .medium : .small
+            self.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : self.isFloating ? .small : .accessibilityMedium
+        }
+    }
+    
+    private func preferredFontFor(textStyle: UIFont.TextStyle, weight: UIFont.Weight? = nil) -> UIFont {
+        let preferredContentSizeCategory: UIContentSizeCategory
+        switch UIApplication.shared.preferredContentSizeCategory {
+        case .extraSmall, .small, .medium:
+            preferredContentSizeCategory = .large
+        case .accessibilityExtraLarge, .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
+            preferredContentSizeCategory =  .accessibilityLarge
+        default:
+            preferredContentSizeCategory = UIApplication.shared.preferredContentSizeCategory
+        }
+        let traitCollection = UITraitCollection(preferredContentSizeCategory: preferredContentSizeCategory)
+        let fontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: textStyle, compatibleWith: traitCollection)
+        let fontMetrics = UIFontMetrics(forTextStyle: textStyle)
+        let font: UIFont
+        if let weight = weight {
+            font = UIFont.systemFont(ofSize: fontDescriptor.pointSize, weight: weight)
+        } else {
+            font = UIFont.systemFont(ofSize: fontDescriptor.pointSize)
+        }
+        return fontMetrics.scaledFont(for: font, maximumPointSize: fontDescriptor.pointSize, compatibleWith: traitCollection)
     }
     
     private func layoutToolbarItems() {

@@ -28,8 +28,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.backgroundStyle) var backgroundStyle: UIBlurEffect.Style
     @Environment(\.backgroundEffect) var backgroundEffect: UIBlurEffect?
     @Environment(\.inheritsVisualStyleFromBottomBar) var inheritsVisualStyleFromBottomBar: Bool
-    // TODO:
-    //@Environment(\.isTranslucent) var isTranslucent: Bool
+    @Environment(\.isTranslucent) var isTranslucent: Bool
     @Environment(\.backgroundColor) var backgroundColor: UIColor?
     @Environment(\.barTintColor) var barTintColor: UIColor?
     @Environment(\.tintColor) var tintColor: UIColor?
@@ -76,8 +75,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  backgroundStyle: backgroundStyle,
                                  backgroundEffect: backgroundEffect,
                                  inheritsVisualStyleFromBottomBar: inheritsVisualStyleFromBottomBar,
-                                 // TODO:
-                                 //isTranslucent: isTranslucent,
+                                 isTranslucent: isTranslucent,
                                  backgroundColor: backgroundColor,
                                  barTintColor: barTintColor,
                                  tintColor: tintColor,

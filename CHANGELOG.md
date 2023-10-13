@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.7.5
+
+Fixes popup bar tint color issue (SplitViewController detail).
+Example update.
+
 ## 3.7.4
 
 Added support for very large content category sizes by adjusting the labels height.

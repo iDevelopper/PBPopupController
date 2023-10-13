@@ -260,6 +260,7 @@ internal extension UITabBarController
         }
         self.popupBar.barStyle = self.tabBar.barStyle
         self.popupBar.tintColor = self.tabBar.tintColor
+        self.popupBar.isTranslucent = self.tabBar.isTranslucent
         if #available(iOS 13.0, *) {
             self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
         } else {
@@ -658,9 +659,10 @@ internal extension UINavigationController
         }
         self.popupBar.barStyle = self.navigationBar.barStyle
         self.popupBar.tintColor = self.navigationBar.tintColor
-        
+        if let svc = self.splitViewController, let nc = svc.viewControllers[0] as? UINavigationController {
+            self.popupBar.tintColor = nc.navigationBar.tintColor
+        }
         self.popupBar.isTranslucent = self.navigationBar.isTranslucent
-        
         if #available(iOS 13.0, *) {
             self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
         } else {

@@ -25,13 +25,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         let font = UIFont.boldSystemFont(ofSize: UIFont.buttonFontSize)
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
-        if #available(iOS 13.0, *) {
-            UIBarButtonItem.appearance().tintColor = UIColor.systemPink
-        }
-        else {
-            UIBarButtonItem.appearance().tintColor = UIColor.red
-        }
-        
         PBPopupLogs.instance.isEnabled = true // default, false will disable logging from the module PBPopupController
         
         return true

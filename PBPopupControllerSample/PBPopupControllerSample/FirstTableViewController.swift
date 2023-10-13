@@ -246,7 +246,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             navigationController.isToolbarHidden = true
             if navigationController.toolbarIsShown {
                 navigationController.isToolbarHidden = false
-                self.setupToolbarAppearance()
+                //self.setupToolbarAppearance()
             }
             self.containerVC = navigationController
             if let containerController = navigationController.parent {
@@ -260,7 +260,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.containerVC = self
         }
     }
-    
+    /*
     func setupToolbarAppearance() {
         if #available(iOS 13, *) {
             if let navigationController = self.navigationController as? NavigationController {
@@ -276,7 +276,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             }
         }
     }
-    
+    */
     func firstSetup() {
         self.setupPopupBar()
                 
@@ -459,63 +459,84 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     // MARK: - Toolbar container actions
     
-    // TODO: BarAppearance for iOS 13
     @IBAction func defaultToolbarStyle(_ sender: UIBarButtonItem) {
-        navigationController?.navigationBar.barStyle = .default
-        navigationController?.toolbar.barStyle = .default
-        navigationController?.navigationBar.barTintColor = nil
-        navigationController?.toolbar.barTintColor = nil
-        navigationController?.toolbar.backgroundColor = nil
-        navigationController?.navigationBar.tintColor = self.view.tintColor
-        navigationController?.toolbar.tintColor = self.view.tintColor
-        (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-            (obj as! UIBarButtonItem).tintColor = self.view.tintColor
-        })
-
-        navigationController?.updatePopupBarAppearance()
-    }
-
-    // TODO: BarAppearance for iOS 13
-    @IBAction func changeToolbarStyle(_ sender: Any) {
-        if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
-            navigationController?.toolbar.barStyle = aStyle
-        }
-
         if #available(iOS 13.0, *) {
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
-                navigationController?.toolbar.tintColor = aColor
-            }
-            
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
-                navigationController?.toolbar.barTintColor = aColor
-                navigationController?.toolbar.backgroundColor = aColor
-            }
+            self.navigationController?.overrideUserInterfaceStyle = .unspecified
+            let aColor = self.view.tintColor
+            self.navigationController?.toolbar.tintColor = aColor
+            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
+            })
+            self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
+            self.navigationController?.updatePopupBarAppearance()
         }
         else {
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
-                navigationController?.toolbar.tintColor = aColor
+            navigationController?.navigationBar.barStyle = .default
+            navigationController?.toolbar.barStyle = .default
+            navigationController?.navigationBar.barTintColor = nil
+            navigationController?.toolbar.barTintColor = nil
+            navigationController?.navigationBar.tintColor = self.view.tintColor
+            navigationController?.toolbar.tintColor = self.view.tintColor
+            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+                (obj as! UIBarButtonItem).tintColor = self.view.tintColor
+            })
+            
+            navigationController?.updatePopupBarAppearance()
+        }
+    }
+
+    @IBAction func changeToolbarStyle(_ sender: Any) {
+        if #available(iOS 13.0, *) {
+            let currentStyle = self.navigationController?.traitCollection.userInterfaceStyle
+            self.navigationController?.overrideUserInterfaceStyle = currentStyle == .light ? .dark : .light
+            let aColor = UIColor.PBRandomAdaptiveInvertedColor()
+            self.navigationController?.toolbar.tintColor = aColor
+            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
+            })
+            self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
+            self.navigationController?.updatePopupBarAppearance()
+        }
+        else {
+            if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
+                navigationController?.toolbar.barStyle = aStyle
             }
             
-            if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
-                navigationController?.toolbar.barTintColor = aColor
+            if #available(iOS 13.0, *) {
+                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
+                    navigationController?.toolbar.tintColor = aColor
+                }
+                
+                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
+                    navigationController?.toolbar.barTintColor = aColor
+                }
             }
+            else {
+                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
+                    navigationController?.toolbar.tintColor = aColor
+                }
+                
+                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
+                    navigationController?.toolbar.barTintColor = aColor
+                }
+            }
+            
+            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
+            })
+            if let aStyle = navigationController?.toolbar.barStyle {
+                navigationController?.navigationBar.barStyle = aStyle
+            }
+            if let aColor = navigationController?.toolbar.tintColor {
+                navigationController?.navigationBar.tintColor = aColor
+            }
+            if let aColor = navigationController?.toolbar.barTintColor {
+                navigationController?.navigationBar.barTintColor = aColor
+                navigationController?.navigationBar.backgroundColor = aColor
+            }
+            
+            navigationController?.updatePopupBarAppearance()
         }
-        
-        (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-            (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
-        })
-        if let aStyle = navigationController?.toolbar.barStyle {
-            navigationController?.navigationBar.barStyle = aStyle
-        }
-        if let aColor = navigationController?.toolbar.tintColor {
-            navigationController?.navigationBar.tintColor = aColor
-        }
-        if let aColor = navigationController?.toolbar.barTintColor {
-            navigationController?.navigationBar.barTintColor = aColor
-            navigationController?.navigationBar.backgroundColor = aColor
-        }
-        
-        navigationController?.updatePopupBarAppearance()
     }
     
     // MARK: - Setup Styles Actions

@@ -17,6 +17,9 @@ class DemoViewControllerNoChild: UIViewController {
         if #available(iOS 13.0, *) {
             self.view.backgroundColor = UIColor.systemBackground
         }
+        else {
+            self.view.backgroundColor = .white
+        }
         
         let topLabel = UILabel()
         topLabel.text = "Top"
@@ -57,10 +60,24 @@ class DemoViewControllerNoChild: UIViewController {
             contentVC.albumTitle = self.popupBar.title
             contentVC.songTitle = self.popupBar.subtitle
             
-            let closeItem = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))
-            let playItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: contentVC, action: #selector(PopupContentViewController.playPauseAction(_:)))
-            self.popupBar.rightBarButtonItems = [playItem, closeItem]
-
+            if #available(iOS 13.0, *) {
+                let scaleConfig = UIImage.SymbolConfiguration(scale: .large)
+                let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
+                let config = scaleConfig.applying(weightConfig)
+                
+                var image: UIImage!
+                image = UIImage(systemName: "play.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+                let playItem = UIBarButtonItem(image: image, style: .plain, target: contentVC, action: #selector(PopupContentViewController.playPauseAction(_:)))
+                image = UIImage(systemName: "xmark", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+                let closeItem = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(close(_:)))
+                self.popupBar.rightBarButtonItems = [playItem, closeItem]
+            }
+            else {
+                let closeItem = UIBarButtonItem(image: UIImage(named: "close-small"), style: .plain, target: self, action: #selector(close(_:)))
+                let playItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: contentVC, action: #selector(PopupContentViewController.playPauseAction(_:)))
+                self.popupBar.rightBarButtonItems = [playItem, closeItem]
+            }
+            
             DispatchQueue.main.async {
                 self.presentPopupBar(withPopupContentViewController: contentVC, animated: true) {
                     PBLog("Popup Bar Presented")

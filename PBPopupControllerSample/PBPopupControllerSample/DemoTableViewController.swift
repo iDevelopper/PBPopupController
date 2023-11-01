@@ -114,6 +114,8 @@ class DemoTableViewController: UITableViewController {
             cell.albumNameLabel.textColor = UIColor.secondaryLabel
         }
         
+        cell.selectionStyle = .none
+        
         cell.backgroundColor = UIColor.clear
         
         return cell

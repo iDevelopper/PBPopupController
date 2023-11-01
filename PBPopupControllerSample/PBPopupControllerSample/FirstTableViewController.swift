@@ -14,6 +14,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     // MARK: - Properties
     
     @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var headerTitle: UILabel! {
+        didSet {
+            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            headerTitle.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            headerTitle.adjustsFontForContentSizeCategory = true
+        }
+    }
     
     var popupContentVC: PopupContentViewController!
     var popupContentTVC: PopupContentTableViewController!
@@ -94,6 +101,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         
         self.setupContainerVC()
         
+        //self.containerVC.usePopupBarLegacyShadow = true
+        //self.containerVC.usePopupBarSmoothGradient = false
         if #available(iOS 17.0, *) {
             if let popupBar = self.containerVC?.popupBar {
                 popupBar.isFloating = true
@@ -241,6 +250,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if let navigationController = self.navigationController {
                 navigationController.isToolbarHidden = true
             }
+            else {
+                self.headerTitle.text = tabBarController.title
+            }
         }
         else if let navigationController = self.navigationController as? NavigationController {
             navigationController.isToolbarHidden = true
@@ -255,6 +267,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         else if let containerController = self.parent {
             self.containerVC = containerController
+            self.headerTitle.text = containerController.title
         }
         else {
             self.containerVC = self
@@ -346,7 +359,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func setupPopupBar() {
         if let popupBar = self.containerVC.popupBar {
-            popupBar.PBPopupBarShowColors = false
             if #available(iOS 17.0, *) {
                 popupBar.isFloating = self.popupBarIsFloating
             }
@@ -462,6 +474,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     @IBAction func defaultToolbarStyle(_ sender: UIBarButtonItem) {
         if #available(iOS 13.0, *) {
             self.navigationController?.overrideUserInterfaceStyle = .unspecified
+            self.view.window?.overrideUserInterfaceStyle  = .unspecified
             let aColor = self.view.tintColor
             self.navigationController?.toolbar.tintColor = aColor
             (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
@@ -489,6 +502,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         if #available(iOS 13.0, *) {
             let currentStyle = self.navigationController?.traitCollection.userInterfaceStyle
             self.navigationController?.overrideUserInterfaceStyle = currentStyle == .light ? .dark : .light
+            self.view.window?.overrideUserInterfaceStyle  = currentStyle == .light ? .dark : .light
             let aColor = UIColor.PBRandomAdaptiveInvertedColor()
             self.navigationController?.toolbar.tintColor = aColor
             (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
@@ -928,7 +942,7 @@ extension FirstTableViewController {
             cell.albumArtImageView.image = images[indexPath.row]
             cell.songNameLabel.text = titles[indexPath.row]
             cell.albumNameLabel.text = subtitles[indexPath.row]
-            cell.selectionStyle = .default
+            cell.selectionStyle = .none
 
             var font = UIFont.systemFont(ofSize: 17, weight: .regular)
             cell.songNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)

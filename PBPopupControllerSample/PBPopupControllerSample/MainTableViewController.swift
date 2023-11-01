@@ -15,6 +15,7 @@ class MainTableViewController: UITableViewController {
     let identifiers = ["TabBarNavController", "TabBarController", "NavController", "NavController", "ViewController", "", "SplitViewController", "SplitViewController", "SplitViewController", "DemoContainerController","DemoContainerController_iPad", "SwiftUIDemo"]
 
     var presentationStyle: UIModalPresentationStyle!
+    var enableColorsDebug: Bool = false
     
     // MARK: - View lifecycle
     
@@ -27,6 +28,8 @@ class MainTableViewController: UITableViewController {
             self.presentationStyle = .fullScreen
             let presentation = UIBarButtonItem(title: "Page Sheet", style: .plain, target: self, action: #selector(presentationChanged(_:)))
             self.navigationItem.rightBarButtonItem = presentation
+            let enableColors = UIBarButtonItem(image: UIImage(systemName: "circle.hexagongrid.fill"), style: .plain, target: self, action: #selector(enableColorsDebug(_:)))
+            self.navigationItem.leftBarButtonItem = enableColors
         }
         self.tableView.tableFooterView = UIView()
     }
@@ -44,6 +47,15 @@ class MainTableViewController: UITableViewController {
         if let presentation = sender as? UIBarButtonItem {
             self.presentationStyle = self.presentationStyle == .fullScreen ? .pageSheet : .fullScreen
             presentation.title = self.presentationStyle == .fullScreen ? "Page Sheet" : "Full Screen"
+        }
+    }
+    
+    @IBAction func enableColorsDebug(_ sender: Any) {
+        if let enableColors = sender as? UIBarButtonItem {
+            self.enableColorsDebug.toggle()
+            if #available(iOS 13.0, *) {
+                enableColors.image = self.enableColorsDebug ? UIImage(systemName: "circle.hexagongrid.fill")?.withRenderingMode(.alwaysOriginal) : UIImage(systemName: "circle.hexagongrid.fill")
+            }
         }
     }
     
@@ -103,6 +115,7 @@ class MainTableViewController: UITableViewController {
                 vc.isModalInPresentation = true
             }
             
+            vc.enablePopupBarColorsDebug = self.enableColorsDebug
             self.present(vc, animated: true, completion: nil)
             // TODO: for internal tests (comment the line above & decomment the 2 lines below)
             //let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -124,7 +137,7 @@ class MainTableViewController: UITableViewController {
         if indexPath.row == 10 {
             if UIDevice.current.userInterfaceIdiom == .pad {
                 let vc = UIStoryboard(name: "Custom", bundle: nil).instantiateViewController(withIdentifier: self.identifiers[indexPath.row])
-                vc.title = items[indexPath.row]
+                vc.title = self.items[indexPath.row]
                 return vc
             }
         }
@@ -135,6 +148,7 @@ class MainTableViewController: UITableViewController {
         }
         else if indexPath.row == 5 {
             let vc = DemoViewControllerNoChild()
+            vc.title = self.items[indexPath.row]
             return vc
         }
         else if let vc = self.storyboard?.instantiateViewController(withIdentifier: self.identifiers[indexPath.row]) {
@@ -157,7 +171,7 @@ class MainTableViewController: UITableViewController {
                     nc.toolbarIsShown = true
                 }
             }
-            vc.title = items[indexPath.row]
+            vc.title = self.items[indexPath.row]
             return vc
         }
         return nil

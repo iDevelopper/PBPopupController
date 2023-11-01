@@ -22,7 +22,8 @@ class DemoViewControllerNoChild: UIViewController {
         }
         
         let topLabel = UILabel()
-        topLabel.text = "Top"
+        //topLabel.text = "Top"
+        topLabel.text = self.title
 
         if #available(iOS 13.0, *) {
             topLabel.textColor = UIColor.label

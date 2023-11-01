@@ -30,7 +30,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.inheritsVisualStyleFromBottomBar) var inheritsVisualStyleFromBottomBar: Bool
     @Environment(\.isTranslucent) var isTranslucent: Bool
     @Environment(\.backgroundColor) var backgroundColor: UIColor?
-    @Environment(\.barTintColor) var barTintColor: UIColor?
+    //@Environment(\.barTintColor) var barTintColor: UIColor?
     @Environment(\.tintColor) var tintColor: UIColor?
     @Environment(\.popupBarProgressViewStyle) var popupBarProgressViewStyle: PBPopupBarProgressViewStyle
     @Environment(\.popupBarBorderViewStyle) var popupBarBorderViewStyle: PBPopupBarBorderViewStyle
@@ -77,7 +77,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  inheritsVisualStyleFromBottomBar: inheritsVisualStyleFromBottomBar,
                                  isTranslucent: isTranslucent,
                                  backgroundColor: backgroundColor,
-                                 barTintColor: barTintColor,
+                                 //barTintColor: barTintColor,
                                  tintColor: tintColor,
                                  progressViewStyle: popupBarProgressViewStyle,
                                  borderViewStyle: popupBarBorderViewStyle,

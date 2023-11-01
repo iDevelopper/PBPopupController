@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension CGGradient{
+internal extension CGGradient{
     
     class func with(_ colors:[UIColor],_ locations:[CGFloat]) -> CGGradient{
         return CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors.map{$0.cgColor} as CFArray, locations: locations)!

@@ -27,7 +27,7 @@ internal struct PBPopupState<PopupContent: View> {
     let inheritsVisualStyleFromBottomBar: Bool
     let isTranslucent: Bool
     let backgroundColor: UIColor?
-    let barTintColor: UIColor?
+    //let barTintColor: UIColor?
     let tintColor: UIColor?
     let progressViewStyle: PBPopupBarProgressViewStyle
     let borderViewStyle: PBPopupBarBorderViewStyle

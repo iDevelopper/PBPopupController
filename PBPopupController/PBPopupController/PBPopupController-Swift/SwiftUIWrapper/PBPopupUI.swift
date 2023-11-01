@@ -10,6 +10,9 @@ import SwiftUI
 
 @available(iOS 14.0, *)
 public class RoundShadowImageView: PBPopupRoundShadowImageView {
+    /**
+     :nodoc:
+     */
     public override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -174,9 +177,9 @@ public extension View {
     }
     
     /// The bar tint color of the popup bar toolbar.
-    func barTintColor(_ color: UIColor) -> some View {
-        return environment(\.barTintColor, color)
-    }
+    //func barTintColor(_ color: UIColor) -> some View {
+    //    return environment(\.barTintColor, color)
+    //}
     
     /// The tint color of the popup bar toolbar.
     func tintColor(_ color: UIColor) -> some View {

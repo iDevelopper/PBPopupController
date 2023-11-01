@@ -21,7 +21,7 @@ internal class _PBPopupBarView: UIView {
         self.autoresizingMask = [.flexibleWidth]
         self.autoresizesSubviews = true
         self.preservesSuperviewLayoutMargins = true
-        self.clipsToBounds = true
+        self.clipsToBounds = false
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -542,7 +542,7 @@ extension PBPopupPresentationStyle
     
     internal func pb_popupBar() -> PBPopupBar
     {
-        let rv = PBPopupBar(frame: CGRect(x: 0, y: 0, width: self.containerViewController.view.bounds.width, height: PBPopupBarHeightProminent))
+        let rv = PBPopupBar(frame: CGRect(x: 0, y: 0, width: self.containerViewController.view.bounds.width, height: PBPopupBarHeightProminent), usePopupBarSmoothGradient: self.containerViewController.usePopupBarSmoothGradient, usePopupBarLegacyShadow: self.containerViewController.usePopupBarLegacyShadow, enablePopupBarColorsDebug: self.containerViewController.enablePopupBarColorsDebug)
         self.popupBarView = _PBPopupBarView()
         self.popupBarView.frame = CGRect(x: 0, y: 0, width: self.containerViewController.view.bounds.width, height: rv.popupBarHeight)
         rv.isHidden = true
@@ -558,6 +558,8 @@ extension PBPopupPresentationStyle
         rv.popupController = self
         
         self.popupBarView.popupController = self
+        
+        rv.isFloating = false
         
         return rv
     }
@@ -996,10 +998,10 @@ extension PBPopupPresentationStyle
         
         frame.origin.y += self.wantsAdditionalSafeAreaInsetTop ? -vc.popupBar.popupBarHeight : vc.popupBar.popupBarHeight
         
-        if vc.popupBarIsHidden {
+        if vc.popupBarIsHidden || vc.popupBar.isFloating {
             frame.origin.y = vc.view.bounds.height
         }
-        
+
         PBLog("\(frame)")
         return frame
     }

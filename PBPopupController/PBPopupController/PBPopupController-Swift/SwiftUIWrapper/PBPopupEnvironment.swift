@@ -37,9 +37,11 @@ internal struct PBPopupBarBackgroundColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
 }
 
+/*
 internal struct PBPopupBarBarTintColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
 }
+*/
 
 internal struct PBPopupBarTintColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
@@ -140,10 +142,12 @@ internal extension EnvironmentValues {
         set { self[PBPopupBarBackgroundColorKey.self] = newValue }
     }
     
+    /*
     var barTintColor: UIColor? {
         get { self[PBPopupBarBarTintColorKey.self] }
         set { self[PBPopupBarBarTintColorKey.self] = newValue }
     }
+    */
     
     var tintColor: UIColor? {
         get { self[PBPopupBarTintColorKey.self] }

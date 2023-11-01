@@ -201,6 +201,8 @@ internal class PBPopupPresentationController: UIPresentationController
         self.touchForwardingView.popupController = self.popupController
         containerView.insertSubview(touchForwardingView, at: 0)
         
+        self.shouldUpdateBackingView = false
+        
         self.setupBackingView()
         
         self.popupContentView.contentView.addSubview(presentedView)
@@ -272,6 +274,7 @@ internal class PBPopupPresentationController: UIPresentationController
             self.blackView?.alpha = 1.0
             NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
         }
+        self.shouldUpdateBackingView = true
     }
     
     override func dismissalTransitionWillBegin()
@@ -293,6 +296,8 @@ internal class PBPopupPresentationController: UIPresentationController
             self.popupContentView.contentView.addSubview(imageViewForPresentation)
             self.configureImageViewInStartPosition()
         }
+        
+        self.shouldUpdateBackingView = false
         
         if let backingView = self.backingView {
             backingView.removeFromSuperview()
@@ -375,6 +380,7 @@ internal class PBPopupPresentationController: UIPresentationController
         else {
             self.blackView?.alpha = 1.0
         }
+        self.shouldUpdateBackingView = true
     }
     
     @objc func didEnterBackground(_ sender: Any)
@@ -580,8 +586,10 @@ extension PBPopupPresentationController
         //frame.size.height = popupBarViewFrame.maxY
         let isFloating = self.presentingVC.popupBar.isFloating
         frame.size.height = self.isPresenting ? popupBarViewFrame.maxY + (isFloating ? self.presentingVC.defaultFrameForBottomBar().size.height : 0.0) : (isFloating ? popupBarViewFrame.maxY  + (isFloating ? self.presentingVC.defaultFrameForBottomBar().size.height : 0.0) : popupBarViewFrame.maxY)
-        let insets = self.presentingVC.insetsForBottomBar()
-        frame.size.height += isFloating ? insets.bottom : 0.0
+        if let nc = presentingVC as? UINavigationController, nc.isToolbarHidden == false {
+            let insets = self.presentingVC.insetsForBottomBar()
+            frame.size.height += isFloating ? insets.bottom : 0.0
+        }
         PBLog("\(frame)")
         return frame
     }
@@ -843,7 +851,8 @@ extension PBPopupPresentationController
 
         if self.backingView == nil {
             let isHidden = self.popupBarView.isHidden
-            if !self.presentingVC.popupBar.isFloating {
+            let isFloating = self.presentingVC.popupBar.isFloating
+            if !isFloating {
                 self.popupBarView.isHidden = true
             }
 
@@ -867,7 +876,7 @@ extension PBPopupPresentationController
             self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: self.isPresenting ? false : true, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
-            if !self.presentingVC.popupBar.isFloating {
+            if !isFloating {
                 self.popupBarView.isHidden = isHidden
             }
 
@@ -937,8 +946,6 @@ extension PBPopupPresentationController
         self.popupBarView.alpha = 1.0
         
         guard let popupBar = self.presentingVC.popupBar else { return nil }
-        
-        popupBar.setHighlighted(false, animated: false)
         
         if !self.isCompactOrPhoneInLandscape() && self.popupContentView.popupImageView != nil {
             popupBar.shadowImageView.isHidden = true

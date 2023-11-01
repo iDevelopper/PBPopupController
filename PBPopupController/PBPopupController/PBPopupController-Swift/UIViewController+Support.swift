@@ -28,6 +28,9 @@ private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
 public extension UIViewController
 {
     internal struct AssociatedKeys {
+        static var enablePopupBarColorsDebug = "enablePopupBarColorsDebug"
+        static var usePopupBarSmoothGradient = "usePopupBarSmoothGradient"
+        static var usePopupBarLegacyShadow = "usePopupBarLegacyShadow"
         static var popupBar: PBPopupBar?
         static var bottomBar: UIView?
         
@@ -69,41 +72,42 @@ public extension UIViewController
         return rv
     }
     
-    internal var isTabBarHiddenDuringTransition: Bool! {
+    /**
+     A Boolean value indicating whether the popup bar displays the view layout with colors. The default value is `false`. If necessary, change the value to `true` before accessing or configuring the popup bar.
+     */
+    @objc var enablePopupBarColorsDebug: Bool {
         get {
-            let isHidden = withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
-                    objc_getAssociatedObject(self, $0) as? NSNumber
+            let isEnabled = withUnsafePointer(to: &AssociatedKeys.enablePopupBarColorsDebug) {
+                objc_getAssociatedObject(self, $0) as? NSNumber
             }
-            return isHidden?.boolValue ?? false
+            return isEnabled?.boolValue ?? false
         }
         set {
-            if let newValue = newValue {
-                withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
-                    objc_setAssociatedObject(
-                        self,
-                        $0,
-                        NSNumber(value: newValue),
-                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                    )
-                }
+            withUnsafePointer(to: &AssociatedKeys.enablePopupBarColorsDebug) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
             }
         }
     }
     
     /**
-     A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.
-
-     - SeeAlso: `hidesBottomBarWhenPushed`.
+     A Boolean value indicating whether the floating popup bar uses smooth gradient.  The default value is `true`. If necessary, change the value to `false` before accessing or configuring the popup bar.
+     
+     - SeeAlso: [smooth-gradient](https://github.com/janselv/smooth-gradient).
      */
-    @objc var hidesPopupBarWhenPushed: Bool {
+    @objc var usePopupBarSmoothGradient: Bool {
         get {
-            let isHidden = withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+            let isEnabled = withUnsafePointer(to: &AssociatedKeys.usePopupBarSmoothGradient) {
                     objc_getAssociatedObject(self, $0) as? NSNumber
             }
-            return isHidden?.boolValue ?? false
+            return isEnabled?.boolValue ?? false
         }
         set {
-            withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+            withUnsafePointer(to: &AssociatedKeys.usePopupBarSmoothGradient) {
                 objc_setAssociatedObject(
                     self,
                     $0,
@@ -114,34 +118,18 @@ public extension UIViewController
         }
     }
     
-    @objc internal var popupBarIsHidden: Bool {
+    /**
+     A Boolean value indicating whether the floating popup bar uses legacy shadow (otherwise it uses NSShadow with shadowPath).  The default value is `false`. If necessary, change the value to `true` before accessing or configuring the popup bar.
+     */
+    @objc var usePopupBarLegacyShadow: Bool {
         get {
-            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+            let isEnabled = withUnsafePointer(to: &AssociatedKeys.usePopupBarLegacyShadow) {
                     objc_getAssociatedObject(self, $0) as? NSNumber
             }
-            return isHidden?.boolValue ?? false
+            return isEnabled?.boolValue ?? false
         }
         set {
-            withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
-                objc_setAssociatedObject(
-                    self,
-                    $0,
-                    NSNumber(value: newValue),
-                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-                )
-            }
-        }
-    }
-    
-    @objc internal var popupBarWasHidden: Bool {
-        get {
-            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
-                    objc_getAssociatedObject(self, $0) as? NSNumber
-            }
-            return isHidden?.boolValue ?? false
-        }
-        set {
-            withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+            withUnsafePointer(to: &AssociatedKeys.usePopupBarLegacyShadow) {
                 objc_setAssociatedObject(
                     self,
                     $0,
@@ -351,6 +339,89 @@ public extension UIViewController
                         .OBJC_ASSOCIATION_RETAIN_NONATOMIC
                     )
                 }
+            }
+        }
+    }
+    
+    internal var isTabBarHiddenDuringTransition: Bool! {
+        get {
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            if let newValue = newValue {
+                withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        NSNumber(value: newValue),
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
+            }
+        }
+    }
+    
+    /**
+     A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.
+
+     - SeeAlso: `hidesBottomBarWhenPushed`.
+     */
+    @objc var hidesPopupBarWhenPushed: Bool {
+        get {
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
+        }
+    }
+    
+    internal var popupBarIsHidden: Bool {
+        get {
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
+        }
+    }
+    
+    internal var popupBarWasHidden: Bool {
+        get {
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+                    objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            return isHidden?.boolValue ?? false
+        }
+        set {
+            withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
             }
         }
     }

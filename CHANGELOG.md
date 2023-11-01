@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## 3.7.6
+
+Added [smooth-gradient](https://github.com/janselv/smooth-gradient) Copyright (c) 2016 Jansel Valentin.
+Floating popup bar layout improvements.
+Improved floating popup bar animation when hidesPopupBarWhenPushed.
+Example update.
+Update documentation.
+
 ## 3.7.5
 
 Fixes popup bar tint color issue (SplitViewController detail).

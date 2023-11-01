@@ -16,7 +16,7 @@ PBPopupController is a framework for presenting bars and view controllers as pop
 
 ## Overview
 
-`PBPopupController` allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.
+`PBPopupController` allows to configure a popup bar (like the mini player of Apple Music App), docking it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.
 
 Each view controller can present a popup bar, docked to a bottom view. For `UITabBarController` subclasses, the default is the tab bar. For `UINavigationController` subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.
 
@@ -28,7 +28,9 @@ Popup close buttons styles are labeled `chevron` for modern style chevron close 
 
 You can also present and dismiss the popup content view controller programmatically.
 
-The popup bar has a `prominent` style based on the modern Music app look and feel and below and a `compact` style for iOS 9-style look and feel.. You can change these default values.
+The popup bar has a `prominent` style based on the modern Music app look and feel and a `compact` style for iOS 9-style look and feel.. You can change these default values. For each, there is a floating parameter for matching the style like in Apple's Music application since iOS 17.
+
+You can also present completely custom popup bars.
 
 The presentation options provided by the framework are listed in the `PBPopupPresentationStyle` enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style was `fullScreen` by default and for iOS 10 and below, the style was `deck`. The default is `deck`. You can change these default values. The `custom` option allows you to present the controller on a part of the screen.
 
@@ -77,6 +79,7 @@ pod 'PBPopupController'
 * iOS 13 dark mode support.
 * macOS Catalyst support.
 * iPad look and feel support.
+* Floating bar style support.
 
 ## Basic API Description
 
@@ -181,6 +184,17 @@ When you override the `preferredStatusBarStyle` variable in your popup content v
 ## API Documentation
 
 You can find [the docs here](http://iDevelopper.github.io/PBPopupController/). Documentation is generated with [jazzy](https://github.com/realm/jazzy) and hosted on [GitHub-Pages](https://pages.github.com).
+
+## Acknowledgements
+
+The framework uses:
+
+* [smooth-gradient](https://github.com/janselv/smooth-gradient) Copyright (c) 2016 Jansel Valentin
+
+The demo project uses:
+
+* [MarqueeLabel](https://github.com/cbpowell/MarqueeLabel) Copyright (c) 2011-2023 Charles Powell
+* [LoremIpsum](https://github.com/lukaskubanek/LoremIpsum) Copyright (c) 2013 Lukas Kubanek
 
 ## Special Mention
 

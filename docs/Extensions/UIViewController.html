@@ -17,7 +17,7 @@
     <a title="UIViewController Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.6.16 Docs</a> (84% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.7.5 Docs</a> (83% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -58,7 +58,7 @@
                 <a href="../Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/RoundShadowImageView.html">RoundShadowImageView</a>
+                <a href="../Classes.html#/c:@M@PBPopupController@objc(cs)RoundShadowImageView">RoundShadowImageView</a>
               </li>
             </ul>
           </li>
@@ -156,9 +156,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed"></a>
-                    <a name="//apple_ref/swift/Property/hidesPopupBarWhenPushed" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed">hidesPopupBarWhenPushed</a>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)enablePopupBarColorsDebug"></a>
+                    <a name="//apple_ref/swift/Property/enablePopupBarColorsDebug" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)enablePopupBarColorsDebug">enablePopupBarColorsDebug</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -166,10 +166,38 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.</p>
+                        <p>A Boolean value indicating whether the popup bar displays the view layout with colors. The default value is <code>false</code>. If necessary, change the value to <code>true</code> before accessing or configuring the popup bar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">var</span> <span class="nv">enablePopupBarColorsDebug</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)usePopupBarSmoothGradient"></a>
+                    <a name="//apple_ref/swift/Property/usePopupBarSmoothGradient" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)usePopupBarSmoothGradient">usePopupBarSmoothGradient</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value indicating whether the floating popup bar uses smooth gradient.  The default value is <code>true</code>. If necessary, change the value to <code>false</code> before accessing or configuring the popup bar.</p>
 <div class="aside aside-see-also">
     <p class="aside-title">See also</p>
-    <code>hidesBottomBarWhenPushed</code>.
+    <a href="https://github.com/janselv/smooth-gradient">smooth-gradient</a>.
 
 </div>
 
@@ -179,7 +207,35 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="k">var</span> <span class="nv">hidesPopupBarWhenPushed</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+<span class="k">var</span> <span class="nv">usePopupBarSmoothGradient</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)usePopupBarLegacyShadow"></a>
+                    <a name="//apple_ref/swift/Property/usePopupBarLegacyShadow" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)usePopupBarLegacyShadow">usePopupBarLegacyShadow</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value indicating whether the floating popup bar uses legacy shadow (otherwise it uses NSShadow with shadowPath).  The default value is <code>false</code>. If necessary, change the value to <code>true</code> before accessing or configuring the popup bar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">var</span> <span class="nv">usePopupBarLegacyShadow</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -374,6 +430,39 @@ The default implmentation for <code>UIViewController</code> returns an invisible
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
 <span class="kd">internal(set)</span> <span class="k">weak</span> <span class="k">var</span> <span class="nv">popupContentView</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupContentView.html">PBPopupContentView</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed"></a>
+                    <a name="//apple_ref/swift/Property/hidesPopupBarWhenPushed" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@PBPopupController@@objc(cs)UIViewController(py)hidesPopupBarWhenPushed">hidesPopupBarWhenPushed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Boolean value indicating whether the popup bar is hidden when the view controller is pushed on to a navigation controller.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code>hidesBottomBarWhenPushed</code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="k">var</span> <span class="nv">hidesPopupBarWhenPushed</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -815,7 +904,7 @@ If the popup bar&rsquo;s <code>inheritsVisualStyleFromBottomBar</code> property 
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-09-20)</p>
+          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-11-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

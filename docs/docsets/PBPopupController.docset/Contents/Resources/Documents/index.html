@@ -16,7 +16,7 @@
     <a title="PBPopupController  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">PBPopupController 3.6.16 Docs</a> (84% documented)</p>
+        <p><a href="index.html">PBPopupController 3.7.5 Docs</a> (83% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="search.json">
@@ -57,7 +57,7 @@
                 <a href="Classes/PBPopupRoundShadowImageView.html">PBPopupRoundShadowImageView</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/RoundShadowImageView.html">RoundShadowImageView</a>
+                <a href="Classes.html#/c:@M@PBPopupController@objc(cs)RoundShadowImageView">RoundShadowImageView</a>
               </li>
             </ul>
           </li>
@@ -156,7 +156,7 @@
 <p><img src="https://raw.githubusercontent.com/iDevelopper/PBPopupController/master/PBPopupController/Assets/iTunesArtwork.png" alt="Image"></p>
 <h2 id='overview' class='heading'>Overview</h2>
 
-<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> allows to configure a popup bar (like the mini player of Apple Music App), dock it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.</p>
+<p><code><a href="Classes/PBPopupController.html">PBPopupController</a></code> allows to configure a popup bar (like the mini player of Apple Music App), docking it to the bottom bar of a presenting view container controller (like UITabBarController, UINavigationController). The presenting view controller can be any UIViewController subclass.</p>
 
 <p>Each view controller can present a popup bar, docked to a bottom view. For <code>UITabBarController</code> subclasses, the default is the tab bar. For <code>UINavigationController</code> subclasses, the default view is the toolbar. For other classes, the popup bar is presented at the bottom of the screen. View controller subclasses can provide their own bottom bar views.</p>
 
@@ -168,7 +168,9 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 
 <p>You can also present and dismiss the popup content view controller programmatically.</p>
 
-<p>The popup bar has a <code>prominent</code> style based on the modern Music app look and feel and below and a <code>compact</code> style for iOS 9-style look and feel.. You can change these default values.</p>
+<p>The popup bar has a <code>prominent</code> style based on the modern Music app look and feel and a <code>compact</code> style for iOS 9-style look and feel.. You can change these default values. For each, there is a floating parameter for matching the style like in Apple&rsquo;s Music application since iOS 17.</p>
+
+<p>You can also present completely custom popup bars.</p>
 
 <p>The presentation options provided by the framework are listed in the <code><a href="Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></code> enumeration. They make the presentation look like the behavior of the Apple Music App. For iOS 9, the presentation style was <code>fullScreen</code> by default and for iOS 10 and below, the style was <code>deck</code>. The default is <code>deck</code>. You can change these default values. The <code>custom</code> option allows you to present the controller on a part of the screen.</p>
 <h2 id='installation' class='heading'>Installation</h2>
@@ -212,6 +214,7 @@ Popup close buttons styles are labeled <code>chevron</code> for modern style che
 <li>iOS 13 dark mode support.</li>
 <li>macOS Catalyst support.</li>
 <li>iPad look and feel support.</li>
+<li>Floating bar style support.</li>
 </ul>
 <h2 id='basic-api-description' class='heading'>Basic API Description</h2>
 
@@ -306,6 +309,20 @@ So, you can set the properties:</p>
 <h2 id='api-documentation' class='heading'>API Documentation</h2>
 
 <p>You can find <a href="http://iDevelopper.github.io/PBPopupController/">the docs here</a>. Documentation is generated with <a href="https://github.com/realm/jazzy">jazzy</a> and hosted on <a href="https://pages.github.com">GitHub-Pages</a>.</p>
+<h2 id='acknowledgements' class='heading'>Acknowledgements</h2>
+
+<p>The framework uses:</p>
+
+<ul>
+<li><a href="https://github.com/janselv/smooth-gradient">smooth-gradient</a> Copyright &copy; 2016 Jansel Valentin</li>
+</ul>
+
+<p>The demo project uses:</p>
+
+<ul>
+<li><a href="https://github.com/cbpowell/MarqueeLabel">MarqueeLabel</a> Copyright &copy; 2011-2023 Charles Powell</li>
+<li><a href="https://github.com/lukaskubanek/LoremIpsum">LoremIpsum</a> Copyright &copy; 2013 Lukas Kubanek</li>
+</ul>
 <h2 id='special-mention' class='heading'>Special Mention</h2>
 
 <p>A Special Thank to <a href="https://github.com/LeoNatan">Leo Natan</a>.</p>
@@ -327,7 +344,7 @@ So, you can set the properties:</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-09-20)</p>
+          <p>&copy; 2023 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2023-11-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>

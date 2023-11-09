@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.8.0
+
+Update iOS minimum deployment target to 12.0.
+
 ## 3.7.7
 
 Improved floating popup bar background shadow and exposed it.

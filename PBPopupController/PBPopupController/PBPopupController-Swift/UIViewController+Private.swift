@@ -1003,10 +1003,40 @@ public extension UIViewController
     internal func _cleanupPopup()
     {
         PBLog("_cleanupPopup")
+        withUnsafePointer(to: &AssociatedKeys.enablePopupBarColorsDebug) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.usePopupBarSmoothGradient) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.usePopupBarLegacyShadow) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.popupBarIsHidden) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.popupBarWasHidden) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.additionalSafeAreaInsetsBottomForContainer) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.popupAdditionalSafeAreaInsets) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
         withUnsafePointer(to: &AssociatedKeys.popupContentViewController) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         withUnsafePointer(to: &AssociatedKeys.popupContentView) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.popupBar) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         withUnsafePointer(to: &AssociatedKeys.bottomBar) {
@@ -1016,9 +1046,6 @@ public extension UIViewController
             withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
                 objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             }
-        }
-        withUnsafePointer(to: &AssociatedKeys.popupBar) {
-            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         withUnsafePointer(to: &AssociatedKeys.popupController) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

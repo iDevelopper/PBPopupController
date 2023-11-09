@@ -143,6 +143,16 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         super.viewDidDisappear(animated)
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        /*
+        if #available(iOS 13.0, *) {
+            guard let popupBar = self.containerVC.popupBar else { return }
+            popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
+        }
+        */
+    }
+    
     deinit {
         PBLog("deinit \(self)")
     }
@@ -361,6 +371,14 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         if let popupBar = self.containerVC.popupBar {
             if #available(iOS 17.0, *) {
                 popupBar.isFloating = self.popupBarIsFloating
+                // TODO:
+                //popupBar.floatingBackgroundColor = UIColor.systemMint
+                //popupBar.floatingBackgroundEffect = UIBlurEffect(style: .systemMaterial)
+                /*
+                let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+                popupBar.floatingBackgroundShadow.shadowColor = userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
+                popupBar.floatingBackgroundShadow.shadowBlurRadius = 8.0
+                */
             }
             //if #available(iOS 15.0, *) {
             //    popupBar.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : .small
@@ -827,7 +845,8 @@ extension FirstTableViewController {
             }
 
             cell.switchLabel.adjustsFontForContentSizeCategory = true
-            
+            cell.selectionStyle = .none
+
             return cell
 
         case 1:

@@ -23,12 +23,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         tabBarAppearance.configureWithDefaultBackground()
         
         if #available(iOS 17.0, *) {
-            tabBarAppearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterial)
+            tabBarAppearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
         }
-        let newTabBarappearance = UITabBar.appearance()
-        newTabBarappearance.standardAppearance = tabBarAppearance
+        let newTabBarAppearance = UITabBar.appearance()
+        newTabBarAppearance.standardAppearance = tabBarAppearance
         if #available(iOS 15.0, *) {
-            newTabBarappearance.scrollEdgeAppearance = tabBarAppearance
+            newTabBarAppearance.scrollEdgeAppearance = tabBarAppearance
+        }
+        
+        let toolbarAppearance = UIToolbarAppearance()
+        toolbarAppearance.configureWithDefaultBackground()
+        
+        if #available(iOS 17.0, *) {
+            toolbarAppearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
+        }
+        let newToolbarAppearance = UIToolbar.appearance()
+        newToolbarAppearance.standardAppearance = toolbarAppearance
+        if #available(iOS 15.0, *) {
+            newToolbarAppearance.scrollEdgeAppearance = toolbarAppearance
         }
         
         let navBarAppearance = UINavigationBarAppearance()

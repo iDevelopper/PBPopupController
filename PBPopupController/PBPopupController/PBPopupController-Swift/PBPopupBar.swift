@@ -533,6 +533,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     /**
+     The shadow displayed underneath the floating popup bar background. Read only but its properties can be changed.
+     */
+    @objc public internal(set) var floatingBackgroundShadow: NSShadow!
+    
+    /**
      The tint color to apply to the popup bar background.
      */
     @available(iOS, obsoleted: 13.0, message: "Use backgroundColor and floatingBackgroundColor instead")
@@ -789,7 +794,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             
             self.backgroundView?.mask = popupBarIsFloating ? self.floatingBackgroundMaskView : nil
 
-            self.floatingBackgroundShadowView?.cornerRadius = self.floatingRadius
             self.floatingBackgroundShadowView?.isHidden = !popupBarIsFloating
 
             self.contentView.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
@@ -836,8 +840,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     internal var floatingRadius: CGFloat = 14
     
     // The default inset for the floating popup bar
-    internal var floatingInsets: UIEdgeInsets = UIEdgeInsets(top: 3.0, left: 12, bottom: 5.0, right: 12)
-    
+    internal var floatingInsets: UIEdgeInsets = UIEdgeInsets(top: 4.0, left: 12, bottom: 4.0, right: 12)
+
     internal var backgroundView: _PBPopupBackgroundEffectShadowView!
     internal var transitionBackgroundView: _PBPopupBackgroundEffectShadowView!
     
@@ -876,8 +880,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private var contentViewRightConstraint: NSLayoutConstraint!
     private var contentViewHeightConstraint: NSLayoutConstraint!
 
-    private var toolbarTopConstraint: NSLayoutConstraint!
-    
     private var customBarBottomConstraint: NSLayoutConstraint!
     
     private var safeAreaBackgroundViewHeightConstraint: NSLayoutConstraint?
@@ -1045,19 +1047,51 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         */
         
         if !self.usePopupBarLegacyShadow {
-            let shadow = NSShadow()
-            shadow.shadowColor = self.enablePopupBarColorsDebug ? UIColor.green.withAlphaComponent(0.85) : UIColor.black.withAlphaComponent(0.15)
-            shadow.shadowOffset = .zero
-            shadow.shadowBlurRadius = 8.0
             
             self.floatingBackgroundShadowView = _PBPopupBackgroundShadowView()
             self.floatingBackgroundShadowView.autoresizingMask = []
             self.floatingBackgroundShadowView.isUserInteractionEnabled = false
+            self.floatingBackgroundShadowView.floatingInset = self.floatingInsets
             self.floatingBackgroundShadowView.cornerRadius = self.floatingRadius
-            self.floatingBackgroundShadowView.shadow = shadow
             self.floatingBackgroundShadowView.isHidden = true
             
             self.addSubview(self.floatingBackgroundShadowView)
+
+            self.floatingBackgroundShadow = NSShadow()
+            self.floatingBackgroundShadow.shadowColor = nil
+            self.floatingBackgroundShadow.shadowBlurRadius = 8.0
+            self.floatingBackgroundShadow.shadowOffset = .zero
+            self.floatingBackgroundShadowView.userFloatingBackgroundShadow = self.floatingBackgroundShadow
+
+            let shadow = NSShadow()
+            
+            var lightColor: UIColor
+            var darkColor: UIColor
+            if self.enablePopupBarColorsDebug {
+                lightColor = UIColor.red.withAlphaComponent(0.85)
+                darkColor = UIColor.red.withAlphaComponent(0.85)
+            }
+            else {
+                lightColor = UIColor.black.withAlphaComponent(0.15)
+                darkColor = UIColor.black.withAlphaComponent(0.30)
+            }
+            if #available(iOS 13.0, *) {
+                if self.traitCollection.userInterfaceStyle == .light {
+                    shadow.shadowColor = lightColor
+                }
+                else {
+                    shadow.shadowColor = darkColor
+                }
+            }
+            else {
+                shadow.shadowColor = lightColor
+            }
+            shadow.shadowOffset = CGSize(width: 0.0, height: 0.0)
+            shadow.shadowBlurRadius = 8.0
+            
+            self.floatingBackgroundShadowView.lightShadowColor = lightColor
+            self.floatingBackgroundShadowView.darkShadowColor = darkColor
+            self.floatingBackgroundShadowView.shadow = shadow
         }
         
         self.contentView = _PBPopupBarContentView(effect: nil)
@@ -1089,7 +1123,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.toolbar.shadowImage = UIImage()
         }
         
-        self.contentView.addSubview(self.toolbar)
+        self.contentView.effectView.contentView.addSubview(self.toolbar)
         
         self.shadowImageView = PBPopupRoundShadowImageView(frame: .zero)
         self.shadowImageView.cornerRadius = 3.0
@@ -1129,10 +1163,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         self.highlightView = _PBPopupBarHighlightView()
         self.highlightView.autoresizingMask = []
         self.highlightView.isUserInteractionEnabled = false
-        self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.10)
         if #available(iOS 13.0, *) {
-            if self.traitCollection.userInterfaceStyle == .dark/* || self.overrideUserInterfaceStyle == .dark*/ {
-                self.highlightView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+            if self.traitCollection.userInterfaceStyle == .dark {
+                self.highlightView.backgroundColor = UIColor.white.withAlphaComponent(0.10)
             }
         }
         self.highlightView.alpha = 0.0
@@ -1156,7 +1190,12 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     deinit {
+        self.floatingBackgroundShadowView?.colorToken?.invalidate()
+        self.floatingBackgroundShadowView?.offsetToken?.invalidate()
+        self.floatingBackgroundShadowView?.radiusToken?.invalidate()
+        
         NotificationCenter.default.removeObserver(self, name: UIContentSizeCategory.didChangeNotification, object: nil)
+        
         PBLog("deinit \(self)")
     }
     
@@ -1238,9 +1277,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      :nodoc:
      */
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
         if #available(iOS 13.0, *) {
             let style = self.traitCollection.userInterfaceStyle
-            self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.1) : UIColor.white.withAlphaComponent(0.1)
+            self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
         }
     }
     
@@ -1848,7 +1888,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             NSLayoutConstraint.deactivate(horizontalConstraints)
         }
         if self.isFloating {
-            let format = String(format: "H:|-%f-[view]-%f-|", self.floatingRadius / 2.5, self.floatingRadius / 2.5)
+            let format = String(format: "H:|-%f-[view]-%f-|", self.floatingRadius, self.floatingRadius)
             self.progressViewHorizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: format, options: [], metrics: nil, views: views)
         }
         else {
@@ -2126,8 +2166,6 @@ extension PBPopupBar
         
         var floatingInset: UIEdgeInsets!
         
-        var contentView: UIView!
-
         var colorView: UIView!
         var imageView: UIImageView!
         
@@ -2209,43 +2247,83 @@ extension PBPopupBar
     }
 
     internal class _PBPopupBackgroundShadowView: UIView {
+        var colorToken: NSKeyValueObservation?
+        var offsetToken: NSKeyValueObservation?
+        var radiusToken: NSKeyValueObservation?
+        
+        var userFloatingBackgroundShadow: NSShadow!
+        var lightShadowColor: UIColor!
+        var darkShadowColor: UIColor!
+
         var shadow: NSShadow! {
             didSet {
-                self.layer.shadowOffset = self.shadow.shadowOffset
-                self.layer.shadowRadius = self.shadow.shadowBlurRadius
+                self.layer.shadowOffset = shadow.shadowOffset
+                self.layer.shadowRadius = shadow.shadowBlurRadius
                 
                 self.updateShadowColor()
                 
                 self.setNeedsLayout()
+                
+                self.colorToken = self.userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
+                    guard let shadowColor = change.newValue else { return }
+                    self.updateShadowColor()
+                }
+
+                self.offsetToken = self.userFloatingBackgroundShadow.observe(\.shadowOffset, options: .new) { (shadowOffset, change) in
+                    guard let shadowOffset = change.newValue else { return }
+                    self.layer.shadowOffset = shadowOffset
+                }
+                
+                self.radiusToken = self.userFloatingBackgroundShadow.observe(\.shadowBlurRadius, options: .new) { (shadowBlurRadius, change) in
+                    guard let shadowBlurRadius = change.newValue else { return }
+                    self.layer.shadowRadius = shadowBlurRadius
+                }
             }
         }
+        
         var maskLayer: CAShapeLayer!
         
-        var cornerRadius: CGFloat! {
-            didSet {
-                self.setNeedsLayout()
-            }
-        }
+        var cornerRadius: CGFloat!
         
         var floatingInset: UIEdgeInsets!
         
         override init(frame: CGRect) {
             super.init(frame: frame)
-            
+                        
             self.maskLayer = CAShapeLayer()
             self.maskLayer.fillRule = .evenOdd
             self.layer.mask = self.maskLayer
             self.layer.shouldRasterize = true
+
+            if #available(iOS 17.0, *) {
+                self.registerForTraitChanges([UITraitDisplayScale.self, UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                    self.layer.rasterizationScale = self.traitCollection.displayScale
+                    if let userShadow = self.userFloatingBackgroundShadow, userShadow.shadowColor == nil {
+                        self.shadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? self.lightShadowColor : self.darkShadowColor
+                        self.updateShadowColor()
+                    }
+                }
+            }
         }
         
         required init(coder aDecoder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
         
+        deinit {
+            PBLog("deinit \(self)")
+        }
+        
         func updateShadowColor() {
-            if let shadow = self.shadow, let shadowColor = shadow.shadowColor as? UIColor {
+            if let userShadow = self.userFloatingBackgroundShadow, let shadowColor = userShadow.shadowColor as? UIColor {
                 self.layer.shadowColor = shadowColor.withAlphaComponent(1.0).cgColor
                 self.layer.shadowOpacity = Float(shadowColor.cgColor.alpha)
+            }
+            else {
+                if let shadow = self.shadow, let shadowColor = shadow.shadowColor as? UIColor {
+                    self.layer.shadowColor = shadowColor.withAlphaComponent(1.0).cgColor
+                    self.layer.shadowOpacity = Float(shadowColor.cgColor.alpha)
+                }
             }
         }
         
@@ -2253,6 +2331,14 @@ extension PBPopupBar
             super.traitCollectionDidChange(previousTraitCollection)
             
             self.layer.rasterizationScale = self.traitCollection.displayScale
+            if #available(iOS 13.0, *) {
+                if let userShadow = self.userFloatingBackgroundShadow, userShadow.shadowColor == nil {
+                    self.shadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? self.lightShadowColor : self.darkShadowColor
+                }
+            }
+            else {
+                self.shadow.shadowColor = self.lightShadowColor
+            }
             self.updateShadowColor()
         }
         
@@ -2269,7 +2355,6 @@ extension PBPopupBar
                 let maskPath = UIBezierPath(rect: self.maskLayer.bounds)
                 maskPath.append(UIBezierPath(roundedRect: CGRectInset(self.maskLayer.bounds, dx, dy), cornerRadius: self.cornerRadius))
                 maskPath.usesEvenOddFillRule = true
-                
                 self.maskLayer.path = maskPath.cgPath
             }
         }
@@ -2278,7 +2363,6 @@ extension PBPopupBar
     internal class _PBPopupBackgroundMaskView: UIView {
         var gradient: CGGradient!
         var isSmooth: Bool = false
-        var floatingCornerRadius: CGFloat = 0
         
         convenience init(frame: CGRect, smooth: Bool = false) {
             self.init(frame: frame)
@@ -2288,7 +2372,7 @@ extension PBPopupBar
             self.backgroundColor = .clear
 
             let color1 = UIColor.clear
-            let color2 = UIColor.white
+            let color2 = UIColor.black
             
             if smooth {
                 self.gradient = CGGradient.with(easing: .easeInOutSine, from: color1, to: color2)

@@ -63,7 +63,7 @@ pod 'PBPopupController'
 
 ## Requirements
 
-* iOS 11 or later.
+* iOS 12 or later.
 * ARC memory management.
 
 ## Features

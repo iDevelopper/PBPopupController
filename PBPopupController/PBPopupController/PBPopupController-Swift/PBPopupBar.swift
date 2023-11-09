@@ -2265,7 +2265,6 @@ extension PBPopupBar
                 self.setNeedsLayout()
                 
                 self.colorToken = self.userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
-                    guard let shadowColor = change.newValue else { return }
                     self.updateShadowColor()
                 }
 

@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.7.7
+
+Improved floating popup bar background shadow and exposed it.
+Update documentation.
+
 ## 3.7.6
 
 Added [smooth-gradient](https://github.com/janselv/smooth-gradient) Copyright (c) 2016 Jansel Valentin.

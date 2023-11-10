@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.8.1
+
+Update Cocoapods home page.
+
 ## 3.8.0
 
 Update iOS minimum deployment target to 12.0.

@@ -165,10 +165,16 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
     }
     
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        if self.popupContentViewController is DemoBottomSheetViewController {
+            return false
+        }
         return true
     }
     
     func popupController(_ popupController: PBPopupController, shouldOpen popupContentViewController: UIViewController) -> Bool {
+        if popupContentViewController is DemoBottomSheetViewController {
+            return true
+        }
         switch self.selectedIndex {
         case 0:
             self.popupContentView.popupPresentationStyle = .deck
@@ -180,5 +186,11 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
             self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 8/10)
         }
         return true
+    }
+    
+    func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
+        if popupContentViewController is DemoBottomSheetViewController {
+            self.dismissPopup(animated: true)
+        }
     }
 }

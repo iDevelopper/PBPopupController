@@ -9,11 +9,12 @@
 import UIKit
 import PBPopupController
 
-class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
+class DemoChildViewController: UIViewController {
     
     @IBOutlet weak var childTitle: UILabel!
     @IBOutlet weak var presentButton: UIButton!
     @IBOutlet weak var presentCustomButton: UIButton!
+    @IBOutlet weak var bottomSheetButton: UIButton!
     @IBOutlet weak var dismissButton: UIButton!
     
     override func viewDidLoad() {
@@ -68,11 +69,19 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
         }
     }
     
+    @IBAction func bottomSheet(_ sender: UIButton) {
+        if let containerVC = self.parent {
+            containerVC.dismissPopupBar(animated: false) {
+                self.presentBottomSheet()
+            }
+        }
+    }
+    
     @IBAction func dismissPopupBar(_ sender: UIButton) {
         self.dismissPopup()
     }
     
-    func presentCustomPopup() {
+    private func presentCustomPopup() {
         if let containerVC = self.parent as? DemoContainerController {
             let customYTBar = self.storyboard?.instantiateViewController(withIdentifier: "CustomPopupBarViewController") as! CustomPopupBarViewController
             customYTBar.view.backgroundColor = .clear
@@ -98,7 +107,7 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
         }
     }
     
-    func presentPopup() {
+    private func presentPopup() {
         if let containerVC = self.parent as? DemoContainerController {
             containerVC.popupController.dataSource = containerVC
             containerVC.popupController.delegate = containerVC
@@ -117,6 +126,19 @@ class DemoChildViewController: UIViewController, PBPopupControllerDelegate {
                     PBLog("Popup Bar Presented")
                 }
             }
+        }
+    }
+    
+    private func presentBottomSheet() {
+        if let containerVC = self.parent as? DemoContainerController {
+            containerVC.popupController.dataSource = containerVC
+            containerVC.popupController.delegate = containerVC
+            containerVC.popupContentView.additionalFloatingBottomInset = 8.0
+            let viewController = DemoBottomSheetViewController()
+            containerVC.presentPopup(withPopupContentViewController: viewController, size: CGSize(width: self.view.bounds.width - 40, height: 300), isFloating: true, animated: true) {
+                //
+            }
+            
         }
     }
     

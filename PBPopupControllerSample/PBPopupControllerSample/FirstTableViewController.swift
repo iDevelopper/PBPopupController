@@ -116,7 +116,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         super.viewDidLayoutSubviews()
 
         if let containerVC = self.containerVC, let popupContentView = containerVC.popupContentView {
-            popupContentView.popupContentSize = CGSize(width: -1, height: self.containerVC.view.bounds.height * 0.85)
+            popupContentView.popupContentSize = CGSize(width: -1, height: self.containerVC.view.bounds.height * 0.65)
         }
     }
     
@@ -356,7 +356,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 if let customPopupBarVC = storyboard?.instantiateViewController(withIdentifier: "CustomPopupBarViewController") as? CustomPopupBarViewController {
                     customPopupBarVC.view.backgroundColor = UIColor.clear
                     popupBar.shouldExtendCustomBarUnderSafeArea = false
-                    //popupBar.isTranslucent = false
+                    popupBar.inheritsVisualStyleFromBottomBar = false
+                    let customView = UIView()
+                    popupBar.backgroundCustomView = customView
                     popupBar.customPopupBarViewController = customPopupBarVC
 
                     customPopupBarVC.imageView.image = popupBar.image
@@ -371,7 +373,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         if let popupBar = self.containerVC.popupBar {
             if #available(iOS 17.0, *) {
                 popupBar.isFloating = self.popupBarIsFloating
-                // TODO:
                 //popupBar.floatingBackgroundColor = UIColor.systemMint
                 //popupBar.floatingBackgroundEffect = UIBlurEffect(style: .systemMaterial)
                 /*
@@ -383,11 +384,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             //if #available(iOS 15.0, *) {
             //    popupBar.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : .small
             //}
-            popupBar.shouldExtendCustomBarUnderSafeArea = true // Default, but not for floating bar
             popupBar.dataSource = self.isPopupContentTableView ? nil : self
             popupBar.previewingDelegate = self
             
-            //popupBar.inheritsVisualStyleFromBottomBar = true
             popupBar.inheritsVisualStyleFromBottomBar = self.containerIsBarController ? true : false
             popupBar.shadowImageView.shadowOpacity = 0
             popupBar.borderViewStyle = .none
@@ -574,6 +573,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     // MARK: - Setup Styles Actions
     
     @IBAction func barIsFloatingChanged(_ sender: UISwitch) {
+        if self.popupBarStyle == .custom { return }
+        
         self.popupBarIsFloating = sender.isOn
                         
         if let popupBar = self.containerVC?.popupBar {

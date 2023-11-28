@@ -27,6 +27,7 @@
 		3268B823219C2E0E00AC66EF /* DemoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3268B822219C2E0E00AC66EF /* DemoViewController.swift */; };
 		326ECE2E21CFCEDD0022AD43 /* MarqueeLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326ECE2D21CFCEDD0022AD43 /* MarqueeLabel.swift */; };
 		328BDCD620DCDDB200682698 /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 328BDCD520DCDDB200682698 /* NavigationController.swift */; };
+		329CDA152B1312E800C14B13 /* DemoBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329CDA142B1312E800C14B13 /* DemoBottomSheetViewController.swift */; };
 		32ADE568285C615800AF5F81 /* MusicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ADE565285C615800AF5F81 /* MusicView.swift */; };
 		32ADE569285C615800AF5F81 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ADE567285C615800AF5F81 /* PlayerView.swift */; };
 		32C0160823268D31004DDDF1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C0160623268D31004DDDF1 /* SceneDelegate.swift */; };
@@ -122,6 +123,7 @@
 		326ECE2D21CFCEDD0022AD43 /* MarqueeLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarqueeLabel.swift; sourceTree = "<group>"; };
 		327A2DD12416BB4C00CDDF1E /* PBPopupControllerSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PBPopupControllerSample.entitlements; sourceTree = "<group>"; };
 		328BDCD520DCDDB200682698 /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
+		329CDA142B1312E800C14B13 /* DemoBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoBottomSheetViewController.swift; sourceTree = "<group>"; };
 		32ADE565285C615800AF5F81 /* MusicView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicView.swift; sourceTree = "<group>"; };
 		32ADE567285C615800AF5F81 /* PlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		32C0160623268D31004DDDF1 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				3257A60B219AEA4F00A0B3CD /* DemoCollectionViewController.swift */,
 				32C0B66F216C614A00E0AC2B /* DemoContainerController.swift */,
 				32C0B671216C6A2100E0AC2B /* DemoChildViewController.swift */,
+				329CDA142B1312E800C14B13 /* DemoBottomSheetViewController.swift */,
 				32276940213E7EE500C6AB19 /* CustomPopupBarViewController.swift */,
 				32560E7223F13B2B00586DB1 /* DemoContainerController_iPad.swift */,
 				32560E7523F13B6000586DB1 /* DemoChildViewController_iPad.swift */,
@@ -416,6 +419,7 @@
 				32E0EC2B217DF3F0009C3DA9 /* FirstTableViewController.swift in Sources */,
 				32560E7623F13B6000586DB1 /* DemoChildViewController_iPad.swift in Sources */,
 				32DB35C32534977F0099EB80 /* ViewDemoView.swift in Sources */,
+				329CDA152B1312E800C14B13 /* DemoBottomSheetViewController.swift in Sources */,
 				3205F6A1250B4D82006EBC9F /* DemoViewControllerNoChild.swift in Sources */,
 				32DB35C22534977F0099EB80 /* TabNavView.swift in Sources */,
 				32E0EC2F217EED03009C3DA9 /* ButtonTableViewCell.swift in Sources */,

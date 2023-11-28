@@ -53,7 +53,7 @@ NSString* _PBPopupDecodeBase64String(NSString* base64String)
 				});
 				
 				NSString* groupName = [_self valueForKey:key];
-				if([groupName hasSuffix:@"🤡"] == NO)
+				if(groupName != nil && [groupName hasSuffix:@"🤡"] == NO)
 				{
 					[_self setValue:[NSString stringWithFormat:@"%@🤡", groupName] forKey:key];
 				}

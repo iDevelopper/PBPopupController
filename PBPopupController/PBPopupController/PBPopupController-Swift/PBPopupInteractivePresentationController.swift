@@ -28,11 +28,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
     private var animator: UIViewPropertyAnimator!
     
-    private var availableHeight: CGFloat = 0
+    private var availableHeight: CGFloat = 0.0
     
-    private var progress: CGFloat = 0
+    private var progress: CGFloat = 0.0
     
-    private var location: CGFloat = 0
+    private var location: CGFloat = 0.0
     
     private var shouldComplete = false
     
@@ -151,13 +151,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             
             self.progress = translation.y / self.availableHeight
 
-            let actualCornerRadius = (vc.popupContentView.layer.presentation()?.cornerRadius ?? 0) / 1.5
-            let maxProgress = self.isPresenting ? 1 : vc.popupBar.isFloating ? (self.availableHeight - vc.popupBar.floatingInsets.top - actualCornerRadius) / self.popupController.popupBarView.frame.maxY : 1
-            
-            if (self.progress >= maxProgress || self.progress <= 0) {
-                self.progress = self.progress >= maxProgress ? maxProgress : 0
+            if (self.progress >= 1 || self.progress <= 0) {
+                self.progress = self.progress >= 1 ? 1 : 0
             }
 
+            animator.fractionComplete = self.progress
+            self.update(self.progress)
+            
             if self.isPresenting {
                 var alpha = (0.30 - self.progress) / 0.30
                 alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha
@@ -166,25 +166,24 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha
                 vc.popupContentView.popupCloseButton?.alpha = alpha
             }
-            
-            animator.fractionComplete = self.progress
-            self.update(self.progress)
-
-            if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
-                let statusBarFrame = self.popupController.statusBarFrame(for: self.popupController.containerViewController.view)
-                let statusBarHeightThreshold = statusBarFrame.minY + statusBarFrame.height / 2
-                let backingViewY = layerPresentation.frame.minY
-                
-                if self.statusBarThresholdDir == 1 && backingViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && backingViewY < statusBarHeightThreshold {
-                    self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? self.popupController.popupPreferredStatusBarStyle : self.popupController.containerPreferredStatusBarStyle
-                    //UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
-                    // Apple Documentation: If you call this method within an animation block, the changes are animated along with the rest of the animation block.
+                        
+            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
+                if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
+                    let statusBarFrame = self.popupController.statusBarFrame(for: vc.view)
+                    let statusBarHeightThreshold = statusBarFrame.minY + statusBarFrame.height / 2
+                    let backingViewY = layerPresentation.frame.minY
+                    
+                    if self.statusBarThresholdDir == 1 && backingViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && backingViewY < statusBarHeightThreshold {
+                        self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? self.popupController.popupPreferredStatusBarStyle : self.popupController.containerPreferredStatusBarStyle
+                        //UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
+                        // Apple Documentation: If you call this method within an animation block, the changes are animated along with the rest of the animation block.
                         vc.setNeedsStatusBarAppearanceUpdate()
-                    //}
-                    self.statusBarThresholdDir = -self.statusBarThresholdDir
+                        //}
+                        self.statusBarThresholdDir = -self.statusBarThresholdDir
+                    }
                 }
             }
-
+            
             let location = self.location + (availableHeight * self.progress)
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: self.isPresenting ? .closed : .open, progress: self.progress, location: location)
 
@@ -333,7 +332,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     private func popupContainerViewAvailableHeight() -> CGFloat
     {
-        let availableHeight = self.presentationController.popupContentViewFrameForPopupStateClosed(finish: true).minY - self.presentationController.popupContentViewFrameForPopupStateOpen().minY
+        let closedFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
+        let availableHeight = (self.isPresenting ? closedFrame.minY : closedFrame.maxY) - self.presentationController.popupContentViewFrameForPopupStateOpen().minY
         return self.isPresenting ? -availableHeight : availableHeight
     }
 }

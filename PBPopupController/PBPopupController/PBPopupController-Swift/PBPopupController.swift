@@ -18,7 +18,7 @@ internal class _PBPopupBarView: UIView {
     internal override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.autoresizingMask = [.flexibleWidth]
+        self.autoresizingMask = []
         self.autoresizesSubviews = true
         self.preservesSuperviewLayoutMargins = true
         self.clipsToBounds = false
@@ -638,9 +638,10 @@ extension PBPopupPresentationStyle
         self.delegate?.popupController?(self, willPresent: vc.popupBar)
         
         let height = vc.popupBar.popupBarHeight
+        let width = vc.popupBar.popupBarWidth
         
-        vc.popupBar.frame = CGRect(x: 0.0, y: 0.0, width: vc.bottomBar.bounds.size.width, height: height)
-        
+        vc.popupBar.frame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
+
         self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
         
         vc.view.insertSubview(self.popupBarView, belowSubview: vc.bottomBar)
@@ -705,7 +706,7 @@ extension PBPopupPresentationStyle
             vc.popupBar.removeFromSuperview()
             self.delegate?.popupController?(self, didDismiss: vc.popupBar)
             vc.popupBar = nil
-            self.popupBarView.removeFromSuperview()
+            self.popupBarView?.removeFromSuperview()
             self.popupBarView = nil
             self.popupPresentationState = .dismissed
             vc.popupContentViewController.popupContainerViewController = nil
@@ -1016,14 +1017,20 @@ extension PBPopupPresentationStyle
         
         var height = vc.popupBar.popupBarHeight
         
+        var width = vc.popupBar.popupBarWidth
+        if vc.popupBar.popupBarStyle == .custom {
+            if vc.popupContentView.popupContentSize.width > 0 {
+                width = vc.popupContentView.popupContentSize.width
+            }
+        }
         // Unsafe Area
         if self.bottomBarHeight == 0.0, vc.popupBar.popupBarStyle != .custom || vc.popupBar.shouldExtendCustomBarUnderSafeArea {
             height += insets.bottom
         }
         
-        var frame = CGRect(x: defaultFrame.origin.x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: defaultFrame.size.width, height: height)
+        var frame = CGRect(x: (defaultFrame.size.width - width) / 2, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(defaultFrame.size.width, width), height: height)
         if vc is UINavigationController || vc is UITabBarController {
-            frame = CGRect(x: 0.0, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: vc.view.bounds.width, height: height)
+            frame = CGRect(x: (defaultFrame.size.width - width) / 2, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(vc.view.bounds.width, width), height: height)
             if let svc = vc.splitViewController, vc === svc.viewControllers.first {
                 frame.origin.x += abs(vc.view.frame.minX)
                 frame.size.width -= abs(vc.view.frame.minX)

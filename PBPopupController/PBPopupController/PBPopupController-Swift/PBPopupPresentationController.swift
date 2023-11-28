@@ -69,7 +69,7 @@ internal class PBPopupPresentationController: UIPresentationController
     {
         var frame = self.popupController.statusBarFrame(for: self.popupController.containerViewController.view)
         if self.popupPresentationStyle == .deck, frame.height == 0 {
-            let height = presentingVC.view.safeAreaInsets.top
+            let height = self.presentingVC.view.safeAreaInsets.top
             frame.size.height = height > 0 ? height : 20 // probably an old iPhone
         }
         if self.popupController.isContainerPresentationSheet {
@@ -104,9 +104,12 @@ internal class PBPopupPresentationController: UIPresentationController
     
     private var popupBarView: _PBPopupBarView!
     {
-        get {
-            return popupController.popupBarView
-        }
+        return popupController.popupBarView
+    }
+    
+    private var popupIsFloating: Bool {
+        let isFloating = self.presentingVC.popupContentView.isFloating || self.presentingVC.popupBar.isFloating || self.presentingVC.popupBar.popupBarWidth < self.presentingVC.defaultFrameForBottomBar().size.width || self.popupContentView.isFloating
+        return isFloating
     }
     
     private var touchForwardingView: PBTouchForwardingView!
@@ -583,10 +586,9 @@ extension PBPopupPresentationController
             frame.origin.y = 0
         }
         let popupBarViewFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
-        //frame.size.height = popupBarViewFrame.maxY
-        let isFloating = self.presentingVC.popupBar.isFloating
+        let isFloating = self.popupIsFloating
         frame.size.height = self.isPresenting ? popupBarViewFrame.maxY + (isFloating ? self.presentingVC.defaultFrameForBottomBar().size.height : 0.0) : (isFloating ? popupBarViewFrame.maxY  + (isFloating ? self.presentingVC.defaultFrameForBottomBar().size.height : 0.0) : popupBarViewFrame.maxY)
-        if let nc = presentingVC as? UINavigationController, nc.isToolbarHidden == false {
+        if let nc = self.presentingVC as? UINavigationController, nc.isToolbarHidden == false {
             let insets = self.presentingVC.insetsForBottomBar()
             frame.size.height += isFloating ? insets.bottom : 0.0
         }
@@ -664,8 +666,8 @@ extension PBPopupPresentationController
                 y = height - self.popupContentView.popupContentSize.height
                 if self.popupContentView.popupContentSize.width > 0 {
                     width = self.presentingVC.view.bounds.width
-                    x = width - self.popupContentView.popupContentSize.width
-                    width = width - x
+                    x = (width - self.popupContentView.popupContentSize.width) / 2
+                    width = self.popupContentView.popupContentSize.width
                 }
             }
             height = height - y
@@ -686,6 +688,12 @@ extension PBPopupPresentationController
                     frame = CGRect(x: x, y: y, width: containerView.bounds.width - x, height: height)
                 }
             }
+        }
+        if self.popupContentView.isFloating {
+            if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden {
+                frame.origin.y -= self.presentingVC.view.safeAreaInsets.bottom
+            }
+            frame.origin.y -= (self.presentingVC.defaultFrameForBottomBar().height + self.popupContentView.additionalFloatingBottomInset)
         }
         PBLog("\(frame)")
         return frame
@@ -737,7 +745,7 @@ extension PBPopupPresentationController
         if #available(iOS 13.0, *) {
             backingView.layer.cornerCurve = .continuous
         }
-        if !self.presentingVC.popupBar.isFloating {
+        if !self.popupIsFloating {
             backingView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         }
         else {
@@ -757,7 +765,7 @@ extension PBPopupPresentationController
 //        cornerRadius = defaultCornerRadius
 //#else
         
-        let isFloating = self.presentingVC.popupBar.isFloating
+        let isFloating = self.popupIsFloating
         let floatingRadius = self.presentingVC.popupBar.floatingRadius
 
         switch self.popupPresentationStyle {
@@ -810,18 +818,10 @@ extension PBPopupPresentationController
             }
         }
         else {
-            // TODO: maskedCorners is not animatable
             if UIDevice.current.userInterfaceIdiom == .phone {
-                /*
-                if self.isPresenting {
-                    if defaultCornerRadius == 0 && self.popupPresentationStyle == .deck {
-                        //self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                    }
+                if !isFloating {
+                    self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
                 }
-                else {
-                    //self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                }
-                */
             }
             else {
                 if !self.popupController.isContainerPresentationSheet {
@@ -851,7 +851,7 @@ extension PBPopupPresentationController
 
         if self.backingView == nil {
             let isHidden = self.popupBarView.isHidden
-            let isFloating = self.presentingVC.popupBar.isFloating
+            let isFloating = self.popupIsFloating
             if !isFloating {
                 self.popupBarView.isHidden = true
             }
@@ -987,7 +987,8 @@ extension PBPopupPresentationController
     
     private func animateBottomBarToHidden( _ hidden: Bool)
     {
-        if !self.presentingVC.popupBar.isFloating {
+        let isFloating = self.popupIsFloating
+        if !isFloating {
             self.presentingVC._animateBottomBarToHidden(hidden)
         }
     }

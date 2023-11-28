@@ -68,6 +68,16 @@ import UIKit
     }
     
     /**
+     A Boolean value that indicates whether the popup is floating (`true`) or not (`false`).
+     */
+    @objc public var isFloating: Bool = false
+    
+    /**
+     An optional inset for the floating content view.
+     */
+    @objc public var additionalFloatingBottomInset: CGFloat = 0.0
+
+    /**
      If `true`, the popup content view can be dismissed when user interact outside the bounds.
      */
     @objc public var popupCanDismissOnPassthroughViews: Bool = true

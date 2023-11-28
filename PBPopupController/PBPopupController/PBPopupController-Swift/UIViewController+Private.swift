@@ -290,7 +290,9 @@ internal extension UITabBarController
             if self.bottomBarAppearance.shadowColor != nil {
                 self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
             }
-            self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            if self.popupBar.inheritsVisualStyleFromBottomBar {
+                self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            }
             let appearance = self.tabBar.standardAppearance
             appearance.shadowColor = self.popupBar.isFloating ? nil : self.popupBar.shadowColor
             self.tabBar.standardAppearance = appearance
@@ -692,9 +694,10 @@ internal extension UINavigationController
     @objc override func defaultFrameForBottomBar() -> CGRect
     {
         var toolBarFrame = self.toolbar.frame
-        
+
         toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
         toolBarFrame.size.height = self.isToolbarHidden ? 0.0 : toolBarFrame.size.height
+        toolBarFrame.size.width = self.navigationBar.frame.width
         
         if let tabBarController = self.tabBarController {
             let tabBarFrame = tabBarController.defaultFrameForBottomBar()
@@ -736,7 +739,9 @@ internal extension UINavigationController
             if self.bottomBarAppearance.shadowColor != nil {
                 self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
             }
-            self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            if self.popupBar.inheritsVisualStyleFromBottomBar {
+                self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            }
             let appearance = self.toolbar.standardAppearance
             appearance.shadowColor = self.popupBar.isFloating ? nil : self.popupBar.shadowColor
             self.toolbar.standardAppearance = appearance

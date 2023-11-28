@@ -611,6 +611,55 @@ public extension UIViewController
     }
     
     /**
+     Presents an interactive popup view controller in the container's view hierarchy. The popup bar is not visible and the popup is attached or not to the container's bottom bar (see `popupContainerViewController`) depending on the `isFloating` parameter.
+     
+     You may call this method multiple times with different controllers, triggering replacement to the popup content view and update to the popup bar, if popup is open or bar presented, respectively.
+     
+     The provided controller is retained by the system and will be released once a different controller is presented or when the popup bar is dismissed.
+     
+     - Parameter controller: The presented view controller for popup presentation.
+     - Parameter size: The popup content view size (optional). May be set by the controller in viewDidLayoutSubviews.
+     - Parameter isFloating: A Boolean value that indicates whether the popup is floating (`true`) or not (`false`).
+     - Parameter animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - Parameter completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     
+     - SeeAlso: `PBPopupBar.customPopupBarViewController` for a custom popup bar view controller.
+     `PBPopupController.dataSource` for a custom bottom bar view.
+     `presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)`.
+     */
+    @objc func presentPopup(withPopupContentViewController controller: UIViewController!, size: CGSize = .zero, isFloating: Bool = true, animated: Bool, completion: (() -> Swift.Void)? = nil) {
+        let customBarViewController = UIViewController()
+        customBarViewController.view.backgroundColor = nil
+        customBarViewController.preferredContentSize = CGSize(width: size.width, height: 0.0)
+        self.popupBar.customPopupBarViewController = customBarViewController
+        self.popupBar.inheritsVisualStyleFromBottomBar = false
+        self.popupBar.backgroundView.customView = UIView()
+        self.popupContentView.popupIgnoreDropShadowView = false
+        self.popupContentView.popupPresentationStyle = .custom
+        self.popupContentView.popupContentSize = CGSize(width: size.width, height: size.height)
+        self.popupContentView.isFloating = isFloating
+        self.popupBar.shouldExtendCustomBarUnderSafeArea = true
+        self.popupController.wantsAdditionalSafeAreaInsetBottom = false
+        
+        self.presentPopupBar(withPopupContentViewController: controller, openPopup: true, animated: animated) {
+            completion?()
+        }
+    }
+    
+    /**
+     Dismisses the popup presentation, closing the popup if open and dismissing the popup bar.
+     
+     - Parameters:
+     - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
+     - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
+     */
+    @objc func dismissPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
+        self.dismissPopupBar(animated: animated) {
+            completion?()
+        }
+    }
+    
+    /**
      Opens the popup, displaying the content view controller's view.
      
      - Parameters:

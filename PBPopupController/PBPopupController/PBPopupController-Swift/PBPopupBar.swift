@@ -1349,7 +1349,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 self.customBarRightConstraint = customPopupBarViewController.view.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: 0.0)
                 self.customBarRightConstraint.isActive = true
             }
-            let constant = self.contentView.frame.height
+            let constant = self.frame.height
             if let heightConstraint = self.customBarHeightConstraint {
                 heightConstraint.constant = constant
             }

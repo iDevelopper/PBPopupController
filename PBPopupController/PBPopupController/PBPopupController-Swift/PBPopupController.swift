@@ -498,7 +498,11 @@ extension PBPopupPresentationStyle
 #if targetEnvironment(macCatalyst)
         if let hostingWindow = self.containerViewController.view.window?.value(forKeyPath: "hostWindow.attachedWindow") as AnyObject? {
             if let borderView = hostingWindow.value(forKey: "borderView") as AnyObject? {
-                if let cornerRadius = borderView.value(forKey: "bottomCornerHeight") as? CGFloat {
+                // TODO:
+                //if let cornerRadius = borderView.value(forKey: "bottomCornerHeight") as? CGFloat {
+                //    return cornerRadius
+                //}
+                if let cornerRadius = borderView.value(forKey: "cachedCornerRadius") as? CGFloat {
                     return cornerRadius
                 }
             }
@@ -994,13 +998,15 @@ extension PBPopupPresentationStyle
     internal func popupBarViewFrameForPopupStateHidden() -> CGRect
     {
         guard let vc = self.containerViewController else { return .zero }
-        
+                
         var frame = self.popupBarViewFrameForPopupStateClosed()
         
-        frame.origin.y += self.wantsAdditionalSafeAreaInsetTop ? -vc.popupBar.popupBarHeight : vc.popupBar.popupBarHeight
+        let insets = vc.insetsForBottomBar()
+        
+        frame.origin.y += self.wantsAdditionalSafeAreaInsetTop ? -vc.popupBar.popupBarHeight : vc.popupBar.popupBarHeight + insets.bottom
         
         if vc.popupBarIsHidden || vc.popupBar.isFloating {
-            frame.origin.y = vc.view.bounds.height
+            frame.origin.y = self.wantsAdditionalSafeAreaInsetTop ? vc.view.bounds.minY : vc.view.bounds.height
         }
 
         PBLog("\(frame)")

@@ -30,42 +30,42 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 154,
+      "line": 159,
       "symbol": "PBPopupControllerDataSource",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 195,
+      "line": 200,
       "symbol": "PBPopupControllerDelegate",
       "symbol_kind": "source.lang.swift.decl.protocol",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 337,
+      "line": 342,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 794,
+      "line": 819,
       "symbol": "PBPopupController.gestureRecognizer(_:shouldRequireFailureOf:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1040,
+      "line": 1081,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1186,
+      "line": 1227,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -289,7 +289,7 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIViewController+Support.swift",
-      "line": 653,
+      "line": 723,
       "symbol": "UIViewController.popupContainerViewController(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

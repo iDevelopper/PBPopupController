@@ -636,7 +636,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     @objc public var subtitle: String? {
         didSet {
             self.subtitleLabel?.isHidden = subtitle == nil
-            
             self.configureTitleLabels()
             self.configureAccessibility()
         }

@@ -123,6 +123,11 @@ extension PBPopupPresentationState
     case custom
     
     /**
+     A presentation style in which the presented view covers a part of the screen without popup bar.
+     */
+    case popup
+    
+    /**
      Default presentation style: fullScreen for iOS 9 and above, otherwise deck.
      */
     public static let `default`: PBPopupPresentationStyle = {
@@ -135,7 +140,7 @@ extension PBPopupPresentationStyle
     /**
      An array of human readable strings for the popup content view presentation styles.
      */
-    public static let strings = ["deck", "fullScreen", "custom"]
+    public static let strings = ["deck", "fullScreen", "custom", "popup"]
     
     private func string() -> NSString {
         return PBPopupPresentationStyle.strings[self.rawValue] as NSString
@@ -761,6 +766,21 @@ extension PBPopupPresentationStyle
         self._presentPopupBarAnimated(animated, completionBlock: nil)
     }
     
+    internal func _presentPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
+    {
+        self.popupPresentationState = .closed
+        self._openPopupAnimated(animated) {
+            completionBlock?()
+        }
+    }
+        
+    internal func _dismissPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
+    {
+        self._closePopupAnimated(animated) {
+            completionBlock?()
+        }
+    }
+    
     internal func fixInsetsForContainerIfNeeded(addInsets: Bool = true, layout: Bool = true)
     {
         guard let vc = self.containerViewController else {
@@ -808,9 +828,11 @@ extension PBPopupPresentationStyle
     internal func preparePopupContentViewControllerForPresentation()
     {
         if let vc = self.containerViewController {
-            self.popupPresentationInteractiveController = PBPopupInteractivePresentationController()
-            self.popupPresentationInteractiveController.attachToViewController(popupController: self, withView: self.popupBarView, presenting: true)
-            self.popupPresentationInteractiveController.delegate = self
+            if vc.popupContentView.popupPresentationStyle != .popup {
+                self.popupPresentationInteractiveController = PBPopupInteractivePresentationController()
+                self.popupPresentationInteractiveController.attachToViewController(popupController: self, withView: self.popupBarView, presenting: true)
+                self.popupPresentationInteractiveController.delegate = self
+            }
             
             self.popupDismissalInteractiveController = PBPopupInteractivePresentationController()
             if vc.popupContentView.popupContentDraggingView != nil {
@@ -842,7 +864,12 @@ extension PBPopupPresentationStyle
             return
         }
         
-        self._closePopupAnimated(true)
+        if vc.popupContentView.popupPresentationStyle == .popup {
+            vc.dismissPopup(animated: true)
+        }
+        else {
+            self._closePopupAnimated(true)
+        }
     }
     
     internal func _openPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
@@ -1034,7 +1061,8 @@ extension PBPopupPresentationStyle
             height += insets.bottom
         }
         
-        var frame = CGRect(x: (defaultFrame.size.width - width) / 2, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(defaultFrame.size.width, width), height: height)
+        let x = max((defaultFrame.size.width - width) / 2, defaultFrame.origin.x)
+        var frame = CGRect(x: x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(defaultFrame.size.width, width), height: height)
         if vc is UINavigationController || vc is UITabBarController {
             frame = CGRect(x: (defaultFrame.size.width - width) / 2, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(vc.view.bounds.width, width), height: height)
             if let svc = vc.splitViewController, vc === svc.viewControllers.first {
@@ -1152,7 +1180,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                     }
                 }
                 //
-                self.popupContentPanGestureRecognizer.isEnabled = true
+                self.popupContentPanGestureRecognizer?.isEnabled = true
             }
         }
     }
@@ -1187,7 +1215,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                         vc.view.insertSubview(vc.popupContentView, at: 0)
                     }
                     //
-                    self.popupBarPanGestureRecognizer.isEnabled = true
+                    self.popupBarPanGestureRecognizer?.isEnabled = true
                 }
             }
         }
@@ -1207,11 +1235,11 @@ extension PBPopupController: UIViewControllerPreviewingDelegate
             if let rv = vc.popupBar.previewingDelegate?.previewingViewControllerFor?(vc.popupBar) {
                 
                 // Disable interaction if a preview view controller is about to be presented.
-                self.popupBarTapGestureRecognizer.isEnabled = false
-                self.popupBarPanGestureRecognizer.isEnabled = false
+                self.popupBarTapGestureRecognizer?.isEnabled = false
+                self.popupBarPanGestureRecognizer?.isEnabled = false
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(0.1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
-                    self.popupBarTapGestureRecognizer.isEnabled = true
-                    self.popupBarPanGestureRecognizer.isEnabled = true
+                    self.popupBarTapGestureRecognizer?.isEnabled = true
+                    self.popupBarPanGestureRecognizer?.isEnabled = true
                 })
                 return rv
             }

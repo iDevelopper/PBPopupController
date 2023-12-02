@@ -93,7 +93,7 @@ public extension UITabBarController
         self._hBWT(t: t, iE: iE, d: d)
         
         if (t > 0) {
-            if let rv = self.getAssociatedPopupBarFor(self) {
+            if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
                 if self.popupController.popupPresentationState != .hidden {
                     rv.applyGroupingIdentifier(fromBottomBar: false)
                     self.bottomBar.isHidden = true
@@ -104,7 +104,7 @@ public extension UITabBarController
                             if let transitionView = rv.transitionBackgroundView {
                                 transitionView.effect = rv.backgroundView.effect
                                 if rv.enablePopupBarColorsDebug {
-                                    transitionView.backgroundColor = .red
+                                    transitionView.backgroundColor = .yellow
                                     transitionView.effect = nil
                                 }
                                 transitionView.frame = self.popupController.popupBarView.frame
@@ -132,7 +132,7 @@ public extension UITabBarController
         self._sBWT(t: t, iE: iE, d: d)
 
         if (t > 0) {
-            if let rv = self.getAssociatedPopupBarFor(self) {
+            if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
                 if let vc = self.popupController.containerViewController {
                     if self.popupController.popupPresentationState != .hidden || vc.popupBarIsHidden {
                         rv.applyGroupingIdentifier(fromBottomBar: false)
@@ -382,7 +382,7 @@ public extension UINavigationController
     //_setToolbarHidden:edge:duration:
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat)
     {
-        if let rv = self.getAssociatedPopupBarFor(self) {
+        if let rv = UINavigationController.getAssociatedPopupBarFor(self) {
             if self.popupController.popupPresentationState != .hidden {
                 if self.popupBarIsHidden == true {
                     self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
@@ -398,7 +398,7 @@ public extension UINavigationController
                         if self.bottomBar.isHidden {
                             transitionView.effect = rv.backgroundView.effect
                             if rv.enablePopupBarColorsDebug {
-                                transitionView.backgroundColor = .red
+                                transitionView.backgroundColor = .yellow
                                 transitionView.effect = nil
                             }
                             transitionView.frame = self.popupController.popupBarView.frame
@@ -480,17 +480,17 @@ public extension UINavigationController
     {
         if self.responds(to: #selector(pb_ncDidLayoutSubviews)) {
             self.pb_ncDidLayoutSubviews()
-            if let rv = self.getAssociatedPopupBarFor(self) {
+            if let rv = UINavigationController.getAssociatedPopupBarFor(self) {
                 var position: CGFloat = 0
                 if let presentation = self.toolbar.layer.presentation() {
                     position = presentation.position.x
                 }
                 self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? (self.toolbar.isHidden || position < 0 ? 0.0 : 1.0) : 1.0
                 if rv.isFloating {
-                    self.popupController.popupBarView.superview?.bringSubviewToFront(self.popupController.popupBarView)
+                    self.popupController?.popupBarView?.superview?.bringSubviewToFront(self.popupController.popupBarView)
                 }
                 else {
-                    self.popupController.popupBarView.superview?.insertSubview(self.popupController.popupBarView, belowSubview: bottomBar)
+                    self.popupController?.popupBarView?.superview?.insertSubview(self.popupController.popupBarView, belowSubview: bottomBar)
                 }
             }
         }
@@ -510,7 +510,7 @@ public extension UINavigationController
                 }
             }
         }
-        if let rv = self.getAssociatedPopupBarFor(self), !rv.isHidden {
+        if let rv = UINavigationController.getAssociatedPopupBarFor(self), !rv.isHidden {
             let additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: self.topViewController?.additionalSafeAreaInsets.bottom ?? 0.0, right: 0)
             if viewController.popupAdditionalSafeAreaInsets == .zero {
                 PBPopupFixInsetsForViewController(viewController, false, additionalInsets)
@@ -628,7 +628,7 @@ public extension UINavigationController
     
     private func popupControllerFor(_ controller: UIViewController) -> PBPopupController?
     {
-        if let rv = self.getAssociatedPopupControllerFor(controller) {
+        if let rv = UINavigationController.getAssociatedPopupControllerFor(controller) {
             return rv
         }
         if  controller.parent == nil {
@@ -639,7 +639,7 @@ public extension UINavigationController
     
     private func popupBarFor(_ controller: UIViewController) -> PBPopupBar?
     {
-        if let rv = self.getAssociatedPopupBarFor(controller) {
+        if let rv = UINavigationController.getAssociatedPopupBarFor(controller) {
             return rv
         }
         return nil
@@ -795,7 +795,7 @@ public extension UISplitViewController
     @objc private func pb_svcDidLayoutSubviews()
     {
         self.pb_svcDidLayoutSubviews()
-        if let rv = self.getAssociatedPopupBarFor(self) {
+        if let rv = UISplitViewController.getAssociatedPopupBarFor(self) {
             self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
         }
     }
@@ -882,7 +882,7 @@ public extension UIViewController
     {
         var newInsets = insets
         newInsets.bottom += self.additionalSafeAreaInsetsBottomForContainer
-        if let rv = self.getAssociatedPopupBarFor(self) {
+        if let rv = UIViewController.getAssociatedPopupBarFor(self) {
             if !(rv.isHidden) && self.popupController.popupPresentationState != .dismissing {
                 newInsets.bottom += rv.frame.height
                 self._sCoOvIns(insets:newInsets)
@@ -908,14 +908,22 @@ public extension UIViewController
         /// Find the popup content view safe area insets
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
             if var insets = popupContentView.superview?.safeAreaInsets {
+                /*
                 let containerInsets = vc.view.safeAreaInsets
                 if let svc = vc.splitViewController, containerInsets.left > 0 {
                     if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
                         //insets.left = containerInsets.left
                     }
                 }
+                */
                 if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
                     insets.top = 0
+                }
+                if popupContentView.popupPresentationStyle == .popup {
+                    insets.top = 0
+                    if popupContentView.isFloating {
+                        insets.bottom = 0
+                    }
                 }
                 return insets
             }
@@ -941,7 +949,7 @@ public extension UIViewController
         }
         
         if let svc = self as? UISplitViewController {
-            if let vc1 = svc.children.first, let rv = self.getAssociatedPopupBarFor(vc1), !rv.isHidden {
+            if let vc1 = svc.children.first, let rv = UIViewController.getAssociatedPopupBarFor(vc1), !rv.isHidden {
                 var additionalInsets: UIEdgeInsets
                 if let nc = vc1 as? UINavigationController {
                     additionalInsets = UIEdgeInsets(top: 0, left: 0, bottom: -nc.topViewController!.additionalSafeAreaInsets.bottom, right: 0)
@@ -977,7 +985,7 @@ public extension UIViewController
     {
         self.pb_viewWillTransition(to: size, with: coordinator)
 
-        if let rv = self.getAssociatedPopupBarFor(self) {
+        if let rv = UIViewController.getAssociatedPopupBarFor(self) {
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
             }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
@@ -992,15 +1000,15 @@ public extension UIViewController
     @objc private func pb_viewDidLayoutSubviews()
     {
         self.pb_viewDidLayoutSubviews()
-        if let rv = self.getAssociatedPopupBarFor(self) {
+        if let rv = UIViewController.getAssociatedPopupBarFor(self) {
             if !(self is UITabBarController) && !(self is UINavigationController) {
                 self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
             }
             if rv.isFloating {
-                self.popupController.popupBarView.superview?.bringSubviewToFront(self.popupController.popupBarView)
+                self.popupController?.popupBarView?.superview?.bringSubviewToFront(self.popupController.popupBarView)
             }
             else {
-                self.popupController.popupBarView.superview?.insertSubview(self.popupController.popupBarView, belowSubview: bottomBar)
+                self.popupController?.popupBarView?.superview?.insertSubview(self.popupController.popupBarView, belowSubview: bottomBar)
             }
         }
     }

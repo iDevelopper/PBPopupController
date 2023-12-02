@@ -54,7 +54,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         self.gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(gesture:)))
         self.gesture.delegate = self
-        self.popupController.popupBarTapGestureRecognizer.require(toFail: self.gesture)
+        if let popupBarTapGestureRecognizer = self.popupController.popupBarTapGestureRecognizer {
+            popupBarTapGestureRecognizer.require(toFail: self.gesture)
+        }
         view.addGestureRecognizer(self.gesture)
         if presenting {
             self.popupController.popupBarPanGestureRecognizer = self.gesture
@@ -207,7 +209,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             else {
                 animator.isReversed = true
                 if self.isPresenting {
-                    self.popupController.popupBarPanGestureRecognizer.isEnabled = false
+                    self.popupController.popupBarPanGestureRecognizer?.isEnabled = false
                     
                     self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
                     animator.addAnimations {
@@ -218,7 +220,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         let previousState = self.popupController.popupPresentationState
                         self.popupController.popupPresentationState = .closed
                         self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-                        self.popupController.popupBarPanGestureRecognizer.isEnabled = true
+                        self.popupController.popupBarPanGestureRecognizer?.isEnabled = true
                     }
                     
                     self.presentationController.popupBarForPresentation?.alpha = 1.0
@@ -301,7 +303,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         vc.popupContentView.popupImageView?.isHidden = true
         vc.popupContentView.popupImageModule?.isHidden = true
         
-        self.popupController.popupBarPanGestureRecognizer.isEnabled = false
+        self.popupController.popupBarPanGestureRecognizer?.isEnabled = false
         
         self.presentationController.continueDismissalAnimationWithDurationFactor(durationFactor)
 

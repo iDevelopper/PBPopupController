@@ -51,21 +51,21 @@ public extension UIViewController
     
     // https://github.com/atrick/swift-evolution/blob/diagnose-implicit-raw-bitwise/proposals/nnnn-implicit-raw-bitwise-conversion.md#workarounds-for-common-cases
     
-    internal func getAssociatedPopupBarFor(_ controller: UIViewController) -> PBPopupBar? {
+    internal static func getAssociatedPopupBarFor(_ controller: UIViewController) -> PBPopupBar? {
         let rv = withUnsafePointer(to: &AssociatedKeys.popupBar) {
                 objc_getAssociatedObject(controller, $0) as? PBPopupBar
         }
         return rv
     }
     
-    internal func getAssociatedBottomBarFor(_ controller: UIViewController) -> UIView? {
+    internal static func getAssociatedBottomBarFor(_ controller: UIViewController) -> UIView? {
         let rv = withUnsafePointer(to: &AssociatedKeys.bottomBar) {
                 objc_getAssociatedObject(controller, $0) as? UIView
         }
         return rv
     }
     
-    internal func getAssociatedPopupControllerFor(_ controller: UIViewController) -> PBPopupController? {
+    internal static func getAssociatedPopupControllerFor(_ controller: UIViewController) -> PBPopupController? {
         let rv = withUnsafePointer(to: &AssociatedKeys.popupController) {
                 objc_getAssociatedObject(controller, $0) as? PBPopupController
         }
@@ -557,15 +557,16 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func dismissPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if self.getAssociatedPopupBarFor(self) != nil {
+        if UIViewController.getAssociatedPopupBarFor(self) != nil {
             self.popupController._closePopupAnimated(false) {
                 self.popupController._dismissPopupBarAnimated(animated) {
-                    self.popupController.popupPresentationController = nil
-                    self.popupController.popupPresentationInteractiveController = nil
-                    self.popupController.popupDismissalInteractiveController = nil
-                    self.popupController = nil
-                    self._cleanupPopup()
-                    completion?()
+                    DispatchQueue.main.async {
+                        self.popupController.popupPresentationController = nil
+                        self.popupController.popupPresentationInteractiveController = nil
+                        self.popupController.popupDismissalInteractiveController = nil
+                        self._cleanupPopup()
+                        completion?()
+                    }
                 }
             }
         }
@@ -582,7 +583,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func hidePopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if self.getAssociatedPopupBarFor(self) != nil {
+        if UIViewController.getAssociatedPopupBarFor(self) != nil {
             self.popupController._hidePopupBarAnimated(animated) {
                 completion?()
             }
@@ -600,7 +601,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func showPopupBar(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        if self.getAssociatedPopupBarFor(self) != nil {
+        if UIViewController.getAssociatedPopupBarFor(self) != nil {
             self.popupController._showPopupBarAnimated(animated) {
                 completion?()
             }
@@ -628,34 +629,54 @@ public extension UIViewController
      `presentPopupBar(withPopupContentViewController:openPopup:animated:completion:)`.
      */
     @objc func presentPopup(withPopupContentViewController controller: UIViewController!, size: CGSize = .zero, isFloating: Bool = true, animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        let customBarViewController = UIViewController()
-        customBarViewController.view.backgroundColor = nil
-        customBarViewController.preferredContentSize = CGSize(width: size.width, height: 0.0)
-        self.popupBar.customPopupBarViewController = customBarViewController
-        self.popupBar.inheritsVisualStyleFromBottomBar = false
-        self.popupBar.backgroundView.customView = UIView()
+        assert(controller != nil, "Content view controller cannot be nil.")
+        if controller == nil {
+            NSException.raise(NSExceptionName.internalInconsistencyException, format: "Content view controller cannot be nil.", arguments: getVaList([]))
+        }
         self.popupContentView.popupIgnoreDropShadowView = false
-        self.popupContentView.popupPresentationStyle = .custom
+        self.popupContentView.popupPresentationStyle = .popup
         self.popupContentView.popupContentSize = CGSize(width: size.width, height: size.height)
         self.popupContentView.isFloating = isFloating
-        self.popupBar.shouldExtendCustomBarUnderSafeArea = true
-        self.popupController.wantsAdditionalSafeAreaInsetBottom = false
+
+        self.popupContentViewController = controller
+        controller.popupContainerViewController = self
+
+        controller.view.translatesAutoresizingMaskIntoConstraints = true
+        controller.view.autoresizingMask = []
+        controller.view.frame = self.view.bounds
+        controller.view.clipsToBounds = false
         
-        self.presentPopupBar(withPopupContentViewController: controller, openPopup: true, animated: animated) {
+        // TODO: SwiftUI
+        // SwiftUI: The popup content view must be in the responder chain for the preferences to work.
+        if NSStringFromClass(type(of: controller).self).contains("PBPopupUIContentController") {
+            self.popupContentView.insertSubview(controller.view, at: 0)
+            self.view.insertSubview(self.popupContentView, at: 0)
+        }
+        //
+        
+        controller.view.setNeedsLayout()
+        controller.view.layoutIfNeeded()
+        
+        self.popupController._presentPopupAnimated(animated) {
             completion?()
         }
     }
     
     /**
-     Dismisses the popup presentation, closing the popup if open and dismissing the popup bar.
+     Dismisses the popup presentation, closing the popup if open.
      
      - Parameters:
      - animated: Pass `true` to animate the presentation; otherwise, pass `false`.
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func dismissPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        self.dismissPopupBar(animated: animated) {
-            completion?()
+        self.popupController._dismissPopupAnimated(true) {
+            DispatchQueue.main.async {
+                self.popupController.popupPresentationController = nil
+                self.popupController.popupDismissalInteractiveController = nil
+                self._cleanupPopup()
+                completion?()
+            }
         }
     }
     
@@ -701,7 +722,7 @@ public extension UIViewController
 {
     func popupContainerViewController(for viewController: UIViewController? = nil) -> UIViewController? {
         let controller = viewController ?? self
-        if let rv = self.getAssociatedPopupControllerFor(controller) {
+        if let rv = UIViewController.getAssociatedPopupControllerFor(controller) {
             return rv.containerViewController
         }
         if controller.parent == nil {

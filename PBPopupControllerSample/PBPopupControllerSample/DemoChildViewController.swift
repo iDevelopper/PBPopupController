@@ -88,6 +88,9 @@ class DemoChildViewController: UIViewController {
             containerVC.popupController.dataSource = containerVC
             containerVC.popupController.delegate = containerVC
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
+            if #available(iOS 13.0, *) {
+                containerVC.popupBar.backgroundEffect = containerVC.tabBar.standardAppearance.backgroundEffect
+            }
             containerVC.popupBar.customPopupBarViewController = customYTBar
             containerVC.popupBar.image = customYTBar.imageView.image
             containerVC.popupBar.title = customYTBar.titleLabel.text
@@ -112,6 +115,9 @@ class DemoChildViewController: UIViewController {
             containerVC.popupController.dataSource = containerVC
             containerVC.popupController.delegate = containerVC
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
+            if #available(iOS 13.0, *) {
+                containerVC.popupBar.backgroundEffect = containerVC.tabBar.standardAppearance.backgroundEffect
+            }
             containerVC.popupBar.image = UIImage(named: "Cover22")
             containerVC.popupBar.title = LoremIpsum.title
             containerVC.popupBar.subtitle = LoremIpsum.sentence

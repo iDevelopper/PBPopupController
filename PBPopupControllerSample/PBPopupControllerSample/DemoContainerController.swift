@@ -22,7 +22,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
             tabBar.delegate = self
         }
     }
-
+    
     var viewControllers = [UIViewController?]()
     var selectedIndex: Int = 0
     var currentChildVC: UIViewController!
@@ -73,11 +73,11 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         
         self.presentChild()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
@@ -85,7 +85,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
     }
-
+    
     deinit {
         PBLog("deinit \(self)")
     }
@@ -107,7 +107,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
             self.containerView.backgroundColor = self.view.backgroundColor
         }
     }
-
+    
     // MARK: - Layout
     
     func setupConstraintsForBottomBar() {
@@ -157,7 +157,7 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
     func popupController(_ popupController: PBPopupController, insetsFor bottomBarView: UIView) -> UIEdgeInsets {
         return .zero
     }
-
+    
     // MARK: - PBPopupController delegate
     
     func popupControllerTapGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
@@ -180,17 +180,11 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
             self.popupContentView.popupPresentationStyle = .deck
         case 1:
             self.popupContentView.popupPresentationStyle = .fullScreen
-
+            
         default:
             self.popupContentView.popupPresentationStyle = .custom
             self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 8/10)
         }
         return true
-    }
-    
-    func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
-        if popupContentViewController is DemoBottomSheetViewController {
-            self.dismissPopup(animated: true)
-        }
     }
 }

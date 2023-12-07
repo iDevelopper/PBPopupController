@@ -104,9 +104,7 @@ class PopupContentViewController: UIViewController {
         didSet {
             songNameLabel.animationDelay = 2
             songNameLabel.speed = .rate(15)
-            if #available(iOS 13.0, *) {
-                songNameLabel.textColor = UIColor.label
-            }
+            songNameLabel.textColor = UIColor.label
             songNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
             songNameLabel.adjustsFontForContentSizeCategory = true
         }
@@ -125,9 +123,7 @@ class PopupContentViewController: UIViewController {
             albumNameLabel.textColor = UIColor.red
             albumNameLabel.animationDelay = 2
             albumNameLabel.speed = .rate(20)
-            if #available(iOS 13.0, *) {
-                albumNameLabel.textColor = UIColor.systemPink
-            }
+            albumNameLabel.textColor = UIColor.systemPink
             let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
             albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
             albumNameLabel.adjustsFontForContentSizeCategory = true
@@ -136,39 +132,31 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var prevButton: UIButton! {
         didSet {
-            if #available(iOS 13.0, *) {
-                let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
-                prevButton.setImage(UIImage(systemName: "backward.fill", withConfiguration: config), for: .normal)
-                prevButton.tintColor = UIColor.label
-            }
+            let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            prevButton.setImage(UIImage(systemName: "backward.fill", withConfiguration: config), for: .normal)
+            prevButton.tintColor = UIColor.label
         }
     }
     
     @IBOutlet weak var playPauseButton: UIButton! {
         didSet {
-            if #available(iOS 13.0, *) {
-                let config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
-                self.playPauseButton.setImage(UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
-                playPauseButton.tintColor = UIColor.label
-            }
+            let config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
+            self.playPauseButton.setImage(UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
+            playPauseButton.tintColor = UIColor.label
         }
     }
     
     @IBOutlet weak var nextButton: UIButton! {
         didSet {
-            if #available(iOS 13.0, *) {
-                let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
-                nextButton.setImage(UIImage(systemName: "forward.fill", withConfiguration: config), for: .normal)
-                nextButton.tintColor = UIColor.label
-            }
+            let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            nextButton.setImage(UIImage(systemName: "forward.fill", withConfiguration: config), for: .normal)
+            nextButton.tintColor = UIColor.label
         }
     }
     
     @IBOutlet weak var volumeSlider: UISlider! {
         didSet {
-            if #available(iOS 13.0, *) {
-                volumeSlider.tintColor = UIColor.label
-            }
+            volumeSlider.tintColor = UIColor.label
         }
     }
     
@@ -204,9 +192,7 @@ class PopupContentViewController: UIViewController {
             containerVC.popupContentView.popupImageView = self.albumArtImageView
         }
 
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = UIColor.secondarySystemBackground
-        }
+        self.view.backgroundColor = UIColor.secondarySystemBackground
         
         self.setupImageViewForPlaying()
 
@@ -241,9 +227,7 @@ class PopupContentViewController: UIViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = UIColor.secondarySystemBackground
-        }
+        self.view.backgroundColor = UIColor.secondarySystemBackground
     }
     
     override func viewWillLayoutSubviews() {
@@ -265,15 +249,7 @@ class PopupContentViewController: UIViewController {
         backgroundView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
         backgroundView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         
-        var blurEffect: UIBlurEffect!
-        
-        if #available(iOS 13.0, *) {
-            blurEffect = UIBlurEffect(style: .systemMaterial)
-        }
-        else {
-            blurEffect = UIBlurEffect(style: .extraLight)
-        }
-
+        let blurEffect = UIBlurEffect(style: .systemMaterial)
         self.visualEffectView = UIVisualEffectView(effect: blurEffect)
         self.view.insertSubview(self.visualEffectView, at: 1)
         self.visualEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -364,39 +340,26 @@ class PopupContentViewController: UIViewController {
         PBLog("playPauseAction")
         
         self.isPlaying = !self.isPlaying
-        if #available(iOS 13.0, *) {
-            let config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
-            self.playPauseButton.setImage(self.isPlaying ? UIImage(systemName: "pause.fill", withConfiguration: config) : UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
-        }
-        else {
-            self.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
-        }
+
+        var config: UIImage.SymbolConfiguration
+        config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
+        self.playPauseButton.setImage(self.isPlaying ? UIImage(systemName: "pause.fill", withConfiguration: config) : UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
         
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
         
         var image: UIImage!
-        if #available(iOS 13.0, *) {
-            let scaleConfig = UIImage.SymbolConfiguration(scale: popupBar.isFloating || popupBar.popupBarStyle == .compact ? .medium : .large)
-            let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
-            let config = scaleConfig.applying(weightConfig)
-            
-            image = self.isPlaying ? UIImage(systemName: "pause.fill") :  UIImage(systemName: "play.fill")
-            image = image.applyingSymbolConfiguration(config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
-        }
-        else {
-            image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
-        }
+        let scaleConfig = UIImage.SymbolConfiguration(scale: popupBar.isFloating || popupBar.popupBarStyle == .compact ? .medium : .large)
+        let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
+        config = scaleConfig.applying(weightConfig)
+
+        image = self.isPlaying ? UIImage(systemName: "pause.fill") :  UIImage(systemName: "play.fill")
+        image = image.applyingSymbolConfiguration(config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
         if popupBar.popupBarStyle == .prominent {
             popupBar.rightBarButtonItems?.first?.image = image
         }
         let dev = UIDevice.current.userInterfaceIdiom
-        if #available(iOS 13.0, *) {
-            popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = image
-        }
-        else {
-            popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = self.isPlaying ? UIImage(named: "pause-small") : UIImage(named: "play-small")
-        }
+        popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].image = image
         popupBar.leftBarButtonItems?[dev == .phone ? 0 : 1].accessibilityLabel = NSLocalizedString(self.isPlaying ? "Pause" : "Play", comment: "")
         self.setupImageViewForPlaying()
         if self.isPlaying {

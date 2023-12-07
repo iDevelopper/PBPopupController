@@ -22,13 +22,13 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         self.delegate = self
         self.preferredDisplayMode = .allVisible
         self.preferredPrimaryColumnWidthFraction = 0.4
-        #if targetEnvironment(macCatalyst)
-            self.primaryBackgroundStyle = .sidebar
-        #else
+#if targetEnvironment(macCatalyst)
+        self.primaryBackgroundStyle = .sidebar
+#else
         if #available(iOS 14.0, *) {
             self.preferredSplitBehavior = .tile
         }
-        #endif
+#endif
     }
 
     override func viewDidLoad() {
@@ -66,10 +66,10 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
         return globalIsContainer ? true: masterIsContainer ? true : false
     }
     
-    #if !targetEnvironment(macCatalyst)
+#if !targetEnvironment(macCatalyst)
     @available(iOS 14.0, *)
     func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
         return globalIsContainer ? .primary: masterIsContainer ? .primary : .secondary
     }
-    #endif
+#endif
 }

@@ -29,11 +29,7 @@ class DemoTableViewController: UITableViewController {
             subtitles += [LoremIpsum.sentence]
         }
         
-        if #available(iOS 13.0, *) {
-            self.tableView.backgroundColor = .systemBackground
-        } else {
-            self.tableView.backgroundColor = UIColor.white
-        }
+        self.tableView.backgroundColor = .systemBackground
     
         self.tableView.tableFooterView = UIView()
         
@@ -109,10 +105,8 @@ class DemoTableViewController: UITableViewController {
         cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         cell.albumNameLabel.adjustsFontForContentSizeCategory = true
         
-        if #available(iOS 13.0, *) {
-            cell.songNameLabel.textColor = UIColor.label
-            cell.albumNameLabel.textColor = UIColor.secondaryLabel
-        }
+        cell.songNameLabel.textColor = UIColor.label
+        cell.albumNameLabel.textColor = UIColor.secondaryLabel
         
         cell.selectionStyle = .none
         

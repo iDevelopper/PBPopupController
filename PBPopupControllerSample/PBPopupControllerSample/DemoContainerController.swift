@@ -33,31 +33,19 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         self.setupConstraintsForBottomBar()
         
         if let childVC1 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
-            if #available(iOS 13.0, *) {
-                childVC1.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            } else {
-                childVC1.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            }
+            childVC1.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
             childVC1.childTitle.text = self.tabBar.items![0].title
             self.viewControllers.append(childVC1)
         }
         
         if let childVC2 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
-            if #available(iOS 13.0, *) {
-                childVC2.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            } else {
-                childVC2.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            }
+            childVC2.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
             childVC2.childTitle.text = self.tabBar.items![1].title
             self.viewControllers.append(childVC2)
         }
         
         if let childVC3 = self.storyboard?.instantiateViewController(withIdentifier: "DemoChildViewController") as? DemoChildViewController {
-            if #available(iOS 13.0, *) {
-                childVC3.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
-            } else {
-                childVC3.view.backgroundColor = UIColor.PBRandomExtraLightColor()
-            }
+            childVC3.view.backgroundColor = UIColor.PBRandomAdaptiveColor()
             childVC3.childTitle.text = self.tabBar.items![2].title
             self.viewControllers.append(childVC3)
         }

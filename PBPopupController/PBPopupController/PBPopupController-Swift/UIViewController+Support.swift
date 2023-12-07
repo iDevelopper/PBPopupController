@@ -34,7 +34,6 @@ public extension UIViewController
         static var popupBar: PBPopupBar?
         static var bottomBar: UIView?
         
-        @available(iOS 13.0, *)
         static var bottomBarAppearance: UIBarAppearance?
         
         static var popupController: PBPopupController?
@@ -201,7 +200,6 @@ public extension UIViewController
         }
     }
 
-    @available(iOS 13.0, *)
     @objc internal var bottomBarAppearance: UIBarAppearance! {
         get {
             let rv = withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {

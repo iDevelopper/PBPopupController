@@ -17,13 +17,9 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
     fileprivate var itemsPerRow: CGFloat {
         if UIDevice.current.userInterfaceIdiom == .pad {return 4}
         var statusBarOrientation: UIInterfaceOrientation = .unknown
-        #if !targetEnvironment(macCatalyst)
-        if #available(iOS 13.0, *) {
-            statusBarOrientation = self.view.window?.windowScene?.interfaceOrientation ?? .unknown
-        } else {
-           statusBarOrientation = UIApplication.shared.statusBarOrientation
-        }
-        #endif
+#if !targetEnvironment(macCatalyst)
+        statusBarOrientation = self.view.window?.windowScene?.interfaceOrientation ?? .unknown
+#endif
         if statusBarOrientation == .portrait || statusBarOrientation == .portraitUpsideDown {return 2}
         return 4
     }
@@ -46,11 +42,7 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
             subtitles += [LoremIpsum.sentence]
         }
         
-        if #available(iOS 13.0, *) {
-            self.collectionView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-        } else {
-            self.collectionView.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
+        self.collectionView.backgroundColor = UIColor.PBRandomAdaptiveColor()
         
         self.collectionView.contentInsetAdjustmentBehavior = .always
         
@@ -123,10 +115,8 @@ class DemoChildViewController_iPad: UICollectionViewController, UICollectionView
         cell.title.text = self.titles[indexPath.row]
         cell.subtitle.text = self.subtitles[indexPath.row]
         
-        if #available(iOS 13.0, *) {
-            cell.title.textColor = UIColor.label
-            cell.subtitle.textColor = UIColor.secondaryLabel
-        }
+        cell.title.textColor = UIColor.label
+        cell.subtitle.textColor = UIColor.secondaryLabel
 
         return cell
     }

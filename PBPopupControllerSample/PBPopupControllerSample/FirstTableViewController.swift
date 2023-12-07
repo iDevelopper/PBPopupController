@@ -83,11 +83,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             subtitles += [LoremIpsum.sentence]
         }
         
-        if #available(iOS 13.0, *) {
-            self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-        } else {
-            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
+        self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
         
         self.tableView.tableFooterView = UIView()
         
@@ -123,12 +119,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.tabBarController?.delegate = self
+        self.setupToolbarAppearance()
         
-        self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-        self.popupContentVC.images = self.images
-        self.popupContentVC.titles = self.titles
-        self.popupContentVC.subtitles = self.subtitles
+        self.tabBarController?.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -146,10 +139,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         /*
-        if #available(iOS 13.0, *) {
-            guard let popupBar = self.containerVC.popupBar else { return }
-            popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
-        }
+        guard let popupBar = self.containerVC.popupBar else { return }
+        popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
         */
     }
     
@@ -204,13 +195,14 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
     }
 
+    // Home bar button item
     @IBAction func dismiss(_ sender: Any?) {
         self.popupContentVC = nil
         self.popupContentTVC = nil
                 
         self.containerVC.dismissPopupBar(animated: false) {
             if sender is UIBarButtonItem || sender is UIButton { // Home button
-                #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
                 let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
                 guard let windowScene = window?.windowScene else {
                     return
@@ -219,7 +211,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                     toolbar.isVisible = false
                     titlebar.toolbar = nil
                 }
-                #endif
+#endif
                 
                 self.performSegue(withIdentifier: "unwindToHome", sender: sender)
             }
@@ -268,7 +260,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             navigationController.isToolbarHidden = true
             if navigationController.toolbarIsShown {
                 navigationController.isToolbarHidden = false
-                //self.setupToolbarAppearance()
             }
             self.containerVC = navigationController
             if let containerController = navigationController.parent {
@@ -283,23 +274,48 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.containerVC = self
         }
     }
-    /*
-    func setupToolbarAppearance() {
-        if #available(iOS 13, *) {
-            if let navigationController = self.navigationController as? NavigationController {
-                let toolbarAppearance = UIToolbarAppearance()
-                toolbarAppearance.configureWithDefaultBackground()
-                
-                navigationController.toolbar.compactAppearance = toolbarAppearance
-                navigationController.toolbar.standardAppearance = toolbarAppearance
-                if #available(iOS 15.0, *) {
-                    navigationController.toolbar.scrollEdgeAppearance = toolbarAppearance
-                    navigationController.toolbar.compactScrollEdgeAppearance = toolbarAppearance
-                }
+    
+    func setupContentVC() {
+        self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+        self.popupContentVC.images = self.images
+        self.popupContentVC.titles = self.titles
+        self.popupContentVC.subtitles = self.subtitles
+    }
+    
+    func setupContentTVC() {
+        self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as? PopupContentTableViewController
+        self.popupContentTVC.images = self.images
+        self.popupContentTVC.titles = self.titles
+        self.popupContentTVC.subtitles = self.subtitles
+    }
+    
+    func setupToolbarAppearance(withBackgroundColor backgroundColor: UIColor? = nil) {
+        if let navigationController = self.navigationController as? NavigationController {
+            let navigationBarAppearance = navigationController.navigationBar.standardAppearance
+            
+            let toolbarAppearance = UIToolbarAppearance()
+            toolbarAppearance.configureWithDefaultBackground()
+            
+            toolbarAppearance.backgroundEffect = navigationBarAppearance.backgroundEffect
+            
+            navigationBarAppearance.backgroundColor = backgroundColor
+            if backgroundColor == nil {
+                toolbarAppearance.backgroundColor = navigationBarAppearance.backgroundColor
             }
+            else {
+                toolbarAppearance.backgroundColor = backgroundColor
+            }
+            navigationController.navigationBar.compactAppearance = navigationBarAppearance
+            navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
+            if #available(iOS 15.0, *) {
+                navigationController.navigationBar.compactScrollEdgeAppearance = navigationBarAppearance
+            }
+
+            navigationController.toolbar.compactAppearance = toolbarAppearance
+            navigationController.toolbar.standardAppearance = toolbarAppearance
         }
     }
-    */
+    
     func firstSetup() {
         self.setupPopupBar()
                 
@@ -321,11 +337,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.popupCloseButtonStyle = self.containerVC.popupContentView.popupCloseButtonStyle
             
             self.containerVC.popupController.delegate = self
-            //if let popupEffectView = self.containerVC.popupContentView.popupEffectView {
-            //    popupEffectView.effect = nil
-            //}
             
-            #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
             if let tabBarController = self.tabBarController, self.navigationController == nil {
                 if tabBarController.modalPresentationStyle == .fullScreen {
                     self.containerVC.popupController.dataSource = self
@@ -334,7 +347,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                     self.containerVC.popupController.wantsAdditionalSafeAreaInsetTop = true
                 }
             }
-            #endif
+#endif
             /*
             if let popupContentView = self.containerVC.popupContentView {
                 popupContentView.popupIgnoreDropShadowView = false
@@ -394,10 +407,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             popupBar.image?.accessibilityLabel = NSLocalizedString("Cover", comment: "")
             
             if self.containerVC is UITabBarController, self.navigationController == nil {
-                if #available(iOS 13.0, *) {
-                    let interaction = UIContextMenuInteraction(delegate: self)
-                    popupBar.addInteraction(interaction)
-                }
+                let interaction = UIContextMenuInteraction(delegate: self)
+                popupBar.addInteraction(interaction)
             }
             //popupBar.semanticContentAttribute = .forceRightToLeft
             //popupBar.barButtonItemsSemanticContentAttribute = .forceRightToLeft
@@ -421,27 +432,20 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     func setupBarButtonItems() {
-        if #available(iOS 13.0, *) {
-            let scaleConfig = UIImage.SymbolConfiguration(scale: self.popupBarIsFloating || self.popupBarStyle == .compact ? .medium : .large)
-            let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
-            let config = scaleConfig.applying(weightConfig)
-            
-            var image: UIImage!
-            image = UIImage(systemName: "play.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
-            self.popupPlayButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-            image = UIImage(systemName: "forward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
-            self.popupNextButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-            image = UIImage(systemName: "ellipsis", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
-            self.popupMoreButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-            image = UIImage(systemName: "backward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
-            self.popupPrevButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-        }
-        else {
-            self.popupPlayButtonItem = UIBarButtonItem(image: UIImage(named: "play-small"), style: .plain, target: nil, action: nil)
-            self.popupNextButtonItem = UIBarButtonItem(image: UIImage(named: "next-small"), style: .plain, target: nil, action: nil)
-            self.popupMoreButtonItem = UIBarButtonItem(image: UIImage(named: "more"), style: .plain, target: nil, action: nil)
-            self.popupPrevButtonItem = UIBarButtonItem(image: UIImage(named: "prev-small"), style: .plain, target: nil, action: nil)
-        }
+        let scaleConfig = UIImage.SymbolConfiguration(scale: self.popupBarIsFloating || self.popupBarStyle == .compact ? .medium : .large)
+        let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
+        let config = scaleConfig.applying(weightConfig)
+        
+        var image: UIImage!
+        image = UIImage(systemName: "play.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+        self.popupPlayButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        image = UIImage(systemName: "forward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+        self.popupNextButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        image = UIImage(systemName: "ellipsis", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+        self.popupMoreButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        image = UIImage(systemName: "backward.fill", withConfiguration: config)?.withAlignmentRectInsets(.zero).imageWithoutBaseline()
+        self.popupPrevButtonItem = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
+        
         self.popupPlayButtonItem.accessibilityLabel = NSLocalizedString("Play", comment: "")
         self.popupNextButtonItem.accessibilityLabel = NSLocalizedString("Next track", comment: "")
         self.popupMoreButtonItem.accessibilityLabel = NSLocalizedString("More", comment: "")
@@ -489,85 +493,34 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     // MARK: - Toolbar container actions
     
     @IBAction func defaultToolbarStyle(_ sender: UIBarButtonItem) {
-        if #available(iOS 13.0, *) {
-            self.navigationController?.overrideUserInterfaceStyle = .unspecified
-            self.view.window?.overrideUserInterfaceStyle  = .unspecified
-            let aColor = self.view.tintColor
-            self.navigationController?.toolbar.tintColor = aColor
-            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
-            })
-            self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
-            self.navigationController?.updatePopupBarAppearance()
-        }
-        else {
-            navigationController?.navigationBar.barStyle = .default
-            navigationController?.toolbar.barStyle = .default
-            navigationController?.navigationBar.barTintColor = nil
-            navigationController?.toolbar.barTintColor = nil
-            navigationController?.navigationBar.tintColor = self.view.tintColor
-            navigationController?.toolbar.tintColor = self.view.tintColor
-            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-                (obj as! UIBarButtonItem).tintColor = self.view.tintColor
-            })
-            
-            navigationController?.updatePopupBarAppearance()
-        }
+        self.setupToolbarAppearance()
+        self.navigationController?.overrideUserInterfaceStyle = .unspecified
+        let aColor = self.view.tintColor
+        self.navigationController?.toolbar.tintColor = aColor
+        (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+            (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
+        })
+        self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
+        self.navigationController?.updatePopupBarAppearance()
     }
 
     @IBAction func changeToolbarStyle(_ sender: Any) {
-        if #available(iOS 13.0, *) {
-            let currentStyle = self.navigationController?.traitCollection.userInterfaceStyle
-            self.navigationController?.overrideUserInterfaceStyle = currentStyle == .light ? .dark : .light
-            self.view.window?.overrideUserInterfaceStyle  = currentStyle == .light ? .dark : .light
-            let aColor = UIColor.PBRandomAdaptiveInvertedColor()
-            self.navigationController?.toolbar.tintColor = aColor
-            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
-            })
-            self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
-            self.navigationController?.updatePopupBarAppearance()
+        let navBarAppearance = self.navigationController?.navigationBar.standardAppearance
+        if navBarAppearance?.backgroundColor == nil {
+            self.setupToolbarAppearance(withBackgroundColor: UIColor.PBRandomAdaptiveColor())
         }
         else {
-            if let aStyle = UIBarStyle(rawValue: 1 - (navigationController?.toolbar.barStyle.rawValue ?? 0)) {
-                navigationController?.toolbar.barStyle = aStyle
-            }
-            
-            if #available(iOS 13.0, *) {
-                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveInvertedColor() : view.tintColor {
-                    navigationController?.toolbar.tintColor = aColor
-                }
-                
-                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomAdaptiveColor() : view.backgroundColor {
-                    navigationController?.toolbar.barTintColor = aColor
-                }
-            }
-            else {
-                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomLightColor() : view.tintColor {
-                    navigationController?.toolbar.tintColor = aColor
-                }
-                
-                if let aColor = navigationController?.toolbar.barStyle != nil ? UIColor.PBRandomExtraLightColor() : view.backgroundColor {
-                    navigationController?.toolbar.barTintColor = aColor
-                }
-            }
-            
-            (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
-                (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
-            })
-            if let aStyle = navigationController?.toolbar.barStyle {
-                navigationController?.navigationBar.barStyle = aStyle
-            }
-            if let aColor = navigationController?.toolbar.tintColor {
-                navigationController?.navigationBar.tintColor = aColor
-            }
-            if let aColor = navigationController?.toolbar.barTintColor {
-                navigationController?.navigationBar.barTintColor = aColor
-                navigationController?.navigationBar.backgroundColor = aColor
-            }
-            
-            navigationController?.updatePopupBarAppearance()
+            self.setupToolbarAppearance()
         }
+        let interfaceStyle = Int.random(in: 0..<3)
+        self.navigationController?.overrideUserInterfaceStyle = UIUserInterfaceStyle(rawValue:interfaceStyle) ?? .unspecified
+        let aColor = UIColor.PBRandomAdaptiveInvertedColor()
+        self.navigationController?.toolbar.tintColor = aColor
+        (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
+            (obj as! UIBarButtonItem).tintColor = self.navigationController?.toolbar.tintColor
+        })
+        self.navigationController?.navigationBar.tintColor = self.navigationController?.toolbar.tintColor
+        self.navigationController?.updatePopupBarAppearance()
     }
     
     // MARK: - Setup Styles Actions
@@ -579,9 +532,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                         
         if let popupBar = self.containerVC?.popupBar {
             popupBar.isFloating = self.popupBarIsFloating
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 13 {
-                self.tabBarController?.tabBar.clipsToBounds = self.popupBarIsFloating ? true : false
-            }
         }
         self.setupBarButtonItems()
 
@@ -687,17 +637,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         switch sender.selectedSegmentIndex {
         case 0:
             self.isPopupContentTableView = false
-            self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
-            self.popupContentVC.images = self.images
-            self.popupContentVC.titles = self.titles
-            self.popupContentVC.subtitles = self.subtitles
             self.popupContentTVC = nil
         case 1:
             self.isPopupContentTableView = true
-            self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as? PopupContentTableViewController
-            self.popupContentTVC.images = self.images
-            self.popupContentTVC.titles = self.titles
-            self.popupContentTVC.subtitles = self.subtitles
             self.popupContentVC = nil
         default:
             break
@@ -723,12 +665,16 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 }
             }
         }
+        
+        self.firstSetup()
         self.configureBarButtonItems()
 
         // If sender is the present item of the navigation controller toolbar
         if sender is UIBarButtonItem {
             self.updatePopupBar(forRowAt: 0)
         }
+        
+        self.isPopupContentTableView ? self.setupContentTVC() : self.setupContentVC()
         
         DispatchQueue.main.async {
             self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
@@ -747,14 +693,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         //
         self.containerVC.dismissPopupBar(animated: true, completion: {
             PBLog("Popup Bar Dismissed")
-            self.firstSetup()
         })
         //
     }
 }
 
 extension FirstTableViewController {
-    @available(iOS 13.0, *)
     override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, sender: Any?) -> Bool {
         let result = super.canPerformUnwindSegueAction(action, from: fromViewController, sender: sender)
         
@@ -768,23 +712,7 @@ extension FirstTableViewController {
         
         return result
     }
-    
-    #if !targetEnvironment(macCatalyst)
-    override func canPerformUnwindSegueAction(_ action: Selector, from fromViewController: UIViewController, withSender sender: Any) -> Bool {
-        let result = super.canPerformUnwindSegueAction(action, from: fromViewController, withSender: sender)
-        
-        self.popupContentVC = nil
-        self.popupContentTVC = nil
-        if let containerVC = self.containerVC {
-            containerVC.dismissPopupBar(animated: true, completion: nil)
-        }
-        
-        print("\(self) \(#function) \(action) \(result)")
-        
-        return result
-    }
-    #endif
-    
+
     override func dismiss(animated: Bool, completion: (() -> Void)?) {
         print("\(self) \(#function)")
         super.dismiss(animated:animated, completion: completion)
@@ -841,9 +769,7 @@ extension FirstTableViewController {
             cell.switchSwitch.addTarget(self, action: #selector(barIsFloatingChanged(_:)), for: .valueChanged)
             cell.switchLabel.font = UIFont.preferredFont(forTextStyle: .body)
             
-            if #available(iOS 13.0, *) {
-                cell.switchLabel.textColor = UIColor.label
-            }
+            cell.switchLabel.textColor = UIColor.label
 
             cell.switchLabel.adjustsFontForContentSizeCategory = true
             cell.selectionStyle = .none
@@ -926,9 +852,7 @@ extension FirstTableViewController {
             
             cell.titleLabel.font = UIFont.preferredFont(forTextStyle: .body)
             
-            if #available(iOS 13.0, *) {
-                cell.titleLabel.textColor = UIColor.label
-            }
+            cell.titleLabel.textColor = UIColor.label
 
             cell.titleLabel.adjustsFontForContentSizeCategory = true
             
@@ -972,14 +896,8 @@ extension FirstTableViewController {
             cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
             cell.albumNameLabel.adjustsFontForContentSizeCategory = true
             
-            if #available(iOS 13.0, *) {
-                cell.songNameLabel.textColor = UIColor.label
-                cell.albumNameLabel.textColor = UIColor.secondaryLabel
-            }
-            else {
-                cell.songNameLabel.textColor = UIColor.darkText
-                cell.albumNameLabel.textColor = UIColor.darkGray
-            }
+            cell.songNameLabel.textColor = UIColor.label
+            cell.albumNameLabel.textColor = UIColor.secondaryLabel
 
             return cell
             
@@ -1051,7 +969,7 @@ extension FirstTableViewController {
   
 extension FirstTableViewController: PBPopupControllerDelegate {
     func popupControllerTapGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         if let tabBarController = self.tabBarController, self.navigationController == nil {
             if tabBarController.modalPresentationStyle == .fullScreen {
                 return false
@@ -1059,19 +977,19 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             }
             return true
         }
-        #endif
+#endif
         return true
     }
     
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         if let tabBarController = self.tabBarController, self.navigationController == nil {
             if tabBarController.modalPresentationStyle == .fullScreen {
                 return false
             }
             return true
         }
-        #endif
+#endif
         return true
     }
     
@@ -1115,13 +1033,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
                 bottomModule.alpha = 1.0
             }
         }
-        if #available(iOS 13.0, *) {
-            popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
-            popupContentViewController.view.alpha = 1
-        }
-        else {
-            popupContentViewController.view.backgroundColor = UIColor.white
-        }
+        popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
+        popupContentViewController.view.alpha = 1
     }
 
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
@@ -1169,19 +1082,8 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             }
 
             let alpha = (0.30 - progress) / 0.30
-            if #available(iOS 13.0, *) {
-                popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
-                popupContentViewController.view.alpha = 1 - alpha
-            }
-            else {
-                #if !targetEnvironment(macCatalyst)
-                popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
-                popupContentViewController.view.alpha = 1 - alpha
-                #else
-                popupContentViewController.view.backgroundColor = UIColor(white: 1, alpha: 1 - alpha)
-                popupContentViewController.view.alpha = 1 - alpha
-                #endif
-            }
+            popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
+            popupContentViewController.view.alpha = 1 - alpha
         }
     }
 }
@@ -1314,7 +1216,6 @@ extension FirstTableViewController: PBPopupBarPreviewingDelegate, UIPopoverPrese
 
 // MARK: - UIContextMenuInteractionDelegate
 
-@available(iOS 13.0, *)
 extension FirstTableViewController: UIContextMenuInteractionDelegate
 {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
@@ -1368,10 +1269,10 @@ extension FirstTableViewController {
 
 extension FirstTableViewController {
     func setupToolbarIfNeeded() {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
         guard let windowScene = window?.windowScene else {
-          return
+            return
         }
         if let titlebar = windowScene.titlebar {
             if titlebar.toolbar == nil {
@@ -1389,7 +1290,7 @@ extension FirstTableViewController {
                 titlebar.toolbar = toolbar
             }
         }
-        #endif
+#endif
     }
 }
 

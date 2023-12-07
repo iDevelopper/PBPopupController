@@ -30,10 +30,8 @@ class CustomPopupBarViewController: UIViewController {
         
         barView.layer.cornerRadius = 2
         
-        if #available(iOS 13.0, *) {
-            titleLabel.textColor = UIColor.darkText
-            subtitleLabel.textColor = UIColor.darkGray
-        }
+        titleLabel.textColor = UIColor.darkText
+        subtitleLabel.textColor = UIColor.darkGray
     }
     
     deinit {

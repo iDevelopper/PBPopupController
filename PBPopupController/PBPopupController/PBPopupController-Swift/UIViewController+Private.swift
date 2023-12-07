@@ -10,8 +10,6 @@ import Foundation
 import UIKit
 import ObjectiveC
 
-//_setContentOverlayInsets:
-private let sCoOvBase64 = "X3NldENvbnRlbnRPdmVybGF5SW5zZXRzOg=="
 //_updateContentOverlayInsetsFromParentIfNecessary
 private let uCOIFPINBase64 = "X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRnJvbVBhcmVudElmTmVjZXNzYXJ5"
 //_hideBarWithTransition:isExplicit:
@@ -282,36 +280,22 @@ internal extension UITabBarController
         self.popupBar.effectGroupingIdentifier = self.tabBar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
-        if #available(iOS 13.0, *) {
-            let bottomBarAppearance = self.tabBar.standardAppearance
+        let bottomBarAppearance = self.tabBar.standardAppearance
         
-            self.bottomBarAppearance = bottomBarAppearance.copy()
-            
-            if self.bottomBarAppearance.shadowColor != nil {
-                self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
-            }
-            if self.popupBar.inheritsVisualStyleFromBottomBar {
-                self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
-            }
-            let appearance = self.tabBar.standardAppearance
-            appearance.shadowColor = self.popupBar.isFloating ? nil : self.popupBar.shadowColor
-            self.tabBar.standardAppearance = appearance
-            if #available(iOS 15.0, *) {
-                self.tabBar.scrollEdgeAppearance = appearance
-            }
+        self.bottomBarAppearance = bottomBarAppearance.copy()
+        
+        if self.bottomBarAppearance.shadowColor != nil {
+            self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
         }
-
+        
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }
+        self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
         self.popupBar.barStyle = self.tabBar.barStyle
         self.popupBar.tintColor = self.tabBar.tintColor
         self.popupBar.isTranslucent = self.tabBar.isTranslucent
-        if #available(iOS 13.0, *) {
-            self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
-        } else {
-            self.popupBar.backgroundColor = self.tabBar.barTintColor
-        }
+        self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
     }
 }
 
@@ -731,39 +715,25 @@ internal extension UINavigationController
         self.popupBar.effectGroupingIdentifier = self.toolbar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
-        if #available(iOS 13.0, *) {
-            let bottomBarAppearance = self.toolbar.standardAppearance
-            
-            self.bottomBarAppearance = bottomBarAppearance.copy()
-            
-            if self.bottomBarAppearance.shadowColor != nil {
-                self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
-            }
-            if self.popupBar.inheritsVisualStyleFromBottomBar {
-                self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
-            }
-            let appearance = self.toolbar.standardAppearance
-            appearance.shadowColor = self.popupBar.isFloating ? nil : self.popupBar.shadowColor
-            self.toolbar.standardAppearance = appearance
-            if #available(iOS 15.0, *) {
-                self.toolbar.scrollEdgeAppearance = appearance
-            }
+        let bottomBarAppearance = self.toolbar.standardAppearance
+
+        self.bottomBarAppearance = bottomBarAppearance.copy()
+        
+        if self.bottomBarAppearance.shadowColor != nil {
+            self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
         }
         
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }
+        self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
         self.popupBar.barStyle = self.navigationBar.barStyle
         self.popupBar.tintColor = self.navigationBar.tintColor
         if let svc = self.splitViewController, let nc = svc.viewControllers[0] as? UINavigationController {
             self.popupBar.tintColor = nc.navigationBar.tintColor
         }
         self.popupBar.isTranslucent = self.navigationBar.isTranslucent
-        if #available(iOS 13.0, *) {
-            self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
-        } else {
-            self.popupBar.backgroundColor = self.navigationBar.barTintColor
-        }
+        self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
     }
 }
 
@@ -811,36 +781,8 @@ public extension UIViewController
         var originalMethod: Method!
         var swizzledMethod: Method!
         
-        #if !targetEnvironment(macCatalyst)
-        if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 11 {
-            //_setContentOverlayInsets:
-            var selName = _PBPopupDecodeBase64String(base64String: sCoOvBase64)!
-            var selector = NSSelectorFromString(selName)
-            originalMethod = class_getInstanceMethod(aClass, selector)
-            swizzledMethod = class_getInstanceMethod(aClass, #selector(_sCoOvIns(insets:)))
-            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-                method_exchangeImplementations(originalMethod, swizzledMethod)
-            }
-        }
-        else {
-            //_updateContentOverlayInsetsFromParentIfNecessary
-            var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
-            var selector = NSSelectorFromString(selName)
-            originalMethod = class_getInstanceMethod(aClass, selector)
-            swizzledMethod = class_getInstanceMethod(aClass, #selector(_uCOIFPIN))
-            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-                method_exchangeImplementations(originalMethod, swizzledMethod)
-            }
-        }
-        //_viewSafeAreaInsetsFromScene
-        var selName = _PBPopupDecodeBase64String(base64String: vSAIFSBase64)!
-        var selector = NSSelectorFromString(selName)
-        originalMethod = class_getInstanceMethod(aClass, selector)
-        swizzledMethod = class_getInstanceMethod(aClass, #selector(_vSAIFS))
-        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-            method_exchangeImplementations(originalMethod, swizzledMethod)
-        }
-        #else
+#if !targetEnvironment(macCatalyst)
+        //_updateContentOverlayInsetsFromParentIfNecessary
         var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
         var selector = NSSelectorFromString(selName)
         originalMethod = class_getInstanceMethod(aClass, selector)
@@ -848,7 +790,23 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-        #endif
+        //_viewSafeAreaInsetsFromScene
+        selName = _PBPopupDecodeBase64String(base64String: vSAIFSBase64)!
+        selector = NSSelectorFromString(selName)
+        originalMethod = class_getInstanceMethod(aClass, selector)
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_vSAIFS))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+#else
+        var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
+        var selector = NSSelectorFromString(selName)
+        originalMethod = class_getInstanceMethod(aClass, selector)
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_uCOIFPIN))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+#endif
         
         originalMethod = class_getInstanceMethod(aClass, #selector(addChild(_:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_addChild(_ :)))
@@ -875,25 +833,6 @@ public extension UIViewController
     @objc static func vc_swizzle()
     {
         _ = self.swizzleImplementation
-    }
-    
-    //_setContentOverlayInsets:
-    @objc private func _sCoOvIns(insets: UIEdgeInsets)
-    {
-        var newInsets = insets
-        newInsets.bottom += self.additionalSafeAreaInsetsBottomForContainer
-        if let rv = UIViewController.getAssociatedPopupBarFor(self) {
-            if !(rv.isHidden) && self.popupController.popupPresentationState != .dismissing {
-                newInsets.bottom += rv.frame.height
-                self._sCoOvIns(insets:newInsets)
-            }
-            else {
-                self._sCoOvIns(insets:newInsets)
-            }
-        }
-        else {
-            self._sCoOvIns(insets:newInsets)
-        }
     }
     
     //_updateContentOverlayInsetsFromParentIfNecessary
@@ -1055,10 +994,8 @@ public extension UIViewController
         withUnsafePointer(to: &AssociatedKeys.bottomBar) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        if #available(iOS 13.0, *) {
-            withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
-                objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-            }
+        withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         withUnsafePointer(to: &AssociatedKeys.popupController) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
@@ -1139,11 +1076,9 @@ internal extension UIViewController
     
     @objc func configurePopupBarFromBottomBar()
     {
-        if #available(iOS 13.0, *) {
-            let toolBarAppearance = UIToolbarAppearance()
-            toolBarAppearance.configureWithDefaultBackground()
-            self.popupBar.shadowColor = toolBarAppearance.shadowColor
-        }
+        let toolBarAppearance = UIToolbarAppearance()
+        toolBarAppearance.configureWithDefaultBackground()
+        self.popupBar.shadowColor = toolBarAppearance.shadowColor
         
         self.popupBar.backgroundColor = nil
         

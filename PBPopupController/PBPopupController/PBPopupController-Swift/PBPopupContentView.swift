@@ -191,9 +191,7 @@ import UIKit
         
         self.setupEffectView()
         
-        if #available(iOS 13.0, *) {
-            self.layer.cornerCurve = .continuous
-        }
+        self.layer.cornerCurve = .continuous
     }
     
     required init(coder aDecoder: NSCoder)
@@ -232,20 +230,10 @@ import UIKit
     private func setupPopupCloseButtonTintColor()
     {
         if self.popupCloseButtonStyle == .round {
-            if #available(iOS 13, *) {
-                self.popupCloseButton.tintColor = UIColor.label
-            }
-            else {
-                self.popupCloseButton.tintColor = UIColor.lightGray
-            }
+            self.popupCloseButton.tintColor = UIColor.label
         }
         else {
-            if #available(iOS 13, *) {
-                self.popupCloseButton.tintColor = UIColor.systemGray2
-            }
-            else {
-                self.popupCloseButton.tintColor = UIColor.lightGray
-            }
+            self.popupCloseButton.tintColor = UIColor.systemGray2
         }
     }
     
@@ -304,12 +292,7 @@ import UIKit
                 if self.popupCloseButtonStyle == .round {
                     self.popupCloseButtonHorizontalConstraint = popupCloseButton.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor, constant: 12)
                 } else {
-                    if #available(iOS 13, *) {
-                        self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
-                    }
-                    else {
-                        self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor, constant: self.safeAreaInsets.left)
-                    }
+                    self.popupCloseButtonHorizontalConstraint = popupCloseButton.centerXAnchor.constraint(equalTo: vc.view.safeAreaLayoutGuide.centerXAnchor, constant: 0)
                 }
                 NSLayoutConstraint.activate([self.popupCloseButtonHorizontalConstraint])
             }

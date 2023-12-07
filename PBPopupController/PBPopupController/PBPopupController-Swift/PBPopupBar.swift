@@ -375,21 +375,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.systemBarStyle = newValue
             self.popupController.barStyle = newValue
             
-#if targetEnvironment(macCatalyst)
             self.backgroundView?.backgroundColor = nil
-#else
-            if #available(iOS 13.0, *) {
-                self.backgroundView?.backgroundColor = nil
-            }
-            else {
-                if newValue == .black {
-                    self.backgroundView?.backgroundColor = UIColor.clear
-                }
-                else {
-                    self.backgroundView?.backgroundColor = nil
-                }
-            }
-#endif
             self.toolbar.barStyle = newValue
         }
     }
@@ -419,13 +405,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      */
     @objc public var backgroundStyle: UIBlurEffect.Style {
         get {
-            if #available(iOS 13.0, *) {
-                if self.systemBarStyle == .black {
-                    return .systemChromeMaterialDark
-                }
-                return .systemChromeMaterial
+            if self.systemBarStyle == .black {
+                return .systemChromeMaterialDark
             }
-            return self.systemBarStyle == .black ? .dark : .extraLight
+            return .systemChromeMaterial
         }
         set {
             self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
@@ -563,7 +546,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             }
         }
     }
-    
+
     /**
      The tint color to apply to the popup bar items.
      */
@@ -812,7 +795,9 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.backgroundView?.mask = popupBarIsFloating ? self.floatingBackgroundMaskView : nil
 
             self.floatingBackgroundShadowView?.isHidden = !popupBarIsFloating
-
+            
+            // Corner radius or shadow line
+            self.contentView.effectView.clipsToBounds = popupBarIsFloating ? true : false
             self.contentView.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
             
             if self.usePopupBarLegacyShadow {
@@ -824,28 +809,17 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             
             self.contentView.preservesSuperviewLayoutMargins = !popupBarIsFloating
             self.toolbar.layer.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
-            if #available(iOS 13.0, *) {
-                self.toolbar.layer.cornerCurve = .continuous
-            }
+            self.toolbar.layer.cornerCurve = .continuous
             
             self.toolbar.popupBarIsFloating = popupBarIsFloating
             
-            if #available(iOS 13.0, *) {
-                self.toolbar.backgroundImage = nil
-                self.toolbar.shadowImage = nil
-            }
-            else {
-                self.toolbar.backgroundImage = UIImage()
-                self.toolbar.shadowImage = popupBarIsFloating ? UIImage() : nil
-            }
+            self.toolbar.backgroundImage = nil
+            self.toolbar.shadowImage = nil
             
             self.contentView.effect = popupBarIsFloating ? self.floatingBackgroundEffect : nil
             
             self.contentView.imageView.image = popupBarIsFloating ? self.floatingBackgroundImage : nil
             self.contentView.colorView.backgroundColor = popupBarIsFloating ? self.floatingBackgroundColor : nil
-
-            self.backgroundView?.imageView.image = popupBarIsFloating ? nil : self.backgroundImage
-            self.backgroundView?.colorView.backgroundColor = popupBarIsFloating ? nil : self.backgroundColor
 
             self.configureContentSizeCategory()
             
@@ -1078,16 +1052,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 lightColor = UIColor.black.withAlphaComponent(0.15)
                 darkColor = UIColor.black.withAlphaComponent(0.30)
             }
-            if #available(iOS 13.0, *) {
-                if self.traitCollection.userInterfaceStyle == .light {
-                    shadow.shadowColor = lightColor
-                }
-                else {
-                    shadow.shadowColor = darkColor
-                }
+            if self.traitCollection.userInterfaceStyle == .light {
+                shadow.shadowColor = lightColor
             }
             else {
-                shadow.shadowColor = lightColor
+                shadow.shadowColor = darkColor
             }
             shadow.shadowOffset = CGSize(width: 0.0, height: 0.0)
             shadow.shadowBlurRadius = 8.0
@@ -1103,9 +1072,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         self.contentView.autoresizingMask = []
         self.contentView.castsShadow = false
         self.contentView.floatingInset = self.floatingInsets
-        if #available(iOS 13.0, *) {
-            self.contentView.layer.cornerCurve = .continuous
-        }
+        self.contentView.layer.cornerCurve = .continuous
         
         self.addSubview(self.contentView)
 
@@ -1117,14 +1084,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         self.toolbar.autoresizingMask = []
         self.toolbar.isTranslucent = true
         
-        if #available(iOS 13.0, *) {
-            self.toolbar.shadowImage = nil
-            self.toolbar.backgroundImage = nil
-        }
-        else {
-            self.toolbar.backgroundImage = UIImage()
-            self.toolbar.shadowImage = UIImage()
-        }
+        self.toolbar.shadowImage = nil
+        self.toolbar.backgroundImage = nil
         
         self.contentView.effectView.contentView.addSubview(self.toolbar)
         
@@ -1166,11 +1127,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         self.highlightView = _PBPopupBarHighlightView()
         self.highlightView.autoresizingMask = []
         self.highlightView.isUserInteractionEnabled = false
+        
         self.highlightView.backgroundColor = UIColor.black.withAlphaComponent(0.10)
-        if #available(iOS 13.0, *) {
-            if self.traitCollection.userInterfaceStyle == .dark {
-                self.highlightView.backgroundColor = UIColor.white.withAlphaComponent(0.10)
-            }
+        if self.traitCollection.userInterfaceStyle == .dark {
+            self.highlightView.backgroundColor = UIColor.white.withAlphaComponent(0.10)
         }
         self.highlightView.alpha = 0.0
         
@@ -1281,10 +1241,9 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      */
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            let style = self.traitCollection.userInterfaceStyle
-            self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
-        }
+
+        let style = self.traitCollection.userInterfaceStyle
+        self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
     }
     
     // MARK: - Private Methods
@@ -1771,11 +1730,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     private func titleColor() -> UIColor {
-        if #available(iOS 13.0, *) {
-            return UIColor.label
-        } else {
-            return UIColor.darkText
-        }
+        return UIColor.label
     }
     
     private func subtitleFont() -> UIFont {
@@ -1799,12 +1754,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     private func subtitleColor() -> UIColor {
-        if #available(iOS 13.0, *) {
-            return UIColor.secondaryLabel
-        }
-        else {
-            return UIColor.darkGray
-        }
+        return UIColor.secondaryLabel
     }
     
     private func configureContentSizeCategory() {
@@ -2172,15 +2122,11 @@ extension PBPopupBar
         var cornerRadius: CGFloat = 0 {
             didSet {
                 self.layer.cornerRadius = cornerRadius
-                if #available(iOS 13.0, *) {
-                    self.layer.cornerCurve = .continuous
-                }
+                self.layer.cornerCurve = .continuous
                 
                 if let effectView = self.effectView {
                     effectView.layer.cornerRadius = cornerRadius
-                    if #available(iOS 13.0, *) {
-                        effectView.layer.cornerCurve = .continuous
-                    }
+                    effectView.layer.cornerCurve = .continuous
                 }
             }
         }
@@ -2335,13 +2281,8 @@ extension PBPopupBar
             super.traitCollectionDidChange(previousTraitCollection)
             
             self.layer.rasterizationScale = self.traitCollection.displayScale
-            if #available(iOS 13.0, *) {
-                if let userShadow = self.userFloatingBackgroundShadow, userShadow.shadowColor == nil {
-                    self.shadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? self.lightShadowColor : self.darkShadowColor
-                }
-            }
-            else {
-                self.shadow.shadowColor = self.lightShadowColor
+            if let userShadow = self.userFloatingBackgroundShadow, userShadow.shadowColor == nil {
+                self.shadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? self.lightShadowColor : self.darkShadowColor
             }
             self.updateShadowColor()
         }

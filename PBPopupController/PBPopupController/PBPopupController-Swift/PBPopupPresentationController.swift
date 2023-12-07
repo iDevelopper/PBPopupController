@@ -57,14 +57,14 @@ internal class PBPopupPresentationController: UIPresentationController
     
     private var popupContentViewTopInset: CGFloat
     {
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         return 10.0
-        #else
+#else
         if self.popupController.isContainerPresentationSheet {
             return 0.0
         }
         return UIDevice.current.userInterfaceIdiom == .pad ? 10.0 : 10.0
-        #endif
+#endif
     }
     
     private var statusBarFrame: CGRect
@@ -133,13 +133,13 @@ internal class PBPopupPresentationController: UIPresentationController
             if event == nil {
                 return self
             }
-            #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
             if #available(macCatalyst 13.4, *) {
                 if event?.type == .hover {
                     return self
                 }
             }
-            #endif
+#endif
             
             for passthroughView in passthroughViews {
                 let point = convert(point, to: passthroughView)
@@ -550,14 +550,12 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?)
     {
         super.traitCollectionDidChange(previousTraitCollection)
-        if #available(iOS 13.0, *) {
-            guard previousTraitCollection != nil, let backingView = self.backingView, self.shouldUpdateBackingView == true else { return }
-            if self.traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-                backingView.removeFromSuperview()
-                self.backingView = nil
-                self.setupBackingView()
-                self.animateBackingViewToDeck(true, animated: false)
-            }
+        guard previousTraitCollection != nil, let backingView = self.backingView, self.shouldUpdateBackingView == true else { return }
+        if self.traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            backingView.removeFromSuperview()
+            self.backingView = nil
+            self.setupBackingView()
+            self.animateBackingViewToDeck(true, animated: false)
         }
     }
     
@@ -709,11 +707,11 @@ extension PBPopupPresentationController
         var height = containerView.bounds.height
 
         /*
-        #if targetEnvironment(macCatalyst)
+#if targetEnvironment(macCatalyst)
         if self.popupPresentationStyle == .fullScreen {
             //y = self.statusBarFrame.height
         }
-        #endif
+#endif
         */
         
         if self.popupPresentationStyle != .fullScreen {
@@ -781,9 +779,7 @@ extension PBPopupPresentationController
                     self.dimmerView.layer.maskedCorners = [.layerMaxXMinYCorner]
                 }
             }
-            if #available(iOS 13.0, *) {
-                self.dimmerView.layer.cornerCurve = dropShadowView.layer.cornerCurve
-            }
+            self.dimmerView.layer.cornerCurve = dropShadowView.layer.cornerCurve
         }
     }
     
@@ -799,9 +795,8 @@ extension PBPopupPresentationController
 //#else
         cornerRadius = open ? 10.0 : defaultCornerRadius
 //#endif
-        if #available(iOS 13.0, *) {
-            backingView.layer.cornerCurve = .continuous
-        }
+        backingView.layer.cornerCurve = .continuous
+        
         if !self.popupIsFloating {
             backingView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         }
@@ -847,17 +842,13 @@ extension PBPopupPresentationController
         case .popup:
             cornerRadius = isFloating ? floatingRadius : 0.0
         }
+        self.popupContentView.layer.cornerCurve = .continuous
         
-        if #available(iOS 13.0, *) {
-            self.popupContentView.layer.cornerCurve = .continuous
-        }
 #if !targetEnvironment(macCatalyst)
         if self.popupContentView.popupPresentationStyle != .popup {
             if let dropShadowView = self.popupController.dropShadowViewFor(self.presentingVC.view) {
                 cornerRadius = open ? dropShadowView.layer.cornerRadius : isFloating ? floatingRadius : 0.0
-                if #available(iOS 13.0, *) {
-                    self.popupContentView.layer.cornerCurve = dropShadowView.layer.cornerCurve
-                }
+                self.popupContentView.layer.cornerCurve = dropShadowView.layer.cornerCurve
             }
         }
 #endif
@@ -953,9 +944,7 @@ extension PBPopupPresentationController
             
             self.setupCornerRadiusForBackingViewAnimated(false, open: false)
             
-            if #available(iOS 13.0, *) {
-                self.dimmerView.backgroundColor = self.traitCollection.userInterfaceStyle == .light ? .black : .lightGray
-            }
+            self.dimmerView.backgroundColor = self.traitCollection.userInterfaceStyle == .light ? .black : .lightGray
             
             self.dimmerView.frame = self.backingView.bounds
             self.backingView.addSubview(self.dimmerView)
@@ -1040,9 +1029,7 @@ extension PBPopupPresentationController
 
         if isFloating, let view = view {
             view.clipsToBounds = true
-            if #available(iOS 13.0, *) {
-                view.layer.cornerCurve = .continuous
-            }
+            view.layer.cornerCurve = .continuous
             view.layer.cornerRadius = popupBar.floatingRadius
         }
         

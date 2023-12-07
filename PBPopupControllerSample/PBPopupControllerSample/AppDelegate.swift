@@ -17,12 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var rootViewController: UIViewController!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-        if #available(iOS 13.0, *) {
-            self.window?.tintColor = UIColor.systemPink
-        } else {
-            self.window?.tintColor = UIColor.red
-        }
+        self.window?.tintColor = UIColor.systemPink
         let font = UIFont.boldSystemFont(ofSize: UIFont.buttonFontSize)
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).setTitleTextAttributes([NSAttributedString.Key.font: font], for: .normal)
         PBPopupLogs.instance.isEnabled = true // default, false will disable logging from the module PBPopupController
@@ -53,7 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-@available(iOS 13.0, *)
 extension AppDelegate {
     // MARK: UISceneSession Lifecycle
 
@@ -73,16 +67,11 @@ extension AppDelegate {
 extension AppDelegate {
     func replaceRootViewControllerWith(controller: UIViewController) {
         var rootVC:UIViewController? = nil
-        if #available(iOS 13.0, *) {
-            for window in UIApplication.shared.windows {
-                if window.isKeyWindow {
-                    rootVC = window.rootViewController
-                    window.rootViewController = controller
-                }
+        for window in UIApplication.shared.windows {
+            if window.isKeyWindow {
+                rootVC = window.rootViewController
+                window.rootViewController = controller
             }
-        } else {
-            rootVC = self.window?.rootViewController
-            self.window?.rootViewController = controller
         }
         if let nc = rootVC as? UINavigationController, let _ = nc.topViewController as? MainTableViewController {
             self.rootViewController = rootVC
@@ -91,14 +80,10 @@ extension AppDelegate {
     
     func getRootViewController() -> UIViewController! {
         var rootVC:UIViewController? = nil
-        if #available(iOS 13.0, *) {
-            for window in UIApplication.shared.windows {
-                if window.isKeyWindow {
-                    rootVC = window.rootViewController
-                }
+        for window in UIApplication.shared.windows {
+            if window.isKeyWindow {
+                rootVC = window.rootViewController
             }
-        } else {
-            rootVC = self.window?.rootViewController
         }
         return rootVC
     }

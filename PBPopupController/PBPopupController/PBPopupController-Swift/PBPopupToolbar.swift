@@ -18,20 +18,20 @@ internal class _PBPopupToolbar: UIToolbar {
     
     internal var shadowColor: UIColor! {
         didSet {
-             self.setupAppearance()
-         }
+            self.setupAppearance()
+        }
     }
     
     internal var shadowImage: UIImage! {
         didSet {
-             self.setupAppearance()
-         }
+            self.setupAppearance()
+        }
     }
     
     internal var backgroundImage: UIImage! {
         didSet {
-             self.setupAppearance()
-         }
+            self.setupAppearance()
+        }
     }
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
@@ -83,24 +83,18 @@ internal class _PBPopupToolbar: UIToolbar {
     }
     
     func setupAppearance() {
-        if #available(iOS 13, *) {
-            let toolbarAppearance = self.standardAppearance
-            toolbarAppearance.configureWithDefaultBackground()
-            toolbarAppearance.shadowColor = self.popupBarIsFloating ? nil : self.shadowColor
-            toolbarAppearance.shadowImage = self.shadowImage
-            toolbarAppearance.backgroundImage = self.backgroundImage
-            toolbarAppearance.backgroundEffect = nil
-            
-            self.compactAppearance = toolbarAppearance
-            self.standardAppearance = toolbarAppearance
-            if #available(iOS 15.0, *) {
-                self.scrollEdgeAppearance = toolbarAppearance
-                self.compactScrollEdgeAppearance = toolbarAppearance
-            }
-        }
-        else {
-            self.setBackgroundImage(self.backgroundImage, forToolbarPosition: .any, barMetrics: .default)
-            self.setShadowImage(self.shadowImage, forToolbarPosition: .topAttached)
+        let toolbarAppearance = self.standardAppearance
+        toolbarAppearance.configureWithDefaultBackground()
+        toolbarAppearance.shadowColor = self.popupBarIsFloating ? nil : self.shadowColor
+        toolbarAppearance.shadowImage = self.shadowImage
+        toolbarAppearance.backgroundImage = self.backgroundImage
+        toolbarAppearance.backgroundEffect = nil
+        
+        self.compactAppearance = toolbarAppearance
+        self.standardAppearance = toolbarAppearance
+        if #available(iOS 15.0, *) {
+            self.scrollEdgeAppearance = toolbarAppearance
+            self.compactScrollEdgeAppearance = toolbarAppearance
         }
     }
 }

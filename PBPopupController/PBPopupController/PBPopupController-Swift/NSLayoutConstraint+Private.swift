@@ -14,16 +14,7 @@ internal extension NSLayoutConstraint
     class func reportAmbiguity (_ v:UIView?) {
         var v = v
         if v == nil {
-            #if targetEnvironment(macCatalyst)
             v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            #else
-            if #available(iOS 13.0, *) {
-                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            }
-            else {
-                v = UIApplication.shared.keyWindow
-            }
-            #endif
         }
         for vv in v!.subviews {
             print("\(vv) \(vv.hasAmbiguousLayout)")
@@ -35,16 +26,7 @@ internal extension NSLayoutConstraint
     class func listConstraints (_ v:UIView?) {
         var v = v
         if v == nil {
-            #if targetEnvironment(macCatalyst)
             v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            #else
-            if #available(iOS 13.0, *) {
-                v = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
-            }
-            else {
-                v = UIApplication.shared.keyWindow
-            }
-            #endif
         }
         for vv in v!.subviews {
             let arr1 = vv.constraintsAffectingLayout(for:.horizontal)

@@ -35,9 +35,7 @@ import UIKit
     @objc public var cornerRadius: CGFloat = 3.0 {
         didSet {
             imageView.layer.cornerRadius = cornerRadius
-            if #available(iOS 13.0, *) {
-                imageView.layer.cornerCurve = .continuous
-            }
+            imageView.layer.cornerCurve = .continuous
             imageView.layer.masksToBounds = true
         }
     }

@@ -22,15 +22,14 @@ class MainTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if #available(iOS 13.0, *) {
-            self.tableView.backgroundColor = UIColor.systemBackground
-            
-            self.presentationStyle = .fullScreen
-            let presentation = UIBarButtonItem(title: "Page Sheet", style: .plain, target: self, action: #selector(presentationChanged(_:)))
-            self.navigationItem.rightBarButtonItem = presentation
-            let enableColors = UIBarButtonItem(image: UIImage(systemName: "circle.hexagongrid.fill"), style: .plain, target: self, action: #selector(enableColorsDebug(_:)))
-            self.navigationItem.leftBarButtonItem = enableColors
-        }
+        self.tableView.backgroundColor = UIColor.systemBackground
+        
+        self.presentationStyle = .fullScreen
+        let presentation = UIBarButtonItem(title: "Page Sheet", style: .plain, target: self, action: #selector(presentationChanged(_:)))
+        self.navigationItem.rightBarButtonItem = presentation
+        let enableColors = UIBarButtonItem(image: UIImage(systemName: "circle.hexagongrid.fill"), style: .plain, target: self, action: #selector(enableColorsDebug(_:)))
+        self.navigationItem.leftBarButtonItem = enableColors
+        
         self.tableView.tableFooterView = UIView()
     }
 
@@ -53,9 +52,7 @@ class MainTableViewController: UITableViewController {
     @IBAction func enableColorsDebug(_ sender: Any) {
         if let enableColors = sender as? UIBarButtonItem {
             self.enableColorsDebug.toggle()
-            if #available(iOS 13.0, *) {
-                enableColors.image = self.enableColorsDebug ? UIImage(systemName: "circle.hexagongrid.fill")?.withRenderingMode(.alwaysOriginal) : UIImage(systemName: "circle.hexagongrid.fill")
-            }
+            enableColors.image = self.enableColorsDebug ? UIImage(systemName: "circle.hexagongrid.fill")?.withRenderingMode(.alwaysOriginal) : UIImage(systemName: "circle.hexagongrid.fill")
         }
     }
     
@@ -81,7 +78,6 @@ class MainTableViewController: UITableViewController {
 
     // MARK: - Table view delegate
 
-    @available(iOS 13.0, *)
     override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         //
         return UIContextMenuConfiguration(identifier: "Preview" as NSCopying, previewProvider: { () -> UIViewController? in
@@ -93,7 +89,6 @@ class MainTableViewController: UITableViewController {
         }, actionProvider: nil)
     }
     
-    @available(iOS 13.0, *)
     override func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         if let vc = animator.previewViewController {
             vc.modalPresentationStyle = .fullScreen
@@ -110,10 +105,8 @@ class MainTableViewController: UITableViewController {
         
         if let vc = self.viewControllerForIndexPath(indexPath) {
             vc.modalPresentationStyle = .fullScreen
-            if #available(iOS 13.0, *) {
-                vc.modalPresentationStyle = self.presentationStyle
-                vc.isModalInPresentation = true
-            }
+            vc.modalPresentationStyle = self.presentationStyle
+            vc.isModalInPresentation = true
             
             vc.enablePopupBarColorsDebug = self.enableColorsDebug
             self.present(vc, animated: true, completion: nil)

@@ -25,11 +25,7 @@ class NextTableViewController: UITableViewController {
             subtitles += [LoremIpsum.sentence]
         }
         
-        if #available(iOS 13.0, *) {
-            self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
-        } else {
-            self.tableView.backgroundColor = UIColor.PBRandomExtraLightColor()
-        }
+        self.tableView.backgroundColor = UIColor.PBRandomAdaptiveColor()
         
         self.tableView.tableFooterView = UIView()
         
@@ -70,14 +66,8 @@ class NextTableViewController: UITableViewController {
         cell.albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
         cell.albumNameLabel.adjustsFontForContentSizeCategory = true
         
-        if #available(iOS 13.0, *) {
-            cell.songNameLabel.textColor = UIColor.label
-            cell.albumNameLabel.textColor = UIColor.secondaryLabel
-        }
-        else {
-            cell.songNameLabel.textColor = UIColor.darkText
-            cell.albumNameLabel.textColor = UIColor.darkGray
-        }
+        cell.songNameLabel.textColor = UIColor.label
+        cell.albumNameLabel.textColor = UIColor.secondaryLabel
         
         return cell
     }

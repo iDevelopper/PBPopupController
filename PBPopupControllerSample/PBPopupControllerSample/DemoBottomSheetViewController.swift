@@ -14,11 +14,8 @@ class DemoBottomSheetViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 13.0, *) {
-            self.view.backgroundColor = .systemBackground
-        } else {
-            self.view.backgroundColor = .white
-        }
+        self.view.backgroundColor = .systemBackground
+        
         setupSubviews()
     }
     
@@ -53,9 +50,7 @@ class DemoBottomSheetViewController: UIViewController {
         font = UIFontMetrics(forTextStyle: .footnote).scaledFont(for: font)
         timerLabel.adjustsFontForContentSizeCategory = true
         timerLabel.text = "Timer"
-        if #available(iOS 13.0, *) {
-            timerLabel.textColor = UIColor.label
-        }
+        timerLabel.textColor = UIColor.label
         
         self.view.addSubview(timerLabel)
         

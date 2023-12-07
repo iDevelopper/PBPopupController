@@ -74,15 +74,11 @@ class DemoContainerController_iPad: UIViewController, PBPopupControllerDataSourc
     
     func statusBarOrientation(for view: UIView) -> UIInterfaceOrientation {
         var statusBarOrientation: UIInterfaceOrientation = .unknown
-        #if !targetEnvironment(macCatalyst)
-        if #available(iOS 13.0, *) {
-            statusBarOrientation = view.window?.windowScene?.interfaceOrientation ?? .unknown
-        } else {
-            statusBarOrientation = UIApplication.shared.statusBarOrientation
-        }
-        #else
+#if !targetEnvironment(macCatalyst)
         statusBarOrientation = view.window?.windowScene?.interfaceOrientation ?? .unknown
-        #endif
+#else
+        statusBarOrientation = view.window?.windowScene?.interfaceOrientation ?? .unknown
+#endif
         
         return statusBarOrientation
     }

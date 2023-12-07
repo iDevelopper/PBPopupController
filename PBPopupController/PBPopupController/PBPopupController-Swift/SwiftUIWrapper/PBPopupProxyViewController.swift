@@ -115,11 +115,15 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                     if self?.target.popupBar.dataSource == nil {
                         self?.target.popupBar.dataSource = self
                     }
-                    if let label = labelData?.label {
-                        self?.target.popupBar.titleLabel = label
+                    if self?.target.popupBar.titleLabel == nil {
+                        if let label = labelData?.label {
+                            self?.target.popupBar.titleLabel = label
+                        }
                     }
-                    if let sublabel = labelData?.sublabel {
-                        self?.target.popupBar.subtitleLabel = sublabel
+                    if self?.target.popupBar.subtitleLabel == nil {
+                        if let sublabel = labelData?.sublabel {
+                            self?.target.popupBar.subtitleLabel = sublabel
+                        }
                     }
                 }
                 .onPreferenceChange(PBPopupRoundShadowImagePreferenceKey.self) { [weak self] imageData in
@@ -133,7 +137,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                     }
                 }
                 .onPreferenceChange(PBPopupImagePreferenceKey.self) { [weak self] image in
-                    print("Image: \(String(describing: image))")
+                    //print("Image: \(String(describing: image))")
                     if image != nil {
                         if let imageController = self?.target.popupBar.swiftUIImageController as? UIHostingController<Image?> {
                             imageController.rootView = image

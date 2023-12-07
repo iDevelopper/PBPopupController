@@ -136,13 +136,7 @@ extension PBPopupCloseButtonStyle
     
     private func setupForRoundButton()
     {
-        var blurStyle: UIBlurEffect.Style;
-        if #available(iOS 13, *) {
-            blurStyle = .systemChromeMaterial
-        }
-        else {
-            blurStyle = .extraLight
-        }
+        let blurStyle: UIBlurEffect.Style = .systemChromeMaterial
         self.effectView = UIVisualEffectView(effect: UIBlurEffect(style: blurStyle))
         self.effectView.isUserInteractionEnabled = false
         self.addSubview(self.effectView)
@@ -166,29 +160,17 @@ extension PBPopupCloseButtonStyle
         self.addTarget(self, action: #selector(didTouchUp(_:)), for: .touchUpOutside)
         self.addTarget(self, action: #selector(didTouchCancel(_:)), for: .touchCancel)
         
-        //
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.15
         self.layer.shadowRadius = 4.0
         self.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.layer.masksToBounds = false
-        //
         
         self.setTitleColor(self.tintColor, for: .normal)
         
-        if #available(iOS 13.0, *) {
-            let configuration = UIImage.SymbolConfiguration(pointSize: 15, weight: .heavy, scale: .small)
-            let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
-            self.setImage(image, for: .normal)
-        }
-        else {
-            chevronView = PBChevronView(frame: CGRect(x: 4, y: 4.5, width: 16, height: 16))
-            chevronView.width = 3.0
-            chevronView.state = .up
-            if let aView = chevronView {
-                addSubview(aView)
-            }
-        }
+        let configuration = UIImage.SymbolConfiguration(pointSize: 15, weight: .heavy, scale: .small)
+        let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
+        self.setImage(image, for: .normal)
     }
     
     private func setupForChevronButton()

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "3.8.3"
+    s.version      = "3.9.0"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
     # s.readme       = 'https://raw.githubusercontent.com/iDevelopper/PBPopupController/#{s.version.to_s}/README.md'
     # s.changelog    = 'https://raw.githubusercontent.com/iDevelopper/PBPopupController/#{s.version.to_s}/CHANGELOG.md'
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
     s.author             = { "iDevelopper" => "patrick.bodet4@wanadoo.fr" }
 
     s.platform     = :ios
-    s.ios.deployment_target = '12.0'
+    s.ios.deployment_target = '13.0'
 
     s.source       = { :git => "https://github.com/iDevelopper/PBPopupController.git", :tag => "#{s.version}" }
 

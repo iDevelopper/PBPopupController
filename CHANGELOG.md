@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## 3.9.0
+
+Updated example.
+Set iOS minimum deployment target to 13.0.
+Gesture improvements.
+Width support for custom bars.
+Improved popup presentation.
+Navigation transition improvement ([issue #29](https://github.com/iDevelopper/PBPopupController/issues/29)
+
 ## 3.8.1 - 3.8.2 - 3.8.3
 
 Update Cocoapods home page.

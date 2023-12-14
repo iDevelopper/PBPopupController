@@ -1000,9 +1000,6 @@ public extension UIViewController
         withUnsafePointer(to: &AssociatedKeys.popupController) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        withUnsafePointer(to: &AssociatedKeys.popupContainerViewController) {
-            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
     }
 }
 

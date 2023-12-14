@@ -668,7 +668,7 @@ public extension UIViewController
      - completion: The block to execute after the presentation finishes. This block has no return value and takes no parameters. You may specify nil for this parameter.
      */
     @objc func dismissPopup(animated: Bool, completion: (() -> Swift.Void)? = nil) {
-        self.popupController._dismissPopupAnimated(true) {
+        self.popupController._dismissPopupAnimated(animated) {
             DispatchQueue.main.async {
                 self.popupController.popupPresentationController = nil
                 self.popupController.popupDismissalInteractiveController = nil

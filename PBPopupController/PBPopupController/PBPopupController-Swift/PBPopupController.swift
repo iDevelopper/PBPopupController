@@ -394,7 +394,6 @@ extension PBPopupPresentationStyle
     /**
      The preferred status bar style for the container view controller.
      */
-
     @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
         didSet {
             containerViewController.setNeedsStatusBarAppearanceUpdate()
@@ -482,6 +481,9 @@ extension PBPopupPresentationStyle
                 return inputView
             }
             if NSStringFromClass(type(of: inputView!).self).contains("PopoverView") {
+                return inputView
+            }
+            if NSStringFromClass(type(of: inputView!).self) == "PBPopupController.PBPopupContentView" {
                 return inputView
             }
         }
@@ -841,6 +843,28 @@ extension PBPopupPresentationStyle
     
     @objc internal func closePopupContent()
     {
+        // The popup content has a popup open. Close it before closing the main popup content.
+        if let popupController =  UIViewController.getAssociatedPopupControllerFor(self.containerViewController.popupContentViewController) {
+            if popupController.popupPresentationState == .open {
+                popupController.closePopupContent(animated: false) {
+                    if self.containerViewController.popupContentView.popupCanDismissOnPassthroughViews {
+                        if self.popupPresentationState == .open {
+                            self.closePopupContent(animated: true)
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            // Close popup content.
+            if self.popupPresentationState == .open {
+                self.closePopupContent(animated: true)
+            }
+        }
+    }
+    
+    @objc internal func closePopupContent(animated: Bool = true, completionBlock: (() -> Swift.Void)? = nil)
+    {
         guard let vc = self.containerViewController else {
             return
         }
@@ -849,7 +873,9 @@ extension PBPopupPresentationStyle
         }
         
         if vc.popupContentView.popupPresentationStyle == .popup {
-            vc.dismissPopup(animated: true)
+            vc.dismissPopup(animated: animated) {
+                completionBlock?()
+            }
         }
         else {
             self._closePopupAnimated(true)
@@ -997,7 +1023,7 @@ extension PBPopupPresentationStyle
     internal func popupBarViewFrameForPopupStateHidden() -> CGRect
     {
         guard let vc = self.containerViewController else { return .zero }
-                
+
         var frame = self.popupBarViewFrameForPopupStateClosed()
         
         let insets = vc.insetsForBottomBar()

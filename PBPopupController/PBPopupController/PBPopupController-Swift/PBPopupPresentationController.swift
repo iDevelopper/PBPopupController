@@ -110,11 +110,11 @@ internal class PBPopupPresentationController: UIPresentationController
     }
     
     private var popupIsFloating: Bool {
-        if self.presentingVC.popupContentView.popupPresentationStyle == .popup {
-            return self.presentingVC.popupContentView.isFloating
+        if self.popupContentView.popupPresentationStyle == .popup {
+            return self.popupContentView.isFloating
         }
         else {
-            let isFloating = self.presentingVC.popupContentView.isFloating || self.presentingVC.popupBar.isFloating || self.presentingVC.popupBar.popupBarWidth < self.presentingVC.defaultFrameForBottomBar().size.width || self.popupContentView.isFloating
+            let isFloating = self.popupContentView.isFloating || self.presentingVC.popupBar.isFloating || self.presentingVC.popupBar.popupBarWidth < self.presentingVC.defaultFrameForBottomBar().size.width || self.popupContentView.isFloating
             return isFloating
         }
     }
@@ -144,6 +144,22 @@ internal class PBPopupPresentationController: UIPresentationController
             for passthroughView in passthroughViews {
                 let point = convert(point, to: passthroughView)
                 if passthroughView.hitTest(point, with: event) != nil {
+                    // The popup content has a popup open. Close it before closing the main popup content.
+                    /*
+                    if let popupController =  UIViewController.getAssociatedPopupControllerFor(self.popupController.containerViewController.popupContentViewController) {
+                        if popupController.popupPresentationState == .open {
+                            popupController.closePopupContent(animated: false) {
+                                if self.popupController.containerViewController.popupContentView.popupCanDismissOnPassthroughViews {
+                                    if self.popupController.popupPresentationState == .open {
+                                        self.popupController.closePopupContent()
+                                    }
+                                }
+                            }
+                        }
+                        break
+                    }
+                    */
+                    // Close the poup content.
                     if popupController.containerViewController.popupContentView.popupCanDismissOnPassthroughViews {
                         if popupController.popupPresentationState == .open {
                             popupController.closePopupContent()
@@ -170,6 +186,13 @@ internal class PBPopupPresentationController: UIPresentationController
     
     // MARK: - UIPresentationController
     
+    override var shouldPresentInFullscreen: Bool {
+        if self.presentingVC.popupContentView.popupPresentationStyle == .popup {
+            return false
+        }
+        return true
+    }
+
     override var frameOfPresentedViewInContainerView: CGRect
     {
         return self.presentedViewFrameForPopupStateOpen()
@@ -420,7 +443,6 @@ internal class PBPopupPresentationController: UIPresentationController
         self.touchForwardingView = nil
         
         self.presentedView?.removeFromSuperview()
-        
         self.popupContentView.removeFromSuperview()
     }
 }
@@ -589,10 +611,12 @@ extension PBPopupPresentationController
     private func popupContainerViewFrame() -> CGRect
     {
         var frame = self.presentingVC.view.frame
-        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
-            frame = dropShadowView.frame
-            frame.origin.x += self.presentingVC.view.frame.minX
-            frame.size.width = self.presentingVC.view.frame.width
+        if self.shouldPresentInFullscreen == true {
+            if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+                frame = dropShadowView.frame
+                frame.origin.x += self.presentingVC.view.frame.minX
+                frame.size.width = self.presentingVC.view.frame.width
+            }
         }
         PBLog("\(frame)")
         return frame
@@ -636,9 +660,12 @@ extension PBPopupPresentationController
     {
         guard let containerView = self.containerView else { return .zero }
         
-        var frame = self.popupController.popupBarViewFrameForPopupStateHidden()
+        var frame = self.presentingVC.defaultFrameForBottomBar()
 
         var width = frame.size.width
+        if let dropShadowView = self.dropShadowViewFor(self.presentingVC.view) {
+            width = dropShadowView.frame.width
+        }
         var height = containerView.bounds.height
 
         let y = height
@@ -902,8 +929,10 @@ extension PBPopupPresentationController
         if self.popupPresentationStyle == .custom || self.popupPresentationStyle == .popup || self.popupController.isContainerPresentationSheet || self.presentingVC.splitViewController != nil {
             self.dimmerView.frame = self.dimmerViewFrame()
             self.setupCornerRadiusForDimmerView()
-            containerView.addSubview(self.dimmerView)
-            containerView.sendSubviewToBack(self.dimmerView)
+            if self.popupContentView.wantsPopupDimmerView {
+                containerView.addSubview(self.dimmerView)
+                containerView.sendSubviewToBack(self.dimmerView)
+            }
             return
         }
 

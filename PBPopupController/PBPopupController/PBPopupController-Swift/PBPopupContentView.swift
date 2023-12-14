@@ -83,6 +83,13 @@ import UIKit
     @objc public var popupCanDismissOnPassthroughViews: Bool = true
     
     /**
+     If `false` and `popupPresentationStyle` is  `PBPopupPresentationStyle.custom` or `PBPopupPresentationStyle.popup` , the popup container view has no dimmer view. Default value is `true`.
+     
+     - SeeAlso: `PBPopupPresentationStyle`.
+     */
+    @objc public var wantsPopupDimmerView: Bool = true
+    
+    /**
      If `true`, tells the popup content view presentation to ignore the form sheet presentation by default.
      */
     @objc public var popupIgnoreDropShadowView: Bool = true

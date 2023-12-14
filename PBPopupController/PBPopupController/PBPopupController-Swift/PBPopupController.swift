@@ -409,7 +409,22 @@ extension PBPopupPresentationStyle
      The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.
      */
     @objc public var popupStatusBarStyle: UIStatusBarStyle = .default
-   
+
+    /**
+     Controls whether interaction with the popup generates haptic feedback to the user. The default value is `true`.
+    */
+    @objc public var allowPopupHapticFeedbackGeneration: Bool = true
+    
+    /**
+     The soft soimpact feedback specific intensity. A value between 0.0 and 1.0.
+     */
+    @objc public var softFeedbackGeneratorIntensity: CGFloat = 0.6
+    
+    /**
+     The rigid impact feedback specific intensity. A value between 0.0 and 1.0.
+     */
+    @objc public var rigidFeedbackGeneratorIntensity: CGFloat = 0.7
+
     // MARK: - Private Properties
     
     @objc internal weak var containerViewController: UIViewController!
@@ -459,6 +474,9 @@ extension PBPopupPresentationStyle
     internal var popupPresentationController: PBPopupPresentationController?
     internal var popupPresentationInteractiveController: PBPopupInteractivePresentationController!
     internal var popupDismissalInteractiveController: PBPopupInteractivePresentationController!
+    
+    private var softFeedbackGenerator: UIImpactFeedbackGenerator!
+    private var rigidFeedbackGenerator: UIImpactFeedbackGenerator!
     
     private weak var previewingContext: UIViewControllerPreviewing?
     
@@ -528,6 +546,9 @@ extension PBPopupPresentationStyle
         
         self.popupPresentationState = .hidden
         self.containerViewController = controller
+
+        self.softFeedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
+        self.rigidFeedbackGenerator = UIImpactFeedbackGenerator(style: .rigid)
     }
     
     required init?(coder aDecoder: NSCoder)
@@ -614,6 +635,40 @@ extension PBPopupPresentationStyle
         rv.popupController = self
         
         return rv
+    }
+    
+    // MARK: - Popup Bar Haptic Feedback Generation
+
+    private func _prepareSoftFeedback()
+    {
+        if self.allowPopupHapticFeedbackGeneration == false {
+            return
+        }
+        self.softFeedbackGenerator.prepare()
+    }
+    
+    private func _generateSoftFeedbackWithIntensity(_ intensity: CGFloat)
+    {
+        if self.allowPopupHapticFeedbackGeneration == false {
+            return
+        }
+        self.softFeedbackGenerator.impactOccurred(intensity: intensity)
+    }
+    
+    private func _prepareRigidFeedback()
+    {
+        if self.allowPopupHapticFeedbackGeneration == false {
+            return
+        }
+        self.rigidFeedbackGenerator.prepare()
+    }
+    
+    private func _generateRigidFeedbackWithIntensity(_ intensity: CGFloat)
+    {
+        if self.allowPopupHapticFeedbackGeneration == false {
+            return
+        }
+        self.rigidFeedbackGenerator.impactOccurred(intensity: intensity)
     }
     
     // MARK: - Popup Bar Animation
@@ -790,6 +845,8 @@ extension PBPopupPresentationStyle
     
     @objc internal func popupTapGestureRecognized(tgr: UITapGestureRecognizer)
     {
+        self._prepareRigidFeedback()
+        
         if self.delegate?.popupControllerTapGestureShouldBegin?(self, state: self.popupPresentationState) == false {
             return
         }
@@ -797,6 +854,9 @@ extension PBPopupPresentationStyle
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
+
+            self._generateRigidFeedbackWithIntensity(self.rigidFeedbackGeneratorIntensity)
+            
             vc.popupBar.setHighlighted(true, animated: false)
             self._openPopupAnimated(true) {
                 vc.popupBar.setHighlighted(false, animated: false)
@@ -843,6 +903,7 @@ extension PBPopupPresentationStyle
     
     @objc internal func closePopupContent()
     {
+        self._prepareRigidFeedback()
         // The popup content has a popup open. Close it before closing the main popup content.
         if let popupController =  UIViewController.getAssociatedPopupControllerFor(self.containerViewController.popupContentViewController) {
             if popupController.popupPresentationState == .open {
@@ -858,6 +919,7 @@ extension PBPopupPresentationStyle
         else {
             // Close popup content.
             if self.popupPresentationState == .open {
+                self._generateRigidFeedbackWithIntensity(self.rigidFeedbackGeneratorIntensity)
                 self.closePopupContent(animated: true)
             }
         }
@@ -1143,6 +1205,9 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
     {
         if let vc = self.containerViewController {
             self.popupContentPanGestureRecognizer.isEnabled = false
+
+            self._prepareSoftFeedback()
+            
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
@@ -1159,6 +1224,8 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                 }
             }
 
+            self._generateSoftFeedbackWithIntensity(self.softFeedbackGeneratorIntensity)
+            
             vc.present(vc.popupContentViewController, animated: true) {
                 if self.popupPresentationState == .opening {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
@@ -1189,12 +1256,17 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             if self.delegate?.popupController?(self, shouldClose: vc.popupContentViewController) == false {
                 return
             }
+
+            self._prepareSoftFeedback()
+            
             vc.view.setNeedsLayout()
             vc.view.layoutIfNeeded()
             
             let previousState = self.popupPresentationState
             self.popupPresentationState = .transitioning
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
+            
+            self._generateSoftFeedbackWithIntensity(self.softFeedbackGeneratorIntensity)
             
             vc.popupContentViewController.dismiss(animated: true) {
                 if self.popupPresentationState == .closing {

@@ -320,7 +320,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.setupPopupBar()
                 
         self.commonSetup()
-
+        
         self.setupBarButtonItems()
     }
     
@@ -667,7 +667,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         
         self.firstSetup()
-        self.configureBarButtonItems()
 
         // If sender is the present item of the navigation controller toolbar
         if sender is UIBarButtonItem {
@@ -675,7 +674,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         
         self.isPopupContentTableView ? self.setupContentTVC() : self.setupContentVC()
-        
+
+        self.setupBarButtonItems()
+
         DispatchQueue.main.async {
             self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
                 PBLog("Popup Bar Presented")

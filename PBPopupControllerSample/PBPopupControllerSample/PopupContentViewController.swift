@@ -154,6 +154,14 @@ class PopupContentViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var timerButton: UIButton! {
+        didSet {
+            let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            timerButton.setImage(UIImage(systemName: "timer", withConfiguration: config), for: .normal)
+            timerButton.tintColor = UIColor.systemPink
+        }
+    }
+    
     @IBOutlet weak var volumeSlider: UISlider! {
         didSet {
             volumeSlider.tintColor = UIColor.label
@@ -414,6 +422,18 @@ class PopupContentViewController: UIViewController {
         self.albumTitle = popupBar.subtitle!
     }
     
+    @IBAction func timerAction(_ sender: Any?) {
+        PBLog("timerAction")
+        
+        let safeAreaInsetsBottom = self.view.safeAreaInsets.bottom
+        let viewController = DemoBottomSheetViewController()
+        self.popupController.delegate = self
+        self.popupContentView.wantsPopupDimmerView = false
+        self.popupContentView.additionalFloatingBottomInset = safeAreaInsetsBottom == 0 ? 8.0 : 0.0
+        self.presentPopup(withPopupContentViewController: viewController, animated: true)
+    }
+
+    
     @IBAction func moreAction(_ sender: Any) {
         PBLog("moreAction")
     }
@@ -436,5 +456,11 @@ class PopupContentViewController: UIViewController {
             self.progressView.setProgress(0, animated: false)
             self.playPauseAction(nil)
         }
+    }
+}
+
+extension PopupContentViewController: PBPopupControllerDelegate {
+    func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        return false
     }
 }

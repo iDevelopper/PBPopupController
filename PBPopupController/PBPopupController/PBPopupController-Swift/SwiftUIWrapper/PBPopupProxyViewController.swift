@@ -272,6 +272,22 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     
     //MARK: PBPopupControllerDelegate
     
+    func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController) {
+        currentPopupState?.willOpen?()
+    }
+    
+    func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController) {
+        currentPopupState?.willClose?()
+    }
+    
+    func popupController(_ popupController: PBPopupController, willDismiss popupBar: PBPopupBar) {
+        currentPopupState?.willDismiss?()
+    }
+    
+    func popupController(_ popupController: PBPopupController, willPresent popupBar: PBPopupBar) {
+        currentPopupState?.willPresent?()
+    }
+    
     func popupController(_ popupController: PBPopupController, didPresent popupBar: PBPopupBar) {
         currentPopupState?.isPresented = true
         

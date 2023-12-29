@@ -43,6 +43,10 @@ internal struct PBPopupState<PopupContent: View> {
     let popupContent: (() -> PopupContent)?
     let popupContentViewController: UIViewController?
     let barCustomizer: ((PBPopupBar) -> Void)?
+    let willPresent: (() -> Void)?
+    let willDismiss: (() -> Void)?
+    let willOpen: (() -> Void)?
+    let willClose: (() -> Void)?
     let onPresent: (() -> Void)?
     let onDismiss: (() -> Void)?
     let onOpen: (() -> Void)?

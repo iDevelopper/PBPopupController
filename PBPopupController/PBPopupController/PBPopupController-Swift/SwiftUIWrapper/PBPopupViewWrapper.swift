@@ -17,6 +17,10 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     private let passthroughContent: () -> Content
     private let popupContent: (() -> PopupContent)?
     private let popupContentController: UIViewController?
+    private let willPresent: (() -> Void)?
+    private let willDismiss: (() -> Void)?
+    private let willOpen: (() -> Void)?
+    private let willClose: (() -> Void)?
     private let onPresent: (() -> Void)?
     private let onDismiss: (() -> Void)?
     private let onOpen: (() -> Void)?
@@ -45,7 +49,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
     @Environment(\.popupBarCustomizer) var popupBarCustomizer: ((PBPopupBar) -> Void)?
 
-    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, willPresent: (() -> Void)?, willDismiss: (() -> Void)?, willOpen: (() -> Void)?, willClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen
         self._isHidden = isHidden
@@ -56,6 +60,10 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
         self.onDismiss = onDismiss
         self.onOpen = onOpen
         self.onClose = onClose
+        self.willPresent = willPresent
+        self.willDismiss = willDismiss
+        self.willOpen = willOpen
+        self.willClose = willClose
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<PBPopupViewWrapper>) -> PBPopupProxyViewController<Content, PopupContent> {
@@ -93,6 +101,10 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  popupContent: popupContent,
                                  popupContentViewController: popupContentController,
                                  barCustomizer: popupBarCustomizer,
+                                 willPresent: willPresent,
+                                 willDismiss: willDismiss,
+                                 willOpen: willOpen,
+                                 willClose: willClose,
                                  onPresent: onPresent,
                                  onDismiss: onDismiss,
                                  onOpen: onOpen,

@@ -171,7 +171,8 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
             
         default:
             self.popupContentView.popupPresentationStyle = .custom
-            self.popupContentView.popupContentSize = CGSize(width: -1, height: self.view.bounds.height * 8/10)
+            let height = self.view.bounds.height * (self.traitCollection.verticalSizeClass == .compact ? 0.90 : 0.75)
+            self.popupContentView.popupContentSize = CGSize(width: -1, height: height)
         }
         return true
     }

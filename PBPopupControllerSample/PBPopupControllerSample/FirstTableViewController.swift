@@ -112,7 +112,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         super.viewDidLayoutSubviews()
 
         if let containerVC = self.containerVC, let popupContentView = containerVC.popupContentView {
-            popupContentView.popupContentSize = CGSize(width: -1, height: self.containerVC.view.bounds.height * 0.65)
+            let height = self.containerVC.view.bounds.height * (self.traitCollection.verticalSizeClass == .compact ? 0.90 : 0.75)
+            popupContentView.popupContentSize = CGSize(width: -1, height: height)
         }
     }
     
@@ -143,6 +144,17 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
         */
     }
+    
+    /*
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        if let containerVC = self.containerVC, let popupContentView = containerVC.popupContentView {
+            let height = self.view.bounds.height * (self.traitCollection.verticalSizeClass == .compact ? 0.90 : 0.75)
+            popupContentView.popupContentSize = CGSize(width: -1, height: height)
+        }
+    }
+    */
     
     deinit {
         PBLog("deinit \(self)")
@@ -283,7 +295,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     func setupContentTVC() {
-        self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController") as? PopupContentTableViewController
+        self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController2") as? PopupContentTableViewController
         self.popupContentTVC.images = self.images
         self.popupContentTVC.titles = self.titles
         self.popupContentTVC.subtitles = self.subtitles
@@ -385,7 +397,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     func setupPopupBar() {
         if let popupBar = self.containerVC.popupBar {
             if #available(iOS 17.0, *) {
-                popupBar.isFloating = self.popupBarIsFloating
+                popupBar.isFloating = self.popupBarStyle == .custom ? false : self.popupBarIsFloating
+                /*
+                var floatingInsets = popupBar.floatingInsets
+                floatingInsets.left = 20
+                floatingInsets.right = 20
+                popupBar.floatingInsets = floatingInsets
+                */
                 //popupBar.floatingBackgroundColor = UIColor.systemMint
                 //popupBar.floatingBackgroundEffect = UIBlurEffect(style: .systemMaterial)
                 /*
@@ -813,7 +831,7 @@ extension FirstTableViewController {
                 cell.titleLabel.text = "PopupPresentationStyle"
                 cell.segmentedControl.removeAllSegments()
                 cell.segmentedControl.insertSegment(withTitle: "Default", at: 0, animated: false)
-                for idx in 0..<PBPopupPresentationStyle.strings.count {
+                for idx in 0..<PBPopupPresentationStyle.strings.count - 1 {
                     cell.segmentedControl.insertSegment(withTitle: PBPopupPresentationStyle.strings[idx], at: idx+1, animated: false)
                 }
                 self.popupPresentationStyle = self.containerVC.popupContentView.popupPresentationStyle
@@ -1070,7 +1088,6 @@ extension FirstTableViewController: PBPopupControllerDelegate {
     }
     
     func popupController(_ popupController: PBPopupController, interactivePresentationFor popupContentViewController: UIViewController, state: PBPopupPresentationState, progress: CGFloat, location: CGFloat) {
-        //print("progress: \(progress) - location: \(location)")
         if state == .closed {
             if let popupContentView = self.containerVC.popupContentView {
                 if let bottomModule = popupContentView.popupBottomModule {
@@ -1086,6 +1103,7 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
             popupContentViewController.view.alpha = 1 - alpha
         }
+        //
     }
 }
 

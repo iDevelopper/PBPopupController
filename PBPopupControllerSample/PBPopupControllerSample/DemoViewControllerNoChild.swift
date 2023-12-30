@@ -120,13 +120,8 @@ class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
     
     @objc func presentBottomSheet(_ sender: UIButton) {
         self.dismissPopupBar(animated: false) {
-            let viewController = DemoBottomSheetViewController()
+            let viewController = DemoBottomSheetViewController(withSubviews: false)
             self.popupController.delegate = self
-            /*
-            self.presentPopup(withPopupContentViewController: viewController, size: CGSize(width: self.view.bounds.width - 40, height: 300), animated: true) {
-                //
-            }
-            */
             if UIDevice.current.userInterfaceIdiom == .pad, self.modalPresentationStyle == .pageSheet {
                 self.popupContentView.additionalFloatingBottomInset = 8.0
             }
@@ -138,6 +133,6 @@ class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
     }
     
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
-        return false
+        return true
     }
 }

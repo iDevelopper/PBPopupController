@@ -55,6 +55,7 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var albumArtImageView: UIImageView! {
         didSet {
             albumArtImageView.layer.cornerRadius = 10
+            albumArtImageView.layer.cornerCurve = .continuous
             albumArtImageView.layer.masksToBounds = true
         }
     }
@@ -69,6 +70,7 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var topModule: UIView! {
         didSet {
+            topModule.backgroundColor = nil
             if let containerVC = self.popupContainerViewController {
                 containerVC.popupContentView.popupTopModule = topModule
             }
@@ -105,8 +107,12 @@ class PopupContentViewController: UIViewController {
             songNameLabel.animationDelay = 2
             songNameLabel.speed = .rate(15)
             songNameLabel.textColor = UIColor.label
-            songNameLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            let fontSize: CGFloat = 17
+            let fontWeight: UIFont.Weight = .semibold
+            let textStyle: UIFont.TextStyle = .body
+            songNameLabel.font = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
             songNameLabel.adjustsFontForContentSizeCategory = true
+            songNameLabel.setContentHuggingPriority(.required, for: .vertical)
         }
     }
 
@@ -124,9 +130,12 @@ class PopupContentViewController: UIViewController {
             albumNameLabel.animationDelay = 2
             albumNameLabel.speed = .rate(20)
             albumNameLabel.textColor = UIColor.systemPink
-            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
-            albumNameLabel.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            let fontSize: CGFloat = 15
+            let fontWeight: UIFont.Weight = .medium
+            let textStyle: UIFont.TextStyle = .subheadline
+            albumNameLabel.font = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
             albumNameLabel.adjustsFontForContentSizeCategory = true
+            albumNameLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
         }
     }
     
@@ -176,9 +185,10 @@ class PopupContentViewController: UIViewController {
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
         // FIXME: iOS 17 beta bug (deck animation fails)
-        if #available(iOS 17.0, *) {
-            return super.preferredStatusBarStyle
-        }
+        //  TODO:
+        //if #available(iOS 17.0, *) {
+        //    return super.preferredStatusBarStyle
+        //}
         guard let containerVC = self.popupContainerViewController else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
         
@@ -201,8 +211,6 @@ class PopupContentViewController: UIViewController {
         }
 
         self.view.backgroundColor = UIColor.secondarySystemBackground
-        
-        self.setupImageViewForPlaying()
 
         self.accessibilityDateComponentsFormatter.unitsStyle = .spellOut
     }
@@ -239,10 +247,12 @@ class PopupContentViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
+        PBLog("viewWillLayoutSubviews")
         super.viewWillLayoutSubviews()
 
+        self.configureContentSizeCategory()
+
         // Let's add a vibrancy effect to the popup close button.
-        
         if self.visualEffectView != nil {
             return
         }
@@ -282,7 +292,18 @@ class PopupContentViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
+        PBLog("viewDidLayoutSubviews")
         super.viewDidLayoutSubviews()
+    }
+    
+    private func configureContentSizeCategory() {
+        guard let containerVC = self.popupContainerViewController else { return }
+        let presentationStyle = containerVC.popupContentView.popupPresentationStyle
+        let isLandscape = UIDevice.current.orientation.isLandscape
+        if #available(iOS 15.0, *) {
+            self.view.minimumContentSizeCategory = isLandscape ? .small : presentationStyle == .custom ? .small : .medium
+            self.view.maximumContentSizeCategory = isLandscape ? .small : presentationStyle == .custom ? .accessibilityMedium : .accessibilityLarge
+        }
     }
     
     deinit {
@@ -296,12 +317,11 @@ class PopupContentViewController: UIViewController {
     func setupImageViewForPlaying() {
         if self.isPlaying == true
         {
-            self.albumArtImageViewTopConstraint.constant -= 10
-            self.albumArtImageViewLeadingConstraint.constant -= 10
-            self.albumArtImageViewTrailingConstraint.constant -= 10
-            
-            self.bottomModuleTopConstraint.constant -= 10
-            
+            self.albumArtImageViewTopConstraint.constant -= 20
+            self.albumArtImageViewLeadingConstraint.constant -= 20
+            self.albumArtImageViewTrailingConstraint.constant -= 20
+            self.albumArtImageViewBottomConstraint.constant -= 20
+
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.5, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
             }) { (_ ) in
@@ -315,12 +335,11 @@ class PopupContentViewController: UIViewController {
         }
         else
         {
-            self.albumArtImageViewTopConstraint.constant += 10
-            self.albumArtImageViewLeadingConstraint.constant += 10
-            self.albumArtImageViewTrailingConstraint.constant += 10
-            
-            self.bottomModuleTopConstraint.constant += 10
-            
+            self.albumArtImageViewTopConstraint.constant += 20
+            self.albumArtImageViewLeadingConstraint.constant += 20
+            self.albumArtImageViewTrailingConstraint.constant += 20
+            self.albumArtImageViewBottomConstraint.constant += 20
+
             UIView.animate(withDuration: 0.8, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .curveEaseInOut, animations: {
                 self.view.layoutIfNeeded()
             }) { (_ ) in
@@ -462,5 +481,9 @@ class PopupContentViewController: UIViewController {
 extension PopupContentViewController: PBPopupControllerDelegate {
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
         return false
+    }
+    
+    func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
+        print("didOpen: \(popupContentViewController)")
     }
 }

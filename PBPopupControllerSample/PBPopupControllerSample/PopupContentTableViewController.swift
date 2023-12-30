@@ -14,9 +14,9 @@ class PopupContentTableViewController: UITableViewController {
     var images: [UIImage]!
     var titles: [String]!
     var subtitles: [String]!
-        
+    
     var indexOfCurrentSong: Int = 0
-
+    
     var isPlaying: Bool = false
     
     var albumArtImage: UIImage! {
@@ -60,7 +60,7 @@ class PopupContentTableViewController: UITableViewController {
         
         self.tableView.insetsContentViewsToSafeArea = true
         self.tableView.contentInsetAdjustmentBehavior = .never
-
+        
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 80.0
     }
@@ -95,9 +95,9 @@ class PopupContentTableViewController: UITableViewController {
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
         // FIXME: iOS 17 beta bug (deck animation fails)
-        if #available(iOS 17.0, *) {
-            return super.preferredStatusBarStyle
-        }
+        //if #available(iOS 17.0, *) {
+        //    return super.preferredStatusBarStyle
+        //}
         guard let containerVC = self.popupContainerViewController else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
         
@@ -172,7 +172,7 @@ class PopupContentTableViewController: UITableViewController {
             cell.albumArtImageView.image = self.images[indexPath.row]
             cell.songNameLabel.text = self.titles[indexPath.row]
             cell.albumNameLabel.text = self.subtitles[indexPath.row]
-
+            
             cell.songNameLabel.textColor = UIColor.label
             cell.albumNameLabel.textColor = UIColor.secondaryLabel
             
@@ -211,7 +211,7 @@ class PopupContentTableViewController: UITableViewController {
                 popupBar.image = self.images[indexPath.row]
                 popupBar.title = self.titles[indexPath.row]
                 popupBar.subtitle = self.subtitles[indexPath.row]
-
+                
                 DispatchQueue.main.async {
                     self.tableView.scrollToRow(at: NSIndexPath(item: 0, section: 0) as IndexPath, at: .top, animated: false)
                     self.albumArtImage = self.images[indexPath.row]
@@ -239,7 +239,7 @@ class PopupContentTableViewController: UITableViewController {
         self.isPlaying = !self.isPlaying
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
         cell.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
-
+        
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
         
@@ -263,7 +263,7 @@ class PopupContentTableViewController: UITableViewController {
         
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
-
+        
         popupBar.image = self.images[self.indexOfCurrentSong]
         popupBar.title = self.titles[self.indexOfCurrentSong]
         popupBar.subtitle = self.subtitles[self.indexOfCurrentSong]
@@ -282,14 +282,14 @@ class PopupContentTableViewController: UITableViewController {
         else {
             self.indexOfCurrentSong = 0
         }
-
+        
         guard let containerVC = self.popupContainerViewController,
               let popupBar = containerVC.popupBar else {return}
-
+        
         popupBar.image = self.images[self.indexOfCurrentSong]
         popupBar.title = self.titles[self.indexOfCurrentSong]
         popupBar.subtitle = self.subtitles[self.indexOfCurrentSong]
-
+        
         self.albumArtImage = self.images[self.indexOfCurrentSong]
         self.songTitle = self.titles[self.indexOfCurrentSong]
         self.albumTitle = self.subtitles[self.indexOfCurrentSong]
@@ -297,5 +297,26 @@ class PopupContentTableViewController: UITableViewController {
     
     @IBAction func moreAction(_ sender: Any) {
         PBLog("moreAction")
+    }
+    
+    @IBAction func timerAction(_ sender: Any?) {
+        PBLog("timerAction")
+        
+        let safeAreaInsetsBottom = self.view.safeAreaInsets.bottom
+        let viewController = DemoBottomSheetViewController()
+        self.popupController.delegate = self
+        self.popupContentView.wantsPopupDimmerView = false
+        self.popupContentView.additionalFloatingBottomInset = safeAreaInsetsBottom == 0 ? 8.0 : 0.0
+        self.presentPopup(withPopupContentViewController: viewController, animated: true)
+    }
+}
+
+extension PopupContentTableViewController: PBPopupControllerDelegate {
+    func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        return false
+    }
+    
+    func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
+        print("didOpen: \(popupContentViewController)")
     }
 }

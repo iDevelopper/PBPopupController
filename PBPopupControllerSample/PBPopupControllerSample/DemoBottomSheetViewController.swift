@@ -10,22 +10,69 @@ import UIKit
 
 class DemoBottomSheetViewController: UIViewController {
     var timerSwitch: UISwitch!
+    var contentHeight: CGFloat = 0.0
+    var withSubviews: Bool = true
+    
+    convenience init() {
+        self.init(withSubviews: true)
+    }
+    
+    init(withSubviews: Bool) {
+        self.withSubviews = withSubviews
+        super.init(nibName: nil, bundle: nil)
+    }
+        
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .systemBackground
-        
-        setupSubviews()
+        self.view.backgroundColor = .red
+
+        if withSubviews {
+            self.view.backgroundColor = .systemBackground
+            setupSubviews()
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let container = self.popupContainerViewController {
-            let contentHeight = self.timerSwitch.frame.maxY
-            container.popupContentView.popupContentSize = CGSize(width: container.view.safeAreaLayoutGuide.layoutFrame.width - 40, height: contentHeight + 8.0)
+        if let container = self.popupContainerViewController, let popupContentView = container.popupContentView {
+            
+            if let timerSwitch = self.timerSwitch {
+                self.contentHeight = timerSwitch.frame.maxY
+            }
+            if popupContentView.popupContentSize.width <= 0 {
+                popupContentView.popupContentSize = CGSize(width: self.view.bounds.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight : 200.0 + 8.0)
+            }
         }
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        if let container = self.popupContainerViewController, let popupContentView = container.popupContentView {
+            popupContentView.popupContentSize = CGSize(width: container.view.bounds.size.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight : 200.0 + 8.0)
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+    }
+    
+    private func layoutFrame() -> CGRect {
+        return self.view.window?.safeAreaLayoutGuide.layoutFrame ?? self.view.bounds
+    }
+    
+    private func safeAreaInsets() -> UIEdgeInsets {
+        return self.view.window?.safeAreaInsets ?? .zero
     }
     
     private func setupSubviews() {

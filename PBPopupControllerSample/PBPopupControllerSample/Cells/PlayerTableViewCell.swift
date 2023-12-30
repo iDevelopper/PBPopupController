@@ -13,6 +13,7 @@ class PlayerTableViewCell: UITableViewCell
     @IBOutlet weak var albumArtImageView: UIImageView! {
         didSet {
             albumArtImageView.layer.cornerRadius = 10
+            albumArtImageView.layer.cornerCurve = .continuous
             albumArtImageView.layer.masksToBounds = true
         }
     }
@@ -22,6 +23,12 @@ class PlayerTableViewCell: UITableViewCell
             songNameLabel.animationDelay = 2
             songNameLabel.speed = .rate(15)
             songNameLabel.textColor = UIColor.label
+            let fontSize: CGFloat = 17
+            let fontWeight: UIFont.Weight = .semibold
+            let textStyle: UIFont.TextStyle = .body
+            songNameLabel.font = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
+            songNameLabel.adjustsFontForContentSizeCategory = true
+            songNameLabel.setContentHuggingPriority(.required, for: .vertical)
         }
     }
     
@@ -31,6 +38,12 @@ class PlayerTableViewCell: UITableViewCell
             albumNameLabel.animationDelay = 2
             albumNameLabel.speed = .rate(20)
             albumNameLabel.textColor = UIColor.systemPink
+            let fontSize: CGFloat = 15
+            let fontWeight: UIFont.Weight = .medium
+            let textStyle: UIFont.TextStyle = .subheadline
+            albumNameLabel.font = UIFontMetrics(forTextStyle: textStyle).scaledFont(for: UIFont.systemFont(ofSize: fontSize, weight: fontWeight))
+            albumNameLabel.adjustsFontForContentSizeCategory = true
+            albumNameLabel.setContentHuggingPriority(.defaultLow, for: .vertical)
         }
     }
 
@@ -49,6 +62,14 @@ class PlayerTableViewCell: UITableViewCell
     @IBOutlet weak var nextButton: UIButton! {
         didSet {
             nextButton.tintColor = UIColor.label
+        }
+    }
+    
+    @IBOutlet weak var timerButton: UIButton! {
+        didSet {
+            let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            timerButton.setImage(UIImage(systemName: "timer", withConfiguration: config), for: .normal)
+            timerButton.tintColor = UIColor.systemPink
         }
     }
     

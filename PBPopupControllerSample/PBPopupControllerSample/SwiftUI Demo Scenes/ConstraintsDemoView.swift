@@ -59,7 +59,7 @@ struct SafeAreaDemoView : View {
 @available(iOS 14.0.0, *)
 extension View {
     func popupDemo(isPresented: Binding<Bool>, isHidden: Binding<Bool>? = nil) -> some View {
-        return self.popup(isPresented: isPresented, isHidden: isHidden, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
+        return self.popup(isPresented: isPresented, isHidden: isHidden, willPresent: { print("Will Present Bar") }, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, willOpen: { print("Will Open Popup") },  onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
             SafeAreaDemoView(offset: true)
                 .popupLabel(MarqueeLabel(), sublabel: MarqueeLabel())
             
@@ -84,6 +84,8 @@ extension View {
                     .font(.system(size: 20))
                 })
         }
+        .isFloating(true)
+        //.floatingBackgroundColor(.cyan)
         //.popupBarStyle(.compact)
         //.popupCloseButtonStyle(.round)
         //.popupPresentationStyle(.fullScreen)

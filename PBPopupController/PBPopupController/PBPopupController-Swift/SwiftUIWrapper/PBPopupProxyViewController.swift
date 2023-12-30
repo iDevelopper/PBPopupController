@@ -183,15 +183,18 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
         let popupContentHandler = state.popupContent != nil ? viewHandler(state) : viewControllerHandler(state)
         
         let handler : (Bool) -> Void = { animated in
+            self.target.popupBar.isFloating = self.currentPopupState.isFloating
             if self.target.popupBar.popupBarStyle != .custom {
                 self.target.popupBar.popupBarStyle = self.currentPopupState.popupBarStyle
             }
             self.target.popupBar.barStyle = self.currentPopupState.barStyle
             self.target.popupBar.backgroundStyle = self.currentPopupState.backgroundStyle
+            self.target.popupBar.backgroundEffect = self.currentPopupState.backgroundEffect
+            self.target.popupBar.floatingBackgroundEffect = self.currentPopupState.floatingBackgroundEffect
             self.target.popupBar.inheritsVisualStyleFromBottomBar = self.currentPopupState.inheritsVisualStyleFromBottomBar
             self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
             self.target.popupBar.backgroundColor = self.currentPopupState.backgroundColor
-            //self.target.popupBar.barTintColor = self.currentPopupState.barTintColor
+            self.target.popupBar.floatingBackgroundColor = self.currentPopupState.floatingBackgroundColor
             self.target.popupBar.tintColor = self.currentPopupState.tintColor
             self.target.popupBar.progressViewStyle = self.currentPopupState.progressViewStyle
             self.target.popupBar.borderViewStyle = self.currentPopupState.borderViewStyle
@@ -209,7 +212,6 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                 if let customController = self.target.popupBar.customPopupBarViewController as? PBPopupUICustomBarViewController {
                     rv = customController
                     rv.setAnyView(customBarView.popupBarCustomBarView)
-                    self.target.popupBar.backgroundEffect = self.currentPopupState.backgroundEffect
                 } else {
                     rv = PBPopupUICustomBarViewController(anyView: customBarView.popupBarCustomBarView)
                     self.target.popupBar.customPopupBarViewController = rv
@@ -272,24 +274,40 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     
     //MARK: PBPopupControllerDelegate
     
+    func popupController(_ popupController: PBPopupController, willPresent popupBar: PBPopupBar) {
+        currentPopupState?.willPresent?()
+    }
+
     func popupController(_ popupController: PBPopupController, didPresent popupBar: PBPopupBar) {
         currentPopupState?.isPresented = true
         
         currentPopupState?.onPresent?()
     }
     
+    func popupController(_ popupController: PBPopupController, willDismiss popupBar: PBPopupBar) {
+        currentPopupState?.willDismiss?()
+    }
+
     func popupController(_ popupController: PBPopupController, didDismiss popupBar: PBPopupBar) {
         currentPopupState?.isPresented = false
         
         currentPopupState?.onDismiss?()
     }
     
+    func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController) {
+        currentPopupState?.willOpen?()
+    }
+
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
         currentPopupState?.isOpen = true
         
         currentPopupState?.onOpen?()
     }
     
+    func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController) {
+        currentPopupState?.willClose?()
+    }
+
     func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
         currentPopupState?.isOpen = false
         

@@ -20,14 +20,16 @@ internal struct PBPopupState<PopupContent: View> {
     @Binding var isOpen: Bool
     @Binding var isHidden: Bool
     let closeButtonStyle: PBPopupCloseButtonStyle
+    let isFloating: Bool
     let popupBarStyle: PBPopupBarStyle
     var barStyle: UIBarStyle
     var backgroundStyle: UIBlurEffect.Style
     var backgroundEffect: UIBlurEffect?
+    var floatingBackgroundEffect: UIBlurEffect?
     let inheritsVisualStyleFromBottomBar: Bool
     let isTranslucent: Bool
     let backgroundColor: UIColor?
-    //let barTintColor: UIColor?
+    let floatingBackgroundColor: UIColor?
     let tintColor: UIColor?
     let progressViewStyle: PBPopupBarProgressViewStyle
     let borderViewStyle: PBPopupBarBorderViewStyle
@@ -43,8 +45,12 @@ internal struct PBPopupState<PopupContent: View> {
     let popupContent: (() -> PopupContent)?
     let popupContentViewController: UIViewController?
     let barCustomizer: ((PBPopupBar) -> Void)?
+    let willPresent: (() -> Void)?
     let onPresent: (() -> Void)?
+    let willDismiss: (() -> Void)?
     let onDismiss: (() -> Void)?
+    let willOpen: (() -> Void)?
     let onOpen: (() -> Void)?
+    let willClose: (() -> Void)?
     let onClose: (() -> Void)?
 }

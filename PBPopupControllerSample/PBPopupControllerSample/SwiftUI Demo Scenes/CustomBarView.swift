@@ -79,7 +79,6 @@ struct CustomBarView: View {
         .inheritsVisualStyleFromBottomBar(false)
         //.isTranslucent(false)
         //.backgroundColor(.white)
-        //.barTintColor(UIColor(.white))
         //.backgroundEffect(UIBlurEffect(style: .systemUltraThinMaterialDark))
         .shouldExtendCustomBarUnderSafeArea(true)
         .popupBarCustomView() {

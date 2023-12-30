@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+internal struct PBPopupBarIsFloatingKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
 internal struct PBPopupBarStyleKey: EnvironmentKey {
     static let defaultValue: PBPopupBarStyle = .default
 }
@@ -25,6 +29,10 @@ internal struct PBPopupBarBackgroundEffectKey: EnvironmentKey {
     static let defaultValue: UIBlurEffect? = nil
 }
 
+internal struct PBPopupBarFloatingBackgroundEffectKey: EnvironmentKey {
+    static let defaultValue: UIBlurEffect? = nil
+}
+
 internal struct PBPopupBarInheritsVisualStyleFromBottomBarKey: EnvironmentKey {
     static let defaultValue: Bool = true
 }
@@ -37,11 +45,9 @@ internal struct PBPopupBarBackgroundColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
 }
 
-/*
-internal struct PBPopupBarBarTintColorKey: EnvironmentKey {
+internal struct PBPopupBarFloatingBackgroundColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
 }
-*/
 
 internal struct PBPopupBarTintColorKey: EnvironmentKey {
     static let defaultValue: UIColor? = nil
@@ -107,6 +113,11 @@ internal extension EnvironmentValues {
         set { self[PBPopupCloseButtonStyleKey.self] = newValue }
     }
     
+    var isFloating: Bool {
+        get { self[PBPopupBarIsFloatingKey.self] }
+        set { self[PBPopupBarIsFloatingKey.self] = newValue }
+    }
+
     var popupBarStyle: PBPopupBarStyle {
         get { self[PBPopupBarStyleKey.self] }
         set { self[PBPopupBarStyleKey.self] = newValue }
@@ -127,6 +138,11 @@ internal extension EnvironmentValues {
         set { self[PBPopupBarBackgroundEffectKey.self] = newValue }
     }
     
+    var floatingBackgroundEffect: UIBlurEffect? {
+        get { self[PBPopupBarFloatingBackgroundEffectKey.self] }
+        set { self[PBPopupBarFloatingBackgroundEffectKey.self] = newValue }
+    }
+    
     var inheritsVisualStyleFromBottomBar: Bool {
         get { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] }
         set { self[PBPopupBarInheritsVisualStyleFromBottomBarKey.self] = newValue }
@@ -142,12 +158,10 @@ internal extension EnvironmentValues {
         set { self[PBPopupBarBackgroundColorKey.self] = newValue }
     }
     
-    /*
-    var barTintColor: UIColor? {
-        get { self[PBPopupBarBarTintColorKey.self] }
-        set { self[PBPopupBarBarTintColorKey.self] = newValue }
+    var floatingBackgroundColor: UIColor? {
+        get { self[PBPopupBarFloatingBackgroundColorKey.self] }
+        set { self[PBPopupBarFloatingBackgroundColorKey.self] = newValue }
     }
-    */
     
     var tintColor: UIColor? {
         get { self[PBPopupBarTintColorKey.self] }

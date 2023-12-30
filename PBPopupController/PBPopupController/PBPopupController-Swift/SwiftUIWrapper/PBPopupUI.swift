@@ -104,8 +104,8 @@ public extension View {
     ///   - onClose: A closure executed when the popup closes. (optional)
     ///   - popupContent: A closure returning the content of the popup.
     /// - Returns: A popup bar view.
-    func popup<PopupContent>(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, onPresent: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, onClose: (() -> Void)? = nil, @ViewBuilder popupContent: @escaping () -> PopupContent) -> some View where PopupContent : View {
-        return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, popupContent: popupContent) {
+    func popup<PopupContent>(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, @ViewBuilder popupContent: @escaping () -> PopupContent) -> some View where PopupContent : View {
+        return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, willOpen: willOpen, onOpen: onOpen, willClose: willClose, onClose: onClose, popupContent: popupContent) {
             self
         }.edgesIgnoringSafeArea(.all)
     }
@@ -121,8 +121,8 @@ public extension View {
     ///   - onClose: A closure executed when the popup closes. (optional)
     ///   - popupContentController: A UIKit view controller to use as the popup content controller.
     /// - Returns: A popup bar view.
-    func popup(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, onPresent: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, onClose: (() -> Void)? = nil, popupContentController: UIViewController) -> some View {
-        return PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, popupContentController: popupContentController) {
+    func popup(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, popupContentController: UIViewController) -> some View {
+        return PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, willOpen: willOpen, onOpen: onOpen, willClose: willClose, onClose: onClose, popupContentController: popupContentController) {
             self
         }.edgesIgnoringSafeArea(.all)
     }
@@ -135,6 +135,11 @@ public extension View {
         return environment(\.popupCloseButtonStyle, style)
     }
     
+    /// A Boolean value that indicates whether the popup bar is floating.
+    func isFloating(_ floating: Bool) -> some View {
+        return environment(\.isFloating, floating)
+    }
+
     /// Sets the popup bar style (see PBPopupBarStyle).
     /// - Parameter style: The popup bar style.
     /// - SeeAlso: `PBPopupBarStyle`.
@@ -154,10 +159,16 @@ public extension View {
         return environment(\.backgroundStyle, style)
     }
     
-    /// Sets the custom popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
+    /// Sets the popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
     /// - Parameter effect: The popup bar's background effect.
     func backgroundEffect(_ effect: UIBlurEffect) -> some View {
         return environment(\.backgroundEffect, effect)
+    }
+    
+    /// Sets the floating popup bar's background effect. Use `nil` to use the most appropriate background style for the environment.
+    /// - Parameter effect: The popup bar's background effect.
+    func floatingBackgroundEffect(_ effect: UIBlurEffect) -> some View {
+        return environment(\.floatingBackgroundEffect, effect)
     }
     
     /// If `true`, the popup bar will automatically inherit its style from the bottom bar.
@@ -171,15 +182,15 @@ public extension View {
         return environment(\.isTranslucent, translucent)
     }
 
-    /// The background color of the popup bar toolbar.
+    /// The background color of the popup bar background view.
     func backgroundColor(_ color: UIColor) -> some View {
         return environment(\.backgroundColor, color)
     }
     
-    /// The bar tint color of the popup bar toolbar.
-    //func barTintColor(_ color: UIColor) -> some View {
-    //    return environment(\.barTintColor, color)
-    //}
+    /// The background color of the floating popup bar background view.
+    func floatingBackgroundColor(_ color: UIColor) -> some View {
+        return environment(\.floatingBackgroundColor, color)
+    }
     
     /// The tint color of the popup bar toolbar.
     func tintColor(_ color: UIColor) -> some View {

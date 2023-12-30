@@ -17,20 +17,26 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     private let passthroughContent: () -> Content
     private let popupContent: (() -> PopupContent)?
     private let popupContentController: UIViewController?
+    private let willPresent: (() -> Void)?
     private let onPresent: (() -> Void)?
+    private let willDismiss: (() -> Void)?
     private let onDismiss: (() -> Void)?
+    private let willOpen: (() -> Void)?
     private let onOpen: (() -> Void)?
+    private let willClose: (() -> Void)?
     private let onClose: (() -> Void)?
     
     @Environment(\.popupCloseButtonStyle) var popupCloseButtonStyle: PBPopupCloseButtonStyle
+    @Environment(\.isFloating) var isFloating: Bool
     @Environment(\.popupBarStyle) var popupBarStyle: PBPopupBarStyle
     @Environment(\.barStyle) var barStyle: UIBarStyle
     @Environment(\.backgroundStyle) var backgroundStyle: UIBlurEffect.Style
     @Environment(\.backgroundEffect) var backgroundEffect: UIBlurEffect?
+    @Environment(\.floatingBackgroundEffect) var floatingBackgroundEffect: UIBlurEffect?
     @Environment(\.inheritsVisualStyleFromBottomBar) var inheritsVisualStyleFromBottomBar: Bool
     @Environment(\.isTranslucent) var isTranslucent: Bool
     @Environment(\.backgroundColor) var backgroundColor: UIColor?
-    //@Environment(\.barTintColor) var barTintColor: UIColor?
+    @Environment(\.floatingBackgroundColor) var floatingBackgroundColor: UIColor?
     @Environment(\.tintColor) var tintColor: UIColor?
     @Environment(\.popupBarProgressViewStyle) var popupBarProgressViewStyle: PBPopupBarProgressViewStyle
     @Environment(\.popupBarBorderViewStyle) var popupBarBorderViewStyle: PBPopupBarBorderViewStyle
@@ -45,16 +51,20 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
     @Environment(\.popupBarCustomizer) var popupBarCustomizer: ((PBPopupBar) -> Void)?
 
-    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, willPresent: (() -> Void)?, onPresent: (() -> Void)?, willDismiss: (() -> Void)?, onDismiss: (() -> Void)?, willOpen: (() -> Void)?, onOpen: (() -> Void)?, willClose: (() -> Void)?, onClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen
         self._isHidden = isHidden
         self.passthroughContent = content
         self.popupContent = popupContent
         self.popupContentController = popupContentController
+        self.willPresent = willPresent
         self.onPresent = onPresent
+        self.willDismiss = willDismiss
         self.onDismiss = onDismiss
+        self.willOpen = willOpen
         self.onOpen = onOpen
+        self.willClose = willClose
         self.onClose = onClose
     }
     
@@ -70,14 +80,16 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  isOpen: _isOpen,
                                  isHidden: _isHidden,
                                  closeButtonStyle: popupCloseButtonStyle,
+                                 isFloating: isFloating,
                                  popupBarStyle: popupBarStyle,
                                  barStyle: barStyle,
                                  backgroundStyle: backgroundStyle,
                                  backgroundEffect: backgroundEffect,
+                                 floatingBackgroundEffect: floatingBackgroundEffect,
                                  inheritsVisualStyleFromBottomBar: inheritsVisualStyleFromBottomBar,
                                  isTranslucent: isTranslucent,
                                  backgroundColor: backgroundColor,
-                                 //barTintColor: barTintColor,
+                                 floatingBackgroundColor: floatingBackgroundColor,
                                  tintColor: tintColor,
                                  progressViewStyle: popupBarProgressViewStyle,
                                  borderViewStyle: popupBarBorderViewStyle,
@@ -93,9 +105,13 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  popupContent: popupContent,
                                  popupContentViewController: popupContentController,
                                  barCustomizer: popupBarCustomizer,
+                                 willPresent: willPresent,
                                  onPresent: onPresent,
+                                 willDismiss: willDismiss,
                                  onDismiss: onDismiss,
+                                 willOpen: willOpen,
                                  onOpen: onOpen,
+                                 willClose: willClose,
                                  onClose: onClose)
         
         uiViewController.handlePopupState(state)

@@ -217,9 +217,11 @@ import UIKit
     {
         super.layoutSubviews()
         
+        /*
         if let popupEffectView = self.popupEffectView {
             popupEffectView.frame = self.bounds
         }
+        */
     }
     
     // MARK: - private Methods
@@ -229,9 +231,16 @@ import UIKit
         let effect = UIBlurEffect(style: .light)
         
         self.popupEffectView = PBPopupEffectView(effect: effect)
+        self.popupEffectView.autoresizingMask = []
         self.popupEffectView.frame = self.bounds
 
         self.addSubview(self.popupEffectView)
+        
+        self.popupEffectView.translatesAutoresizingMaskIntoConstraints = false
+        self.popupEffectView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
+        self.popupEffectView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
+        self.popupEffectView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
+        self.popupEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
     }
     
     private func setupPopupCloseButtonTintColor()
@@ -317,6 +326,16 @@ import UIKit
                 */
             //}
         }
+    }
+    
+    internal func superPopup() -> PBPopupContentView?
+    {
+        return self.popupContentViewFor(self)
+    }
+    
+    internal func subPopup() -> PBPopupContentView?
+    {
+        return self.subviews(ofType: PBPopupContentView.self).first
     }
     
     private func _viewFor(_ view: UIView?, selfOrSuperviewKindOf aClass: AnyClass) -> UIView?

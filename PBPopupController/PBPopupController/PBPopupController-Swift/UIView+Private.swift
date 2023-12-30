@@ -30,6 +30,14 @@ internal extension UIView
         return nil
     }
     
+    func subviews<T:UIView>(ofType aType:T.Type) -> [T] {
+        var result = self.subviews.compactMap {$0 as? T}
+        for sub in self.subviews {
+            result.append(contentsOf: sub.subviews(ofType:aType))
+        }
+        return result
+    }
+    
     var _effectGroupingIdentifierIfAvailable: String? {
         var key: String? = nil
         //DispatchQueue.once {

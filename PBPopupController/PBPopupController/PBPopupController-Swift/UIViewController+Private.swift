@@ -820,6 +820,12 @@ public extension UIViewController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
+        originalMethod = class_getInstanceMethod(aClass, #selector(willTransition(to:with:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_willTransition(to:with:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
         originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_viewDidLayoutSubviews))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
@@ -860,9 +866,6 @@ public extension UIViewController
                 }
                 if popupContentView.popupPresentationStyle == .popup {
                     insets.top = 0
-                    if popupContentView.isFloating {
-                        insets.bottom = 0
-                    }
                 }
                 return insets
             }
@@ -913,10 +916,17 @@ public extension UIViewController
             self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
         }
         
+        /*
         if self.popupController.popupPresentationState == .closed {
             self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
             self.popupContentViewController.view.frame.origin = self.popupContentView.frame.origin
             self.popupContentViewController.view.frame.size = CGSize(width: self.popupContentView.frame.size.width, height: self.view.frame.height)
+        }
+        */
+        if let popupContentViewController = self.popupContentViewController {
+            popupContentViewController.view.setNeedsUpdateConstraints()
+            popupContentViewController.view.setNeedsLayout()
+            popupContentViewController.view.layoutIfNeeded()
         }
     }
     
@@ -924,7 +934,13 @@ public extension UIViewController
     {
         self.pb_viewWillTransition(to: size, with: coordinator)
 
+        if let popupContentViewController = self.popupContentViewController {
+            popupContentViewController.viewWillTransition(to: size, with: coordinator)
+        }
         if let rv = UIViewController.getAssociatedPopupBarFor(self) {
+            if let customPopupBarViewController = rv.customPopupBarViewController {
+                customPopupBarViewController.viewWillTransition(to: size, with: coordinator)
+            }
             coordinator.animate(alongsideTransition: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
                 self.viewWillTransitionToSize(size, with: coordinator)
             }, completion: {(_ context: UIViewControllerTransitionCoordinatorContext) -> Void in
@@ -933,6 +949,20 @@ public extension UIViewController
                 rv.setNeedsLayout()
                 rv.layoutIfNeeded()
             })
+        }
+    }
+    
+    @objc private func pb_willTransition(to traitCollection: UITraitCollection, with coordinator: UIViewControllerTransitionCoordinator)
+    {
+        self.pb_willTransition(to: traitCollection, with: coordinator)
+        
+        if let popupContentViewController = self.popupContentViewController {
+            popupContentViewController.willTransition(to: traitCollection, with: coordinator)
+        }
+        if let rv = UIViewController.getAssociatedPopupBarFor(self) {
+            if let customPopupBarViewController = rv.customPopupBarViewController {
+                customPopupBarViewController.willTransition(to: traitCollection, with: coordinator)
+            }
         }
     }
     

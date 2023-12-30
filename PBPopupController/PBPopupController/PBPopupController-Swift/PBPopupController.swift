@@ -469,6 +469,13 @@ extension PBPopupPresentationStyle
         }
     }
     
+    private func PBLogIfEnabled<T>( _ object: @escaping @autoclosure() -> T, error: Bool = false) {
+        let PBLogEnabled: Bool = false
+        if PBLogEnabled {
+            PBLog(object, error: error)
+        }
+    }
+    
     private var disableInteractiveTransitioning = false
     
     internal var popupPresentationController: PBPopupPresentationController?
@@ -504,6 +511,14 @@ extension PBPopupPresentationStyle
             if NSStringFromClass(type(of: inputView!).self) == "PBPopupController.PBPopupContentView" {
                 return inputView
             }
+        }
+        return nil
+    }
+    
+    internal func hasPopupFor(_ view: PBPopupContentView) -> PBPopupContentView? {
+        let contentViews: [PBPopupContentView] = view.subviews.compactMap{ $0 as? PBPopupContentView }
+        if contentViews.count > 0 {
+            return contentViews.first
         }
         return nil
     }
@@ -622,8 +637,8 @@ extension PBPopupPresentationStyle
     internal func pb_popupContentView() -> PBPopupContentView!
     {
         let rv = PBPopupContentView()
-        rv.autoresizingMask = [.flexibleWidth]
-        
+        rv.autoresizingMask = []
+
         rv.clipsToBounds = true
         
         rv.preservesSuperviewLayoutMargins = true // default: false
@@ -915,6 +930,13 @@ extension PBPopupPresentationStyle
                     }
                 }
             }
+            else {
+                // Close popup content.
+                if self.popupPresentationState == .open {
+                    self._generateRigidFeedbackWithIntensity(self.rigidFeedbackGeneratorIntensity)
+                    self.closePopupContent(animated: true)
+                }
+            }
         }
         else {
             // Close popup content.
@@ -1096,7 +1118,7 @@ extension PBPopupPresentationStyle
             frame.origin.y = self.wantsAdditionalSafeAreaInsetTop ? vc.view.bounds.minY : vc.view.bounds.height
         }
 
-        PBLog("\(frame)")
+        PBLogIfEnabled("\(frame)")
         return frame
     }
     
@@ -1131,7 +1153,7 @@ extension PBPopupPresentationStyle
             }
         }
 
-        PBLog("\(frame)")
+        PBLogIfEnabled("\(frame)")
         return frame
     }
 }

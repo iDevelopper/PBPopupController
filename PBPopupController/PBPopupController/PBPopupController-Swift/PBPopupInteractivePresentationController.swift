@@ -168,7 +168,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha
                 vc.popupContentView.popupCloseButton?.alpha = alpha
             }
-                        
+            
             if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
                 if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
                     let statusBarFrame = self.popupController.statusBarFrame(for: vc.view)
@@ -334,9 +334,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     private func popupContainerViewAvailableHeight() -> CGFloat
     {
-        let closedFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
-        let availableHeight = (self.isPresenting ? closedFrame.minY : closedFrame.maxY) - self.presentationController.popupContentViewFrameForPopupStateOpen().minY
-        return self.isPresenting ? -availableHeight : availableHeight
+        guard let vc = self.popupController.containerViewController else { return 0.0 }
+        
+        if vc.popupContentView.popupPresentationStyle == .popup {
+            let closedFrame = self.presentationController.popupContentViewFrameForPopupStateHidden(finish: true)
+            let availableHeight = closedFrame.minY - self.presentationController.popupContentViewFrameForPopupStateOpen().minY
+            return availableHeight
+        }
+        else {
+            let closedFrame = self.popupController.popupBarViewFrameForPopupStateClosed()
+            let availableHeight = (self.isPresenting ? closedFrame.minY : closedFrame.maxY) - self.presentationController.popupContentViewFrameForPopupStateOpen().minY
+            return self.isPresenting ? -availableHeight : availableHeight
+        }
     }
 }
 
@@ -363,6 +372,11 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
         if !self.isPresenting && !(vc?.popupContentViewController.view is UIScrollView) && gesture.direction != .down
         {
             return false
+        }
+        if let popupContentView = gestureRecognizer.view as? PBPopupContentView {
+            if popupContentView.subPopup() != nil {
+                return false
+            }
         }
         return true
     }

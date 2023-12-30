@@ -71,6 +71,13 @@ public extension UIViewController
         return rv
     }
     
+    internal static func getAssociatedPopupContentViewControllerFor(_ controller: PBPopupController) -> UIViewController? {
+        let rv = withUnsafePointer(to: &AssociatedKeys.popupController) {
+                objc_getAssociatedObject(controller, $0) as? UIViewController
+        }
+        return rv
+    }
+    
     /**
      A Boolean value indicating whether the popup bar displays the view layout with colors. The default value is `false`. If necessary, change the value to `true` before accessing or configuring the popup bar.
      */

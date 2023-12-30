@@ -322,6 +322,16 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     /**
+    The default corner radius for the floating popup bar.
+     */
+    @objc public var floatingRadius: CGFloat = 14
+    
+    /**
+    The default insets for the floating popup bar
+     */
+    @objc public var floatingInsets: UIEdgeInsets = UIEdgeInsets(top: 4.0, left: 12, bottom: 4.0, right: 12)
+
+    /**
      The popup bar style (see PBPopupBarStyle).
      */
     @objc public var popupBarStyle: PBPopupBarStyle = .default {
@@ -827,12 +837,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
     }
     
-    // The corner radius for the floating popup bar
-    internal var floatingRadius: CGFloat = 14
-    
-    // The default inset for the floating popup bar
-    internal var floatingInsets: UIEdgeInsets = UIEdgeInsets(top: 4.0, left: 12, bottom: 4.0, right: 12)
-
     internal var backgroundView: _PBPopupBackgroundEffectShadowView!
     internal var transitionBackgroundView: _PBPopupBackgroundEffectShadowView!
     
@@ -1596,6 +1600,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     }
     
     private func removeTitleLabels() {
+        /*
         if let titleLabel = self.titleLabel {
             titleLabel.removeFromSuperview()
             self.titlesView.removeArrangedSubview(titleLabel)
@@ -1611,6 +1616,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 
         self.askForLabels = true
         self.configureTitleLabels()
+        */
     }
 
     private func configureTitleLabels() {

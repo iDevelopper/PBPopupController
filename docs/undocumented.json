@@ -16,14 +16,14 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupCloseButton.swift",
-      "line": 267,
+      "line": 249,
       "symbol": "PBPopupCloseButton.setButtonStateStationary()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupCloseButton.swift",
-      "line": 275,
+      "line": 257,
       "symbol": "PBPopupCloseButton.setButtonStateTransitioning()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -51,21 +51,21 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 819,
+      "line": 882,
       "symbol": "PBPopupController.gestureRecognizer(_:shouldRequireFailureOf:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1081,
+      "line": 1163,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1227,
+      "line": 1319,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -93,49 +93,49 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 45,
+      "line": 43,
       "symbol": "PBPopupRoundShadowImageView.shadowColor",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 54,
+      "line": 52,
       "symbol": "PBPopupRoundShadowImageView.shadowOffset",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 60,
+      "line": 58,
       "symbol": "PBPopupRoundShadowImageView.shadowOpacity",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 66,
+      "line": 64,
       "symbol": "PBPopupRoundShadowImageView.shadowRadius",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 74,
+      "line": 72,
       "symbol": "PBPopupRoundShadowImageView.init(frame:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 81,
+      "line": 79,
       "symbol": "PBPopupRoundShadowImageView.init(image:cornerRadius:shadowColor:shadowOffset:shadowOpacity:shadowRadius:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupRoundShadowImageView.swift",
-      "line": 92,
+      "line": 90,
       "symbol": "PBPopupRoundShadowImageView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -205,14 +205,14 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 285,
+      "line": 296,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 289,
+      "line": 300,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -247,49 +247,49 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 46,
+      "line": 45,
       "symbol": "UIColor.PBRandomAdaptiveColor()",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 61,
+      "line": 59,
       "symbol": "UIColor.PBRandomAdaptiveInvertedColor()",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 77,
+      "line": 75,
       "symbol": "UIColor.init(hex:alpha:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 86,
+      "line": 84,
       "symbol": "UIColor.init(color:alpha:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 98,
+      "line": 96,
       "symbol": "UIColor.lighterColor(value:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIColor+Random.swift",
-      "line": 112,
+      "line": 110,
       "symbol": "UIColor.darkerColor(value:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIViewController+Support.swift",
-      "line": 723,
+      "line": 728,
       "symbol": "UIViewController.popupContainerViewController(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

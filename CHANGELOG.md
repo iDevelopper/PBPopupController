@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## 3.9.1
+
+Update Package.swift (iOS v13).
+SwiftUI updates.
+Added support for haptic feedback when interacting with the popup.
+Bug fixes and improvements.
+Update documentation.
+
 ## 3.9.0
 
 Updated example.

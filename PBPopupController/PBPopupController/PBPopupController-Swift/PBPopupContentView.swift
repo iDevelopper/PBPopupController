@@ -217,11 +217,9 @@ import UIKit
     {
         super.layoutSubviews()
         
-        /*
         if let popupEffectView = self.popupEffectView {
             popupEffectView.frame = self.bounds
         }
-        */
     }
     
     // MARK: - private Methods
@@ -235,12 +233,6 @@ import UIKit
         self.popupEffectView.frame = self.bounds
 
         self.addSubview(self.popupEffectView)
-        
-        self.popupEffectView.translatesAutoresizingMaskIntoConstraints = false
-        self.popupEffectView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0.0).isActive = true
-        self.popupEffectView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0.0).isActive = true
-        self.popupEffectView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0.0).isActive = true
-        self.popupEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0.0).isActive = true
     }
     
     private func setupPopupCloseButtonTintColor()

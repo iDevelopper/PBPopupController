@@ -816,7 +816,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
 
             self.shadowImageView.cornerRadius = popupBarIsFloating ? self.floatingRadius / 2 : 3.0
             self.highlightView.layer.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
-            
+            self.highlightView.layer.cornerCurve = .continuous
+
             self.contentView.preservesSuperviewLayoutMargins = !popupBarIsFloating
             self.toolbar.layer.cornerRadius = popupBarIsFloating ? self.floatingRadius : 0.0
             self.toolbar.layer.cornerCurve = .continuous
@@ -1247,7 +1248,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         super.traitCollectionDidChange(previousTraitCollection)
 
         let style = self.traitCollection.userInterfaceStyle
-        self.highlightView.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
+        self.highlightView?.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
     }
     
     // MARK: - Private Methods

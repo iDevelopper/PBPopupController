@@ -144,21 +144,6 @@ internal class PBPopupPresentationController: UIPresentationController
             for passthroughView in passthroughViews {
                 let point = convert(point, to: passthroughView)
                 if passthroughView.hitTest(point, with: event) != nil {
-                    // The popup content has a popup open. Close it before closing the main popup content.
-                    /*
-                    if let popupController =  UIViewController.getAssociatedPopupControllerFor(self.popupController.containerViewController.popupContentViewController) {
-                        if popupController.popupPresentationState == .open {
-                            popupController.closePopupContent(animated: false) {
-                                if self.popupController.containerViewController.popupContentView.popupCanDismissOnPassthroughViews {
-                                    if self.popupController.popupPresentationState == .open {
-                                        self.popupController.closePopupContent()
-                                    }
-                                }
-                            }
-                        }
-                        break
-                    }
-                    */
                     // Close the poup content.
                     if popupController.containerViewController.popupContentView.popupCanDismissOnPassthroughViews {
                         if popupController.popupPresentationState == .open {
@@ -233,6 +218,9 @@ internal class PBPopupPresentationController: UIPresentationController
         
         self.popupContentView.isHidden = true
         containerView.addSubview(self.popupContentView)
+        
+        self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true)
+        presentedView.frame = self.presentedViewFrame()
         
         if self.popupContentView.popupPresentationStyle != .popup {
             self.popupBarForPresentation = self.setupPopupBarForPresentation()
@@ -1202,7 +1190,6 @@ extension PBPopupPresentationController
     
     private func configureBottomModuleInStartPosition()
     {
-        // TODO:
         guard let popupBar = UIViewController.getAssociatedPopupBarFor(self.presentingVC) else { return }
         guard popupBar.popupBarStyle == .prominent else { return }
         guard let imageViewForPresentation = self.imageViewForPresentation else { return }

@@ -114,6 +114,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         if let containerVC = self.containerVC, let popupContentView = containerVC.popupContentView {
             let height = self.containerVC.view.bounds.height * (self.traitCollection.verticalSizeClass == .compact ? 0.90 : 0.75)
             popupContentView.popupContentSize = CGSize(width: -1, height: height)
+            //popupContentView.popupContentSize = CGSize(width: self.containerVC.view.bounds.width - 40, height: height)
         }
     }
     

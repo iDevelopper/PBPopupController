@@ -866,6 +866,9 @@ public extension UIViewController
                 }
                 if popupContentView.popupPresentationStyle == .popup {
                     insets.top = 0
+                    if popupContentView.isFloating {
+                        insets.bottom = 0
+                    }
                 }
                 return insets
             }

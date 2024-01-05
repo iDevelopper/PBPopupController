@@ -222,7 +222,7 @@ internal class PBPopupPresentationController: UIPresentationController
         self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true)
         presentedView.frame = self.presentedViewFrame()
         
-        if self.popupContentView.popupPresentationStyle != .popup {
+        if self.popupPresentationStyle != .popup {
             self.popupBarForPresentation = self.setupPopupBarForPresentation()
             if let popupBarForPresentation = self.popupBarForPresentation {
                 self.popupContentView.contentView.addSubview(popupBarForPresentation)
@@ -295,7 +295,7 @@ internal class PBPopupPresentationController: UIPresentationController
             return
         }
         
-        if self.popupContentView.popupPresentationStyle != .popup {
+        if self.popupPresentationStyle != .popup {
             self.popupBarForPresentation = self.setupPopupBarForPresentation()
             if let popupBarForPresentation = self.popupBarForPresentation {
                 self.popupContentView.contentView.addSubview(popupBarForPresentation)
@@ -351,7 +351,7 @@ internal class PBPopupPresentationController: UIPresentationController
             animator.stopAnimation(false)
 
             self.finishAnimator = UIViewPropertyAnimator(duration: animator.duration * Double(durationFactor), dampingRatio: 1, animations: {
-                if self.popupContentView.popupPresentationStyle == .popup {
+                if self.popupPresentationStyle == .popup {
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateHidden(finish: true, isInteractive: true)
                 }
                 else {
@@ -448,7 +448,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         var animator: UIViewPropertyAnimator!
         
         if self.isPresenting {
-            if self.popupContentView.popupPresentationStyle == .popup {
+            if self.popupPresentationStyle == .popup {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateHidden(finish: false)
             }
             else {
@@ -496,7 +496,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             self.animateBottomBarToHidden(true)
             
             let animations = {
-                if self.popupContentView.popupPresentationStyle == .popup {
+                if self.popupPresentationStyle == .popup {
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateHidden(finish: false, isInteractive: transitionContext.isInteractive)
                 }
                 else {
@@ -562,22 +562,28 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             backingView.removeFromSuperview()
             self.backingView = nil
         }
+        
         containerView.layoutIfNeeded()
+        self.presentingVC.view.layoutIfNeeded()
+        
         coordinator.animate(alongsideTransition: { (context) in
             containerView.frame = self.popupContainerViewFrame()
-            if self.popupContentView.popupPresentationStyle != .popup {
+            if self.popupPresentationStyle != .popup {
                 self.blackView?.frame = self.popupBlackViewFrame()
             }
             self.setupBackingView()
-            self.animateBackingViewToDeck(true, animated: false)
+            UIView.performWithoutAnimation {
+                self.animateBackingViewToDeck(true, animated: false)
 
-            self.presentingVC.popupContentViewController.viewWillTransition(to: size, with: coordinator)
-
-            self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
-            presentedView.frame = self.presentedViewFrame()
-            self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
-            self.popupContentView.updatePopupCloseButtonPosition()
+                self.presentingVC.popupContentViewController.viewWillTransition(to: size, with: coordinator)
+                
+                self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
+                presentedView.frame = self.presentedViewFrame()
+                self.setupCornerRadiusForPopupContentViewAnimated(true, open: true)
+                self.popupContentView.updatePopupCloseButtonPosition()
+            }
             containerView.layoutIfNeeded()
+            self.presentingVC.view.layoutIfNeeded()
         })
 
         super.viewWillTransition(to: size, with: coordinator)
@@ -800,11 +806,13 @@ extension PBPopupPresentationController
         let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
         
         var cornerRadius: CGFloat = 0.0
-//#if targetEnvironment(macCatalyst)
-//        cornerRadius = defaultCornerRadius
-//#else
-        cornerRadius = open ? 10.0 : defaultCornerRadius
-//#endif
+        cornerRadius = open ? (self.popupPresentationStyle != .fullScreen ? 10.0 : defaultCornerRadius) : defaultCornerRadius
+        if self.isPresenting {
+            cornerRadius = open ? (self.popupPresentationStyle != .fullScreen ? 10.0 : defaultCornerRadius / 2) : defaultCornerRadius / 2
+        }
+        else {
+            cornerRadius = open ? (self.popupPresentationStyle != .fullScreen ? 10.0 : defaultCornerRadius / 2) : defaultCornerRadius
+        }
         backingView.layer.cornerCurve = .continuous
         
         if !self.popupIsFloating {
@@ -823,13 +831,10 @@ extension PBPopupPresentationController
         let defaultCornerRadius = self.popupController.cornerRadiusForWindow()
         
         var cornerRadius: CGFloat = 0.0
-//#if targetEnvironment(macCatalyst)
-//        cornerRadius = defaultCornerRadius
-//#else
         
         let isFloating = self.popupIsFloating
         var floatingRadius: CGFloat = 0.0
-        if self.presentingVC.popupContentView.popupPresentationStyle == .popup {
+        if self.popupPresentationStyle == .popup {
             floatingRadius = 10.0
         }
         else {
@@ -857,14 +862,13 @@ extension PBPopupPresentationController
         self.popupContentView.layer.cornerCurve = .continuous
         
 #if !targetEnvironment(macCatalyst)
-        if self.popupContentView.popupPresentationStyle != .popup {
+        if self.popupPresentationStyle != .popup {
             if let dropShadowView = self.popupController.dropShadowViewFor(self.presentingVC.view) {
                 cornerRadius = open ? dropShadowView.layer.cornerRadius : isFloating ? floatingRadius : 0.0
                 self.popupContentView.layer.cornerCurve = dropShadowView.layer.cornerCurve
             }
         }
 #endif
-//#endif
         self.popupContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
 
         /// splitViewController master or detail
@@ -945,7 +949,7 @@ extension PBPopupPresentationController
             if let nc = self.presentingVC.navigationController {
                 snapshotView = nc.view
             }
-            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: self.isPresenting ? false : true, withCapInsets: .zero)
+            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: true, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
             if !isFloating {
@@ -987,10 +991,12 @@ extension PBPopupPresentationController
                     dropShadowView.superview?.transform = CGAffineTransform(a: scaledXY, b: 0.0, c: 0.0, d: scaledXY, tx: 1.0, ty: -translatedY)
                 }
                 else {
-                    self.backingView.transform = .identity
-                    let translatedY = self.statusBarFrame.height - (self.statusBarFrame.height > 0 ? (self.backingView.bounds.height * (1 - scaledXY) / 2) : 0.0)
-                    self.backingView.transform = CGAffineTransform(a: scaledXY, b: 0.0, c: 0.0, d: scaledXY, tx: 1.0, ty: translatedY)
-                    self.setupCornerRadiusForBackingViewAnimated(animated, open: true)
+                    if let backingView = self.backingView {
+                        backingView.transform = .identity
+                        let translatedY = self.statusBarFrame.height - (self.statusBarFrame.height > 0 ? (backingView.bounds.height * (1 - scaledXY) / 2) : 0.0)
+                        backingView.transform = CGAffineTransform(a: scaledXY, b: 0.0, c: 0.0, d: scaledXY, tx: 1.0, ty: translatedY)
+                        self.setupCornerRadiusForBackingViewAnimated(animated, open: true)
+                    }
                 }
             }
         }

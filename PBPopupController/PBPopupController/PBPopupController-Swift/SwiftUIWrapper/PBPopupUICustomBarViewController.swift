@@ -16,7 +16,8 @@ internal class PBPopupUICustomBarViewController : UIViewController {
         hostingChild.rootView = anyView
         
         hostingChild.view.layoutIfNeeded()
-        self.preferredContentSize = hostingChild.sizeThatFits(in: CGSize.zero)
+        
+        self.updatePreferredContentSize()
     }
     
     required init(anyView: AnyView) {
@@ -34,7 +35,8 @@ internal class PBPopupUICustomBarViewController : UIViewController {
         hostingChild.didMove(toParent: self)
         
         hostingChild.view.layoutIfNeeded()
-        self.preferredContentSize = hostingChild.sizeThatFits(in: CGSize.zero)
+
+        self.updatePreferredContentSize()
     }
     
     required init?(coder: NSCoder) {
@@ -50,6 +52,12 @@ internal class PBPopupUICustomBarViewController : UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        self.preferredContentSize = hostingChild.sizeThatFits(in: CGSize.zero)
+        self.updatePreferredContentSize()
+    }
+    
+    fileprivate func updatePreferredContentSize() {
+        var size = CGSize.zero
+        size.width = hostingChild.view.frame.size.width
+        self.preferredContentSize = hostingChild.sizeThatFits(in: size)
     }
 }

@@ -146,6 +146,18 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                         }
                     }
                 }
+                .onPreferenceChange(PBPopupBackgroundImagePreferenceKey.self) { [weak self] imageData in
+                    if let imageData = imageData {
+                        self?.target.popupBar.backgroundImage = imageData.image
+                        self?.target.popupBar.backgroundImageContentMode = imageData.contentMode
+                    }
+                }
+                .onPreferenceChange(PBPopupFloatingBackgroundImagePreferenceKey.self) { [weak self] imageData in
+                    if let imageData = imageData {
+                        self?.target.popupBar.floatingBackgroundImage = imageData.image
+                        self?.target.popupBar.floatingBackgroundImageContentMode = imageData.contentMode
+                    }
+                }
                 .onPreferenceChange(PBPopupProgressPreferenceKey.self) { [weak self] progress in
                     self?.target.popupBar.progress = progress ?? 0.0
                 }
@@ -190,7 +202,12 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             self.target.popupBar.barStyle = self.currentPopupState.barStyle
             self.target.popupBar.backgroundStyle = self.currentPopupState.backgroundStyle
             self.target.popupBar.backgroundEffect = self.currentPopupState.backgroundEffect
-            self.target.popupBar.floatingBackgroundEffect = self.currentPopupState.floatingBackgroundEffect
+            //if let backgroundEffect = self.currentPopupState.backgroundEffect {
+            //    self.target.popupBar.backgroundEffect = backgroundEffect
+            //}
+            if let floatingBackgroundEffect = self.currentPopupState.floatingBackgroundEffect {
+                self.target.popupBar.floatingBackgroundEffect = floatingBackgroundEffect
+            }
             self.target.popupBar.inheritsVisualStyleFromBottomBar = self.currentPopupState.inheritsVisualStyleFromBottomBar
             self.target.popupBar.isTranslucent = self.currentPopupState.isTranslucent
             self.target.popupBar.backgroundColor = self.currentPopupState.backgroundColor

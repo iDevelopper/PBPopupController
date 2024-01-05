@@ -32,6 +32,12 @@ internal struct PBPopupRoundShadowImageData : Equatable {
 }
 
 @available(iOS 14.0, *)
+internal struct PBPopupBackgroundImageData : Equatable {
+    let image: UIImage
+    let contentMode: UIView.ContentMode
+}
+
+@available(iOS 14.0, *)
 internal struct PBPopupAnyViewWrapper : Equatable {
     let anyView: AnyView
     
@@ -58,6 +64,16 @@ internal struct PBPopupRoundShadowImagePreferenceKey: PBPopupNullablePreferenceK
 @available(iOS 14.0, *)
 internal struct PBPopupImagePreferenceKey: PBPopupNullablePreferenceKey {
     typealias Value = Image?
+}
+
+@available(iOS 14.0, *)
+internal struct PBPopupBackgroundImagePreferenceKey: PBPopupNullablePreferenceKey {
+    typealias Value = PBPopupBackgroundImageData?
+}
+
+@available(iOS 14.0, *)
+internal struct PBPopupFloatingBackgroundImagePreferenceKey: PBPopupNullablePreferenceKey {
+    typealias Value = PBPopupBackgroundImageData?
 }
 
 @available(iOS 14.0, *)

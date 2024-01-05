@@ -67,6 +67,9 @@ extension View {
             
                 .popupImage(Image("Cover23").resizable())
             
+                //.popupBackgroundImage(UIImage(named: "Cover21")!, contentMode: .scaleToFill)
+                //.popupFloatingBackgroundImage(UIImage(named: "Cover22")!, contentMode: .redraw)
+
                 .popupBarItems(trailing: {
                     HStack(spacing: 20) {
                         Button(action: {

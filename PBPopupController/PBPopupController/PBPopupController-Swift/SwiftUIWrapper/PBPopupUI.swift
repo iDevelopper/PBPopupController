@@ -327,6 +327,20 @@ public extension View {
         return self.preference(key: PBPopupImagePreferenceKey.self, value: image)
     }
     
+    /// Configures the view's popup bar background image.
+    /// - Parameter image: The image to use.
+    /// - Parameter contentMode: The content mode to use when rendering the `backgroundImage`.
+    func popupBackgroundImage(_ image: UIImage, contentMode: UIView.ContentMode) -> some View {
+        return self.preference(key: PBPopupBackgroundImagePreferenceKey.self, value: PBPopupBackgroundImageData(image: image, contentMode: contentMode))
+    }
+    
+    /// Configures the view's popup bar floating background image.
+    /// - Parameter image: The image to use.
+    /// - Parameter contentMode: The content mode to use when rendering the `backgroundImage`.
+    func popupFloatingBackgroundImage(_ image: UIImage, contentMode: UIView.ContentMode) -> some View {
+        return self.preference(key: PBPopupFloatingBackgroundImagePreferenceKey.self, value: PBPopupBackgroundImageData(image: image, contentMode: contentMode))
+    }
+    
     /// Configures the view's popup bar progress.
     /// The progress is represented by a floating-point value between 0.0 and 1.0, inclusive, where 1.0 indicates the completion of the task. The default value is 0.0. Values less than 0.0 and greater than 1.0 are pinned to those limits.
     /// - Parameter progress: The popup bar progress.

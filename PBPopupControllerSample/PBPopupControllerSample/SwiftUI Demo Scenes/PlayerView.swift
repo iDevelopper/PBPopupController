@@ -140,8 +140,11 @@ struct PlayerView: View {
             HStack(spacing: 20) {
                 Button(action: {
                     print("Play")
+                    isPlaying.toggle()
+                    shadowOpacity = isPlaying ? 0.8 : 0.0
                 }) {
-                    Image(systemName: "play.fill")
+                    //Image(systemName: "play.fill")
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                 }
                 
                 Button(action: {

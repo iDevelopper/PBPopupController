@@ -40,7 +40,7 @@ struct EnlargingButton: View {
 struct CustomBarView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    static private let center = CLLocationCoordinate2D(latitude: 40.6892, longitude: -74.0445)
+    static private let center = CLLocationCoordinate2D(latitude: 48.8534, longitude: 2.3488)
     static private let defaultRegion = MKCoordinateRegion(center: CustomBarView.center, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
     
     static private let zoomedRegion = MKCoordinateRegion(center: CustomBarView.center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
@@ -79,7 +79,7 @@ struct CustomBarView: View {
         .inheritsVisualStyleFromBottomBar(false)
         //.isTranslucent(false)
         //.backgroundColor(.white)
-        //.backgroundEffect(UIBlurEffect(style: .systemUltraThinMaterialDark))
+        .backgroundEffect(UIBlurEffect(style: .systemThinMaterial))
         .shouldExtendCustomBarUnderSafeArea(true)
         .popupBarCustomView() {
             ZStack(alignment: .trailing) {

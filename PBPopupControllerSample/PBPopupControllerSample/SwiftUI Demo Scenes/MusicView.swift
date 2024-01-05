@@ -142,6 +142,7 @@ struct MusicView: View {
                 PlayerView(song: currentSong)
 			}
 		}
+        .isFloating(true)
 		//.popupBarStyle(.compact)
 		.popupBarProgressViewStyle(.top)
         //.popupPresentationStyle(.fullScreen)

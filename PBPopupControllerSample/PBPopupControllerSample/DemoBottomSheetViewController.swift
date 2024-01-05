@@ -46,7 +46,7 @@ class DemoBottomSheetViewController: UIViewController {
                 self.contentHeight = timerSwitch.frame.maxY
             }
             if popupContentView.popupContentSize.width <= 0 {
-                popupContentView.popupContentSize = CGSize(width: self.view.bounds.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight : 200.0 + 8.0)
+                popupContentView.popupContentSize = CGSize(width: self.view.bounds.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight + 8.0 : 200.0)
             }
         }
     }
@@ -55,7 +55,7 @@ class DemoBottomSheetViewController: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
 
         if let container = self.popupContainerViewController, let popupContentView = container.popupContentView {
-            popupContentView.popupContentSize = CGSize(width: container.view.bounds.size.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight : 200.0 + 8.0)
+            popupContentView.popupContentSize = CGSize(width: container.view.bounds.size.width - 40 - safeAreaInsets().left * 2, height: contentHeight > 0 ? contentHeight + 8.0 : 200.0)
         }
     }
     

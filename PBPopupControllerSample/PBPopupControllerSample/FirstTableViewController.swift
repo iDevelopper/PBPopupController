@@ -968,7 +968,7 @@ extension FirstTableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
-
+        
         if indexPath.section == 3 {
             self.updatePopupBar(forRowAt: indexPath.row)
             if self.popupBarStyle == .custom {
@@ -982,6 +982,24 @@ extension FirstTableViewController {
         self.containerVC.popupBar.image = images[index]
         self.containerVC.popupBar.title = titles[index]
         self.containerVC.popupBar.subtitle = subtitles[index]
+        self.configureAccessibility()
+    }
+    
+    private func configureAccessibility() {
+        guard let containerVC = self.containerVC,
+              let popupBar = containerVC.popupBar else {return}
+        
+        var accessibility = String()
+        accessibility = NSLocalizedString("Popup bar", comment: "") + "\n"
+        if let title = popupBar.title {
+            accessibility += title + "\n"
+        }
+        if let subtitle = popupBar.subtitle {
+            accessibility += subtitle
+        }
+        popupBar.accessibilityLabel = accessibility
+        
+        popupBar.accessibilityHint = NSLocalizedString("Double tap to open popup content", comment: "")
     }
 }
 

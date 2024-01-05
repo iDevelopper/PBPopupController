@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## 3.9.2
+
+Minor presentation and rotation tweaks.
+SwiftUI updates and improvements.
+
 ## 3.9.1
 
 Update Package.swift (iOS v13).

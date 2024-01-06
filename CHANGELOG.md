@@ -1,6 +1,10 @@
 # CHANGELOG
 
 
+## 3.9.3
+
+Remove the unnecessary safe area modifier.
+
 ## 3.9.2
 
 Minor presentation and rotation tweaks.

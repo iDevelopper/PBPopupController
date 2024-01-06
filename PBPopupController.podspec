@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
     s.name         = "PBPopupController"
-    s.version      = "3.9.2"
+    s.version      = "3.9.3"
     s.summary      = "A framework for presenting bars and view controllers as popup, much like the look and feel of Apple Music App."
     # s.readme       = 'https://raw.githubusercontent.com/iDevelopper/PBPopupController/#{s.version.to_s}/README.md'
     # s.changelog    = 'https://raw.githubusercontent.com/iDevelopper/PBPopupController/#{s.version.to_s}/CHANGELOG.md'

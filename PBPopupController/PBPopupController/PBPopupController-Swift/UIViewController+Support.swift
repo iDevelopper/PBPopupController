@@ -10,24 +10,6 @@ import Foundation
 import UIKit
 import ObjectiveC
 
-// TODO:
-/*
-//_setContentOverlayInsets:
-private let sCoOvBase64 = "X3NldENvbnRlbnRPdmVybGF5SW5zZXRzOg=="
-//_updateContentOverlayInsetsFromParentIfNecessary
-private let uCOIFPINBase64 = "X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRnJvbVBhcmVudElmTmVjZXNzYXJ5"
-//_hideBarWithTransition:isExplicit:
-private let hBWTiEBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
-//_showBarWithTransition:isExplicit:
-private let sBWTiEBase64 = "X3Nob3dCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
-//_setToolbarHidden:edge:duration:
-private let sTHedBase64 = "X3NldFRvb2xiYXJIaWRkZW46ZWRnZTpkdXJhdGlvbjo="
-//hideBarWithTransition:
-private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
-//showBarWithTransition:
-private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
-*/
-
 public extension UIViewController
 {
     internal struct AssociatedKeys {

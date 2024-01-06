@@ -11,7 +11,9 @@ import UIKit
 import ObjectiveC
 
 //_updateContentOverlayInsetsFromParentIfNecessary
-private let uCOIFPINBase64 = "X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRnJvbVBhcmVudElmTmVjZXNzYXJ5"
+//private let uCOIFPINBase64 = "X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRnJvbVBhcmVudElmTmVjZXNzYXJ5"
+//_viewSafeAreaInsetsFromScene
+//private let vSAIFSBase64 = "X3ZpZXdTYWZlQXJlYUluc2V0c0Zyb21TY2VuZQ=="
 //_hideBarWithTransition:isExplicit:
 private let hBWTiEBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
 //_hideBarWithTransition:isExplicit:duration:
@@ -26,8 +28,6 @@ private let sTHedBase64 = "X3NldFRvb2xiYXJIaWRkZW46ZWRnZTpkdXJhdGlvbjo="
 private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
 //showBarWithTransition:
 private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
-//_viewSafeAreaInsetsFromScene
-private let vSAIFSBase64 = "X3ZpZXdTYWZlQXJlYUluc2V0c0Zyb21TY2VuZQ=="
 
 public extension UITabBarController
 {
@@ -781,7 +781,8 @@ public extension UIViewController
         var originalMethod: Method!
         var swizzledMethod: Method!
         
-#if !targetEnvironment(macCatalyst)
+//#if !targetEnvironment(macCatalyst)
+        /*
         //_updateContentOverlayInsetsFromParentIfNecessary
         var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
         var selector = NSSelectorFromString(selName)
@@ -790,6 +791,8 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
+        */
+        /*
         //_viewSafeAreaInsetsFromScene
         selName = _PBPopupDecodeBase64String(base64String: vSAIFSBase64)!
         selector = NSSelectorFromString(selName)
@@ -798,7 +801,9 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-#else
+        */
+//#else
+        /*
         var selName = _PBPopupDecodeBase64String(base64String: uCOIFPINBase64)!
         var selector = NSSelectorFromString(selName)
         originalMethod = class_getInstanceMethod(aClass, selector)
@@ -806,7 +811,8 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-#endif
+        */
+//#endif
         
         originalMethod = class_getInstanceMethod(aClass, #selector(addChild(_:)))
         swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_addChild(_ :)))
@@ -841,26 +847,21 @@ public extension UIViewController
         _ = self.swizzleImplementation
     }
     
+    /*
     //_updateContentOverlayInsetsFromParentIfNecessary
     @objc private func _uCOIFPIN()
     {
         self._uCOIFPIN()
     }
+    */
     
+    /*
     //_viewSafeAreaInsetsFromScene
     @objc private func _vSAIFS() -> UIEdgeInsets
     {
         /// Find the popup content view safe area insets
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
             if var insets = popupContentView.superview?.safeAreaInsets {
-                /*
-                let containerInsets = vc.view.safeAreaInsets
-                if let svc = vc.splitViewController, containerInsets.left > 0 {
-                    if UIDevice.current.userInterfaceIdiom == .phone || (UIDevice.current.userInterfaceIdiom == .pad && vc.popupController.dropShadowViewFor(svc.view) == nil) {
-                        //insets.left = containerInsets.left
-                    }
-                }
-                */
                 if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
                     insets.top = 0
                 }
@@ -876,6 +877,7 @@ public extension UIViewController
         let insets = self._vSAIFS()
         return insets
     }
+    */
     
     internal func pb_popupController() -> PBPopupController!
     {
@@ -919,13 +921,6 @@ public extension UIViewController
             self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
         }
         
-        /*
-        if self.popupController.popupPresentationState == .closed {
-            self.popupContentView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-            self.popupContentViewController.view.frame.origin = self.popupContentView.frame.origin
-            self.popupContentViewController.view.frame.size = CGSize(width: self.popupContentView.frame.size.width, height: self.view.frame.height)
-        }
-        */
         if let popupContentViewController = self.popupContentViewController {
             popupContentViewController.view.setNeedsUpdateConstraints()
             popupContentViewController.view.setNeedsLayout()

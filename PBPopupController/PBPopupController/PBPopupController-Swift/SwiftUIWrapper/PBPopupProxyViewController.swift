@@ -313,6 +313,6 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     }
     
     func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
-        return currentPopupState?.checkPopupControllerPanGestureShouldBegin?() ?? true;
+        return currentPopupState?.checkPopupControllerPanGestureShouldBegin?(popupController, state) ?? true;
     }
 }

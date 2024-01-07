@@ -51,5 +51,5 @@ internal struct PBPopupState<PopupContent: View> {
     let onDismiss: (() -> Void)?
     let onOpen: (() -> Void)?
     let onClose: (() -> Void)?
-    let checkPopupControllerPanGestureShouldBegin: (() -> Bool)?
+    let checkPopupControllerPanGestureShouldBegin: ((PBPopupController, PBPopupPresentationState) -> Bool)?
 }

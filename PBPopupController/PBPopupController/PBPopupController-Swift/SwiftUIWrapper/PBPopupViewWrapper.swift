@@ -25,7 +25,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     private let onDismiss: (() -> Void)?
     private let onOpen: (() -> Void)?
     private let onClose: (() -> Void)?
-    private let popupControllerPanGestureShouldBegin: (() -> Bool)?
+    private let popupControllerPanGestureShouldBegin: ((PBPopupController, PBPopupPresentationState) -> Bool)?
     
     @Environment(\.popupCloseButtonStyle) var popupCloseButtonStyle: PBPopupCloseButtonStyle
     @Environment(\.popupBarStyle) var popupBarStyle: PBPopupBarStyle
@@ -62,7 +62,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
         willDismiss: (() -> Void)?,
         willOpen: (() -> Void)?,
         willClose: (() -> Void)?,
-        popupControllerPanGestureShouldBegin: (() -> Bool)?,
+        popupControllerPanGestureShouldBegin: ((PBPopupController, PBPopupPresentationState) -> Bool)?,
         popupContent: (() -> PopupContent)? = nil,
         popupContentController: UIViewController? = nil,
         @ViewBuilder content: @escaping () -> Content) {

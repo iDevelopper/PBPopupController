@@ -25,6 +25,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     private let onDismiss: (() -> Void)?
     private let onOpen: (() -> Void)?
     private let onClose: (() -> Void)?
+    private let popupControllerPanGestureShouldBegin: (() -> Bool)?
     
     @Environment(\.popupCloseButtonStyle) var popupCloseButtonStyle: PBPopupCloseButtonStyle
     @Environment(\.popupBarStyle) var popupBarStyle: PBPopupBarStyle
@@ -49,7 +50,22 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
     @Environment(\.popupBarCustomBarView) var popupBarCustomBarView: PBPopupBarCustomView?
     @Environment(\.popupBarCustomizer) var popupBarCustomizer: ((PBPopupBar) -> Void)?
 
-    init(isPresented: Binding<Bool>, isOpen: Binding<Bool>, isHidden: Binding<Bool>, onPresent: (() -> Void)?, onDismiss: (() -> Void)?, onOpen: (() -> Void)?, onClose: (() -> Void)?, willPresent: (() -> Void)?, willDismiss: (() -> Void)?, willOpen: (() -> Void)?, willClose: (() -> Void)?, popupContent: (() -> PopupContent)? = nil, popupContentController: UIViewController? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        isPresented: Binding<Bool>,
+        isOpen: Binding<Bool>,
+        isHidden: Binding<Bool>,
+        onPresent: (() -> Void)?,
+        onDismiss: (() -> Void)?,
+        onOpen: (() -> Void)?,
+        onClose: (() -> Void)?,
+        willPresent: (() -> Void)?,
+        willDismiss: (() -> Void)?,
+        willOpen: (() -> Void)?,
+        willClose: (() -> Void)?,
+        popupControllerPanGestureShouldBegin: (() -> Bool)?,
+        popupContent: (() -> PopupContent)? = nil,
+        popupContentController: UIViewController? = nil,
+        @ViewBuilder content: @escaping () -> Content) {
         self._isPresented = isPresented
         self._isOpen = isOpen
         self._isHidden = isHidden
@@ -64,6 +80,7 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
         self.willDismiss = willDismiss
         self.willOpen = willOpen
         self.willClose = willClose
+        self.popupControllerPanGestureShouldBegin = popupControllerPanGestureShouldBegin
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<PBPopupViewWrapper>) -> PBPopupProxyViewController<Content, PopupContent> {
@@ -108,7 +125,8 @@ internal struct PBPopupViewWrapper<Content, PopupContent>: UIViewControllerRepre
                                  onPresent: onPresent,
                                  onDismiss: onDismiss,
                                  onOpen: onOpen,
-                                 onClose: onClose)
+                                 onClose: onClose, 
+                                 checkPopupControllerPanGestureShouldBegin: popupControllerPanGestureShouldBegin)
         
         uiViewController.handlePopupState(state)
     }

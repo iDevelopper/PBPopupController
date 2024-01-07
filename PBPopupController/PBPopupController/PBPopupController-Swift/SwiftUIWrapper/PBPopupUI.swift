@@ -105,7 +105,7 @@ public extension View {
     ///   - popupContent: A closure returning the content of the popup.
     /// - Returns: A popup bar view.
     func popup<PopupContent>(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, onPresent: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, onClose: (() -> Void)? = nil, willPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, @ViewBuilder popupContent: @escaping () -> PopupContent) -> some View where PopupContent : View {
-        return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, willPresent: willPresent, willDismiss: willDismiss, willOpen: willOpen, willClose: willClose, popupContent: popupContent) {
+        return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, willPresent: willPresent, willDismiss: willDismiss, willOpen: willOpen, willClose: willClose, popupControllerPanGestureShouldBegin: nil, popupContent: popupContent) {
             self
         }.edgesIgnoringSafeArea(.all)
     }
@@ -122,7 +122,7 @@ public extension View {
     ///   - popupContentController: A UIKit view controller to use as the popup content controller.
     /// - Returns: A popup bar view.
     func popup(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, onPresent: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, onClose: (() -> Void)? = nil, willPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, popupContentController: UIViewController) -> some View {
-        return PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, willPresent: willPresent, willDismiss: willDismiss, willOpen: willOpen, willClose: willClose, popupContentController: popupContentController) {
+        return PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), onPresent: onPresent, onDismiss: onDismiss, onOpen: onOpen, onClose: onClose, willPresent: willPresent, willDismiss: willDismiss, willOpen: willOpen, willClose: willClose, popupControllerPanGestureShouldBegin: nil, popupContentController: popupContentController) {
             self
         }.edgesIgnoringSafeArea(.all)
     }

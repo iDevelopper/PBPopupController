@@ -137,15 +137,25 @@ struct MusicView: View {
 		.accentColor(.pink)
         
         
-		.popup(isPresented: $isPopupBarPresented, isOpen: $isPopupOpen) {
-			if let currentSong = currentSong {
+        .popup(isPresented: $isPopupBarPresented,
+               isOpen: $isPopupOpen,
+               willOpen: { print("willOpen") },
+               onOpen: { print("onOpen") },
+               shouldClose: { return true }
+        )
+        {
+            if let currentSong = currentSong {
                 PlayerView(song: currentSong)
-			}
-		}
+            }
+        }
         .isFloating(true)
 		//.popupBarStyle(.compact)
 		.popupBarProgressViewStyle(.top)
         //.popupPresentationStyle(.fullScreen)
+        //.popupCloseButtonStyle(.none)
+        //.popupContentViewCustomizer { popupBContentView in
+        //    popupBContentView.popupEffectView.effect = nil
+        //}
 	}
 }
 

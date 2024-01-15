@@ -67,6 +67,10 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
         //readyForHandling = true
     }
     
+    deinit {
+        print("Deinit: \(self)")
+    }
+    
     fileprivate var target: UIViewController {
         //print("self.children: \(self.children)")
         return children.first ?? self
@@ -100,9 +104,11 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
         }
     }
     
+    /*
     fileprivate func cast<T>(value: Any, to type: T) -> PBPopupUIContentController<T> where T: View {
         return value as! PBPopupUIContentController<T>
     }
+    */
     
     func viewHandler(_ state: PBPopupState<PopupContent>) -> (() -> Void) {
         let view = {
@@ -171,12 +177,22 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                         self.createOrUpdateHostingControllerForAnyView(&self.trailingBarItemsController, view: anyView, barButtonItem: &self.trailingBarButtonItem, targetBarButtons: { popupBar.rightBarButtonItems = $0 }, leadSpacing: false, trailingSpacing: false)
                     }
                 }
+                .onPreferenceChange(PBPopupContentBackgroundPreferenceKey.self) { [weak self] view in
+                    if let self = self, let anyView = view?.anyView, let popupViewController = self.popupViewController as? PBPopupUIContentController {
+                        let hostingChild = UIHostingController(rootView: anyView)
+                        if let swiftuiView = hostingChild.view {
+                            popupViewController.swiftuiBackgroundView = swiftuiView
+                        }
+                    }
+                }
         }()
         return {
             if self.popupViewController == nil {
-                self.popupViewController = PBPopupUIContentController(rootView: view)
+                //self.popupViewController = PBPopupUIContentController(rootView: view)
+                self.popupViewController = PBPopupUIContentController(anyView: AnyView(view))
             } else {
-                self.cast(value: self.popupViewController!, to: view.self).rootView = view
+                //self.cast(value: self.popupViewController!, to: view.self).rootView = view
+                (self.popupViewController as! PBPopupUIContentController).setAnyView(AnyView(view))
             }
         }
     }
@@ -239,6 +255,7 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
             }
             
             self.currentPopupState.barCustomizer?(self.target.popupBar)
+            self.currentPopupState.contentViewCustomizer?(self.target.popupContentView)
 
             self.target.popupController.delegate = self
             
@@ -247,18 +264,23 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                 
                 let presentationState = self.target.popupController.popupPresentationState
                 if presentationState == .hidden || presentationState == .dismissed {
-                    self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: self.currentPopupState.isOpen, animated: animated, completion: nil)
+                    if let isOpen = self.currentPopupState.isOpen {
+                        self.target.presentPopupBar(withPopupContentViewController: self.popupViewController, openPopup: isOpen.wrappedValue, animated: animated, completion: nil)
+                    }
                 }
                 else {
-                    if self.currentPopupState.isOpen == true {
-                        self.target.openPopup(animated: true, completion: nil)
-                    }
-                    else {
-                        self.target.closePopup(animated: true, completion: nil)
-                    }
-                    if self.currentPopupState.isHidden == true {
-                        if !self.target.popupBarIsHidden {
-                            self.target.hidePopupBar(animated: true)
+                    if presentationState == .transitioning { return }
+                    if let isOpen = self.currentPopupState.isOpen {
+                        if isOpen.wrappedValue == true {
+                            self.target.openPopup(animated: true, completion: nil)
+                        }
+                        else {
+                            self.target.closePopup(animated: true, completion: nil)
+                        }
+                        if let isHidden = self.currentPopupState.isHidden, isHidden.wrappedValue == true {
+                            if !self.target.popupBarIsHidden {
+                                self.target.hidePopupBar(animated: true)
+                            }
                         }
                     }
                     else {
@@ -268,8 +290,10 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
                     }
                 }
             } else {
-                print("state: \(self.target.popupController.popupPresentationState.description)")
-                self.target.dismissPopupBar(animated: animated, completion: nil)
+                //print("state: \(self.target.popupController.popupPresentationState.description)")
+                if self.target.popupController.popupPresentationState != .transitioning {
+                    self.target.dismissPopupBar(animated: animated, completion: nil)
+                }
             }
         }
         if readyForHandling {
@@ -297,7 +321,6 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
 
     func popupController(_ popupController: PBPopupController, didPresent popupBar: PBPopupBar) {
         currentPopupState?.isPresented = true
-        
         currentPopupState?.onPresent?()
     }
     
@@ -307,8 +330,11 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
 
     func popupController(_ popupController: PBPopupController, didDismiss popupBar: PBPopupBar) {
         currentPopupState?.isPresented = false
-        
         currentPopupState?.onDismiss?()
+    }
+    
+    func popupController(_ popupController: PBPopupController, shouldOpen popupContentViewController: UIViewController) -> Bool {
+        currentPopupState?.shouldOpen?() ?? true
     }
     
     func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController) {
@@ -316,9 +342,12 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     }
 
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
-        currentPopupState?.isOpen = true
-        
+        currentPopupState?.isOpen?.wrappedValue = true
         currentPopupState?.onOpen?()
+    }
+    
+    func popupController(_ popupController: PBPopupController, shouldClose popupContentViewController: UIViewController) -> Bool {
+        currentPopupState?.shouldClose?() ?? true
     }
     
     func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController) {
@@ -326,8 +355,15 @@ internal class PBPopupProxyViewController<Content, PopupContent> : UIHostingCont
     }
 
     func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
-        currentPopupState?.isOpen = false
-        
+        currentPopupState?.isOpen?.wrappedValue = false
         currentPopupState?.onClose?()
+    }
+    
+    func popupControllerTapGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        currentPopupState?.tapGestureShouldBegin?(state) ?? true
+    }
+    
+    func popupControllerPanGestureShouldBegin(_ popupController: PBPopupController, state: PBPopupPresentationState) -> Bool {
+        currentPopupState?.panGestureShouldBegin?(state) ?? true
     }
 }

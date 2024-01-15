@@ -106,6 +106,10 @@ internal struct PBPopupBarCustomizer: EnvironmentKey {
     static let defaultValue: ((PBPopupBar) -> Void)? = nil
 }
 
+internal struct PBPopupContentViewCustomizer: EnvironmentKey {
+    static let defaultValue: ((PBPopupContentView) -> Void)? = nil
+}
+
 @available(iOS 14.0, *)
 internal extension EnvironmentValues {
     var popupCloseButtonStyle: PBPopupCloseButtonStyle {
@@ -226,5 +230,10 @@ internal extension EnvironmentValues {
     var popupBarCustomizer: ((PBPopupBar) -> Void)? {
         get { self[PBPopupBarCustomizer.self] }
         set { self[PBPopupBarCustomizer.self] = newValue }
+    }
+
+    var popupContentViewCustomizer: ((PBPopupContentView) -> Void)? {
+        get { self[PBPopupContentViewCustomizer.self] }
+        set { self[PBPopupContentViewCustomizer.self] = newValue }
     }
 }

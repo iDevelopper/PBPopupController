@@ -96,35 +96,58 @@ public extension View {
     /// Presents a popup bar with popup content.
     /// - Parameters:
     ///   - isPresented: A binding to whether the popup bar is presented.
-    ///   - isOpen: A binding to whether the popup is open. (optional)
-    ///   - isHidden: A binding to whether the popup is hidden. (optional)
-    ///   - onPresent: A closure executed when the popup bar is presented. (optional)
-    ///   - onDismiss: A closure executed when the popup bar is dismissed. (optional)
-    ///   - onOpen: A closure executed when the popup opens. (optional)
-    ///   - onClose: A closure executed when the popup closes. (optional)
+    ///   - isOpen: A binding to whether the popup is open (optional).
+    ///   - isHidden: A binding to whether the popup is hidden (optional).
+    ///   - onPresent: A closure executed when the popup bar is presented (optional).
+    ///   - onDismiss: A closure executed when the popup bar is dismissed (optional).
+    ///   - shouldOpen: A closure executed just before the popup content view is about to be open by typing or dragging the popup bar (optional).
+    ///   - willOpen: A closure executed just before the popup content view is about to be open (optional).
+    ///   - onOpen: A closure executed when the popup opens (optional).
+    ///   - shouldClose: A closure executed just before the popup content view is about to be closed by typing the popup close button or dragging the popup content view (optional).
+    ///   - willClose: A closure executed just before the popup content view is about to be closed (optional).
+    ///   - onClose: A closure executed when the popup closes (optional).
+    ///   - tapGestureShouldBegin: A closure that asks if a gesture recognizer should begin interpreting touches (optional).
+    ///   - panGestureShouldBegin: A closure that asks if a gesture recognizer should begin interpreting touches (optional).
     ///   - popupContent: A closure returning the content of the popup.
     /// - Returns: A popup bar view.
-    func popup<PopupContent>(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, @ViewBuilder popupContent: @escaping () -> PopupContent) -> some View where PopupContent : View {
-        return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, willOpen: willOpen, onOpen: onOpen, willClose: willClose, onClose: onClose, popupContent: popupContent) {
-            self
-        }.edgesIgnoringSafeArea(.all)
+    func popup<PopupContent>(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, shouldOpen: (() -> Bool)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, shouldClose: (() -> Bool)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, tapGestureShouldBegin: ((_ state: PBPopupPresentationState) -> Bool)? = nil, panGestureShouldBegin: ((_ state: PBPopupPresentationState) -> Bool)? = nil, @ViewBuilder popupContent: @escaping () -> PopupContent) -> some View where PopupContent : View {
+        //return PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, shouldOpen: shouldOpen, willOpen: willOpen, onOpen: onOpen, shouldClose: shouldClose, willClose: willClose, onClose: onClose, tapGestureShouldBegin: tapGestureShouldBegin, panGestureShouldBegin: panGestureShouldBegin, popupContent: popupContent) {
+        //    self
+        //}.edgesIgnoringSafeArea(.all)
+        return ZStack {
+            isPresented.wrappedValue ? EmptyView() : EmptyView()
+            isOpen?.wrappedValue ?? false  ? EmptyView() : EmptyView()
+            PBPopupViewWrapper<Self, PopupContent>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, shouldOpen: shouldOpen, willOpen: willOpen, onOpen: onOpen, shouldClose: shouldClose, willClose: willClose, onClose: onClose, tapGestureShouldBegin: tapGestureShouldBegin, panGestureShouldBegin: panGestureShouldBegin, popupContent: popupContent) {
+                self
+            }
+        }.ignoresSafeArea()
     }
     
     /// Presents a popup bar with UIKit popup content view controller.
     /// - Parameters:
     ///   - isPresented: A binding to whether the popup bar is presented.
-    ///   - isOpen: A binding to whether the popup is open. (optional)
-    ///   - isHidden: A binding to whether the popup is hidden. (optional)
-    ///   - onPresent: A closure executed when the popup bar is presented. (optional)
-    ///   - onDismiss: A closure executed when the popup bar is dismissed. (optional)
-    ///   - onOpen: A closure executed when the popup opens. (optional)
-    ///   - onClose: A closure executed when the popup closes. (optional)
+    ///   - isOpen: A binding to whether the popup is open (optional).
+    ///   - isHidden: A binding to whether the popup is hidden (optional).
+    ///   - onPresent: A closure executed when the popup bar is presented (optional).
+    ///   - onDismiss: A closure executed when the popup bar is dismissed (optional).
+    ///   - shouldOpen: A closure executed just before the popup content view is about to be open by typing or dragging the popup bar (optional).
+    ///   - willOpen: A closure executed just before the popup content view is about to be open (optional).
+    ///   - onOpen: A closure executed when the popup opens (optional).
+    ///   - shouldClose: A closure executed just before the popup content view is about to be closed by typing the popup close button or dragging the popup content view (optional).
+    ///   - willClose: A closure executed just before the popup content view is about to be closed (optional).
+    ///   - onClose: A closure executed when the popup closes (optional).
+    ///   - tapGestureShouldBegin: A closure that asks if a gesture recognizer should begin interpreting touches (optional).
+    ///   - panGestureShouldBegin: A closure that asks if a gesture recognizer should begin interpreting touches (optional).
     ///   - popupContentController: A UIKit view controller to use as the popup content controller.
     /// - Returns: A popup bar view.
-    func popup(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, popupContentController: UIViewController) -> some View {
-        return PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, willOpen: willOpen, onOpen: onOpen, willClose: willClose, onClose: onClose, popupContentController: popupContentController) {
-            self
-        }.edgesIgnoringSafeArea(.all)
+    func popup(isPresented: Binding<Bool>, isOpen: Binding<Bool>? = nil, isHidden: Binding<Bool>? = nil, willPresent: (() -> Void)? = nil, onPresent: (() -> Void)? = nil, willDismiss: (() -> Void)? = nil, onDismiss: (() -> Void)? = nil, shouldOpen: (() -> Bool)? = nil, willOpen: (() -> Void)? = nil, onOpen: (() -> Void)? = nil, shouldClose: (() -> Bool)? = nil, willClose: (() -> Void)? = nil, onClose: (() -> Void)? = nil, tapGestureShouldBegin: ((_ state: PBPopupPresentationState) -> Bool)? = nil, panGestureShouldBegin: ((_ state: PBPopupPresentationState) -> Bool)? = nil, popupContentController: UIViewController) -> some View {
+        return ZStack {
+            isPresented.wrappedValue ? EmptyView() : EmptyView()
+            isOpen?.wrappedValue ?? false  ? EmptyView() : EmptyView()
+            PBPopupViewWrapper<Self, EmptyView>(isPresented: isPresented, isOpen: isOpen ?? Binding.constant(false), isHidden: isHidden ?? Binding.constant(false), willPresent: willPresent, onPresent: onPresent, willDismiss: willDismiss, onDismiss: onDismiss, shouldOpen: shouldOpen, willOpen: willOpen, onOpen: onOpen, shouldClose: shouldClose, willClose: willClose, onClose: onClose, tapGestureShouldBegin: tapGestureShouldBegin, panGestureShouldBegin: panGestureShouldBegin, popupContentController: popupContentController) {
+                self
+            }
+        }.ignoresSafeArea()
     }
     
     /// Sets the popup close button style.
@@ -139,7 +162,7 @@ public extension View {
     func isFloating(_ floating: Bool) -> some View {
         return environment(\.isFloating, floating)
     }
-
+    
     /// Sets the popup bar style (see PBPopupBarStyle).
     /// - Parameter style: The popup bar style.
     /// - SeeAlso: `PBPopupBarStyle`.
@@ -181,7 +204,7 @@ public extension View {
     func isTranslucent(_ translucent: Bool) -> some View {
         return environment(\.isTranslucent, translucent)
     }
-
+    
     /// The background color of the popup bar background view.
     func backgroundColor(_ color: UIColor) -> some View {
         return environment(\.backgroundColor, color)
@@ -273,6 +296,17 @@ public extension View {
     func popupBarCustomizer(_ customizer: @escaping (_ popupBar: PBPopupBar) -> Void) -> some View {
         return environment(\.popupBarCustomizer, customizer)
     }
+    
+    /// Gives a low-level access to the `PBPopupContentView` object for customization, beyond what is exposed by LNPopupUI.
+    ///
+    ///    The popup content view customization closure is called after all other popup content view modifiers have been applied.
+    ///
+    /// - Parameters:
+    ///   - customizer: A customizing closure that is called to customize the popup bar object.
+    ///   - popupContentView: The popup content view to customize.
+    func popupContentViewCustomizer(_ customizer: @escaping (_ popupBContentView: PBPopupContentView) -> Void) -> some View {
+        return environment(\.popupContentViewCustomizer, customizer)
+    }
 }
 
 @available(iOS 14.0, *)
@@ -361,6 +395,14 @@ public extension View {
     func popupBarItems<TrailingContent>(@ViewBuilder trailing: () -> TrailingContent) -> some View where TrailingContent: View {
         return self
             .preference(key: PBPopupTrailingBarItemsPreferenceKey.self, value: PBPopupAnyViewWrapper(anyView: AnyView(trailing())))
+    }
+    
+    /// Sets the background to display on the popup content (the view to draw behind this view).
+    ///
+    /// - Parameter background: The background view of the popup content.
+    func popupContentBackground<BackgroundContent>(@ViewBuilder background: () -> BackgroundContent) -> some View where BackgroundContent: View {
+        return self
+            .preference(key: PBPopupContentBackgroundPreferenceKey.self, value: PBPopupAnyViewWrapper(anyView: AnyView(background())))
     }
 }
 

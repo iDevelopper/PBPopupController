@@ -92,6 +92,11 @@ internal struct PBPopupTrailingBarItemsPreferenceKey: PBPopupNullablePreferenceK
 }
 
 @available(iOS 14.0, *)
+internal struct PBPopupContentBackgroundPreferenceKey: PBPopupNullablePreferenceKey {
+    typealias Value = PBPopupAnyViewWrapper?
+}
+
+@available(iOS 14.0, *)
 internal protocol PBPopupNullablePreferenceKey : PreferenceKey {
     static var defaultValue: Value? {
         get

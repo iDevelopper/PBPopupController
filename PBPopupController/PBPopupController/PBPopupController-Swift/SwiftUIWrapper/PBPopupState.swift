@@ -17,8 +17,8 @@ internal struct PBPopupBarCustomView {
 @available(iOS 14.0, *)
 internal struct PBPopupState<PopupContent: View> {
     @Binding var isPresented: Bool
-    @Binding var isOpen: Bool
-    @Binding var isHidden: Bool
+    var isOpen: Binding<Bool>?
+    var isHidden: Binding<Bool>?
     let closeButtonStyle: PBPopupCloseButtonStyle
     let isFloating: Bool
     let popupBarStyle: PBPopupBarStyle
@@ -45,12 +45,17 @@ internal struct PBPopupState<PopupContent: View> {
     let popupContent: (() -> PopupContent)?
     let popupContentViewController: UIViewController?
     let barCustomizer: ((PBPopupBar) -> Void)?
+    let contentViewCustomizer: ((PBPopupContentView) -> Void)?
     let willPresent: (() -> Void)?
     let onPresent: (() -> Void)?
     let willDismiss: (() -> Void)?
     let onDismiss: (() -> Void)?
+    let shouldOpen: (() -> Bool)?
     let willOpen: (() -> Void)?
     let onOpen: (() -> Void)?
+    let shouldClose: (() -> Bool)?
     let willClose: (() -> Void)?
     let onClose: (() -> Void)?
+    let tapGestureShouldBegin: ((PBPopupPresentationState) -> Bool)?
+    let panGestureShouldBegin: ((PBPopupPresentationState) -> Bool)?
 }

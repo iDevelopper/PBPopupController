@@ -59,7 +59,26 @@ struct SafeAreaDemoView : View {
 @available(iOS 14.0.0, *)
 extension View {
     func popupDemo(isPresented: Binding<Bool>, isHidden: Binding<Bool>? = nil) -> some View {
-        return self.popup(isPresented: isPresented, isHidden: isHidden, willPresent: { print("Will Present Bar") }, onPresent: { print("Bar Presented") }, onDismiss: { print("Bar Dismissed") }, willOpen: { print("Will Open Popup") },  onOpen: { print("Popup Opened") }, onClose: { print("Popup Closed") }) {
+        return self.popup(
+            isPresented: isPresented,
+            isHidden: isHidden,
+            willPresent: { print("Will Present Bar") },
+            onPresent: { print("Bar Presented") },
+            onDismiss: { print("Bar Dismissed") },
+            shouldOpen: {
+                return true
+            },
+            willOpen: { print("Will Open Popup") },
+            onOpen: { print("Popup Opened") },
+            onClose: { print("Popup Closed") },
+            tapGestureShouldBegin: {state in
+                return true
+            },
+            panGestureShouldBegin: {state in
+                return true
+            }
+        )
+        {
             SafeAreaDemoView(offset: true)
                 .popupLabel(MarqueeLabel(), sublabel: MarqueeLabel())
             
@@ -67,9 +86,9 @@ extension View {
             
                 .popupImage(Image("Cover23").resizable())
             
-                //.popupBackgroundImage(UIImage(named: "Cover21")!, contentMode: .scaleToFill)
-                //.popupFloatingBackgroundImage(UIImage(named: "Cover22")!, contentMode: .redraw)
-
+            //.popupBackgroundImage(UIImage(named: "Cover21")!, contentMode: .scaleToFill)
+            //.popupFloatingBackgroundImage(UIImage(named: "Cover22")!, contentMode: .redraw)
+            
                 .popupBarItems(trailing: {
                     HStack(spacing: 20) {
                         Button(action: {
@@ -94,7 +113,7 @@ extension View {
         //.popupPresentationStyle(.fullScreen)
         //.popupPresentationStyle(.custom)
         //.popupContentSize(CGSize(width: -1, height: 500))
-        .popupPresentationDuration(0.35)
+        .popupPresentationDuration(0.5)
         .popupIgnoreDropShadowView(false)
     }
 }

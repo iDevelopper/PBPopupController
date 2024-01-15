@@ -120,14 +120,47 @@ struct PlayerView: View {
 				   minHeight: 0,
 				   maxHeight: .infinity,
 				   alignment: .top)
+            /*
 			.background({
 				ZStack {
 					Image(song.imageName)
 						.resizable()
 					BlurView()
 				}
-				.edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea()
 			}())
+            */
+            // FIXME: fixes ignores safe area bug.
+            // Use
+            // popupContentBackground<BackgroundContent>(@ViewBuilder background: () -> BackgroundContent) -> some View where BackgroundContent: View
+            // As
+            // ignoresSafeArea(_ regions: SafeAreaRegions = .all, edges: Edge.Set = .all) -> some View
+            // displays the view outside the bounds in certain circumstances (swipe down to close the popup canceled)
+            .popupContentBackground() {
+                ZStack {
+                    Image(song.imageName)
+                        .resizable()
+                    BlurView()
+                }
+                .ignoresSafeArea()
+            }
+            
+            /*
+            .background({
+                ZStack {
+                    Color(.systemTeal)
+                }
+                .edgesIgnoringSafeArea(.all)
+            }())
+            */
+            /*
+            .popupContentBackground() {
+                ZStack {
+                    Color(.systemTeal)
+                }
+                .edgesIgnoringSafeArea(.all)
+            }
+            */
 		}
 		.popupTitle(song.title)
         
@@ -143,7 +176,6 @@ struct PlayerView: View {
                     isPlaying.toggle()
                     shadowOpacity = isPlaying ? 0.8 : 0.0
                 }) {
-                    //Image(systemName: "play.fill")
                     Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                 }
                 

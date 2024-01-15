@@ -250,7 +250,7 @@ extension PBPopupPresentationStyle
     @objc optional func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController)
     
     /**
-     Called just before the popup content view is about to be closed by typing the popup close button or dragging the popup content view..
+     Called just before the popup content view is about to be closed by typing the popup close button or dragging the popup content view.
      
      - Parameter popupController:             The popup controller object.
      - Parameter popupContentViewController:  The popup content view controller object.
@@ -468,14 +468,7 @@ extension PBPopupPresentationStyle
             return vc.bottomBar.frame.height
         }
     }
-    
-    private func PBLogIfEnabled<T>( _ object: @escaping @autoclosure() -> T, error: Bool = false) {
-        let PBLogEnabled: Bool = false
-        if PBLogEnabled {
-            PBLog(object, error: error)
-        }
-    }
-    
+        
     private var disableInteractiveTransitioning = false
     
     internal var popupPresentationController: PBPopupPresentationController?
@@ -995,6 +988,7 @@ extension PBPopupPresentationStyle
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 if (vc.popupContentView.superview != nil) {
+                    vc.popupContentViewController.view.removeFromSuperview()
                     vc.popupContentView.removeFromSuperview()
                 }
             }
@@ -1117,8 +1111,7 @@ extension PBPopupPresentationStyle
         if vc.popupBarIsHidden || vc.popupBar.isFloating {
             frame.origin.y = self.wantsAdditionalSafeAreaInsetTop ? vc.view.bounds.minY : vc.view.bounds.height
         }
-
-        PBLogIfEnabled("\(frame)")
+        PBLog("\(frame)")
         return frame
     }
     
@@ -1152,8 +1145,7 @@ extension PBPopupPresentationStyle
                 frame.size.width -= abs(vc.view.frame.minX)
             }
         }
-
-        PBLogIfEnabled("\(frame)")
+        PBLog("\(frame)")
         return frame
     }
 }
@@ -1242,6 +1234,7 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 if (vc.popupContentView.superview != nil) {
+                    vc.popupContentViewController.view.removeFromSuperview()
                     vc.popupContentView.removeFromSuperview()
                 }
             }

@@ -51,21 +51,21 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 882,
+      "line": 875,
       "symbol": "PBPopupController.gestureRecognizer(_:shouldRequireFailureOf:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1163,
+      "line": 1155,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/PBPopupController.swift",
-      "line": 1319,
+      "line": 1312,
       "symbol": "PBPopupController",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -205,14 +205,14 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 296,
+      "line": 330,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/SwiftUIWrapper/PBPopupUI.swift",
-      "line": 300,
+      "line": 334,
       "symbol": "View.popupTitle(verbatim:subtitle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -289,7 +289,7 @@
     },
     {
       "file": "/Users/patrickbodet/Documents/PBPopupController/PBPopupController/PBPopupController/PBPopupController-Swift/UIViewController+Support.swift",
-      "line": 728,
+      "line": 713,
       "symbol": "UIViewController.popupContainerViewController(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

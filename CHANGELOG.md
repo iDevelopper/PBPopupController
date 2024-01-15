@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## 3.9.4
+
+Adds hooks for shouldOpen, shouldClose, tapGestureShouldBegin and panGestureShouldBegin (swiftUI).
+Exposes the `.popupContentViewCustomizer()` modifier, which allows lower-level customization through the UIKit `PBPopupContentView` object (swiftUI).
+Adds the `.popupContentBackground()` modifier to fixe ignoresSafeArea() displaying view out of bounds (swiftUI).
+Improves popup content rotation.
+Updates example.
+Updates documentation.
+
 ## 3.9.3
 
 Remove the unnecessary safe area modifier.

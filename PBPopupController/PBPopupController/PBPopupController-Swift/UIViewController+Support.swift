@@ -3,7 +3,7 @@
 //  PBPopupController
 //
 //  Created by Patrick BODET on 16/03/2018.
-//  Copyright © 2018-2023 Patrick BODET. All rights reserved.
+//  Copyright © 2018-2024 Patrick BODET. All rights reserved.
 //
 
 import Foundation

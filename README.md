@@ -193,7 +193,7 @@ The framework uses:
 
 The demo project uses:
 
-* [MarqueeLabel](https://github.com/cbpowell/MarqueeLabel) Copyright (c) 2011-2023 Charles Powell
+* [MarqueeLabel](https://github.com/cbpowell/MarqueeLabel) Copyright (c) 2011-2024 Charles Powell
 * [LoremIpsum](https://github.com/lukaskubanek/LoremIpsum) Copyright (c) 2013 Lukas Kubanek
 
 ## Special Mention

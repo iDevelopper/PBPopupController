@@ -290,6 +290,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func setupContentVC() {
         self.popupContentVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController
+        self.popupContentVC.overrideUserInterfaceStyle = self.navigationController?.overrideUserInterfaceStyle ?? .unspecified
         self.popupContentVC.images = self.images
         self.popupContentVC.titles = self.titles
         self.popupContentVC.subtitles = self.subtitles
@@ -297,6 +298,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func setupContentTVC() {
         self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController2") as? PopupContentTableViewController
+        self.popupContentTVC.overrideUserInterfaceStyle = self.navigationController?.overrideUserInterfaceStyle ?? .unspecified
         self.popupContentTVC.images = self.images
         self.popupContentTVC.titles = self.titles
         self.popupContentTVC.subtitles = self.subtitles
@@ -514,6 +516,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     @IBAction func defaultToolbarStyle(_ sender: UIBarButtonItem) {
         self.setupToolbarAppearance()
         self.navigationController?.overrideUserInterfaceStyle = .unspecified
+        self.popupContentVC?.overrideUserInterfaceStyle = .unspecified
+        self.popupContentTVC?.overrideUserInterfaceStyle = .unspecified
         let aColor = self.view.tintColor
         self.navigationController?.toolbar.tintColor = aColor
         (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in
@@ -533,6 +537,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         let interfaceStyle = Int.random(in: 0..<3)
         self.navigationController?.overrideUserInterfaceStyle = UIUserInterfaceStyle(rawValue:interfaceStyle) ?? .unspecified
+        self.popupContentVC?.overrideUserInterfaceStyle = UIUserInterfaceStyle(rawValue:interfaceStyle) ?? .unspecified
+        self.popupContentTVC?.overrideUserInterfaceStyle = UIUserInterfaceStyle(rawValue:interfaceStyle) ?? .unspecified
         let aColor = UIColor.PBRandomAdaptiveInvertedColor()
         self.navigationController?.toolbar.tintColor = aColor
         (navigationController?.toolbar.items as NSArray?)?.enumerateObjects({ obj, idx, stop in

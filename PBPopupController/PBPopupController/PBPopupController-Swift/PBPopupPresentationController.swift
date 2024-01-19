@@ -20,6 +20,7 @@ internal class PBPopupPresentationController: UIPresentationController
     }
     
     internal var backingView: UIView!
+    private var popupBarForBackingView: UIView!
 
     private var shouldUpdateBackingView: Bool = true
     
@@ -307,6 +308,10 @@ internal class PBPopupPresentationController: UIPresentationController
                 self.popupContentView.contentView.addSubview(imageViewForPresentation)
                 self.configureImageViewInStartPosition()
             }
+            
+            if coordinator.isInteractive {
+                self.popupBarForBackingView = self.setupPopupBarForBackingView()
+            }
         }
         
         self.shouldUpdateBackingView = false
@@ -316,6 +321,12 @@ internal class PBPopupPresentationController: UIPresentationController
         }
         self.backingView = nil
         self.setupBackingView()
+        
+        if let popupBarForBackingView = self.popupBarForBackingView {
+            popupBarForBackingView.alpha = 0
+            self.backingView.addSubview(popupBarForBackingView)
+        }
+        
         self.animateBackingViewToDeck(true, animated: false)
         
         self.popupContentView.popupCloseButton?.setButtonStateTransitioning()
@@ -350,7 +361,11 @@ internal class PBPopupPresentationController: UIPresentationController
         if let animator = self.animator {
             animator.stopAnimation(false)
 
-            self.finishAnimator = UIViewPropertyAnimator(duration: animator.duration * Double(durationFactor), dampingRatio: 1, animations: {
+            let duration = animator.duration * Double(durationFactor)
+            self.finishAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
+                UIView.animate(withDuration: duration * 2/3, delay: duration * 1/3) {
+                    self.popupBarForBackingView?.alpha = 1.0
+                }
                 if self.popupPresentationStyle == .popup {
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateHidden(finish: true, isInteractive: true)
                 }
@@ -588,27 +603,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         } completion: { _ in
             self.popupController.popupPresentationState = .open
         }
-        /*
-        coordinator.animate(alongsideTransition: { (context) in
-            containerView.frame = self.popupContainerViewFrame()
-            if self.popupPresentationStyle != .popup {
-                self.blackView?.frame = self.popupBlackViewFrame()
-            }
-            self.setupBackingView()
-            UIView.performWithoutAnimation {
-                self.animateBackingViewToDeck(true, animated: false)
-
-                self.presentingVC.popupContentViewController.viewWillTransition(to: size, with: coordinator)
-                
-                self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
-                presentedView.frame = self.presentedViewFrame()
-                self.setupCornerRadiusForPopupContentView(open: true)
-                self.popupContentView.updatePopupCloseButtonPosition()
-            }
-            containerView.layoutIfNeeded()
-            self.presentingVC.view.layoutIfNeeded()
-        })
-        */
 
         super.viewWillTransition(to: size, with: coordinator)
     }
@@ -717,7 +711,7 @@ extension PBPopupPresentationController
         }
         else {
             frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-            if self.presentingVC.popupBar.isFloating {
+            if isFloating {
                 frame = frame.inset(by: self.presentingVC.popupBar.floatingInsets)
                 if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden {
                     let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.presentingVC.insetsForBottomBar().bottom, right: 0)
@@ -952,7 +946,9 @@ extension PBPopupPresentationController
     
     private func setupBackingView()
     {
-        guard let containerView = self.containerView else { return }
+        guard let containerView = self.containerView,
+              let coordinator = self.presentedViewController.transitionCoordinator
+        else { return }
         
         if self.popupPresentationStyle == .custom || self.popupPresentationStyle == .popup || self.popupController.isContainerPresentationSheet || self.presentingVC.splitViewController != nil {
             self.dimmerView.frame = self.dimmerViewFrame()
@@ -965,9 +961,8 @@ extension PBPopupPresentationController
         }
 
         if self.backingView == nil {
-            let isHidden = self.popupBarView.isHidden
-            let isFloating = self.popupIsFloating
-            if !isFloating {
+            let isHidden = coordinator.isInteractive && !self.isPresenting
+            if isHidden {
                 self.popupBarView.isHidden = true
             }
 
@@ -988,12 +983,10 @@ extension PBPopupPresentationController
             if let nc = self.presentingVC.navigationController {
                 snapshotView = nc.view
             }
-            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: false, withCapInsets: .zero)
+            self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: isHidden, withCapInsets: .zero)
             self.backingView.autoresizingMask = []
             
-            if !isFloating {
-                self.popupBarView.isHidden = isHidden
-            }
+            self.popupBarView.isHidden = false
 
             self.backingView.frame = imageRect
             
@@ -1097,6 +1090,15 @@ extension PBPopupPresentationController
         return view
     }
     
+    private func setupPopupBarForBackingView() -> UIView?
+    {
+        let view = self.presentingVC.view.resizableSnapshotView(from: self.popupBarView.frame, afterScreenUpdates: true, withCapInsets: .zero)
+        if let view = view {
+            view.frame = self.popupBarView.frame
+        }
+        return view
+    }
+
     // MARK: - Bottom bar
     
     private func animateBottomBarToHidden( _ hidden: Bool)

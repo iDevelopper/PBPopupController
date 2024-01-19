@@ -75,6 +75,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning)
     {
+        self.availableHeight = self.popupContainerViewAvailableHeight()
         super.startInteractiveTransition(transitionContext)
         self.animator = self.presentationController.interruptibleAnimator(using: transitionContext) as? UIViewPropertyAnimator
         if self.shouldComplete {
@@ -88,7 +89,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             self.finish()
             return
         }
-        self.availableHeight = self.popupContainerViewAvailableHeight()
         self.progress = 0.0
         animator.fractionComplete = self.progress
         self.update(self.progress)
@@ -294,10 +294,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         guard let vc = self.popupController.containerViewController else { return }
 
         self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
-
-        animator.addAnimations {
-            vc.setNeedsStatusBarAppearanceUpdate()
-        }
 
         self.presentationController.imageViewForPresentation?.isHidden = false
         vc.popupContentView.popupImageView?.isHidden = true

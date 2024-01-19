@@ -2118,9 +2118,11 @@ extension PBPopupBar
         
         var customView: UIView? {
             didSet {
+                oldValue?.removeFromSuperview()
                 if let customView = customView {
                     self.addSubview(customView)
                 }
+                self.layoutIfNeeded()
             }
         }
         var colorView: UIView!
@@ -2188,7 +2190,7 @@ extension PBPopupBar
             super.layoutSubviews()
             
             if let effectView = self.effectView {
-                effectView.frame = self.bounds;
+                effectView.frame = self.bounds
                 
                 self.imageView.frame = effectView.contentView.bounds
                 self.colorView.frame = effectView.contentView.bounds

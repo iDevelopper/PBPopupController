@@ -1759,7 +1759,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private func configureContentSizeCategory() {
         if #available(iOS 15.0, *) {
             self.minimumContentSizeCategory = self.popupBarStyle == .prominent ? .medium : .small
-            self.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : self.isFloating ? .small : .accessibilityMedium
+            self.maximumContentSizeCategory = self.popupBarStyle == .prominent ? .accessibilityLarge : self.isFloating ? .accessibilityMedium : .accessibilityMedium
         }
     }
     

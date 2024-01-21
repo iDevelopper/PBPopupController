@@ -124,6 +124,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.setupToolbarAppearance()
         
         self.tabBarController?.delegate = self
+        
+        self.tableView.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -332,7 +334,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     func firstSetup() {
+        
+        self.commonSetup()
+        
         self.setupPopupBar()
+        
+        self.setupCustomPopupBar()
                 
         self.commonSetup()
         
@@ -675,7 +682,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.commonSetup()
         
         if self.containerVC.popupController.popupPresentationState == .closed {
-            // Present the popup bar with another popup
+            // Present the popup bar with another popup content
             self.presentPopupBar(self)
         }
     }

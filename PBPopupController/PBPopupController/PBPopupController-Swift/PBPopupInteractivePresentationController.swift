@@ -295,9 +295,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
 
         self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
 
-        self.presentationController.imageViewForPresentation?.isHidden = false
-        vc.popupContentView.popupImageView?.isHidden = true
-        vc.popupContentView.popupImageModule?.isHidden = true
+        if let imageViewForPresentation = self.presentationController.imageViewForPresentation {
+            imageViewForPresentation.isHidden = false
+            vc.popupContentView.popupImageView?.isHidden = true
+            vc.popupContentView.popupImageModule?.isHidden = true
+        }
         
         self.popupController.popupBarPanGestureRecognizer?.isEnabled = false
         

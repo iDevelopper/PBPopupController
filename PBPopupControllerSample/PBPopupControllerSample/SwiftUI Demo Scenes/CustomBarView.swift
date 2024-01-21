@@ -75,7 +75,14 @@ struct CustomBarView: View {
             .buttonStyle(MyButtonStyle(colorScheme: colorScheme))
             .padding()
         }
-        .popup(isPresented: Binding.constant(true), isOpen: $isOpen, tapGestureShouldBegin: { state in return false }, panGestureShouldBegin: { state in return false }, popupContentController: popupContentController)
+        .popup(isPresented: Binding.constant(true), isOpen: $isOpen, tapGestureShouldBegin: { state in
+            return true
+        }, panGestureShouldBegin: { state in
+            if state == .open {
+                return true
+            }
+            return false
+        }, popupContentController: popupContentController)
         .inheritsVisualStyleFromBottomBar(false)
         //.isTranslucent(false)
         //.backgroundColor(.white)

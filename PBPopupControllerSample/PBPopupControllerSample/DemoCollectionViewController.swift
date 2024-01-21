@@ -144,9 +144,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         
         if let firstVC = self.firstVC, let containerVC = firstVC.containerVC {
             if containerVC.popupController.popupPresentationState == .hidden {
-                containerVC.presentPopupBar(withPopupContentViewController: firstVC.isPopupContentTableView ? firstVC.popupContentTVC : firstVC.popupContentVC, animated: true, completion: {
-                    PBLog("Popup Bar Presented")
-                })
+                firstVC.presentPopupBar(self)
             }
         }
     }

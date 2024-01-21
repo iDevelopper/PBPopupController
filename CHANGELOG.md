@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.9.5
+
+Improved the presentation animation of popup vontent view when floating popup bars.
+Improved popup bar title and subtitle layout and appearance.
 
 ## 3.9.4
 

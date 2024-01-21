@@ -169,7 +169,6 @@ private let itemClass11: AnyClass? = NSClassFromString(_PBPopupDecodeBase64Strin
 private let itemClass10: AnyClass? = NSClassFromString(_PBPopupDecodeBase64String(base64String: "X1VJVG9vbGJhck5hdmlnYXRpb25CdXR0b24=")!)
 
 internal let PBPopupBarHeightCompact: CGFloat = 48.0
-//internal let PBPopupBarHeightProminent: CGFloat = 64.5
 internal let PBPopupBarHeightProminent: CGFloat = 64.0
 internal let PBPopupBarImageHeightProminent: CGFloat = 48.0
 internal let PBPopupBarImageHeightCompact: CGFloat = 40.0
@@ -243,7 +242,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     @objc weak public var dataSource: PBPopupBarDataSource? {
         didSet {
             self.askForLabels = true
-            self.removeTitleLabels()
             self.configureTitleLabels()
         }
     }
@@ -347,9 +345,6 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
         didSet {
             PBLog("The value of popupBarStyle changed from \(oldValue.description) to \(popupBarStyle.description)")
-            if oldValue != popupBarStyle {
-                self.removeTitleLabels()
-            }
             if popupBarStyle == .custom {
                 self.isFloating = false
                 if self.customPopupBarViewController == nil {
@@ -863,6 +858,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private var userFloatingBackgroundImage: UIImage?
 
     private var contentView: _PBPopupBarContentView!
+    internal func hideContent(_ hide: Bool) {
+        self.contentView.isHidden = hide
+    }
+    
     private var toolbar: _PBPopupToolbar!
     
     internal var shadowColor: UIColor! {
@@ -931,33 +930,17 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     
     private var titlesViewLeftConstraint: NSLayoutConstraint!
     private var titlesViewRightConstraint: NSLayoutConstraint!
-    
+    private var titlesViewTopConstraint: NSLayoutConstraint!
+    private var titlesViewBottomConstraint: NSLayoutConstraint!
+
     // true if we have to ask for a custom label (i.e. MarqueeLabel)
     private var askForLabels: Bool = false
     
     // The label containing the title text
-    internal var titleLabel: UILabel? {
-        didSet {
-            titleLabel?.backgroundColor = UIColor.clear
-            titleLabel?.font = self.titleFont()
-            titleLabel?.textColor = self.titleColor()
-            titleLabel?.isAccessibilityElement = true
-            titleLabel?.adjustsFontForContentSizeCategory = true
-            titleLabel?.setContentHuggingPriority(.required, for: .vertical)
-        }
-    }
+    internal var titleLabel: UILabel?
 
     // The label containing the subtitle text
-    internal var subtitleLabel: UILabel? {
-        didSet {
-            subtitleLabel?.backgroundColor = UIColor.clear
-            subtitleLabel?.font = self.subtitleFont()
-            subtitleLabel?.textColor = self.subtitleColor()
-            subtitleLabel?.isAccessibilityElement = true
-            subtitleLabel?.adjustsFontForContentSizeCategory = true
-            subtitleLabel?.setContentHuggingPriority(.required, for: .vertical)
-        }
-    }
+    internal var subtitleLabel: UILabel?
 
     // The progress view (see PBPopupBarProgressViewStyle and progress property)
     @objc dynamic private var progressView: _PBPopupBarProgressView!
@@ -1553,12 +1536,25 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.titlesView.backgroundColor = UIColor.yellow
         }
         
-        if self.titlesView.translatesAutoresizingMaskIntoConstraints == true {
-            self.titlesView.translatesAutoresizingMaskIntoConstraints = false
-            
-            self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: self.titlesView.isHidden ? 0.0 : 8.0).isActive = true
-            self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: self.titlesView.isHidden ? 0.0 : -8.0).isActive = true
+        self.titlesView.translatesAutoresizingMaskIntoConstraints = false
+        
+        var constant = self.titlesView.isHidden ? 0.0 : self.popupBarStyle == .prominent ? 10.0 : 5.0
+        if let topConstraint = self.titlesViewTopConstraint {
+            topConstraint.constant = constant
         }
+        else {
+            self.titlesViewTopConstraint = self.titlesView.topAnchor.constraint(equalTo: self.toolbar.topAnchor, constant: constant)
+        }
+        self.titlesViewTopConstraint.isActive = true
+        
+        constant = self.titlesView.isHidden ? 0.0 : self.popupBarStyle == .prominent ? -10.0 : -5.0
+        if let bottomConstraint = self.titlesViewBottomConstraint {
+            bottomConstraint.constant = constant
+        }
+        else {
+            self.titlesViewBottomConstraint = self.titlesView.bottomAnchor.constraint(equalTo: self.toolbar.bottomAnchor, constant: constant)
+        }
+        self.titlesViewBottomConstraint.isActive = true
         
         if let leftConstraint = self.titlesViewLeftConstraint {
             leftConstraint.constant = left
@@ -1600,52 +1596,28 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
     }
     
-    private func removeTitleLabels() {
-        /*
-        if let titleLabel = self.titleLabel {
-            titleLabel.removeFromSuperview()
-            self.titlesView.removeArrangedSubview(titleLabel)
-            self.titleLabel = nil
-        }
-        if let subtitleLabel = self.subtitleLabel {
-            subtitleLabel.removeFromSuperview()
-            self.titlesView.removeArrangedSubview(subtitleLabel)
-            self.subtitleLabel = nil
-        }
-        
-        self.setNeedsLayout()
-                
-        self.askForLabels = true
-        self.configureTitleLabels()
-        */
-    }
-
     private func configureTitleLabels() {
         if self.askForLabels {
             self.askForLabels = false
             if let titleLabel = self.dataSource?.titleLabel?(for: self) {
-                if let oldTitleLabel = self.titleLabel {
-                    oldTitleLabel.removeFromSuperview()
-                    self.titlesView.removeArrangedSubview(oldTitleLabel)
-                }
-                self.titlesView.insertArrangedSubview(titleLabel, at: 0)
                 self.titleLabel = titleLabel
             }
             
             if let subtitleLabel = self.dataSource?.subtitleLabel?(for: self) {
-                if let oldSubtitleLabel = self.subtitleLabel {
-                    oldSubtitleLabel.removeFromSuperview()
-                    self.titlesView.removeArrangedSubview(oldSubtitleLabel)
-                }
-                self.titlesView.addArrangedSubview(subtitleLabel)
                 self.subtitleLabel = subtitleLabel
             }
+        }
+        for arrangedSubview in self.titlesView.arrangedSubviews {
+            arrangedSubview.removeFromSuperview()
+            self.titlesView.removeArrangedSubview(arrangedSubview)
         }
         
         if self.titleLabel == nil {
             self.titleLabel = newTitleLabel()
-            self.titlesView.insertArrangedSubview(self.titleLabel!, at: 0)
         }
+        self.configureTitleLabel()
+        self.titlesView.insertArrangedSubview(self.titleLabel!, at: 0)
+
         if self.enablePopupBarColorsDebug {
             self.titleLabel?.backgroundColor = UIColor.magenta.withAlphaComponent(0.5)
         }
@@ -1653,8 +1625,10 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
 
         if self.subtitleLabel == nil {
             self.subtitleLabel = newTitleLabel()
-            self.titlesView.addArrangedSubview(self.subtitleLabel!)
         }
+        self.configureSubtitleLabel()
+        self.titlesView.addArrangedSubview(self.subtitleLabel!)
+
         if self.enablePopupBarColorsDebug {
             self.subtitleLabel?.backgroundColor = UIColor.cyan.withAlphaComponent(0.5)
         }
@@ -1740,6 +1714,15 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         return UIColor.label
     }
     
+    private func configureTitleLabel() {
+        self.titleLabel?.backgroundColor = UIColor.clear
+        self.titleLabel?.font = self.titleFont()
+        self.titleLabel?.textColor = self.titleColor()
+        self.titleLabel?.isAccessibilityElement = true
+        self.titleLabel?.adjustsFontForContentSizeCategory = true
+        self.titleLabel?.setContentHuggingPriority(.required, for: .vertical)
+    }
+    
     private func subtitleFont() -> UIFont {
         var fontSize: CGFloat = 15
         var fontWeight: UIFont.Weight = .regular
@@ -1762,6 +1745,15 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     
     private func subtitleColor() -> UIColor {
         return UIColor.secondaryLabel
+    }
+    
+    private func configureSubtitleLabel() {
+        self.subtitleLabel?.backgroundColor = UIColor.clear
+        self.subtitleLabel?.font = self.subtitleFont()
+        self.subtitleLabel?.textColor = self.subtitleColor()
+        self.subtitleLabel?.isAccessibilityElement = true
+        self.subtitleLabel?.adjustsFontForContentSizeCategory = true
+        self.subtitleLabel?.setContentHuggingPriority(.required, for: .vertical)
     }
     
     private func configureContentSizeCategory() {

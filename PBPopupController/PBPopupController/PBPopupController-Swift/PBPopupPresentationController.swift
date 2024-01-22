@@ -375,7 +375,7 @@ internal class PBPopupPresentationController: UIPresentationController
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true, isInteractive: true)
                 }
                 presentedView.frame = self.presentedViewFrame()
-                self.popupBarForPresentation?.center.x = self.popupContentView.contentView.center.x
+                self.popupBarForPresentation?.center.x = self.popupContentView.bounds.center.x
                 self.animateBottomBarToHidden(false)
                 self.animateBackingViewToDeck(false, animated: true)
                 self.animateImageViewInFinalPosition()
@@ -476,9 +476,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: false)
             }
             presentedView?.frame = self.presentedViewFrame()
-            
-            self.popupBarForPresentation?.center.x = self.popupContentView.contentView.center.x
-            
+                        
             self.containerView?.layoutIfNeeded()
             
             self.popupContentView.isHidden = false
@@ -488,8 +486,6 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             let animations = {
                 self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
                 presentedView?.frame = self.presentedViewFrame()
-
-                self.popupBarForPresentation?.center.x = self.popupContentView.contentView.center.x
 
                 self.animateBottomBarToHidden(true)
                 
@@ -514,8 +510,8 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             self.popupContentView.frame = self.popupContentViewFrameForPopupStateOpen()
             presentedView?.frame = self.presentedViewFrame()
             
-            self.popupBarForPresentation?.center.x = self.popupContentView.contentView.center.x
-            
+            self.popupBarForPresentation?.center.x = self.popupContentView.bounds.center.x
+
             self.containerView?.layoutIfNeeded()
             
             self.animateBottomBarToHidden(true)
@@ -529,7 +525,7 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
                 }
                 presentedView?.frame = self.presentedViewFrame()
 
-                self.popupBarForPresentation?.center.x = self.popupContentView.contentView.center.x
+                self.popupBarForPresentation?.center.x = self.popupContentView.bounds.center.x
 
                 if !transitionContext.isInteractive {
                     self.animateBottomBarToHidden(false)
@@ -979,7 +975,7 @@ extension PBPopupPresentationController
                 imageRect.size.width += x
             }
             
-            //for debug
+            // TODO: For debug
             //let image = presentingVC.view.makeSnapshot(from: imageRect)
             
             var snapshotView = self.presentingVC.view!
@@ -1062,13 +1058,13 @@ extension PBPopupPresentationController
         
         let rect = self.popupContentViewFrameForPopupStateClosed(finish: true)
         
-        //for debug
+        // TODO: For debug
         //let image = self.presentingVC.view.makeSnapshot(from: rect)
         
         let view = self.presentingVC.view.resizableSnapshotView(from: rect, afterScreenUpdates: true, withCapInsets: .zero)
-        
+
         if popupBar.popupBarStyle == .prominent {
-            self.presentingVC.popupBar.shadowImageView.isHidden = false
+            popupBar.shadowImageView.isHidden = false
         }
         
         if isFloating, let view = view {

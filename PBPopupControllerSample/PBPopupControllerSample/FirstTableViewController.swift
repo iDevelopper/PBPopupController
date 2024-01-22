@@ -370,17 +370,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 }
             }
 #endif
-            /*
-            if let popupContentView = self.containerVC.popupContentView {
-                popupContentView.popupIgnoreDropShadowView = false
-                popupContentView.popupPresentationDuration = 0.4
-                popupContentView.popupCanDismissOnPassthroughViews = true
-                //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
-            }
-            
-            self.containerVC.popupController.containerPreferredStatusBarStyle = .default
-            self.containerVC.popupController.popupPreferredStatusBarStyle = .lightContent
-            */
             self.tableView.reloadData()
         }
     }
@@ -448,8 +437,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             //containerVC.popupBar.titleTextAttributes = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.backgroundColor: UIColor.clear, NSAttributedString.Key.foregroundColor: UIColor.red, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
             
             if let popupContentView = self.containerVC.popupContentView {
+                // TODO:
+                //popupContentView.popupEffectView.effect = nil
                 popupContentView.popupIgnoreDropShadowView = false
-                popupContentView.popupPresentationDuration = 0.4
+                //popupContentView.popupPresentationDuration = 0.4
                 popupContentView.popupCanDismissOnPassthroughViews = true
                 //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
             }

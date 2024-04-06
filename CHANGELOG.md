@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.9.7
+
+Fixes a bug where Apple does not correctly update the safe area insets when closing a navigation controller is canceled.
+Updates example.
+
 ## 3.9.6
 
 Improved the presentation animation of floating popup bars.

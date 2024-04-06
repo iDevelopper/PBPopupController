@@ -24,6 +24,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     var popupContentVC: PopupContentViewController!
     var popupContentTVC: PopupContentTableViewController!
+    var popupContentNC: UINavigationController!
 
     weak var containerVC: UIViewController!
     
@@ -296,6 +297,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.popupContentVC.images = self.images
         self.popupContentVC.titles = self.titles
         self.popupContentVC.subtitles = self.subtitles
+    }
+    
+    func setupContentNC() {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .red
+        self.popupContentNC = UINavigationController(rootViewController: vc)
     }
     
     func setupContentTVC() {
@@ -697,6 +704,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         
         self.isPopupContentTableView ? self.setupContentTVC() : self.setupContentVC()
+        // Presenting a navigation controller
+        //self.isPopupContentTableView ? self.setupContentTVC() : self.setupContentNC()
 
         self.setupBarButtonItems()
 
@@ -704,6 +713,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
                 PBLog("Popup Bar Presented")
             })
+            // Presenting a navigation controller
+            /*
+            self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentNC, animated: true, completion: {
+                PBLog("Popup Bar Presented")
+            })
+            */
         }
     }
     

@@ -94,10 +94,9 @@ class PopupContentTableViewController: UITableViewController {
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        // FIXME: iOS 17 beta bug (deck animation fails)
-        //if #available(iOS 17.0, *) {
-        //    return super.preferredStatusBarStyle
-        //}
+        if #available(iOS 17.0, *) {
+            return super.preferredStatusBarStyle
+        }
         guard let containerVC = self.popupContainerViewController else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
         

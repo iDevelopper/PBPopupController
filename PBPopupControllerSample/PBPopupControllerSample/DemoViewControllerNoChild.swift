@@ -11,13 +11,23 @@ import PBPopupController
 
 class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
     
+    var images = [UIImage]()
+    var titles = [String]()
+    var subtitles = [String]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor.systemBackground
         
+        for idx in 1...22 {
+            let imageName = String(format: "Cover%02d", idx)
+            images += [UIImage(named: imageName)!]
+            titles += [LoremIpsum.title]
+            subtitles += [LoremIpsum.sentence]
+        }
+        
         let topLabel = UILabel()
-        //topLabel.text = "Top"
         topLabel.text = self.title
         topLabel.textColor = UIColor.label
 
@@ -93,6 +103,10 @@ class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let contentVC = storyboard.instantiateViewController(withIdentifier: "PopupContentViewController") as? PopupContentViewController {
                 contentVC.backgroundView = UIImageView(image: self.popupBar.image)
+
+                contentVC.images = self.images
+                contentVC.titles = self.titles
+                contentVC.subtitles = self.subtitles
                 contentVC.albumArtImage = self.popupBar.image
                 contentVC.albumTitle = self.popupBar.title
                 contentVC.songTitle = self.popupBar.subtitle

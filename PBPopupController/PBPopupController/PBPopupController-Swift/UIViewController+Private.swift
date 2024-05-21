@@ -854,21 +854,8 @@ public extension UIViewController
         /// Find the popup content view safe area insets
         if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
             if var insets = popupContentView.superview?.safeAreaInsets {
-                /*
-                if popupContentView.popupPresentationStyle == .deck  || popupContentView.popupPresentationStyle == .custom {
-                    insets.top = 0
-                }
-                if popupContentView.popupPresentationStyle == .popup {
-                    insets.top = 0
-                    if popupContentView.isFloating {
-                        insets.bottom = 0
-                    }
-                }
+                insets.top = 0
                 return insets
-                */
-                if popupContentView.popupPresentationStyle == .fullScreen {
-                    return insets
-                }
             }
         }
         let insets = self._vSAIFS()

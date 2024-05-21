@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 3.9.8
+
+Updated popup content safe area insets.
+Updated popup close button position.
+Status bar style animation improvements.
+Updated demo project.
+
 ## 3.9.7
 
 Fixes a bug where Apple does not correctly update the safe area insets when closing a navigation controller is canceled.

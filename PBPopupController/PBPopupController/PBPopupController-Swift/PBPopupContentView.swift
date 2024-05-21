@@ -147,7 +147,11 @@ import UIKit
     /**
      If `true`, move close button under navigation bars
      */
-    @objc public var popupCloseButtonAutomaticallyUnobstructsTopBars: Bool = true
+    @objc public var popupCloseButtonAutomaticallyUnobstructsTopBars: Bool = true {
+        didSet {
+            self.setupPopupCloseButton()
+        }
+    }
     
     /**
      The view to which the popup interaction gesture recognizer should be added to. The default implementation returns the popup content view.
@@ -169,6 +173,7 @@ import UIKit
     internal var size: CGSize! = .zero
     
     private var popupCloseButtonTopConstraint: NSLayoutConstraint!
+    private var popupCloseButtonVerticalConstraint: NSLayoutConstraint!
     private var popupCloseButtonHorizontalConstraint: NSLayoutConstraint!
     
     internal var contentView: UIView {
@@ -278,22 +283,21 @@ import UIKit
         }
         
         if popupCloseButtonStyle != .none {
-            //let startingTopConstant: CGFloat = self.popupCloseButtonTopConstraint.constant
             self.popupCloseButtonTopConstraint.constant = self.popupCloseButtonStyle == .round ? 12 : 8
             let statusBarHeight = self.popupController.statusBarHeight(for: self.popupController.containerViewController.view)
             if self.popupPresentationStyle == .fullScreen || (self.popupPresentationStyle == .custom && self.popupContentSize.height == UIScreen.main.bounds.height) {
                 self.popupCloseButtonTopConstraint.constant += self.popupController.containerViewController.popupContentViewController.prefersStatusBarHidden == true ? 0 : (self.popupController.isContainerPresentationSheet ? 0.0 : statusBarHeight)
             }
-
-            let hitTest = self.popupController.containerViewController.popupContentViewController.view.hitTest(CGPoint(x: 12, y: self.popupCloseButtonTopConstraint.constant), with: nil)
-            let possibleBar = _viewFor(hitTest, selfOrSuperviewKindOf: UINavigationBar.self) as? UINavigationBar
-            if possibleBar != nil {
+            if let navigationController = self.popupController.containerViewController.popupContentViewController as? UINavigationController {
+                let possibleBar = navigationController.navigationBar
                 if self.popupCloseButtonAutomaticallyUnobstructsTopBars {
-                    self.popupCloseButtonTopConstraint.constant += possibleBar!.bounds.height
+                    self.popupCloseButtonVerticalConstraint = self.popupCloseButton.topAnchor.constraint(equalTo: possibleBar.bottomAnchor, constant: 8.0)
                 }
                 else {
-                    self.popupCloseButtonTopConstraint.constant = possibleBar!.center.y - popupCloseButton.frame.height / 2
+                    self.popupCloseButtonVerticalConstraint = self.popupCloseButton.centerYAnchor.constraint(equalTo: possibleBar.centerYAnchor)
                 }
+                NSLayoutConstraint.deactivate([popupCloseButtonTopConstraint])
+                NSLayoutConstraint.activate([popupCloseButtonVerticalConstraint])
             }
             
             if let vc = self.popupController.containerViewController.popupContentViewController {
@@ -305,18 +309,11 @@ import UIKit
                 NSLayoutConstraint.activate([self.popupCloseButtonHorizontalConstraint])
             }
             
-            //if startingTopConstant != self.popupCloseButtonTopConstraint.constant {
-                self.setNeedsUpdateConstraints()
+            self.setNeedsUpdateConstraints()
                 
-                UIView.performWithoutAnimation {
-                    self.layoutIfNeeded()
-                }
-                /*
-                UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0.0, options: [.allowUserInteraction, .allowAnimatedContent], animations: {
-                    self.layoutIfNeeded()
-                }, completion: nil)
-                */
-            //}
+            UIView.performWithoutAnimation {
+                self.layoutIfNeeded()
+            }
         }
     }
     

@@ -94,9 +94,6 @@ class PopupContentTableViewController: UITableViewController {
     }
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 17.0, *) {
-            return super.preferredStatusBarStyle
-        }
         guard let containerVC = self.popupContainerViewController else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
         
@@ -316,6 +313,6 @@ extension PopupContentTableViewController: PBPopupControllerDelegate {
     }
     
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
-        print("didOpen: \(popupContentViewController)")
+        PBLog("didOpen: \(popupContentViewController)")
     }
 }

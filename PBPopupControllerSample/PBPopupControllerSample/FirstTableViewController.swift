@@ -9,6 +9,21 @@
 import UIKit
 import PBPopupController
 
+class PopupNavigationController: UINavigationController {
+    override open var childForStatusBarStyle: UIViewController? {
+        return self.topViewController
+    }
+
+    /*
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        if let container = self.appDelegate.containerVC() as? UITabBarController {
+            return container.popupController.popupStatusBarStyle
+        }
+        return .default
+    }
+    */
+}
+
 class FirstTableViewController: UITableViewController, PBPopupControllerDataSource {
     
     // MARK: - Properties
@@ -24,7 +39,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     var popupContentVC: PopupContentViewController!
     var popupContentTVC: PopupContentTableViewController!
-    var popupContentNC: UINavigationController!
 
     weak var containerVC: UIViewController!
     
@@ -46,6 +60,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     var popupCloseButtonStyle: PBPopupCloseButtonStyle!
     
     var isPopupContentTableView: Bool = false
+    var isContentEmbeddedInNavigation: Bool = false
     
     var images = [UIImage]()
     var titles = [String]()
@@ -299,12 +314,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.popupContentVC.subtitles = self.subtitles
     }
     
-    func setupContentNC() {
-        let vc = UIViewController()
-        vc.view.backgroundColor = .red
-        self.popupContentNC = UINavigationController(rootViewController: vc)
-    }
-    
     func setupContentTVC() {
         self.popupContentTVC = self.storyboard?.instantiateViewController(withIdentifier: "PopupContentTableViewController2") as? PopupContentTableViewController
         self.popupContentTVC.overrideUserInterfaceStyle = self.navigationController?.overrideUserInterfaceStyle ?? .unspecified
@@ -444,12 +453,12 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             //containerVC.popupBar.titleTextAttributes = [NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.backgroundColor: UIColor.clear, NSAttributedString.Key.foregroundColor: UIColor.red, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 24)]
             
             if let popupContentView = self.containerVC.popupContentView {
-                // TODO:
                 //popupContentView.popupEffectView.effect = nil
                 popupContentView.popupIgnoreDropShadowView = false
                 //popupContentView.popupPresentationDuration = 0.4
                 popupContentView.popupCanDismissOnPassthroughViews = true
                 //popupContentView.popupContentDraggingView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 200))
+                popupContentView.popupCloseButtonAutomaticallyUnobstructsTopBars = false
             }
             
             self.containerVC.popupController.containerPreferredStatusBarStyle = .default
@@ -568,6 +577,19 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.commonSetup()
     }
 
+    @IBAction func embedPopupContentChanged(_ sender: UISwitch) {
+        self.isContentEmbeddedInNavigation = sender.isOn
+        
+        self.setupPopupBar()
+        
+        self.commonSetup()
+        
+        if self.containerVC.popupController.popupPresentationState == .closed {
+            // Present the popup bar with another popup content
+            self.presentPopupBar(self)
+        }
+    }
+    
     @IBAction func popupBarStyleChanged(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -710,15 +732,16 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.setupBarButtonItems()
 
         DispatchQueue.main.async {
+            /*
             self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
                 PBLog("Popup Bar Presented")
             })
+            */
             // Presenting a navigation controller
-            /*
-            self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentNC, animated: true, completion: {
+            
+            self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.isContentEmbeddedInNavigation ? PopupNavigationController(rootViewController: self.popupContentVC) : self.popupContentVC, animated: true, completion: {
                 PBLog("Popup Bar Presented")
             })
-            */
         }
     }
     
@@ -785,7 +808,7 @@ extension FirstTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            return 2
         case 1:
             return 5
         case 2:
@@ -801,18 +824,31 @@ extension FirstTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch indexPath.section {
         case 0:
-            // Floating Popup Bar
             let cell = tableView.dequeueReusableCell(withIdentifier: "switchTableViewCell", for: indexPath) as! SwitchTableViewCell
-            cell.switchLabel.text = "Floating Popup Bar"
-            cell.switchSwitch.isOn = self.containerVC.popupBar.isFloating
-            cell.switchSwitch.addTarget(self, action: #selector(barIsFloatingChanged(_:)), for: .valueChanged)
+            switch indexPath.row {
+            case 0:
+                // Floating Popup Bar
+                cell.switchLabel.text = "Floating Popup Bar"
+                cell.switchSwitch.isOn = self.containerVC.popupBar.isFloating
+                cell.switchSwitch.removeTarget(nil, action: nil, for: .valueChanged)
+                cell.switchSwitch.addTarget(self, action: #selector(barIsFloatingChanged(_:)), for: .valueChanged)
+            case 1:
+                // Embedded Content
+                cell.switchLabel.text = "Embed popupContent in NavigationController"
+                cell.switchSwitch.isOn = self.isContentEmbeddedInNavigation
+                cell.switchSwitch.removeTarget(nil, action: nil, for: .valueChanged)
+                cell.switchSwitch.addTarget(self, action: #selector(embedPopupContentChanged(_:)), for: .valueChanged)
+            default:
+                break
+            }
             cell.switchLabel.font = UIFont.preferredFont(forTextStyle: .body)
             
             cell.switchLabel.textColor = UIColor.label
-
+            
             cell.switchLabel.adjustsFontForContentSizeCategory = true
+            
             cell.selectionStyle = .none
-
+            
             return cell
 
         case 1:
@@ -1079,6 +1115,12 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             popupContent.songTitle = self.containerVC.popupBar.title
             popupContent.albumTitle = self.containerVC.popupBar.subtitle
         }
+        
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+            popupContent.albumArtImage = self.containerVC.popupBar.image
+            popupContent.songTitle = self.containerVC.popupBar.title
+            popupContent.albumTitle = self.containerVC.popupBar.subtitle
+        }
         return true
     }
     
@@ -1183,12 +1225,6 @@ extension FirstTableViewController: UITabBarControllerDelegate {
         }
         return true
     }
-    
-    /*
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        tabBarController.setNeedsStatusBarAppearanceUpdate()
-    }
-    */
 }
 
 // MARK: - PBPopupBarPreviewingDelegate

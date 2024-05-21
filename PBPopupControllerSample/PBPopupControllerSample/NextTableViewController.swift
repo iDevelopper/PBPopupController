@@ -77,7 +77,6 @@ class NextTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        print("\(String(describing: self.popupContainerViewController()))")
         if let containerVC = popupContainerViewController, let popupBar = containerVC.popupBar {
             popupBar.image = images[indexPath.row]
             popupBar.title = titles[indexPath.row]

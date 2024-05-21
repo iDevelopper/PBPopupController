@@ -28,9 +28,19 @@ class PopupContentViewController: UIViewController {
     
     var visualEffectView: UIVisualEffectView!
     
+    var containerVC: UIViewController? {
+        if let vc = self.popupContainerViewController {
+            return vc
+        }
+        if let vc = self.navigationController?.popupContainerViewController {
+            return vc
+        }
+        return nil
+    }
+    
     @IBOutlet weak var imageModule: UIView! {
         didSet {
-            if let containerVC = self.popupContainerViewController {
+            if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupImageModule = imageModule
             }
             imageModule.layer.backgroundColor = UIColor.clear.cgColor
@@ -45,7 +55,7 @@ class PopupContentViewController: UIViewController {
         didSet {
             if isViewLoaded {
                 self.albumArtImageView.image = albumArtImage
-                if let containerVC = self.popupContainerViewController/*, !self.firstVC.isPopupContentTableView*/ {
+                if let containerVC = self.containerVC {
                     containerVC.popupContentView.popupImageView = albumArtImageView
                 }
             }
@@ -71,14 +81,18 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var topModule: UIView! {
         didSet {
             topModule.backgroundColor = nil
-            if let containerVC = self.popupContainerViewController {
+            // TODO:
+            //if let containerVC = self.popupContainerViewController {
+            //    containerVC.popupContentView.popupTopModule = topModule
+            //}
+            if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupTopModule = topModule
             }
         }
     }
     @IBOutlet weak var bottomModule: UIView! {
         didSet {
-            if let containerVC = self.popupContainerViewController {
+            if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupBottomModule = bottomModule
             }
         }
@@ -86,7 +100,7 @@ class PopupContentViewController: UIViewController {
     
     @IBOutlet weak var bottomModuleTopConstraint: NSLayoutConstraint! {
         didSet {
-            if let containerVC = self.popupContainerViewController {
+            if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupBottomModuleTopConstraint = bottomModuleTopConstraint
             }
         }
@@ -184,10 +198,7 @@ class PopupContentViewController: UIViewController {
     // MARK: - Status bar
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if #available(iOS 17.0, *) {
-            return super.preferredStatusBarStyle
-        }
-        guard let containerVC = self.popupContainerViewController else {return.default}
+        guard let containerVC = self.containerVC else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
         
         if popupContentView.popupPresentationStyle != .deck {
@@ -204,7 +215,8 @@ class PopupContentViewController: UIViewController {
         self.albumArtImageView.image = self.albumArtImage
         self.songNameLabel.text = self.songTitle
         self.albumNameLabel.text = self.albumTitle
-        if let containerVC = self.popupContainerViewController {
+
+        if let containerVC = self.containerVC {
             containerVC.popupContentView.popupImageView = self.albumArtImageView
         }
 
@@ -274,8 +286,8 @@ class PopupContentViewController: UIViewController {
         self.visualEffectView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
         self.visualEffectView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
 
-        guard let containerVC = self.popupContainerViewController else { return }
-        
+        guard let containerVC = self.containerVC else { return }
+
         let vibEffect = UIVibrancyEffect(blurEffect: self.visualEffectView.effect as! UIBlurEffect)
         let vibrancyEffectView = UIVisualEffectView(effect: vibEffect)
         vibrancyEffectView.contentView.addSubview(containerVC.popupContentView.popupCloseButton)
@@ -295,7 +307,7 @@ class PopupContentViewController: UIViewController {
     }
     
     private func configureContentSizeCategory() {
-        guard let containerVC = self.popupContainerViewController else { return }
+        guard let containerVC = self.containerVC else { return }
         let presentationStyle = containerVC.popupContentView.popupPresentationStyle
         let isLandscape = UIDevice.current.orientation.isLandscape
         if #available(iOS 15.0, *) {
@@ -370,9 +382,9 @@ class PopupContentViewController: UIViewController {
         config = UIImage.SymbolConfiguration(pointSize: 44, weight: .regular, scale: .default)
         self.playPauseButton.setImage(self.isPlaying ? UIImage(systemName: "pause.fill", withConfiguration: config) : UIImage(systemName: "play.fill", withConfiguration: config), for: .normal)
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
-        
+
         var image: UIImage!
         let scaleConfig = UIImage.SymbolConfiguration(scale: popupBar.isFloating || popupBar.popupBarStyle == .compact ? .medium : .large)
         let weightConfig = UIImage.SymbolConfiguration(weight: .semibold)
@@ -405,7 +417,7 @@ class PopupContentViewController: UIViewController {
             self.indexOfCurrentSong = self.images.count - 1
         }
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
 
         popupBar.image = self.images[self.indexOfCurrentSong]
@@ -429,7 +441,7 @@ class PopupContentViewController: UIViewController {
             self.indexOfCurrentSong = 0
         }
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
 
         popupBar.image = self.images[self.indexOfCurrentSong]
@@ -460,7 +472,7 @@ class PopupContentViewController: UIViewController {
     }
     
     @objc func tick() {
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
 
         popupBar.progress += 0.002
@@ -486,6 +498,6 @@ extension PopupContentViewController: PBPopupControllerDelegate {
     }
     
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
-        print("didOpen: \(popupContentViewController)")
+        PBLog("didOpen: \(popupContentViewController)")
     }
 }

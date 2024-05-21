@@ -396,6 +396,7 @@ extension PBPopupPresentationStyle
      */
     @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
         didSet {
+            self.popupStatusBarStyle = self.popupPresentationState == .closed ? containerPreferredStatusBarStyle : self.popupPreferredStatusBarStyle
             containerViewController.setNeedsStatusBarAppearanceUpdate()
         }
     }

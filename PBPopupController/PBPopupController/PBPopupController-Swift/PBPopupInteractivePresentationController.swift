@@ -169,20 +169,18 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 vc.popupContentView.popupCloseButton?.alpha = alpha
             }
             
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion < 17 {
-                if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
-                    let statusBarFrame = self.popupController.statusBarFrame(for: vc.view)
-                    let statusBarHeightThreshold = statusBarFrame.minY + statusBarFrame.height / 2
-                    let backingViewY = layerPresentation.frame.minY
-                    
-                    if self.statusBarThresholdDir == 1 && backingViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && backingViewY < statusBarHeightThreshold {
-                        self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? self.popupController.popupPreferredStatusBarStyle : self.popupController.containerPreferredStatusBarStyle
-                        //UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
-                        // Apple Documentation: If you call this method within an animation block, the changes are animated along with the rest of the animation block.
-                        vc.setNeedsStatusBarAppearanceUpdate()
-                        //}
-                        self.statusBarThresholdDir = -self.statusBarThresholdDir
-                    }
+            if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
+                let statusBarFrame = self.popupController.statusBarFrame(for: vc.view)
+                let statusBarHeightThreshold = statusBarFrame.minY + statusBarFrame.height / 2
+                let backingViewY = layerPresentation.frame.minY
+                
+                if self.statusBarThresholdDir == 1 && backingViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && backingViewY < statusBarHeightThreshold {
+                    self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? self.popupController.popupPreferredStatusBarStyle : self.popupController.containerPreferredStatusBarStyle
+                    //UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
+                    // Apple Documentation: If you call this method within an animation block, the changes are animated along with the rest of the animation block.
+                    vc.setNeedsStatusBarAppearanceUpdate()
+                    //}
+                    self.statusBarThresholdDir = -self.statusBarThresholdDir
                 }
             }
             

@@ -37,12 +37,12 @@ import UIKit
     /**
      The popup content view presentation duration when presenting from closed to open state.
      */
-    @objc public var popupPresentationDuration: TimeInterval = 0.5
+    @objc public var popupPresentationDuration: TimeInterval = 0.4
     
     /**
      The popup content view dismissal duration when dismissing from open to closed state.
      */
-    @objc public var popupDismissalDuration: TimeInterval = 0.6
+    @objc public var popupDismissalDuration: TimeInterval = 0.5
     
     /**
      The threshold value used to open or close the popup content view when dragging.

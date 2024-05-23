@@ -81,10 +81,6 @@ class PopupContentViewController: UIViewController {
     @IBOutlet weak var topModule: UIView! {
         didSet {
             topModule.backgroundColor = nil
-            // TODO:
-            //if let containerVC = self.popupContainerViewController {
-            //    containerVC.popupContentView.popupTopModule = topModule
-            //}
             if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupTopModule = topModule
             }

@@ -2158,7 +2158,8 @@ extension PBPopupBar
             
             self.effectView = UIVisualEffectView(effect: effect)
             self.effectView.clipsToBounds = true
-            
+            self.effectView.contentView.clipsToBounds = false
+
             self.colorView = UIView()
             self.imageView = UIImageView()
             

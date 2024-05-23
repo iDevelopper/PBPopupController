@@ -280,12 +280,20 @@ internal extension UITabBarController
         self.popupBar.effectGroupingIdentifier = self.tabBar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
+        let appearance = UITabBarAppearance()
+        self.popupBar.shadowColor = appearance.shadowColor
+        
         let bottomBarAppearance = self.tabBar.standardAppearance
         
         self.bottomBarAppearance = bottomBarAppearance.copy()
         
         if self.bottomBarAppearance.shadowColor != nil {
             self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
+        }
+        
+        bottomBarAppearance.shadowColor = appearance.shadowColor
+        if self.popupBar.isFloating {
+            bottomBarAppearance.shadowColor = .clear
         }
         
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
@@ -715,6 +723,9 @@ internal extension UINavigationController
         self.popupBar.effectGroupingIdentifier = self.toolbar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
+        let appearance = UIToolbarAppearance()
+        self.popupBar.shadowColor = appearance.shadowColor
+
         let bottomBarAppearance = self.toolbar.standardAppearance
 
         self.bottomBarAppearance = bottomBarAppearance.copy()
@@ -723,6 +734,11 @@ internal extension UINavigationController
             self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
         }
         
+        bottomBarAppearance.shadowColor = appearance.shadowColor
+        if self.popupBar.isFloating {
+            bottomBarAppearance.shadowColor = .clear
+        }
+
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
             return
         }

@@ -112,7 +112,10 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.tableView.estimatedRowHeight = 80.0
         
         self.setupContainerVC()
-        
+
+        self.setupTabBarAppearance()
+        self.setupToolbarAppearance()
+
         //self.containerVC.usePopupBarLegacyShadow = true
         //self.containerVC.usePopupBarSmoothGradient = false
         if #available(iOS 17.0, *) {
@@ -136,8 +139,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.setupToolbarAppearance()
         
         self.tabBarController?.delegate = self
         
@@ -322,6 +323,21 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.popupContentTVC.subtitles = self.subtitles
     }
     
+    func setupTabBarAppearance() {
+        if let tabBarController = self.tabBarController {
+            let tabBar = tabBarController.tabBar
+            let appearance = UITabBarAppearance()
+            appearance.configureWithDefaultBackground()
+            if #available(iOS 17.0, *) {
+                appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
+            }
+            tabBar.standardAppearance = appearance
+            if #available(iOS 15.0, *) {
+                tabBar.scrollEdgeAppearance = appearance
+            }
+        }
+    }
+    
     func setupToolbarAppearance(withBackgroundColor backgroundColor: UIColor? = nil) {
         if let navigationController = self.navigationController as? NavigationController {
             let navigationBarAppearance = navigationController.navigationBar.standardAppearance
@@ -330,7 +346,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             toolbarAppearance.configureWithDefaultBackground()
             
             toolbarAppearance.backgroundEffect = navigationBarAppearance.backgroundEffect
-            
+
             navigationBarAppearance.backgroundColor = backgroundColor
             if backgroundColor == nil {
                 toolbarAppearance.backgroundColor = navigationBarAppearance.backgroundColor
@@ -338,14 +354,19 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             else {
                 toolbarAppearance.backgroundColor = backgroundColor
             }
+            navigationController.navigationBar.standardAppearance = navigationBarAppearance
             navigationController.navigationBar.compactAppearance = navigationBarAppearance
             navigationController.navigationBar.scrollEdgeAppearance = navigationBarAppearance
             if #available(iOS 15.0, *) {
                 navigationController.navigationBar.compactScrollEdgeAppearance = navigationBarAppearance
             }
 
-            navigationController.toolbar.compactAppearance = toolbarAppearance
             navigationController.toolbar.standardAppearance = toolbarAppearance
+            navigationController.toolbar.compactAppearance = toolbarAppearance
+            if #available(iOS 15.0, *) {
+                navigationController.toolbar.scrollEdgeAppearance = toolbarAppearance
+                navigationController.toolbar.compactScrollEdgeAppearance = toolbarAppearance
+            }
         }
     }
     

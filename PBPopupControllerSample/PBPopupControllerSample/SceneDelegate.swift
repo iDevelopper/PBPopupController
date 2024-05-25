@@ -18,37 +18,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         self.window?.tintColor = UIColor.systemPink
         
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.configureWithDefaultBackground()
-        
-        if #available(iOS 17.0, *) {
-            tabBarAppearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        }
-        let newTabBarAppearance = UITabBar.appearance()
-        newTabBarAppearance.standardAppearance = tabBarAppearance
-        if #available(iOS 15.0, *) {
-            newTabBarAppearance.scrollEdgeAppearance = tabBarAppearance
-        }
-        
-        let toolbarAppearance = UIToolbarAppearance()
-        toolbarAppearance.configureWithDefaultBackground()
-        
-        if #available(iOS 17.0, *) {
-            toolbarAppearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
-        }
-        let newToolbarAppearance = UIToolbar.appearance()
-        newToolbarAppearance.standardAppearance = toolbarAppearance
-        if #available(iOS 15.0, *) {
-            newToolbarAppearance.scrollEdgeAppearance = toolbarAppearance
-        }
-        
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithDefaultBackground()
         
         let newNavBarAppearance = UINavigationBar.appearance()
-        newNavBarAppearance.scrollEdgeAppearance = navBarAppearance
-        newNavBarAppearance.compactAppearance = navBarAppearance
         newNavBarAppearance.standardAppearance = navBarAppearance
+        newNavBarAppearance.compactAppearance = navBarAppearance
+        newNavBarAppearance.scrollEdgeAppearance = navBarAppearance
         if #available(iOS 15.0, *) {
             newNavBarAppearance.compactScrollEdgeAppearance = navBarAppearance
         }

@@ -268,9 +268,6 @@ internal extension UITabBarController
             if self.popupController.popupPresentationState == .presenting {
                 self.tabBar.scrollEdgeAppearance = self.tabBar.standardAppearance
             }
-            else {
-                self.tabBar.scrollEdgeAppearance = nil
-            }
         }
 #endif
     }
@@ -285,15 +282,22 @@ internal extension UITabBarController
         
         let bottomBarAppearance = self.tabBar.standardAppearance
         
-        self.bottomBarAppearance = bottomBarAppearance.copy()
-        
-        if self.bottomBarAppearance.shadowColor != nil {
-            self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
+        if self.bottomBarAppearance == nil {
+            self.bottomBarAppearance = bottomBarAppearance.copy()
         }
         
-        bottomBarAppearance.shadowColor = appearance.shadowColor
-        if self.popupBar.isFloating {
-            bottomBarAppearance.shadowColor = .clear
+        self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
+        
+        bottomBarAppearance.shadowColor = self.bottomBarAppearance.shadowColor
+        if self.popupBar.isFloating, self.popupController.popupPresentationState != .hidden {
+            if self.popupController.popupPresentationState != .dismissing {
+                bottomBarAppearance.shadowColor = .clear
+            }
+        }
+        
+        self.tabBar.standardAppearance = bottomBarAppearance
+        if #available(iOS 15.0, *) {
+            self.tabBar.scrollEdgeAppearance = bottomBarAppearance
         }
         
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
@@ -710,9 +714,7 @@ internal extension UINavigationController
             
             if self.popupController.popupPresentationState == .presenting {
                 self.toolbar.scrollEdgeAppearance = self.toolbar.standardAppearance
-            }
-            else {
-                self.toolbar.scrollEdgeAppearance = nil
+                self.toolbar.compactScrollEdgeAppearance = self.toolbar.standardAppearance
             }
         }
 #endif
@@ -728,15 +730,24 @@ internal extension UINavigationController
 
         let bottomBarAppearance = self.toolbar.standardAppearance
 
-        self.bottomBarAppearance = bottomBarAppearance.copy()
-        
-        if self.bottomBarAppearance.shadowColor != nil {
-            self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
+        if self.bottomBarAppearance == nil {
+            self.bottomBarAppearance = bottomBarAppearance.copy()
         }
         
-        bottomBarAppearance.shadowColor = appearance.shadowColor
-        if self.popupBar.isFloating {
-            bottomBarAppearance.shadowColor = .clear
+        self.popupBar.shadowColor = self.bottomBarAppearance.shadowColor
+        
+        bottomBarAppearance.shadowColor = self.bottomBarAppearance.shadowColor
+        if self.popupBar.isFloating, self.popupController.popupPresentationState != .hidden {
+            if self.popupController.popupPresentationState != .dismissing {
+                bottomBarAppearance.shadowColor = .clear
+            }
+        }
+        
+        self.toolbar.standardAppearance = bottomBarAppearance
+        self.toolbar.compactAppearance = bottomBarAppearance
+        if #available(iOS 15.0, *) {
+            self.toolbar.scrollEdgeAppearance = bottomBarAppearance
+            self.toolbar.compactScrollEdgeAppearance = bottomBarAppearance
         }
 
         if self.popupBar.inheritsVisualStyleFromBottomBar == false {
@@ -1101,7 +1112,6 @@ internal extension UIViewController
     @objc func configurePopupBarFromBottomBar()
     {
         let toolBarAppearance = UIToolbarAppearance()
-        toolBarAppearance.configureWithDefaultBackground()
         self.popupBar.shadowColor = toolBarAppearance.shadowColor
         
         self.popupBar.backgroundColor = nil

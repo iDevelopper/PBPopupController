@@ -211,6 +211,11 @@ public extension UIViewController
                     )
                 }
             }
+            else {
+                withUnsafePointer(to: &AssociatedKeys.bottomBarAppearance) {
+                    objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                }
+            }
         }
     }
     
@@ -532,8 +537,6 @@ public extension UIViewController
         controller.view.setNeedsLayout()
         controller.view.layoutIfNeeded()
 
-        self.configurePopupBarFromBottomBar()
-        
         self.popupController._presentPopupBarAnimated(animated) {
             completion?()
         }
@@ -703,7 +706,7 @@ public extension UIViewController
      - SeeAlso: `PBPopupBar.inheritsVisualStyleFromBottomBar`.
      */
     @objc func updatePopupBarAppearance() {
-        self.popupBar.inheritsVisualStyleFromBottomBar = true
+        self.bottomBarAppearance = nil
         self.popupBar.updatePopupBarAppearance()
     }
 }

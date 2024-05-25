@@ -301,9 +301,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
      */
     @objc public var inheritsVisualStyleFromBottomBar: Bool = true {
         didSet {
-            if inheritsVisualStyleFromBottomBar == true {
-                self.popupController.containerViewController.configurePopupBarFromBottomBar()
-            }
+            self.popupController.containerViewController.configurePopupBarFromBottomBar()
         }
     }
     

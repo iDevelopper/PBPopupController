@@ -717,8 +717,8 @@ extension PBPopupPresentationStyle
         
         UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveEaseInOut, .layoutSubviews], animations: {
             
-            vc.configureScrollEdgeAppearanceForBottomBar()
-            
+            vc.configurePopupBarFromBottomBar()
+
             self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
             self.popupBarView.alpha = 1.0
             
@@ -754,7 +754,7 @@ extension PBPopupPresentationStyle
         vc.popupBar.ignoreLayoutDuringTransition = true
         UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveLinear, .layoutSubviews], animations: {
             
-            vc.configureScrollEdgeAppearanceForBottomBar()
+            vc.configurePopupBarFromBottomBar()
 
             self.popupBarView.frame = contentFrame
             self.popupBarView.alpha = 0.0

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.9.9
+
+Fixed the display of the popup bar and bottom bar shadow line.
+
 ## 3.9.8
 
 Updated popup content safe area insets.

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.9.10
+
+Minor fix.
+
 ## 3.9.9
 
 Fixed the display of the popup bar and bottom bar shadow line.

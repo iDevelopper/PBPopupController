@@ -1238,16 +1238,16 @@ extension PBPopupPresentationController
         guard popupBar.popupBarStyle == .prominent else { return }
         guard let imageViewForPresentation = self.imageViewForPresentation else { return }
         guard let imageView = self.popupContentView.popupImageView else { return }
-        guard let bottomModule = self.popupContentView.popupBottomModule else { return }
+        //guard self.popupContentView.popupBottomModule != nil else { return }
         guard let bottomModuleTopConstraint = self.popupContentView.popupBottomModuleTopConstraint else { return }
 
         if self.isPresenting {
             self.bottomModuleTopConstantForPopupStateOpen = bottomModuleTopConstraint.constant
             let constant = (imageView.frame.size.height - imageViewForPresentation.frame.size.height)
             bottomModuleTopConstraint.constant -= constant
-            bottomModule.superview?.setNeedsUpdateConstraints()
-            bottomModule.superview?.layoutIfNeeded()
-
+            
+            self.presentedView?.setNeedsUpdateConstraints()
+            self.presentedView?.layoutIfNeeded()
         }
     }
     
@@ -1256,12 +1256,13 @@ extension PBPopupPresentationController
         guard let popupBar = UIViewController.getAssociatedPopupBarFor(self.presentingVC) else { return }
         guard popupBar.popupBarStyle == .prominent else { return }
         guard self.imageViewForPresentation != nil else { return }
-        guard let bottomModule = self.popupContentView.popupBottomModule else { return }
+        //guard self.popupContentView.popupBottomModule != nil else { return }
         guard let bottomModuleTopConstraint = self.popupContentView.popupBottomModuleTopConstraint else { return }
         
         bottomModuleTopConstraint.constant = self.bottomModuleTopConstantForPopupStateOpen
-        bottomModule.superview?.setNeedsUpdateConstraints()
-        bottomModule.superview?.layoutIfNeeded()
+        
+        self.presentedView?.setNeedsUpdateConstraints()
+        self.presentedView?.layoutIfNeeded()
     }
     
     // MARK: - Helpers

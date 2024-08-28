@@ -15,19 +15,28 @@ private let uCOIFPINBase64 = "X3VwZGF0ZUNvbnRlbnRPdmVybGF5SW5zZXRzRnJvbVBhcmVudE
 //_viewSafeAreaInsetsFromScene
 private let vSAIFSBase64 = "X3ZpZXdTYWZlQXJlYUluc2V0c0Zyb21TY2VuZQ=="
 //_hideBarWithTransition:isExplicit:
-private let hBWTiEBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
+//private let hBWTiEBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
 //_hideBarWithTransition:isExplicit:duration:
 private let hBWTiEDBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0OmR1cmF0aW9uOg=="
+//_hideBarWithTransition:isExplicit:duration:reason:
+private let hBWTiEDRBase64 = "X2hpZGVCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0OmR1cmF0aW9uOnJlYXNvbjo="
 //_showBarWithTransition:isExplicit:
-private let sBWTiEBase64 = "X3Nob3dCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
+//private let sBWTiEBase64 = "X3Nob3dCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0Og=="
 //_showBarWithTransition:isExplicit:duration:
 private let sBWTiEDBase64 = "X3Nob3dCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0OmR1cmF0aW9uOg=="
+//_showBarWithTransition:isExplicit:duration:reason:
+private let sBWTiEDRBase64 = "X3Nob3dCYXJXaXRoVHJhbnNpdGlvbjppc0V4cGxpY2l0OmR1cmF0aW9uOnJlYXNvbjo="
 //_setToolbarHidden:edge:duration:
 private let sTHedBase64 = "X3NldFRvb2xiYXJIaWRkZW46ZWRnZTpkdXJhdGlvbjo="
 //hideBarWithTransition:
 private let hBWTBase64 = "aGlkZUJhcldpdGhUcmFuc2l0aW9uOg=="
 //showBarWithTransition:
 private let sBWTBase64 = "c2hvd0JhcldpdGhUcmFuc2l0aW9uOg=="
+
+//_UITabContainerView
+private let _uiTCV: AnyClass? = NSClassFromString(_PBPopupDecodeBase64String(base64String: "X1VJVGFiQ29udGFpbmVyVmlldw==")!)
+//_UIFloatingTabBar
+private let _uiFTB: AnyClass? = NSClassFromString(_PBPopupDecodeBase64String(base64String: "X1VJRmxvYXRpbmdUYWJCYXI=")!)
 
 public extension UITabBarController
 {
@@ -45,7 +54,7 @@ public extension UITabBarController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
-        //_hideBarWithTransition:isExplicit:
+        //_hideBarWithTransition:isExplicit:duration:
         var selName = _PBPopupDecodeBase64String(base64String: hBWTiEDBase64)!
         var selector = NSSelectorFromString(selName)
         originalMethod = class_getInstanceMethod(aClass, selector)
@@ -54,16 +63,14 @@ public extension UITabBarController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
-        //_showBarWithTransition:isExplicit:
-        /*
-        selName = _PBPopupDecodeBase64String(base64String: sBWTiEBase64)!
+        //_hideBarWithTransition:isExplicit:duration:reason:
+        selName = _PBPopupDecodeBase64String(base64String: hBWTiEDRBase64)!
         selector = NSSelectorFromString(selName)
         originalMethod = class_getInstanceMethod(aClass, selector)
-        swizzledMethod = class_getInstanceMethod(aClass, #selector(_sBWT(t:iE:)))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_hBWTR(t:iE:d:r:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-        */
         
         //_showBarWithTransition:isExplicit:duration:
         selName = _PBPopupDecodeBase64String(base64String: sBWTiEDBase64)!
@@ -72,6 +79,25 @@ public extension UITabBarController
         swizzledMethod = class_getInstanceMethod(aClass, #selector(_sBWT(t:iE:d:)))
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
+        //_showBarWithTransition:isExplicit:duration:reason
+        selName = _PBPopupDecodeBase64String(base64String: sBWTiEDRBase64)!
+        selector = NSSelectorFromString(selName)
+        originalMethod = class_getInstanceMethod(aClass, selector)
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(_sBWTR(t:iE:d:r:)))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 {
+                originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
+                swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_tbcDidLayoutSubviews))
+                if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+                    method_exchangeImplementations(originalMethod, swizzledMethod)
+                }
+            }
         }
     }()
     
@@ -86,9 +112,20 @@ public extension UITabBarController
     //_hideBarWithTransition:isExplicit:duration:
     @objc private func _hBWT(t: Int, iE: Bool, d: TimeInterval)
     {
+        self._hBWTR(t: t, iE: iE, d: d, r: UInt(UINT64_MAX))
+    }
+    
+    //_hideBarWithTransition:isExplicit:duration:reason:
+    @objc private func _hBWTR(t: Int, iE: Bool, d: TimeInterval, r: UInt)
+    {
         self.isTabBarHiddenDuringTransition = true
         
-        self._hBWT(t: t, iE: iE, d: d)
+        if #available(iOS 18.0, *) {
+            self._hBWTR(t: t, iE: iE, d: d, r: r)
+        }
+        else {
+            self._hBWT(t: t, iE: iE, d: d)
+        }
         
         if (t > 0) {
             if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
@@ -125,9 +162,22 @@ public extension UITabBarController
     //_showBarWithTransition:isExplicit:duration:
     @objc private func _sBWT(t: Int, iE: Bool, d: TimeInterval)
     {
+        self._sBWTR(t: t, iE: iE, d: d, r: UInt(UINT64_MAX))
+    }
+    
+    //_showBarWithTransition:isExplicit:duration:reason:
+    @objc private func _sBWTR(t: Int, iE: Bool, d: TimeInterval, r: UInt)
+    {
+        let tabBarIsAlreadyHidden = self.bottomBar.superview == nil
+        
         self.isTabBarHiddenDuringTransition = false
 
-        self._sBWT(t: t, iE: iE, d: d)
+        if #available(iOS 18.0, *) {
+            self._sBWTR(t: t, iE: iE, d: d, r: r)
+        }
+        else {
+            self._sBWT(t: t, iE: iE, d: d)
+        }
 
         if (t > 0) {
             if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
@@ -138,7 +188,7 @@ public extension UITabBarController
                             if let transitionView = rv.transitionBackgroundView {
                                 transitionView.frame.size.width = .zero
                                 transitionView.layoutIfNeeded()
-                                transitionView.isHidden = false
+                                transitionView.isHidden = tabBarIsAlreadyHidden ? true : false
                             }
                         }
                         self.popupController.popupBarView.alpha = 1
@@ -194,6 +244,17 @@ public extension UITabBarController
             }
         }
     }
+
+    @objc private func pb_tbcDidLayoutSubviews()
+    {
+        if self.responds(to: #selector(pb_tbcDidLayoutSubviews)) {
+            self.pb_tbcDidLayoutSubviews()
+            
+            if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
+                rv.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
+            }
+        }
+    }
     
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
     {
@@ -241,7 +302,8 @@ internal extension UITabBarController
                 return UIEdgeInsets.zero
             }
         }
-        return self.tabBar.isHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
+        let tabBarIsHidden = self.tabBar.isHidden || self.tabBar.superview == nil
+        return tabBarIsHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
     }
     
     @objc override func defaultFrameForBottomBar() -> CGRect
@@ -251,7 +313,8 @@ internal extension UITabBarController
         
         bottomBarFrame.size.height = max(bottomBarFrame.size.height, bottomBarSizeThatFits.height)
         
-        bottomBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.size.height - (self.isTabBarHiddenDuringTransition ? 0.0 : bottomBarFrame.size.height))
+        let tabBarIsHidden = self.tabBar.superview == nil
+        bottomBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.size.height - (self.isTabBarHiddenDuringTransition ? 0.0 : (tabBarIsHidden ? 0.0 : bottomBarFrame.size.height)))
         
         return bottomBarFrame
     }
@@ -306,8 +369,27 @@ internal extension UITabBarController
         self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
         self.popupBar.barStyle = self.tabBar.barStyle
         self.popupBar.tintColor = self.tabBar.tintColor
+        if #available(iOS 18.0, *) {
+            self.fixesPopupBarTintColor()
+        }
         self.popupBar.isTranslucent = self.tabBar.isTranslucent
         self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
+    }
+    
+    @available(iOS 18.0, *)
+    private func fixesPopupBarTintColor() {
+        let doit = (ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 && UIDevice.current.userInterfaceIdiom == .pad)
+        if doit {
+            for tcv in self.view.subviews {
+                if tcv.classForCoder == _uiTCV {
+                    for ftb in tcv.subviews {
+                        if ftb.classForCoder == _uiFTB {
+                            popupBar.tintColor = ftb.tintColor
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -481,7 +563,7 @@ public extension UINavigationController
                 if let presentation = self.toolbar.layer.presentation() {
                     position = presentation.position.x
                 }
-                self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? (self.toolbar.isHidden || position < 0 ? 0.0 : 1.0) : 1.0
+                rv.backgroundView.alpha = rv.isFloating ? (self.toolbar.isHidden || position < 0 ? 0.0 : 1.0) : 1.0
                 if rv.isFloating {
                     self.popupController?.popupBarView?.superview?.bringSubviewToFront(self.popupController.popupBarView)
                 }
@@ -676,8 +758,11 @@ internal extension UINavigationController
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets
     {
-        if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
-            return tabBarController.insetsForBottomBar()
+        let doit = !(ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 && UIDevice.current.userInterfaceIdiom == .pad)
+        if doit {
+            if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
+                return tabBarController.insetsForBottomBar()
+            }
         }
         if let dropShadowView = self.popupController.dropShadowViewFor(self.view) {
             if dropShadowView.frame.minX > 0 {
@@ -695,9 +780,12 @@ internal extension UINavigationController
         toolBarFrame.size.height = self.isToolbarHidden ? 0.0 : toolBarFrame.size.height
         toolBarFrame.size.width = self.navigationBar.frame.width
         
-        if let tabBarController = self.tabBarController {
-            let tabBarFrame = tabBarController.defaultFrameForBottomBar()
-            toolBarFrame.origin.y -= tabBarController.isTabBarHiddenDuringTransition ? 0.0 : tabBarFrame.height
+        let doit = !(ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 && UIDevice.current.userInterfaceIdiom == .pad)
+        if doit {
+            if let tabBarController = self.tabBarController {
+                let tabBarFrame = tabBarController.defaultFrameForBottomBar()
+                toolBarFrame.origin.y -= tabBarController.isTabBarHiddenDuringTransition ? 0.0 : tabBarFrame.height
+            }
         }
         
         return toolBarFrame
@@ -793,7 +881,7 @@ public extension UISplitViewController
     {
         self.pb_svcDidLayoutSubviews()
         if let rv = UISplitViewController.getAssociatedPopupBarFor(self) {
-            self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
+            rv.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
         }
     }
 }

@@ -123,6 +123,7 @@ class MainTableViewController: UITableViewController {
                     self.dismiss(animated: true, completion: nil)
                 }
                 let vc = UIHostingController(rootView: contentView)
+                vc.title = self.items[indexPath.row]
                 return vc
             }
             return nil
@@ -156,6 +157,7 @@ class MainTableViewController: UITableViewController {
                 if indexPath.row == 8 { // global
                     svc.globalIsContainer = true
                 }
+                svc.title = self.items[indexPath.row]
             }
             if vc is UINavigationController {
                 let nc = vc as! NavigationController
@@ -163,8 +165,11 @@ class MainTableViewController: UITableViewController {
                 if indexPath.row == 3 {
                     nc.toolbarIsShown = true
                 }
+                nc.title = self.items[indexPath.row]
             }
-            vc.title = self.items[indexPath.row]
+            if vc is UITabBarController {
+               vc.title = self.items[indexPath.row]
+            }
             return vc
         }
         return nil

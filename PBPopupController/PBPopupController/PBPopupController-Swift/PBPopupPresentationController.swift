@@ -715,7 +715,7 @@ extension PBPopupPresentationController
             frame = self.popupController.popupBarViewFrameForPopupStateClosed()
             if isFloating {
                 frame = frame.inset(by: self.presentingVC.popupBar.floatingInsets)
-                if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden {
+                if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden || self.presentingVC.bottomBar.superview == nil {
                     let insets = UIEdgeInsets(top: 0, left: 0, bottom: self.presentingVC.insetsForBottomBar().bottom, right: 0)
                     frame = frame.inset(by: insets)
                 }
@@ -780,7 +780,7 @@ extension PBPopupPresentationController
             }
         }
         if self.popupContentView.isFloating {
-            if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden {
+            if self.presentingVC.defaultFrameForBottomBar().height == 0 || self.presentingVC.bottomBar.isHidden || self.presentingVC.bottomBar.superview == nil {
                 if let window = self.presentingVC.view.window {
                     frame.origin.y -= window.safeAreaInsets.bottom
                 }
@@ -981,6 +981,9 @@ extension PBPopupPresentationController
             var snapshotView = self.presentingVC.view!
             if let nc = self.presentingVC.navigationController {
                 snapshotView = nc.view
+            }
+            if let tbc = self.presentingVC.tabBarController {
+                snapshotView = tbc.view
             }
             self.backingView = snapshotView.resizableSnapshotView(from: imageRect, afterScreenUpdates: isHidden || coordinator != nil, withCapInsets: .zero)
             self.backingView.autoresizingMask = []

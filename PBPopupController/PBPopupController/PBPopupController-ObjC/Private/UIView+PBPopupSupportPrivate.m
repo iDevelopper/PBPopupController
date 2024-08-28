@@ -14,7 +14,9 @@
 
 // https://www.base64encode.org/
 //backdropGroupName
-static NSString* _bGN = @"YmFja2Ryb3BHcm91cE5hbWU=";
+//static NSString* _bGN = @"YmFja2Ryb3BHcm91cE5hbWU=";
+//groupName
+static NSString* _gN = @"Z3JvdXBOYW1l";
 //_UINavigationBarVisualProvider
 static NSString* _UINBVP = @"X1VJTmF2aWdhdGlvbkJhclZpc3VhbFByb3ZpZGVy";
 //_UINavigationBarVisualProviderLegacyIOS
@@ -48,14 +50,20 @@ NSString* _PBPopupDecodeBase64String(NSString* base64String)
 				static NSString* key = nil;
 				static dispatch_once_t onceToken;
 				dispatch_once(&onceToken, ^{
-					//backdropGroupName
-					key = _PBPopupDecodeBase64String(_bGN);
+                    //backdropGroupName
+                    //key = _PBPopupDecodeBase64String(_bGN);
+                    //groupName
+                    key = _PBPopupDecodeBase64String(_gN);
 				});
 				
-				NSString* groupName = [_self valueForKey:key];
+                //NSString* groupName = [_self valueForKey:key];
+                id backgroundView = [_self valueForKey:@"backgroundView"];
+                
+                NSString* groupName = [backgroundView valueForKey:key];
 				if(groupName != nil && [groupName hasSuffix:@"🤡"] == NO)
 				{
-					[_self setValue:[NSString stringWithFormat:@"%@🤡", groupName] forKey:key];
+                    //[_self setValue:[NSString stringWithFormat:@"%@🤡", groupName] forKey:key];
+                    [backgroundView setValue:[NSString stringWithFormat:@"%@🤡", groupName] forKey:key];
 				}
 			};
 		};

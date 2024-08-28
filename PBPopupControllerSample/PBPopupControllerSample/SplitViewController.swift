@@ -15,7 +15,6 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     var globalIsContainer: Bool = false
     
     weak var containerVC: UIViewController!
-    /*weak */var detailVC: UIViewController!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -36,14 +35,10 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
                 
         if #available(iOS 14.0, *) {
             if self.viewControllers.count > 1 {
-                if let vc1 = viewControllers[0] as? UINavigationController, let vc2 = viewControllers[1] as? UINavigationController {
-                    if let primaryVC = vc1.topViewController as? FirstTableViewController {
-                        self.containerVC = globalIsContainer ? self : masterIsContainer ? vc1 : vc2
-                        self.detailVC = vc2
-                        vc2.topViewController?.title = "Split View Controller (Detail)"
-                        primaryVC.title = globalIsContainer ? "Split View Controller (Global)": masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
-                        primaryVC.loadViewIfNeeded()
-                    }
+                if let vc1 = viewControllers[0] as? NavigationController, let vc2 = viewControllers[1] as? UINavigationController {
+                    vc1.topViewController?.title = "Master"
+                    vc2.topViewController?.title = "Detail"
+                    self.containerVC = globalIsContainer ? self : masterIsContainer ? vc1 : vc2
                 }
             }
         }
@@ -51,20 +46,7 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     
     deinit {
         PBLog("Deinit: \(self)")
-    }
-    
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
-        if let vc1 = primaryViewController as? UINavigationController, let vc2 = secondaryViewController as? UINavigationController {
-            if let primaryVC = vc1.topViewController as? FirstTableViewController {
-                self.containerVC = globalIsContainer ? self : masterIsContainer ? vc1 : vc2
-                vc2.topViewController?.title = "Split View Controller (Detail)"
-                self.detailVC = vc2
-                primaryVC.title = globalIsContainer ? "Split View Controller (Global)": masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
-                primaryVC.loadViewIfNeeded()
-            }
-        }
-        return globalIsContainer ? true: masterIsContainer ? true : false
-    }
+    }    
     
 #if !targetEnvironment(macCatalyst)
     @available(iOS 14.0, *)

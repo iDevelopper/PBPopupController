@@ -12,6 +12,13 @@ import PBPopupController
 class DemoTableViewController: UITableViewController {
 
     @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var headerTitle: UILabel! {
+        didSet {
+            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            headerTitle.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            headerTitle.adjustsFontForContentSizeCategory = true
+        }
+    }
 
     var images = [UIImage]()
     var titles = [String]()
@@ -36,6 +43,11 @@ class DemoTableViewController: UITableViewController {
         self.tableView.rowHeight = UITableView.automaticDimension
         self.tableView.estimatedRowHeight = 80.0
         
+        self.tableView.tableHeaderView = nil
+        if (self.navigationController == nil) {
+            self.tableView.tableHeaderView = self.headerView
+        }
+        
         self.navigationItem.largeTitleDisplayMode = .automatic
 
         let rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(pushNext(_:)))
@@ -49,9 +61,12 @@ class DemoTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.tableView.tableHeaderView = nil
-        if (self.navigationController == nil) {
-            self.tableView.tableHeaderView = self.headerView
+        if let tbc = self.tabBarController, let selectedItem = tbc.tabBar.selectedItem {
+            self.navigationItem.title = selectedItem.title
+            self.title = selectedItem.title
+            if let headerTitle = self.headerTitle {
+                headerTitle.text = selectedItem.title
+            }
         }
         
         self.tableView.reloadData()

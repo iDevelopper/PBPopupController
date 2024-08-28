@@ -9,6 +9,16 @@
 import UIKit
 import PBPopupController
 
+class HeaderView: UICollectionReusableView {
+    @IBOutlet weak var headerTitle: UILabel! {
+        didSet {
+            let font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+            headerTitle.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: font)
+            headerTitle.adjustsFontForContentSizeCategory = true
+        }
+    }
+}
+
 private let reuseIdentifier = "musicCollectionViewCell"
 
 class DemoCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
@@ -24,7 +34,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
         if statusBarOrientation == .portrait || statusBarOrientation == .portraitUpsideDown {return 2}
         return 4
     }
-    
+        
     var images = [UIImage]()
     var titles = [String]()
     var subtitles = [String]()
@@ -54,6 +64,11 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        if let tbc = self.tabBarController, let selectedItem = tbc.tabBar.selectedItem {
+            self.navigationItem.title = selectedItem.title
+            self.title = selectedItem.title
+        }
         
         self.collectionView.reloadData()
     }
@@ -102,8 +117,13 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerView", for: indexPath as IndexPath)
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerView", for: indexPath as IndexPath) as! HeaderView
         headerView.backgroundColor = UIColor.clear
+        if let headerTitle = headerView.headerTitle {
+            if let tbc = self.tabBarController, let selectedItem = tbc.tabBar.selectedItem {
+                headerTitle.text = selectedItem.title
+            }
+        }
         return headerView
     }
     

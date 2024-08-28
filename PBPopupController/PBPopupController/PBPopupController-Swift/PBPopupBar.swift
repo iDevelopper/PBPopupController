@@ -1388,10 +1388,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.contentViewRightConstraint = self.contentView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: self.isFloating ? -self.floatingInsets.right : 0.0)
             self.contentViewRightConstraint.isActive = true
         }
-        var bottom: CGFloat = 0
-        if let bottomBar = self.popupController.containerViewController.bottomBar {
-            bottom = (bottomBar.frame.height == 0 || bottomBar.isHidden) ? self.safeBottom() : 0.0
-        }
+        let bottom = self.popupController.bottomBarHeight == 0 ? self.safeBottom() : 0.0
         var constant = self.frame.height - bottom
         if self.isFloating {
             constant -= (self.floatingInsets.top + self.floatingInsets.bottom)

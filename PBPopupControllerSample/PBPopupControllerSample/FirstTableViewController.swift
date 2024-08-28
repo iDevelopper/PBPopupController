@@ -13,15 +13,6 @@ class PopupNavigationController: UINavigationController {
     override open var childForStatusBarStyle: UIViewController? {
         return self.topViewController
     }
-
-    /*
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        if let container = self.appDelegate.containerVC() as? UITabBarController {
-            return container.popupController.popupStatusBarStyle
-        }
-        return .default
-    }
-    */
 }
 
 class FirstTableViewController: UITableViewController, PBPopupControllerDataSource {
@@ -189,7 +180,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     @IBAction func pushNext(_ sender: Any) {
         if let splitVC = self.splitViewController as? SplitViewController {
             if self.traitCollection.horizontalSizeClass == .compact {
-                if let detailVC = splitVC.detailVC {
+                if let detailVC = splitVC.viewControllers.last as? UINavigationController {
                     if detailVC != self.navigationController {
                         if #available(iOS 14.0, *) {
                             splitVC.show(detailVC, sender: self)
@@ -215,6 +206,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
         if let nextVC = nextVC {
             nextVC.hidesBottomBarWhenPushed = true
+            if UIDevice.current.userInterfaceIdiom == .pad {
+            }
             if sender is FirstTableViewController {
                 nextVC.hidesPopupBarWhenPushed = true
             }
@@ -259,25 +252,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if let containerVC = splitViewController.containerVC {
                 self.containerVC = containerVC
             }
-            else {
-                if splitViewController.globalIsContainer == true {
-                    self.containerVC = splitViewController
-                }
-                else if splitViewController.masterIsContainer == true {
-                    self.containerVC = splitViewController.viewControllers.first
-                }
-                else {
-                    self.containerVC = splitViewController.viewControllers.last
-                }
-                if let nc = splitViewController.viewControllers.first as? UINavigationController {
-                    nc.topViewController?.title = splitViewController.globalIsContainer ? "Split View Controller (Global)": splitViewController.masterIsContainer ? "Split View Controller (Master)" : "Split View Controller (Detail)"
-                }
-                splitViewController.containerVC = self.containerVC
-                if let nc = splitViewController.viewControllers.last as? UINavigationController {
-                    splitViewController.detailVC = nc
-                    nc.topViewController?.title = "Split View Controller (Detail)"
-                }
-            }
         }
         else if let tabBarController = self.tabBarController {
             self.containerVC = tabBarController
@@ -287,6 +261,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             else {
                 self.headerTitle.text = tabBarController.title
             }
+            //if #available(iOS 18.0, *) {
+                //tabBarController.mode = .tabSidebar
+            //}
         }
         else if let navigationController = self.navigationController as? NavigationController {
             navigationController.isToolbarHidden = true
@@ -297,6 +274,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             if let containerController = navigationController.parent {
                 self.containerVC = containerController
             }
+            self.title = navigationController.title
         }
         else if let containerController = self.parent {
             self.containerVC = containerController

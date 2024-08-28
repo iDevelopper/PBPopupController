@@ -396,13 +396,12 @@ extension PBPopupPresentationStyle
      */
     @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
         didSet {
-            self.popupStatusBarStyle = self.popupPresentationState == .closed ? containerPreferredStatusBarStyle : self.popupPreferredStatusBarStyle
             containerViewController.setNeedsStatusBarAppearanceUpdate()
         }
     }
 
     /**
-     The preferred status bar style for the popup content view controller when `popupPresentationStyle` is set to `deck`.
+     The preferred status bar style for the popup content view controller.
      */
     @objc public var popupPreferredStatusBarStyle: UIStatusBarStyle = .lightContent
     
@@ -454,7 +453,7 @@ extension PBPopupPresentationStyle
     {
         guard let vc = self.containerViewController else { return 0.0 }
 #if !targetEnvironment(macCatalyst)
-        if vc.bottomBar.isHidden {
+        if vc.bottomBar.isHidden || vc.bottomBar.superview == nil {
             return 0.0
         }
 #endif
@@ -599,7 +598,8 @@ extension PBPopupPresentationStyle
     {
         var rv: UIView? = nil
         if self.containerViewController is UITabBarController {
-            rv = (self.containerViewController as! UITabBarController).tabBar
+            let tbc = self.containerViewController as! UITabBarController
+            rv = tbc.tabBar
         }
         if let navigationController = self.containerViewController as? UINavigationController {
             rv = navigationController.toolbar

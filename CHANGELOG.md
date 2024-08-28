@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.10.0
+
+iOS 18 Support (Initial)).
+
 ## 3.9.10
 
 Minor fix.

@@ -1192,6 +1192,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         super.layoutSubviews()
         
         guard let popupBarView = self.superview else {return}
+        guard popupBarView.superview != nil else {return}
         
         if self.ignoreLayoutDuringTransition {
             return

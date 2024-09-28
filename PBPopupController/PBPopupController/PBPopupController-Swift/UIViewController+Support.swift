@@ -25,7 +25,7 @@ public extension UIViewController
         static var popupContainerViewController: UIViewController?
         static var popupContentViewController: UIViewController?
         static var popupContentView: PBPopupContentView?
-        static var isTabBarHiddenDuringTransition = "isTabBarHiddenDuringTransition"
+        static var isBottomBarHiddenDuringTransition = "isBottomBarHiddenDuringTransition"
         static var hidesPopupBarWhenPushed = "hidesPopupBarWhenPushed"
         static var popupBarIsHidden = "popupBarIsHidden"
         static var popupBarWasHidden = "popupBarWasHidden"
@@ -338,16 +338,16 @@ public extension UIViewController
         }
     }
     
-    internal var isTabBarHiddenDuringTransition: Bool! {
+    internal var isBottomBarHiddenDuringTransition: Bool! {
         get {
-            let isHidden = withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+            let isHidden = withUnsafePointer(to: &AssociatedKeys.isBottomBarHiddenDuringTransition) {
                     objc_getAssociatedObject(self, $0) as? NSNumber
             }
             return isHidden?.boolValue ?? false
         }
         set {
             if let newValue = newValue {
-                withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+                withUnsafePointer(to: &AssociatedKeys.isBottomBarHiddenDuringTransition) {
                     objc_setAssociatedObject(
                         self,
                         $0,

@@ -54,6 +54,30 @@ public extension UITabBarController
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
         
+        var selName = _PBPopupDecodeBase64String(base64String: hBWTiEDRBase64)!
+        var selector = NSSelectorFromString(selName)
+        if instance.responds(to: selector) {
+            //_hideBarWithTransition:isExplicit:duration:reason:
+            selName = _PBPopupDecodeBase64String(base64String: hBWTiEDRBase64)!
+            selector = NSSelectorFromString(selName)
+            originalMethod = class_getInstanceMethod(aClass, selector)
+            swizzledMethod = class_getInstanceMethod(aClass, #selector(_hBWTR(t:iE:d:r:)))
+            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+                method_exchangeImplementations(originalMethod, swizzledMethod)
+            }
+        }
+        else {
+            //_hideBarWithTransition:isExplicit:duration:
+            var selName = _PBPopupDecodeBase64String(base64String: hBWTiEDBase64)!
+            var selector = NSSelectorFromString(selName)
+            originalMethod = class_getInstanceMethod(aClass, selector)
+            swizzledMethod = class_getInstanceMethod(aClass, #selector(_hBWT(t:iE:d:)))
+            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+                method_exchangeImplementations(originalMethod, swizzledMethod)
+            }
+        }
+        
+        /*
         //_hideBarWithTransition:isExplicit:duration:
         var selName = _PBPopupDecodeBase64String(base64String: hBWTiEDBase64)!
         var selector = NSSelectorFromString(selName)
@@ -71,7 +95,32 @@ public extension UITabBarController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
+        */
         
+        selName = _PBPopupDecodeBase64String(base64String: sBWTiEDRBase64)!
+        selector = NSSelectorFromString(selName)
+        if instance.responds(to: selector) {
+            //_showBarWithTransition:isExplicit:duration:reason
+            selName = _PBPopupDecodeBase64String(base64String: sBWTiEDRBase64)!
+            selector = NSSelectorFromString(selName)
+            originalMethod = class_getInstanceMethod(aClass, selector)
+            swizzledMethod = class_getInstanceMethod(aClass, #selector(_sBWTR(t:iE:d:r:)))
+            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+                method_exchangeImplementations(originalMethod, swizzledMethod)
+            }
+        }
+        else {
+            //_showBarWithTransition:isExplicit:duration:
+            selName = _PBPopupDecodeBase64String(base64String: sBWTiEDBase64)!
+            selector = NSSelectorFromString(selName)
+            originalMethod = class_getInstanceMethod(aClass, selector)
+            swizzledMethod = class_getInstanceMethod(aClass, #selector(_sBWT(t:iE:d:)))
+            if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+                method_exchangeImplementations(originalMethod, swizzledMethod)
+            }
+        }
+        
+        /*
         //_showBarWithTransition:isExplicit:duration:
         selName = _PBPopupDecodeBase64String(base64String: sBWTiEDBase64)!
         selector = NSSelectorFromString(selName)
@@ -89,16 +138,7 @@ public extension UITabBarController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 {
-                originalMethod = class_getInstanceMethod(aClass, #selector(viewDidLayoutSubviews))
-                swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_tbcDidLayoutSubviews))
-                if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
-                    method_exchangeImplementations(originalMethod, swizzledMethod)
-                }
-            }
-        }
+        */
     }()
     
     /**
@@ -118,7 +158,9 @@ public extension UITabBarController
     //_hideBarWithTransition:isExplicit:duration:reason:
     @objc private func _hBWTR(t: Int, iE: Bool, d: TimeInterval, r: UInt)
     {
-        self.isTabBarHiddenDuringTransition = true
+        if UITabBarController.getAssociatedPopupBarFor(self) == nil {
+            self.tabBar._ignoringNastedFrameDuringTransition = true
+        }
         
         if #available(iOS 18.0, *) {
             self._hBWTR(t: t, iE: iE, d: d, r: r)
@@ -129,30 +171,42 @@ public extension UITabBarController
         
         if (t > 0) {
             if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
+                self.isBottomBarHiddenDuringTransition = true
                 if self.popupController.popupPresentationState != .hidden {
                     rv.applyGroupingIdentifier(fromBottomBar: false)
-                    self.bottomBar.isHidden = true
-                    
+
                     if self.popupBarIsHidden == false {
                         if rv.isFloating {
                             rv.backgroundView.alpha = 0.0
-                            if let transitionView = rv.transitionBackgroundView {
-                                transitionView.effect = rv.backgroundView.effect
-                                if rv.enablePopupBarColorsDebug {
-                                    transitionView.backgroundColor = .yellow
-                                    transitionView.effect = nil
+                            if t == 1 {
+                                if let transitionView = rv.transitionBackgroundView {
+                                    transitionView.effect = rv.backgroundView.effect
+                                    if rv.enablePopupBarColorsDebug {
+                                        transitionView.backgroundColor = .green
+                                        transitionView.effect = nil
+                                    }
+                                    transitionView.frame = self.popupController.popupBarView.frame
+                                    self.view.addSubview(transitionView)
+                                    transitionView.isHidden = true
                                 }
-                                transitionView.frame = self.popupController.popupBarView.frame
-                                self.view.addSubview(transitionView)
-                                transitionView.isHidden = true
                             }
                         }
-                        self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { context in
-                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                            self.popupController.popupBarView.layoutIfNeeded()
-                        }, completion: { context in
-                            //
-                        })
+                        if let selectedViewController = self.selectedViewController, let transitionCoordinator = selectedViewController.transitionCoordinator {
+                            transitionCoordinator.animate { _ in
+                                self.popupController.setPopupBarViewFrame(for: .closed)
+                                self.view.layoutIfNeeded()
+                            }
+                        }
+                        else {
+                            let duration: TimeInterval = __pb_durationForTransition(self, UInt(t))
+                            self.setIgnoringLayoutDuringTransition(true)
+                            UIView.animate(withDuration: duration, delay: 0.0, options: [.beginFromCurrentState, .layoutSubviews]) {
+                                self.popupController.setPopupBarViewFrame(for: .closed)
+                                self.view.layoutIfNeeded()
+                                } completion: { _ in
+                                    self.setIgnoringLayoutDuringTransition(false)
+                                }
+                        }
                     }
                 }
             }
@@ -168,10 +222,10 @@ public extension UITabBarController
     //_showBarWithTransition:isExplicit:duration:reason:
     @objc private func _sBWTR(t: Int, iE: Bool, d: TimeInterval, r: UInt)
     {
-        let tabBarIsAlreadyHidden = self.bottomBar.superview == nil
+        if UITabBarController.getAssociatedPopupBarFor(self) == nil {
+            self.tabBar._ignoringNastedFrameDuringTransition = false
+        }
         
-        self.isTabBarHiddenDuringTransition = false
-
         if #available(iOS 18.0, *) {
             self._sBWTR(t: t, iE: iE, d: d, r: r)
         }
@@ -181,6 +235,8 @@ public extension UITabBarController
 
         if (t > 0) {
             if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
+                let tabBarIsAlreadyHidden = self.bottomBar.superview == nil
+                self.isBottomBarHiddenDuringTransition = false
                 if let vc = self.popupController.containerViewController {
                     if self.popupController.popupPresentationState != .hidden || vc.popupBarIsHidden {
                         rv.applyGroupingIdentifier(fromBottomBar: false)
@@ -192,70 +248,71 @@ public extension UITabBarController
                             }
                         }
                         self.popupController.popupBarView.alpha = 1
-                        self.selectedViewController?.transitionCoordinator?.animate(alongsideTransition: { context in
-                            self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                            if rv.isFloating {
-                                if let transitionView = rv.transitionBackgroundView {
-                                    transitionView.frame = self.popupController.popupBarView.frame
-                                    transitionView.layoutIfNeeded()
-                                }
-                            }
-                            self.popupController.popupPresentationState = .closed
-                            vc.popupBarIsHidden = false
-                            if self.popupBarWasHidden {
-                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
-                            }
-                            self.popupController.popupBarView.layoutIfNeeded()
-                        }, completion: { (_ context) in
-                            if context.isCancelled {
-                                self.isTabBarHiddenDuringTransition = true
-                                
+                        if let selectedViewController = self.selectedViewController, let transitionCoordinator = selectedViewController.transitionCoordinator {
+                            transitionCoordinator.animate(alongsideTransition: { context in
+                                self.popupController.setPopupBarViewFrame(for: .closed)
                                 if rv.isFloating {
                                     if let transitionView = rv.transitionBackgroundView {
-                                        transitionView.isHidden = true
+                                        transitionView.frame = self.popupController.popupBarView.frame
+                                        transitionView.layoutIfNeeded()
                                     }
                                 }
-                                if !self.popupBarWasHidden {
-                                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                                }
-                                
+                                self.popupController.popupPresentationState = .closed
+                                vc.popupBarIsHidden = false
                                 if self.popupBarWasHidden {
-                                    self.popupController.popupBarView.alpha = 0
-                                    self.popupController.popupPresentationState = .hidden
-                                    vc.popupBarIsHidden = true
-                                    self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: true)
+                                    self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
                                 }
-                                self.popupController.popupBarView.layoutIfNeeded()
-                            }
-                            else {
-                                if rv.isFloating {
-                                    if let transitionView = rv.transitionBackgroundView {
-                                        rv.backgroundView.alpha = 1.0
-                                        transitionView.isHidden = true
-                                        transitionView.removeFromSuperview()
+                                self.view.layoutIfNeeded()
+                            }, completion: { (_ context) in
+                                if context.isCancelled {
+                                    self.isBottomBarHiddenDuringTransition = true
+                                    
+                                    if rv.isFloating {
+                                        if let transitionView = rv.transitionBackgroundView {
+                                            transitionView.isHidden = true
+                                        }
+                                    }
+                                    if !self.popupBarWasHidden {
+                                        self.popupController.setPopupBarViewFrame(for: .closed)
+                                        self.view.layoutIfNeeded()
+                                    }
+                                    
+                                    if self.popupBarWasHidden {
+                                        self.popupController.popupBarView.alpha = 0
+                                        self.popupController.popupPresentationState = .hidden
+                                        vc.popupBarIsHidden = true
+                                        self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: true)
+                                    }
+                                    self.view.layoutIfNeeded()
+                                }
+                                else {
+                                    if rv.isFloating {
+                                        rv.backgroundView.alpha = self.bottomBarIsHidden() ? 0.0 : 1.0
+                                        if let transitionView = rv.transitionBackgroundView {
+                                            transitionView.isHidden = true
+                                            transitionView.removeFromSuperview()
+                                        }
                                     }
                                 }
+                                rv.applyGroupingIdentifier(fromBottomBar: context.isCancelled ? false : true)
+                            })
+                        }
+                        else {
+                            let duration: TimeInterval = __pb_durationForTransition(self, UInt(t))
+                            UIView.animate(withDuration: duration, delay: 0.0, options: [.beginFromCurrentState, .layoutSubviews]) {
+                                if rv.isFloating {
+                                    rv.backgroundView.alpha = self.bottomBarIsHidden() ? 0.0 : 1.0
+                                }
+                                self.popupController.setPopupBarViewFrame(for: .closed)
+                                self.view.layoutIfNeeded()
                             }
-                            rv.applyGroupingIdentifier(fromBottomBar: context.isCancelled ? false : true)
-                            self.bottomBar.isHidden = context.isCancelled ? true : false
-                        })
+                        }
                     }
                 }
             }
         }
     }
 
-    @objc private func pb_tbcDidLayoutSubviews()
-    {
-        if self.responds(to: #selector(pb_tbcDidLayoutSubviews)) {
-            self.pb_tbcDidLayoutSubviews()
-            
-            if let rv = UITabBarController.getAssociatedPopupBarFor(self) {
-                rv.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
-            }
-        }
-    }
-    
     @objc private func pb_setViewControllers(_ viewControllers: [UIViewController], animated: Bool)
     {
         self.pb_setViewControllers(viewControllers, animated: animated)
@@ -271,6 +328,12 @@ public extension UITabBarController
 
 internal extension UITabBarController
 {
+    @objc override func setIgnoringLayoutDuringTransition( _ ignoringLayoutDuringTransition: Bool)
+    {
+        self.tabBar._ignoringLayoutDuringTransition = ignoringLayoutDuringTransition
+    }
+    
+
     @objc override func _animateBottomBarToHidden( _ hidden: Bool)
     {
         let height = self.tabBar.frame.height
@@ -284,12 +347,11 @@ internal extension UITabBarController
         }
     }
     
-    @objc override func _setBottomBarPosition( _ position: CGFloat)
-    {
-        let height = self.tabBar.frame.height
-        if height > 0.0 {
-            self.tabBar.frame.origin.y = position
+    @objc override func bottomBarIsHidden() -> Bool {
+        if self.tabBar.isHidden || self.tabBar.superview == nil || self.isBottomBarHiddenDuringTransition {
+            return true
         }
+        return false
     }
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets
@@ -302,20 +364,15 @@ internal extension UITabBarController
                 return UIEdgeInsets.zero
             }
         }
-        let tabBarIsHidden = self.tabBar.isHidden || self.tabBar.superview == nil
-        return tabBarIsHidden == false ? UIEdgeInsets.zero : self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
+        let insets = self.view.safeAreaInsets
+        return insets
     }
     
     @objc override func defaultFrameForBottomBar() -> CGRect
     {
-        var bottomBarFrame = self.tabBar.frame
-        let bottomBarSizeThatFits = self.tabBar.sizeThatFits(CGSize.zero)
-        
-        bottomBarFrame.size.height = max(bottomBarFrame.size.height, bottomBarSizeThatFits.height)
-        
-        let tabBarIsHidden = self.tabBar.superview == nil
-        bottomBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.size.height - (self.isTabBarHiddenDuringTransition ? 0.0 : (tabBarIsHidden ? 0.0 : bottomBarFrame.size.height)))
-        
+        let defaultFrame = self.tabBar.frame
+        let layoutFrame = self.tabBar.safeAreaLayoutGuide.layoutFrame
+        let bottomBarFrame = CGRect(x: defaultFrame.minX, y: self.view.bounds.size.height - (self.bottomBarIsHidden() ? 0.0 : defaultFrame.size.height), width: defaultFrame.width, height: layoutFrame.height)
         return bottomBarFrame
     }
     
@@ -461,92 +518,101 @@ public extension UINavigationController
     @objc private func _sTH(h: Bool, e: UInt, d: CGFloat)
     {
         if let rv = UINavigationController.getAssociatedPopupBarFor(self) {
-            if self.popupController.popupPresentationState != .hidden {
-                if self.popupBarIsHidden == true {
-                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
-                }
-                else {
-                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                }
-                self._sTH(h: h, e: e, d: d)
-                self.bottomBar.isHidden = h
-                if rv.isFloating {
-                    rv.backgroundView.alpha = 0.0
-                    if let transitionView = rv.transitionBackgroundView {
-                        if self.bottomBar.isHidden {
-                            transitionView.effect = rv.backgroundView.effect
-                            if rv.enablePopupBarColorsDebug {
-                                transitionView.backgroundColor = .yellow
-                                transitionView.effect = nil
+            if let vc = self.popupController.containerViewController {
+                if self.popupController.popupPresentationState != .hidden || vc.popupBarIsHidden {
+                    if self.popupBarIsHidden == true {
+                        self.popupController.setPopupBarViewFrame(for: .hidden)
+                    }
+                    else {
+                        self.popupController.setPopupBarViewFrame(for: .closed)
+                    }
+                    
+                    self._sTH(h: h, e: e, d: d)
+                    
+                    self.isBottomBarHiddenDuringTransition = h
+                    
+                    if rv.isFloating {
+                        if let transitionView = rv.transitionBackgroundView {
+                            if self.bottomBarIsHidden() {
+                                transitionView.effect = rv.backgroundView.effect
+                                if rv.enablePopupBarColorsDebug {
+                                    transitionView.backgroundColor = .green
+                                    transitionView.effect = nil
+                                }
+                                transitionView.frame = self.popupController.popupBarView.frame
+                                self.view.addSubview(transitionView)
+                                transitionView.isHidden = true
                             }
-                            transitionView.frame = self.popupController.popupBarView.frame
-                            self.view.addSubview(transitionView)
-                            transitionView.isHidden = true
-                        }
-                        else {
-                            transitionView.frame.size.width = .zero
-                            transitionView.layoutIfNeeded()
-                            transitionView.isHidden = false
+                            else {
+                                transitionView.frame.size.width = .zero
+                                transitionView.layoutIfNeeded()
+                                transitionView.isHidden = false
+                            }
                         }
                     }
-                }
-                if let coordinator = self.transitionCoordinator {
-                    coordinator.animate(alongsideTransition: { (_ context) in
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        if rv.isFloating {
-                            if !self.bottomBar.isHidden {
-                                if let transitionView = rv.transitionBackgroundView {
-                                    transitionView.frame = self.popupController.popupBarView.frame
-                                    transitionView.layoutIfNeeded()
-                                }
-                            }
+                    if let coordinator = self.transitionCoordinator {
+                        UIView.animate(withDuration: d / 4) {
+                            rv.backgroundView.alpha = 0.0
                         }
-                        if self.popupBarWasHidden {
-                            self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
-                        }
-                        self.popupController.popupBarView.layoutIfNeeded()
-                    }) { (_ context) in
-                        if context.isCancelled {
-                            if self.popupBarWasHidden {
-                                self.popupBarIsHidden = true
-                                self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
-                                if rv.isFloating {
-                                    rv.backgroundView.alpha = 0.0
-                                    if let transitionView = rv.transitionBackgroundView {
-                                        transitionView.isHidden = true
-                                    }
-                                }
-                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
-                            }
-                        }
-                        else {
+                        coordinator.animate(alongsideTransition: { (_ context) in
+                            self.popupController.setPopupBarViewFrame(for: .closed)
                             if rv.isFloating {
-                                if let transitionView = rv.transitionBackgroundView {
-                                    if !self.bottomBar.isHidden {
-                                        rv.backgroundView.alpha = 1.0
-                                        transitionView.isHidden = true
-                                        transitionView.removeFromSuperview()
+                                if !self.bottomBarIsHidden() {
+                                    if let transitionView = rv.transitionBackgroundView {
+                                        transitionView.frame = self.popupController.popupBarView.frame
+                                        transitionView.layoutIfNeeded()
                                     }
                                 }
                             }
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                            }
+                            self.popupController.popupBarView.layoutIfNeeded()
+                        }) { (_ context) in
+                            if context.isCancelled {
+                                if self.popupBarWasHidden {
+                                    self.popupBarIsHidden = true
+                                    self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateHidden()
+                                    if rv.isFloating {
+                                        rv.backgroundView.alpha = 0.0
+                                        if let transitionView = rv.transitionBackgroundView {
+                                            transitionView.isHidden = true
+                                        }
+                                    }
+                                    self.popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
+                                }
+                            }
+                            else {
+                                if rv.isFloating {
+                                    if let transitionView = rv.transitionBackgroundView {
+                                        if !self.bottomBarIsHidden() {
+                                            rv.backgroundView.alpha = 1.0
+                                            transitionView.isHidden = true
+                                            transitionView.removeFromSuperview()
+                                        }
+                                    }
+                                }
+                            }
+                            self.isBottomBarHiddenDuringTransition = context.isCancelled ? true : false
                         }
-                        self.bottomBar.isHidden = context.isCancelled ? true : false
+                    }
+                    else {
+                        UIView.animate(withDuration: d, delay: 0.0, options: [.beginFromCurrentState, .layoutSubviews]) {
+                            self.popupController.setPopupBarViewFrame(for: .closed)
+                            if self.popupBarWasHidden {
+                                self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
+                            }
+                            self.view.layoutIfNeeded()
+                        }
                     }
                 }
                 else {
-                    UIView.animate(withDuration: d) {
-                        self.popupController.popupBarView.frame = self.popupController.popupBarViewFrameForPopupStateClosed()
-                        if self.popupBarWasHidden {
-                            self.popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
-                        }
-                        self.popupController.popupBarView.layoutIfNeeded()
-                    }
+                    self._sTH(h: h, e: e, d: d)
+                    self.view.layoutIfNeeded()
                 }
             }
             else {
                 self._sTH(h: h, e: e, d: d)
-                self.bottomBar.isHidden = h
-                self.popupController.popupBarView.layoutIfNeeded()
             }
         }
         else {
@@ -563,7 +629,7 @@ public extension UINavigationController
                 if let presentation = self.toolbar.layer.presentation() {
                     position = presentation.position.x
                 }
-                rv.backgroundView.alpha = rv.isFloating ? (self.toolbar.isHidden || position < 0 ? 0.0 : 1.0) : 1.0
+                rv.backgroundView.alpha = rv.isFloating ? (self.bottomBarIsHidden() || position < 0 ? 0.0 : 1.0) : 1.0
                 if rv.isFloating {
                     self.popupController?.popupBarView?.superview?.bringSubviewToFront(self.popupController.popupBarView)
                 }
@@ -684,8 +750,8 @@ public extension UINavigationController
         popupController.popupBarView.alpha = 1
         if let coordinator = fromViewController.transitionCoordinator {
             coordinator.animate { context in
-                popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateClosed()
-                self.popupController.popupPresentationState = .closed
+                self.popupController.setPopupBarViewFrame(for: .closed)
+                popupController.popupPresentationState = .closed
                 vc.popupBarIsHidden = false
                 if vc.popupBarWasHidden {
                     popupController.fixInsetsForContainerIfNeeded(addInsets: true, layout: false)
@@ -696,7 +762,7 @@ public extension UINavigationController
                         popupController.popupBarView.alpha = 0.0
                         self.popupController.popupPresentationState = .hidden
                         vc.popupBarIsHidden = true
-                        popupController.popupBarView.frame = popupController.popupBarViewFrameForPopupStateHidden()
+                        self.popupController.setPopupBarViewFrame(for: .hidden)
                         popupController.fixInsetsForContainerIfNeeded(addInsets: false, layout: false)
                     }
                 }
@@ -726,6 +792,11 @@ public extension UINavigationController
 
 internal extension UINavigationController
 {
+    @objc override func setIgnoringLayoutDuringTransition( _ ignoringLayoutDuringTransition: Bool)
+    {
+        return
+    }
+    
     @objc override func _animateBottomBarToHidden( _ hidden: Bool)
     {
         var height = self.toolbar.frame.height
@@ -748,19 +819,16 @@ internal extension UINavigationController
         }
     }
     
-    @objc override func _setBottomBarPosition( _ position: CGFloat)
-    {
-        let height = self.toolbar.frame.height
-        if height > 0.0 {
-            self.toolbar.frame.origin.y = position
-        }
+    @objc override func bottomBarIsHidden() -> Bool {
+        let hidden = self.isToolbarHidden || self.toolbar.superview == nil || self.isBottomBarHiddenDuringTransition
+        return hidden
     }
     
     @objc override func insetsForBottomBar() -> UIEdgeInsets
     {
         let doit = !(ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 && UIDevice.current.userInterfaceIdiom == .pad)
         if doit {
-            if let tabBarController = self.tabBarController, tabBarController.isTabBarHiddenDuringTransition == false {
+            if let tabBarController = self.tabBarController, tabBarController.isBottomBarHiddenDuringTransition == false {
                 return tabBarController.insetsForBottomBar()
             }
         }
@@ -769,14 +837,16 @@ internal extension UINavigationController
                 return UIEdgeInsets.zero
             }
         }
-        return self.view.window?.safeAreaInsets ?? UIEdgeInsets.zero
+        let insets = self.view.safeAreaInsets
+        return insets
     }
     
     @objc override func defaultFrameForBottomBar() -> CGRect
     {
+        
         var toolBarFrame = self.toolbar.frame
 
-        toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.isToolbarHidden ? 0.0 : toolBarFrame.size.height))
+        toolBarFrame.origin = CGPoint(x: 0, y: self.view.bounds.height - (self.bottomBarIsHidden() ? 0.0 : (toolBarFrame.size.height + self.insetsForBottomBar().bottom)))
         toolBarFrame.size.height = self.isToolbarHidden ? 0.0 : toolBarFrame.size.height
         toolBarFrame.size.width = self.navigationBar.frame.width
         
@@ -784,7 +854,7 @@ internal extension UINavigationController
         if doit {
             if let tabBarController = self.tabBarController {
                 let tabBarFrame = tabBarController.defaultFrameForBottomBar()
-                toolBarFrame.origin.y -= tabBarController.isTabBarHiddenDuringTransition ? 0.0 : tabBarFrame.height
+                toolBarFrame.origin.y -= tabBarController.bottomBarIsHidden() ? 0.0 : tabBarFrame.height
             }
         }
         
@@ -826,7 +896,7 @@ internal extension UINavigationController
         
         bottomBarAppearance.shadowColor = self.bottomBarAppearance.shadowColor
         if self.popupBar.isFloating, self.popupController.popupPresentationState != .hidden {
-            if self.popupController.popupPresentationState != .dismissing {
+            if self.popupController.popupPresentationState != .dismissing && self.popupController.popupPresentationState != .presenting {
                 bottomBarAppearance.shadowColor = .clear
             }
         }
@@ -1015,8 +1085,9 @@ public extension UIViewController
     
     private func viewWillTransitionToSize(_ size: CGSize,  with coordinator: UIViewControllerTransitionCoordinator)
     {
-        if self.popupController.popupPresentationState != .dismissing {
-            self.popupController.popupBarView.frame = self.popupController.popupPresentationState == .hidden ? self.popupController.popupBarViewFrameForPopupStateHidden() :  self.popupController.popupBarViewFrameForPopupStateClosed()
+        let state = popupController.popupPresentationState
+        if state != .dismissing {
+            self.popupController.setPopupBarViewFrame(for: state)
         }
         
         if let popupContentViewController = self.popupContentViewController {
@@ -1067,13 +1138,26 @@ public extension UIViewController
         self.pb_viewDidLayoutSubviews()
         if let rv = UIViewController.getAssociatedPopupBarFor(self) {
             if !(self is UITabBarController) && !(self is UINavigationController) {
-                self.popupController.containerViewController.popupBar.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
+                rv.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
+            }
+            
+            if self is UITabBarController {
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    if ProcessInfo.processInfo.operatingSystemVersion.majorVersion >= 18 {
+                        if rv.isFloating {
+                            rv.backgroundView.alpha = self.bottomBarIsHidden() ? 0.0 : 1.0
+                        }
+                        else {
+                            rv.backgroundView.alpha = 1.0
+                        }
+                    }
+                }
             }
             if rv.isFloating {
                 self.popupController?.popupBarView?.superview?.bringSubviewToFront(self.popupController.popupBarView)
             }
             else {
-                self.popupController?.popupBarView?.superview?.insertSubview(self.popupController.popupBarView, belowSubview: bottomBar)
+                self.popupController?.popupBarView?.superview?.insertSubview(self.popupController.popupBarView, belowSubview: self.bottomBar)
             }
         }
     }
@@ -1090,7 +1174,7 @@ public extension UIViewController
         withUnsafePointer(to: &AssociatedKeys.usePopupBarLegacyShadow) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
-        withUnsafePointer(to: &AssociatedKeys.isTabBarHiddenDuringTransition) {
+        withUnsafePointer(to: &AssociatedKeys.isBottomBarHiddenDuringTransition) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         withUnsafePointer(to: &AssociatedKeys.hidesPopupBarWhenPushed) {
@@ -1131,9 +1215,14 @@ public extension UIViewController
 
 internal extension UIViewController
 {
+    @objc func setIgnoringLayoutDuringTransition( _ ignoringLayoutDuringTransition: Bool)
+    {
+        return
+    }
+    
     @objc func _animateBottomBarToHidden( _ hidden: Bool)
     {
-        let height = self.popupController.bottomBarHeight
+        let height = self.defaultFrameForBottomBar().height
         
         // FIXME: iOS 14 beta 6 bug (toolbar frame animation fails)
         //let insets = self.insetsForBottomBar()
@@ -1153,12 +1242,8 @@ internal extension UIViewController
         }
     }
     
-    @objc func _setBottomBarPosition( _ position: CGFloat)
-    {
-        let height = self.popupController.bottomBarHeight
-        if height > 0.0 {
-            self.bottomBar.frame.origin.y = position
-        }
+    @objc func bottomBarIsHidden() -> Bool {
+        return self.bottomBar.isHidden
     }
     
     @objc func insetsForBottomBar() -> UIEdgeInsets

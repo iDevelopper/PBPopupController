@@ -19,16 +19,17 @@ class CustomPopupBarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        preferredContentSize = CGSize(width: -1, height: 65)
-        
+        preferredContentSize = CGSize(width: -1, height: 56)
+        //preferredContentSize = CGSize(width: 300, height: 56)
+
         self.view.preservesSuperviewLayoutMargins = true
         
-        barView.layer.shadowColor = UIColor.black.cgColor
-        barView.layer.shadowOpacity = 0.5
-        barView.layer.shadowRadius = 5
-        barView.layer.shadowOffset = CGSize(width: 0, height: 0)
+        //barView.layer.shadowColor = UIColor.black.cgColor
+        //barView.layer.shadowOpacity = 0.5
+        //barView.layer.shadowRadius = 5
+        //barView.layer.shadowOffset = CGSize(width: 0, height: 0)
         
-        barView.layer.cornerRadius = 2
+        //barView.layer.cornerRadius = 2
         
         titleLabel.textColor = UIColor.darkText
         subtitleLabel.textColor = UIColor.darkGray

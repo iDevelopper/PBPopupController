@@ -1388,7 +1388,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.contentViewRightConstraint = self.contentView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: self.isFloating ? -self.floatingInsets.right : 0.0)
             self.contentViewRightConstraint.isActive = true
         }
-        let bottom = self.popupController.bottomBarHeight == 0 ? self.safeBottom() : 0.0
+        let bottom = self.popupController.bottomBarIsHidden ? self.safeBottom() : 0.0
         var constant = self.frame.height - bottom
         if self.isFloating {
             constant -= (self.floatingInsets.top + self.floatingInsets.bottom)
@@ -1528,7 +1528,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         }
         
         if self.enablePopupBarColorsDebug {
-            self.titlesView.backgroundColor = UIColor.yellow
+            self.titlesView.backgroundColor = UIColor.lightGray
         }
         
         self.titlesView.translatesAutoresizingMaskIntoConstraints = false

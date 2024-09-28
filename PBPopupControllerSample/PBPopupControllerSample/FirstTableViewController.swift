@@ -28,6 +28,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
     }
     
+    var enableColorsDebug: Bool!
+    
     var popupContentVC: PopupContentViewController!
     var popupContentTVC: PopupContentTableViewController!
 
@@ -245,6 +247,18 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         }
     }
     
+    @available(iOS 18.0, *)
+    @IBAction func hideBottomBar(_ sender: Any) {
+        if let tbc = self.containerVC as? UITabBarController {
+            let isTabBarHidden = tbc.isTabBarHidden
+            self.tabBarController?.setTabBarHidden(!isTabBarHidden, animated: true)
+        }
+        if let nc = self.containerVC as? UINavigationController {
+            let isToolbarHidden = nc.isToolbarHidden
+            self.navigationController?.setToolbarHidden(!isToolbarHidden, animated: true)
+        }
+    }
+    
     // MARK: - Setups
     
     func setupContainerVC() {
@@ -261,6 +275,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             else {
                 self.headerTitle.text = tabBarController.title
             }
+            self.title = tabBarItem.title
             //if #available(iOS 18.0, *) {
                 //tabBarController.mode = .tabSidebar
             //}
@@ -283,6 +298,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         else {
             self.containerVC = self
         }
+        
+        self.enableColorsDebug = self.containerVC.enablePopupBarColorsDebug
     }
     
     func setupContentVC() {
@@ -363,7 +380,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func commonSetup() {
         if let popupBar = self.containerVC?.popupBar {
-            self.popupBarIsFloating = popupBar.isFloating
+            // TODO:
+            //self.popupBarIsFloating = popupBar.isFloating
             
             self.popupBarStyle = popupBar.popupBarStyle
             
@@ -745,6 +763,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     }
     
     @IBAction func dismissPopupBar(_ sender: Any) {
+        self.enableColorsDebug = self.containerVC.enablePopupBarColorsDebug
         // TODO: Test pop when hidesPopupBarWhenPushed is true.
         // self.navigationController?.popToRootViewController(animated: true)
         
@@ -811,6 +830,9 @@ extension FirstTableViewController {
         case 1:
             return 5
         case 2:
+            if #available(iOS 18.0, *) {
+                return 4
+            }
             return 3
         case 3:
             return 22
@@ -934,22 +956,8 @@ extension FirstTableViewController {
             
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "buttonTableViewCell", for: indexPath) as! ButtonTableViewCell
-            switch indexPath.row {
-            case 0:
-                // Dismiss Popup Bar
-                cell.selectionStyle = .none
+            cell.selectionStyle = .none
 
-            case 1:
-                // Push next
-                cell.selectionStyle = .none
-            
-            case 2:
-                cell.selectionStyle = .none
-
-            default:
-                break
-            }
-            
             cell.button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
             cell.button.titleLabel?.adjustsFontForContentSizeCategory = true
             
@@ -1011,6 +1019,14 @@ extension FirstTableViewController {
                     cell.button.removeTarget(nil, action: nil, for: .touchUpInside)
                     cell.button.addTarget(self, action: #selector(pushNextAndHideBottomBar(_:)), for: .touchUpInside)
                     
+                case 3:
+                    // Hides bottom bar
+                    cell.button.setTitle("Hide/Show Bottom Bar (iOS 18)", for: .normal)
+                    cell.button.removeTarget(nil, action: nil, for: .touchUpInside)
+                    if #available(iOS 18.0, *) {
+                        cell.button.addTarget(self, action: #selector(hideBottomBar(_:)), for: .touchUpInside)
+                    }
+                    
                 default:
                     break
                 }
@@ -1024,6 +1040,7 @@ extension FirstTableViewController {
         tableView.deselectRow(at: indexPath, animated: false)
         
         if indexPath.section == 3 {
+            self.containerVC.enablePopupBarColorsDebug = self.enableColorsDebug
             self.updatePopupBar(forRowAt: indexPath.row)
             if self.popupBarStyle == .custom {
                 self.setupCustomPopupBar()

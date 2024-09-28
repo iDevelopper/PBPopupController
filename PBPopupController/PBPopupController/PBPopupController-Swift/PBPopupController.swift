@@ -34,7 +34,7 @@ internal class _PBPopupBarView: UIView {
         if let popupController = self.popupController {
             let state = popupController.popupPresentationState
             if state != .presenting && state != .dismissing {
-                self.frame = state == .hidden ? popupController.popupBarViewFrameForPopupStateHidden() : popupController.popupBarViewFrameForPopupStateClosed()
+                self.popupController.setPopupBarViewFrame(for: state)
             }
         }
     }
@@ -370,7 +370,7 @@ extension PBPopupPresentationStyle
      The tap gesture recognizer attached to the popup bar for presenting the popup content view.
      */
     @objc public var popupBarTapGestureRecognizer: UITapGestureRecognizer!
-
+    
     /**
      The pan gesture recognizer attached to the popup bar for presenting the popup content view.
      */
@@ -399,7 +399,7 @@ extension PBPopupPresentationStyle
             containerViewController.setNeedsStatusBarAppearanceUpdate()
         }
     }
-
+    
     /**
      The preferred status bar style for the popup content view controller.
      */
@@ -409,10 +409,10 @@ extension PBPopupPresentationStyle
      The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.
      */
     @objc public var popupStatusBarStyle: UIStatusBarStyle = .default
-
+    
     /**
      Controls whether interaction with the popup generates haptic feedback to the user. The default value is `true`.
-    */
+     */
     @objc public var allowPopupHapticFeedbackGeneration: Bool = true
     
     /**
@@ -424,7 +424,7 @@ extension PBPopupPresentationStyle
      The rigid impact feedback specific intensity. A value between 0.0 and 1.0.
      */
     @objc public var rigidFeedbackGeneratorIntensity: CGFloat = 0.7
-
+    
     // MARK: - Private Properties
     
     @objc internal weak var containerViewController: UIViewController!
@@ -449,26 +449,38 @@ extension PBPopupPresentationStyle
     
     internal var popupBarView: _PBPopupBarView!
     
+    // TODO: WIP (Do not use)
+    let kPopupBarViewUseFrame: Bool = true
+
+    // TODO: WIP
+    internal var popupBarViewLeadingConstraint: NSLayoutConstraint!
+    internal var popupBarViewTrailingConstraint: NSLayoutConstraint!
+    internal var popupBarViewBottomConstraint: NSLayoutConstraint!
+    internal var popupBarViewHeightConstraint: NSLayoutConstraint!
+    
     internal var bottomBarHeight: CGFloat
     {
         guard let vc = self.containerViewController else { return 0.0 }
-#if !targetEnvironment(macCatalyst)
-        if vc.bottomBar.isHidden || vc.bottomBar.superview == nil {
-            return 0.0
-        }
-#endif
-        if vc is UITabBarController {
-            return vc.defaultFrameForBottomBar().height
-        }
-        else if vc is UINavigationController && (vc.bottomBar == (vc as! UINavigationController).toolbar) {
-            let hidden = (vc as! UINavigationController).isToolbarHidden
-            return hidden ? 0.0 : vc.defaultFrameForBottomBar().height
-        }
-        else {
-            return vc.bottomBar.frame.height
-        }
-    }
         
+        return vc.defaultFrameForBottomBar().height
+    }
+
+    internal var bottomBarInset: CGFloat
+    {
+        guard let vc = self.containerViewController else { return 0.0 }
+        
+        let insets = vc.insetsForBottomBar()
+        
+        return insets.bottom
+    }
+
+    internal var bottomBarIsHidden: Bool
+    {
+        guard let vc = self.containerViewController else { return false }
+
+        return vc.bottomBarIsHidden()
+    }
+    
     private var disableInteractiveTransitioning = false
     
     internal var popupPresentationController: PBPopupPresentationController?
@@ -526,7 +538,7 @@ extension PBPopupPresentationStyle
 #if targetEnvironment(macCatalyst)
         if let hostingWindow = self.containerViewController.view.window?.value(forKeyPath: "hostWindow.attachedWindow") as AnyObject? {
             if let borderView = hostingWindow.value(forKey: "borderView") as AnyObject? {
-                // TODO:
+                // TODO: macCatalyst cornerRadius
                 //if let cornerRadius = borderView.value(forKey: "bottomCornerHeight") as? CGFloat {
                 //    return cornerRadius
                 //}
@@ -554,7 +566,7 @@ extension PBPopupPresentationStyle
         
         self.popupPresentationState = .hidden
         self.containerViewController = controller
-
+        
         self.softFeedbackGenerator = UIImpactFeedbackGenerator(style: .soft)
         self.rigidFeedbackGenerator = UIImpactFeedbackGenerator(style: .rigid)
     }
@@ -583,7 +595,7 @@ extension PBPopupPresentationStyle
         self.popupBarTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.popupTapGestureRecognized(tgr:)))
         self.popupBarView.addGestureRecognizer(self.popupBarTapGestureRecognizer)
         self.popupBarTapGestureRecognizer.delegate = self
-
+        
         self.containerViewController.popupBar = rv
         rv.popupController = self
         
@@ -632,7 +644,7 @@ extension PBPopupPresentationStyle
     {
         let rv = PBPopupContentView()
         rv.autoresizingMask = []
-
+        
         rv.clipsToBounds = true
         
         rv.preservesSuperviewLayoutMargins = true // default: false
@@ -647,7 +659,7 @@ extension PBPopupPresentationStyle
     }
     
     // MARK: - Popup Bar Haptic Feedback Generation
-
+    
     private func _prepareSoftFeedback()
     {
         if self.allowPopupHapticFeedbackGeneration == false {
@@ -702,11 +714,11 @@ extension PBPopupPresentationStyle
         let width = vc.popupBar.popupBarWidth
         
         vc.popupBar.frame = CGRect(x: 0.0, y: 0.0, width: width, height: height)
-
-        self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
         
         vc.view.insertSubview(self.popupBarView, belowSubview: vc.bottomBar)
-        
+
+        self.setPopupBarViewFrame(for: .hidden)
+
         vc.view.setNeedsLayout()
         vc.view.layoutIfNeeded()
         
@@ -718,8 +730,8 @@ extension PBPopupPresentationStyle
         UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveEaseInOut, .layoutSubviews], animations: {
             
             vc.configurePopupBarFromBottomBar()
-
-            self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
+            
+            self.setPopupBarViewFrame(for: .closed)
             self.popupBarView.alpha = 1.0
             
             self.fixInsetsForContainerIfNeeded()
@@ -729,6 +741,11 @@ extension PBPopupPresentationStyle
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             self.delegate?.popupController?(self, didPresent: vc.popupBar)
             vc.popupBarIsHidden = false
+            
+            vc.configurePopupBarFromBottomBar()
+            vc.popupBar.setNeedsLayout()
+            vc.popupBar.layoutIfNeeded()
+            
             completionBlock?()
         }
     }
@@ -748,15 +765,13 @@ extension PBPopupPresentationStyle
         self.popupPresentationState = .dismissing
         self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
         self.delegate?.popupController?(self, willDismiss: vc.popupBar)
-        
-        let contentFrame = self.popupBarViewFrameForPopupStateHidden()
-        
+                
         vc.popupBar.ignoreLayoutDuringTransition = true
         UIView.animate(withDuration: animated ? vc.popupBar.popupBarPresentationDuration : 0.0, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: [.curveLinear, .layoutSubviews], animations: {
             
             vc.configurePopupBarFromBottomBar()
-
-            self.popupBarView.frame = contentFrame
+            
+            self.setPopupBarViewFrame(for: .hidden)
             self.popupBarView.alpha = 0.0
             
             self.fixInsetsForContainerIfNeeded(addInsets: false)
@@ -764,6 +779,10 @@ extension PBPopupPresentationStyle
             let previousState = self.popupPresentationState
             self.popupPresentationState = .hidden
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
+            
+            vc.popupContentView.removeFromSuperview()
+            vc.popupContentView = nil
+            
             vc.popupBar.removeFromSuperview()
             self.delegate?.popupController?(self, didDismiss: vc.popupBar)
             vc.popupBar = nil
@@ -772,6 +791,7 @@ extension PBPopupPresentationStyle
             self.popupPresentationState = .dismissed
             vc.popupContentViewController.popupContainerViewController = nil
             vc.popupContentViewController = nil
+            
             completionBlock?()
         }
     }
@@ -787,13 +807,11 @@ extension PBPopupPresentationStyle
             completionBlock?()
             return
         }
-
+        
         self.popupPresentationState = .dismissing
         
-        let contentFrame = self.popupBarViewFrameForPopupStateHidden()
-        
         let block = {
-            self.popupBarView.frame = contentFrame
+            self.setPopupBarViewFrame(for: .hidden)
             self.popupBarView.alpha = 0.0
             
             self.fixInsetsForContainerIfNeeded(addInsets: false)
@@ -825,7 +843,7 @@ extension PBPopupPresentationStyle
             completionBlock?()
         }
     }
-        
+    
     internal func _dismissPopupAnimated(_ animated: Bool, completionBlock: (() -> Swift.Void)? = nil)
     {
         self._closePopupAnimated(animated) {
@@ -849,7 +867,7 @@ extension PBPopupPresentationStyle
         PBPopupFixInsetsForViewController(vc, layout, additionalInsets)
     }
     
-
+    
     // MARK: - Gesture recognizers
     
     @objc internal func popupTapGestureRecognized(tgr: UITapGestureRecognizer)
@@ -863,7 +881,7 @@ extension PBPopupPresentationStyle
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
                 return
             }
-
+            
             self._generateRigidFeedbackWithIntensity(self.rigidFeedbackGeneratorIntensity)
             
             vc.popupBar.setHighlighted(true, animated: false)
@@ -872,14 +890,14 @@ extension PBPopupPresentationStyle
             }
         }
     }
-
+    
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == self.popupBarTapGestureRecognizer && otherGestureRecognizer == self.popupBarPanGestureRecognizer {
             return true
         }
         return false
     }
-
+    
     // MARK: - Popup Content Animation
     
     internal func preparePopupContentViewControllerForPresentation()
@@ -1101,8 +1119,12 @@ extension PBPopupPresentationStyle
     
     internal func popupBarViewFrameForPopupStateHidden() -> CGRect
     {
+        if self.kPopupBarViewUseFrame == false {
+            return self.popupBarView.frame
+        }
+        
         guard let vc = self.containerViewController else { return .zero }
-
+        
         var frame = self.popupBarViewFrameForPopupStateClosed()
         
         let insets = vc.insetsForBottomBar()
@@ -1115,11 +1137,19 @@ extension PBPopupPresentationStyle
         PBLog("\(frame)")
         return frame
     }
-    
+        
     internal func popupBarViewFrameForPopupStateClosed() -> CGRect
     {
-        guard let vc = self.containerViewController else { return .zero }
+        if self.kPopupBarViewUseFrame == false {
+            return self.popupBarView.frame
+        }
         
+        guard let vc = self.containerViewController else { return .zero }
+        guard let popupBarView = self.popupBarView,
+              popupBarView.superview != nil
+        else {
+            return .zero
+        }
         let defaultFrame = vc.defaultFrameForBottomBar()
         
         let insets = vc.insetsForBottomBar()
@@ -1132,22 +1162,121 @@ extension PBPopupPresentationStyle
                 width = vc.popupContentView.popupContentSize.width
             }
         }
-        // Unsafe Area
-        if self.bottomBarHeight == 0.0, vc.popupBar.popupBarStyle != .custom || vc.popupBar.shouldExtendCustomBarUnderSafeArea {
+        // Safe Area
+        if self.bottomBarIsHidden, vc.popupBar.popupBarStyle != .custom || vc.popupBar.shouldExtendCustomBarUnderSafeArea {
             height += insets.bottom
         }
-        
         let x = max((defaultFrame.size.width - width) / 2, defaultFrame.origin.x)
-        var frame = CGRect(x: x, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(defaultFrame.size.width, width), height: height)
-        if vc is UINavigationController || vc is UITabBarController {
-            frame = CGRect(x: (defaultFrame.size.width - width) / 2, y: defaultFrame.origin.y - vc.popupBar.popupBarHeight - insets.bottom, width: min(vc.view.bounds.width, width), height: height)
-            if let svc = vc.splitViewController, vc === svc.viewControllers.first {
-                frame.origin.x += abs(vc.view.frame.minX)
-                frame.size.width -= abs(vc.view.frame.minX)
-            }
+        var y = defaultFrame.origin.y - height
+        y -= vc.popupBar.popupBarStyle == .custom && self.bottomBarIsHidden ? insets.bottom : 0.0
+        var frame = CGRect(x: x, y: y, width: min(defaultFrame.size.width, width), height: height)
+        if let svc = vc.splitViewController, vc === svc.viewControllers.first {
+            frame.origin.x += abs(vc.view.frame.minX)
+            frame.size.width -= abs(vc.view.frame.minX)
         }
         PBLog("\(frame)")
         return frame
+    }
+    
+    // TODO: WIP (Do not use)
+    internal func updatePopupBarViewConstraints(for state: PBPopupPresentationState) {
+        guard let vc = self.containerViewController else { return }
+        guard let popupBarView = self.popupBarView,
+              popupBarView.superview != nil
+        else {
+            return
+        }
+        
+        let bottomBarInset = self.bottomBarInset
+        
+        let bottomBarHeight = self.bottomBarHeight
+        
+        let popupBarWidth = vc.popupBar.popupBarWidth
+        
+        var shouldExtendCustomBarUnderSafeArea = false
+        if self.bottomBarIsHidden && vc.popupBar.popupBarStyle == .custom {
+            shouldExtendCustomBarUnderSafeArea = vc.popupBar.shouldExtendCustomBarUnderSafeArea
+        }
+        
+        var popupBarMargin = 0.0
+        if popupBarWidth < vc.view.frame.width {
+            popupBarMargin = (vc.view.frame.width - popupBarWidth) / 2
+        }
+
+        self.popupBarView.translatesAutoresizingMaskIntoConstraints = false
+                    
+        var leadingConstant = 0.0
+        if let svc = vc.splitViewController, vc === svc.viewControllers.first {
+            //leadingConstant += vc.view.safeAreaInsets.left
+            leadingConstant += abs(vc.view.frame.minX)
+        }
+        
+        if let popupBarViewLeadingConstraint = self.popupBarViewLeadingConstraint {
+            popupBarViewLeadingConstraint.constant = leadingConstant + popupBarMargin
+        }
+        else {
+            self.popupBarViewLeadingConstraint = self.popupBarView.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: leadingConstant + popupBarMargin)
+            self.popupBarViewLeadingConstraint.isActive = true
+        }
+        
+        let trailingConstant = 0.0
+        if let popupBarViewTrailingConstraint = self.popupBarViewTrailingConstraint {
+            popupBarViewTrailingConstraint.constant = trailingConstant - popupBarMargin
+        }
+        else {
+            self.popupBarViewTrailingConstraint = self.popupBarView.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: trailingConstant - popupBarMargin)
+            self.popupBarViewTrailingConstraint.isActive = true
+        }
+        
+        var bottomConstant = 0.0
+        if state == .closed {
+            bottomConstant = -(bottomBarHeight + (self.bottomBarIsHidden ? 0.0 : bottomBarInset))
+            if self.bottomBarIsHidden && vc.popupBar.popupBarStyle == .custom {
+                bottomConstant -= bottomBarInset
+            }
+        }
+        else {
+            bottomConstant = vc.popupBar.popupBarHeight + (self.bottomBarIsHidden ? bottomBarInset : 0.0)
+        }
+        if let popupBarViewBottomConstraint = self.popupBarViewBottomConstraint {
+            popupBarViewBottomConstraint.constant = bottomConstant
+        }
+        else {
+            self.popupBarViewBottomConstraint = self.popupBarView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: bottomConstant)
+            self.popupBarViewBottomConstraint.isActive = true
+        }
+        
+        var heightConstant = vc.popupBar.popupBarHeight
+        if self.bottomBarIsHidden {
+            if vc.popupBar.popupBarStyle == .custom {
+                heightConstant += shouldExtendCustomBarUnderSafeArea ? bottomBarInset : 0.0
+            }
+            else {
+                heightConstant += bottomBarInset
+            }
+        }
+
+        if let popupBarViewHeightConstraint = self.popupBarViewHeightConstraint {
+            popupBarViewHeightConstraint.constant = heightConstant
+        }
+        else {
+            self.popupBarViewHeightConstraint = self.popupBarView.heightAnchor.constraint(equalToConstant: heightConstant)
+            self.popupBarViewHeightConstraint.isActive = true
+        }
+    }
+    
+    internal func setPopupBarViewFrame(for state: PBPopupPresentationState) {
+        if !kPopupBarViewUseFrame {
+            self.updatePopupBarViewConstraints(for: state)
+        }
+        else {
+            if state == .hidden {
+                self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
+            }
+            else {
+                self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
+            }
+        }
     }
 }
 

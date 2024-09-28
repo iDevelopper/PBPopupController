@@ -7,6 +7,7 @@
 //
 
 #import "UIView+PBPopupSupportPrivate.h"
+#import "NSObject+PBPopupSupportPrivate.h"
 @import ObjectiveC;
 #if TARGET_OS_MACCATALYST
 @import AppKit;
@@ -29,12 +30,7 @@ static NSString* _UITBVPMI = @"X1VJVG9vbGJhclZpc3VhbFByb3ZpZGVyTW9kZXJuSU9T";
 //updateBackgroundGroupName
 static NSString* _uBGN = @"dXBkYXRlQmFja2dyb3VuZEdyb3VwTmFtZQ==";
 
-NSString* _PBPopupDecodeBase64String(NSString* base64String)
-{
-    return [[NSString alloc] initWithData:[[NSData alloc] initWithBase64EncodedString:base64String options:0] encoding:NSUTF8StringEncoding];
-}
-
-@implementation UIView (LNPopupSupportPrivate)
+@implementation UIView (PBPopupSupportPrivate)
 
 + (void)load
 {
@@ -105,3 +101,50 @@ NSString* _PBPopupDecodeBase64String(NSString* base64String)
 }
 
 @end
+
+@implementation UITabBar (LNPopupSupportPrivate)
+
+- (BOOL)_ignoringLayoutDuringTransition
+{
+    return [objc_getAssociatedObject(self, PBPopupIgnoringLayoutDuringTransition) boolValue];
+}
+
+- (void)_setIgnoringLayoutDuringTransition:(BOOL)ignoringLayoutDuringTransition
+{
+    objc_setAssociatedObject(self, PBPopupIgnoringLayoutDuringTransition, @(ignoringLayoutDuringTransition), OBJC_ASSOCIATION_RETAIN);
+}
+
+- (BOOL)_ignoringNastedFrameDuringTransition
+{
+    return [objc_getAssociatedObject(self, PBPopupIgnoringNastedFrameDuringTransition) boolValue];
+}
+
+- (void)_setIgnoringNastedFrameDuringTransition:(BOOL)ignoringNastedFrameDuringTransition
+{
+    objc_setAssociatedObject(self, PBPopupIgnoringNastedFrameDuringTransition, @(ignoringNastedFrameDuringTransition), OBJC_ASSOCIATION_RETAIN);
+}
+
++ (void)load
+{
+    @autoreleasepool
+    {
+        Method origMethod = class_getInstanceMethod(self, @selector(setFrame:));
+        Method swizzledMethod = class_getInstanceMethod(self, @selector(pb_setFrame:));
+        method_exchangeImplementations(origMethod, swizzledMethod);
+    }
+}
+
+- (void)pb_setFrame:(CGRect)frame
+{
+    if(self._ignoringNastedFrameDuringTransition && frame.origin.y < self.superview.bounds.size.height)
+    {
+        return;
+    }
+    if(self._ignoringLayoutDuringTransition == NO)
+    {
+        [self pb_setFrame:frame];
+    }
+}
+
+@end
+

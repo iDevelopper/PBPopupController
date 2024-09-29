@@ -19,7 +19,7 @@ id<UIViewControllerTransitionCoordinator> __pb_transitionCoordinator(UIViewContr
 
 @end
 
-@interface __LNFakeContext: NSObject
+@interface __PBFakeContext: NSObject
 
 @property(nonatomic, getter=isCancelled) BOOL cancelled;
 

@@ -1138,7 +1138,12 @@ public extension UIViewController
         self.pb_viewDidLayoutSubviews()
         if let rv = UIViewController.getAssociatedPopupBarFor(self) {
             if !(self is UITabBarController) && !(self is UINavigationController) {
-                rv.backgroundView.alpha = rv.isFloating ? 0.0 : 1.0
+                if rv.isFloating {
+                    rv.backgroundView.alpha = self.bottomBarIsHidden() ? 0.0 : 1.0
+                }
+                else {
+                    rv.backgroundView.alpha = 1.0
+                }
             }
             
             if self is UITabBarController {
@@ -1243,7 +1248,7 @@ internal extension UIViewController
     }
     
     @objc func bottomBarIsHidden() -> Bool {
-        return self.bottomBar.isHidden
+        return self.bottomBar.isHidden || self.bottomBar.frame.height == 0.0
     }
     
     @objc func insetsForBottomBar() -> UIEdgeInsets

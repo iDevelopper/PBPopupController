@@ -1,8 +1,12 @@
 # CHANGELOG
 
+## 3.10.1
+
+iOS 18.0 Support (Final).
+
 ## 3.10.0
 
-iOS 18 Support (Initial)).
+iOS 18 Support (Initial).
 
 ## 3.9.10
 

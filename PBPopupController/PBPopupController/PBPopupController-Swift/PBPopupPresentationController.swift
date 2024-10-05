@@ -830,6 +830,7 @@ extension PBPopupPresentationController
     {
         var frame = self.popupContentView.bounds
         frame.size.height = self.popupContentViewFrameForPopupStateOpen().height
+        frame.size.width = self.popupContentViewFrameForPopupStateOpen().width
         PBLog("\(frame)")
         return frame
     }

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.10.2
+
+Improved popup content frame animation when popup bar is floating & presentation is interactive.
+
 ## 3.10.1
 
 iOS 18.0 Support (Final).

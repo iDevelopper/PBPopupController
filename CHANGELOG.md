@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.10.3
+
+Updated background color for bars transition.
+
 ## 3.10.2
 
 Improved popup content frame animation when popup bar is floating & presentation is interactive.

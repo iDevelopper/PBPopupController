@@ -379,6 +379,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.popupController.barStyle = newValue
             
             self.backgroundView?.backgroundColor = nil
+            self.transitionBackgroundView?.backgroundColor = nil
             self.toolbar.barStyle = newValue
         }
     }
@@ -459,6 +460,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             if self.userBackgroundColor != newValue {
                 self.userBackgroundColor = newValue
                 self.backgroundView?.colorView.backgroundColor = newValue
+                self.transitionBackgroundView?.colorView.backgroundColor = newValue
             }
         }
     }

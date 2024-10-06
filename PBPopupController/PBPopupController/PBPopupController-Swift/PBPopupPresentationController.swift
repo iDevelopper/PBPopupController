@@ -230,6 +230,13 @@ internal class PBPopupPresentationController: UIPresentationController
         self.popupContentView.contentView.addSubview(presentedView)
         self.popupContentView.contentView.sendSubviewToBack(presentedView)
         
+        // TODO:
+        if self.presentingVC.popupBar.enablePopupBarColorsDebug {
+            self.popupContentView.popupTopModule?.backgroundColor = .red
+            self.popupContentView.popupBottomModule?.backgroundColor = .blue
+            self.popupContentView.popupImageModule?.backgroundColor = .green
+        }
+        
         self.popupContentView.isHidden = true
         containerView.addSubview(self.popupContentView)
         

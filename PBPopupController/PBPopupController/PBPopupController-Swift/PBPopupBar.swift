@@ -840,7 +840,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private var transitionFloatingBackgroundMaskView: _PBPopupBackgroundMaskView!
 
     private var floatingBackgroundShadowView: _PBPopupBackgroundShadowView!
-    
+    internal var transitionFloatingBackgroundShadowView: _PBPopupBackgroundShadowView!
+
     internal var effectGroupingIdentifier: String!
     
     private var effectGroupingIdentifierKey: String?
@@ -857,7 +858,8 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     private var userFloatingBackgroundColor: UIColor?
     private var userFloatingBackgroundImage: UIImage?
 
-    private var contentView: _PBPopupBarContentView!
+    internal var contentView: _PBPopupBarContentView!
+    
     internal func hideContent(_ hide: Bool) {
         self.contentView.isHidden = hide
     }
@@ -1052,6 +1054,13 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             self.floatingBackgroundShadowView.lightShadowColor = lightColor
             self.floatingBackgroundShadowView.darkShadowColor = darkColor
             self.floatingBackgroundShadowView.shadow = shadow
+
+            self.transitionFloatingBackgroundShadowView = _PBPopupBackgroundShadowView()
+            self.transitionFloatingBackgroundShadowView.autoresizingMask = []
+            self.transitionFloatingBackgroundShadowView.isUserInteractionEnabled = false
+            self.transitionFloatingBackgroundShadowView.floatingInset = self.floatingInsets
+            self.transitionFloatingBackgroundShadowView.cornerRadius = self.floatingRadius
+            self.transitionFloatingBackgroundShadowView.shadow = shadow
         }
         
         self.contentView = _PBPopupBarContentView(effect: nil)
@@ -2215,18 +2224,20 @@ extension PBPopupBar
                 
                 self.setNeedsLayout()
                 
-                self.colorToken = self.userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
-                    self.updateShadowColor()
-                }
-
-                self.offsetToken = self.userFloatingBackgroundShadow.observe(\.shadowOffset, options: .new) { (shadowOffset, change) in
-                    guard let shadowOffset = change.newValue else { return }
-                    self.layer.shadowOffset = shadowOffset
-                }
-                
-                self.radiusToken = self.userFloatingBackgroundShadow.observe(\.shadowBlurRadius, options: .new) { (shadowBlurRadius, change) in
-                    guard let shadowBlurRadius = change.newValue else { return }
-                    self.layer.shadowRadius = shadowBlurRadius
+                if let userFloatingBackgroundShadow = self.userFloatingBackgroundShadow {
+                    self.colorToken = self.userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
+                        self.updateShadowColor()
+                    }
+                    
+                    self.offsetToken = self.userFloatingBackgroundShadow.observe(\.shadowOffset, options: .new) { (shadowOffset, change) in
+                        guard let shadowOffset = change.newValue else { return }
+                        self.layer.shadowOffset = shadowOffset
+                    }
+                    
+                    self.radiusToken = self.userFloatingBackgroundShadow.observe(\.shadowBlurRadius, options: .new) { (shadowBlurRadius, change) in
+                        guard let shadowBlurRadius = change.newValue else { return }
+                        self.layer.shadowRadius = shadowBlurRadius
+                    }
                 }
             }
         }

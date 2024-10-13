@@ -230,11 +230,10 @@ internal class PBPopupPresentationController: UIPresentationController
         self.popupContentView.contentView.addSubview(presentedView)
         self.popupContentView.contentView.sendSubviewToBack(presentedView)
         
-        // TODO:
         if self.presentingVC.popupBar.enablePopupBarColorsDebug {
-            self.popupContentView.popupTopModule?.backgroundColor = .red
-            self.popupContentView.popupBottomModule?.backgroundColor = .blue
-            self.popupContentView.popupImageModule?.backgroundColor = .green
+            self.popupContentView.popupTopModule?.backgroundColor = .systemRed
+            self.popupContentView.popupImageModule?.backgroundColor = .systemOrange
+            self.popupContentView.popupBottomModule?.backgroundColor = .systemYellow
         }
         
         self.popupContentView.isHidden = true
@@ -334,7 +333,7 @@ internal class PBPopupPresentationController: UIPresentationController
             }
             
             if coordinator.isInteractive, self.presentingVC.popupBar.isFloating {
-                self.popupBarForBackingView = self.setupPopupBarForBackingView()
+                self.popupBarForBackingView = self.setupPopupBarAppearanceForBackingView()
             }
         }
         
@@ -345,7 +344,7 @@ internal class PBPopupPresentationController: UIPresentationController
         self.setupBackingView()
         
         if let popupBarForBackingView = self.popupBarForBackingView {
-            popupBarForBackingView.alpha = 0.0
+            popupBarForBackingView.isHidden = true
             self.backingView?.addSubview(popupBarForBackingView)
         }
         
@@ -385,7 +384,7 @@ internal class PBPopupPresentationController: UIPresentationController
 
             let duration = animator.duration * Double(durationFactor)
             self.finishAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
-                self.popupBarForBackingView?.alpha = 1.0
+                self.popupBarForBackingView?.isHidden = false
                 if self.popupPresentationStyle == .popup {
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateHidden(finish: true, isInteractive: true)
                 }
@@ -1129,21 +1128,30 @@ extension PBPopupPresentationController
         return view
     }
     
-    private func setupPopupBarForBackingView() -> UIView?
+    private func setupPopupBarAppearanceForBackingView() -> UIView?
     {
-        guard let popupBar = self.presentingVC.popupBar else { return nil }
+        guard let popupBar = self.presentingVC.popupBar,
+              let transitionBackgroundView = popupBar.transitionBackgroundView,
+              let transitionShadowView = popupBar.transitionFloatingBackgroundShadowView
+        else { return nil }
         
-        popupBar.hideContent(true)
+        let transitionView = UIView()
         
-        // Taking shadow into account
-        let rect = self.popupBarView.frame.insetBy(dx: 0.0, dy: -8.0)
-        
-        let view = self.presentingVC.view.resizableSnapshotView(from: rect, afterScreenUpdates: true, withCapInsets: .zero)
-        if let view = view {
-            view.frame = rect
+        transitionBackgroundView.effect = popupBar.backgroundView.effect
+        if popupBar.enablePopupBarColorsDebug {
+            transitionBackgroundView.backgroundColor = .green
+            transitionBackgroundView.effect = nil
         }
-        popupBar.hideContent(false)
-        return view
+        transitionBackgroundView.frame = self.popupBarView.bounds
+        transitionView.addSubview(transitionBackgroundView)
+        
+        transitionShadowView.shadow = popupBar.floatingBackgroundShadow
+        transitionShadowView.frame = popupBar.contentView.frame
+        transitionView.addSubview(transitionShadowView)
+        
+        transitionView.frame = self.popupBarView.frame
+        
+        return transitionView
     }
 
     // MARK: - Bottom bar

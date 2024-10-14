@@ -174,6 +174,20 @@ internal class PBPopupPresentationController: UIPresentationController
         self.presentingVC = presentingViewController
         
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
+
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitDisplayScale.self, UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                guard self.shouldUpdateBackingView == true else { return }
+                if self.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle {
+                    DispatchQueue.main.async {
+                        self.backingView?.removeFromSuperview()
+                        self.backingView = nil
+                        self.setupBackingView()
+                        self.animateBackingViewToDeck(true, animated: false)
+                    }
+                }
+            }
+        }
     }
     
     deinit
@@ -382,6 +396,11 @@ internal class PBPopupPresentationController: UIPresentationController
         if let animator = self.animator {
             animator.stopAnimation(false)
 
+            let previousState = self.popupController.popupPresentationState
+            self.popupController.popupPresentationState = .closing
+            self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+            self.popupController.delegate?.popupController?(self.popupController, willClose: self.presentingVC.popupContentViewController)
+            
             let duration = animator.duration * Double(durationFactor)
             self.finishAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
                 self.popupBarForBackingView?.isHidden = false
@@ -401,6 +420,11 @@ internal class PBPopupPresentationController: UIPresentationController
                 self.popupBarForPresentation?.alpha = 1.0
             })
             
+            let block = self.popupController.delegate?.additionalAnimationsForClosing?(popupController: self.popupController, popupContentViewController: self.presentingVC.popupContentViewController, isInteractive: true)
+            
+            self.finishAnimator.addAnimations {
+                block?()
+            }
             self.finishAnimator.addCompletion { (_) in
                 animator.finishAnimation(at: .end)
             }
@@ -523,6 +547,10 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), dampingRatio: 1, animations: {
                 animations()
             })
+            
+            animator.addAnimations {
+                self.popupController._delegate_additionalAnimationsForOpening?()
+            }
             animator.addCompletion { (_) in
                 completion()
             }
@@ -562,6 +590,10 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
             animator = UIViewPropertyAnimator(duration: self.transitionDuration(using: transitionContext), dampingRatio: 1, animations: {
                 animations()
             })
+            
+            animator.addAnimations {
+                self.popupController._delegate_additionalAnimationsForClosing?()
+            }
             animator.addCompletion { (_) in
                 completion()
             }
@@ -588,10 +620,12 @@ extension PBPopupPresentationController: UIViewControllerAnimatedTransitioning
         super.traitCollectionDidChange(previousTraitCollection)
         guard previousTraitCollection != nil, self.shouldUpdateBackingView == true else { return }
         if self.traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-            self.backingView?.removeFromSuperview()
-            self.backingView = nil
-            self.setupBackingView()
-            self.animateBackingViewToDeck(true, animated: false)
+            DispatchQueue.main.async {
+                self.backingView?.removeFromSuperview()
+                self.backingView = nil
+                self.setupBackingView()
+                self.animateBackingViewToDeck(true, animated: false)
+            }
         }
     }
     

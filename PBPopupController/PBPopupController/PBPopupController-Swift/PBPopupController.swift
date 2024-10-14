@@ -250,6 +250,17 @@ extension PBPopupPresentationStyle
     @objc optional func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController)
     
     /**
+     Asks the delegate for addditional animations to add to the animator while opening the popup content view.
+     
+     - Parameter popupController:             The popup controller object.
+     - Parameter popupContentViewController:  The popup content view controller object.
+
+     - Returns:
+     A block containing the requested animations. The properties should be animatable.
+     */
+    @objc optional func additionalAnimationsForOpening(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)?
+
+    /**
      Called just before the popup content view is about to be closed by typing the popup close button or dragging the popup content view.
      
      - Parameter popupController:             The popup controller object.
@@ -268,6 +279,17 @@ extension PBPopupPresentationStyle
      */
     @objc optional func popupController(_ popupController: PBPopupController, willClose popupContentViewController: UIViewController)
     
+    /**
+     Asks the delegate for addditional animations to add to the animator while closing the popup content view.
+     
+     - Parameter popupController:             The popup controller object.
+     - Parameter popupContentViewController:  The popup content view controller object.
+
+     - Returns:
+     A block containing the requested animations. The properties should be animatable.
+     */
+    @objc optional func additionalAnimationsForClosing(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)?
+
     /**
      Called just after the popup content view is open.
      
@@ -432,17 +454,19 @@ extension PBPopupPresentationStyle
     internal var barStyle: UIBarStyle! {
         didSet {
             if let popupContentView = self.containerViewController.popupContentView, let popupEffectView = popupContentView.popupEffectView, popupEffectView.effect != nil {
+                if popupContentView.inheritsVisualStyleFromPopupBar == false {
 #if targetEnvironment(macCatalyst)
-                if barStyle == .black {
-                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterialDark)
-                }
-                popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterial)
+                    if barStyle == .black {
+                        popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterialDark)
+                    }
+                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterial)
 #else
-                if barStyle == .black {
-                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterialDark)
-                }
-                popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
+                    if barStyle == .black {
+                        popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterialDark)
+                    }
+                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
 #endif
+                }
             }
         }
     }
@@ -486,6 +510,9 @@ extension PBPopupPresentationStyle
     internal var popupPresentationController: PBPopupPresentationController?
     internal var popupPresentationInteractiveController: PBPopupInteractivePresentationController!
     internal var popupDismissalInteractiveController: PBPopupInteractivePresentationController!
+    
+    internal var _delegate_additionalAnimationsForOpening: (() -> Void)?
+    internal var _delegate_additionalAnimationsForClosing: (() -> Void)?
     
     private var softFeedbackGenerator: UIImpactFeedbackGenerator!
     private var rigidFeedbackGenerator: UIImpactFeedbackGenerator!
@@ -1004,6 +1031,11 @@ extension PBPopupPresentationStyle
             self.popupPresentationState = .opening
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
+            
+            if let block = self.delegate?.additionalAnimationsForOpening?(popupController: self, popupContentViewController: vc.popupContentViewController, isInteractive: false) {
+                self._delegate_additionalAnimationsForOpening = block
+            }
+            
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 if (vc.popupContentView.superview != nil) {
@@ -1021,6 +1053,7 @@ extension PBPopupPresentationStyle
                 self.popupPresentationState = .open
                 self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
                 self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
+                self._delegate_additionalAnimationsForOpening = nil
                 completionBlock?()
                 self.disableInteractiveTransitioning = false
                 self.popupContentPanGestureRecognizer.isEnabled = true
@@ -1051,6 +1084,10 @@ extension PBPopupPresentationStyle
         self.popupPresentationState = .closing
         self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
         self.delegate?.popupController?(self, willClose: vc.popupContentViewController)
+        
+        if let block = self.delegate?.additionalAnimationsForClosing?(popupController: self, popupContentViewController: vc.popupContentViewController, isInteractive: false) {
+            self._delegate_additionalAnimationsForClosing = block
+        }
         vc.popupContentViewController.dismiss(animated: animated) {
             let previousState = self.popupPresentationState
             self.popupPresentationState = .closed
@@ -1059,7 +1096,9 @@ extension PBPopupPresentationStyle
             if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
             }
+            self._delegate_additionalAnimationsForClosing = nil
             self.popupPresentationController = nil
+            
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)

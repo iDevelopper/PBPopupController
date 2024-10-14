@@ -267,12 +267,22 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
         
+        let previousState = self.popupController.popupPresentationState
+        self.popupController.popupPresentationState = .opening
+        self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
+        self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
+        
         animator.addAnimations {
             vc.setNeedsStatusBarAppearanceUpdate()
             vc.popupContentView.popupCloseButton?.alpha = 1.0
             self.presentationController.popupBarForPresentation?.alpha = 0.0
         }
         
+        let block = self.popupController.delegate?.additionalAnimationsForOpening?(popupController: self.popupController, popupContentViewController: vc.popupContentViewController, isInteractive: true)
+        animator.addAnimations {
+            block?()
+        }
+
         if durationFactor == 0.0 {
             animator.continueAnimation(withTimingParameters: nil, durationFactor: 1.0)
         }
@@ -280,11 +290,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
             let timingParameters = UICubicTimingParameters(animationCurve: .easeInOut)
             animator.continueAnimation(withTimingParameters: timingParameters, durationFactor: durationFactor)
         }
-        
-        let previousState = self.popupController.popupPresentationState
-        self.popupController.popupPresentationState = .opening
-        self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-        self.popupController.delegate?.popupController?(self.popupController, willOpen: vc.popupContentViewController)
     }
     
     private func continueDismissalAnimation(_ durationFactor: CGFloat = 1.0)
@@ -302,11 +307,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         self.popupController.popupBarPanGestureRecognizer?.isEnabled = false
         
         self.presentationController.continueDismissalAnimationWithDurationFactor(durationFactor)
-
-        let previousState = self.popupController.popupPresentationState
-        self.popupController.popupPresentationState = .closing
-        self.popupController.delegate?.popupController?(self.popupController, stateChanged: self.popupController.popupPresentationState, previousState: previousState)
-        self.popupController.delegate?.popupController?(self.popupController, willClose: vc.popupContentViewController)
     }
     
     private func completionPosition() -> UIViewAnimatingPosition

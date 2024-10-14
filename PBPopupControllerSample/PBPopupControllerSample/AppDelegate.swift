@@ -9,7 +9,7 @@
 import UIKit
 import PBPopupController
 
-@main
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?

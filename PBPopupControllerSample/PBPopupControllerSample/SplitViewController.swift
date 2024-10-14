@@ -18,18 +18,16 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        Task { @MainActor in
-            self.delegate = self
-            self.preferredDisplayMode = .allVisible
-            self.preferredPrimaryColumnWidthFraction = 0.4
+        self.delegate = self
+        self.preferredDisplayMode = .allVisible
+        self.preferredPrimaryColumnWidthFraction = 0.4
 #if targetEnvironment(macCatalyst)
-            self.primaryBackgroundStyle = .sidebar
+        self.primaryBackgroundStyle = .sidebar
 #else
-            if #available(iOS 14.0, *) {
-                self.preferredSplitBehavior = .tile
-            }
-#endif
+        if #available(iOS 14.0, *) {
+            self.preferredSplitBehavior = .tile
         }
+#endif
     }
 
     override func viewDidLoad() {

@@ -337,7 +337,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Patrick BODET";
 				TargetAttributes = {
 					32080BC32087130E0017FECD = {
@@ -616,7 +616,6 @@
 		32080BD72087130F0017FECD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PBPopupControllerSample/PBPopupControllerSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -639,7 +638,6 @@
 		32080BD82087130F0017FECD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PBPopupControllerSample/PBPopupControllerSample.entitlements;
 				CODE_SIGN_STYLE = Automatic;

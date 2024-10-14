@@ -17,7 +17,7 @@
     <a title="PBPopupContentView Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.9.3 Docs</a> (84% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.10.4 Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -28,7 +28,9 @@
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
-        <a href="../index.html">PBPopupController Reference</a>
+        <a href="../index.html">PBPopupController</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Classes.html">Classes</a>
         <img id="carat" src="../img/carat.png" alt=""/>
         PBPopupContentView Class Reference
       </p>
@@ -145,6 +147,7 @@
                 <div class="language">
                   
                   <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupContentView</span> <span class="p">:</span> <span class="kt">UIView</span></code></pre>
 
                 </div>
@@ -187,6 +190,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupCloseButton</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupCloseButton.html">PBPopupCloseButton</a></span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
@@ -215,7 +219,37 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupEffectView</span><span class="p">:</span> <span class="kt">UIVisualEffectView</span><span class="o">!</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)inheritsVisualStyleFromPopupBar"></a>
+                    <a name="//apple_ref/swift/Property/inheritsVisualStyleFromPopupBar" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)inheritsVisualStyleFromPopupBar">inheritsVisualStyleFromPopupBar</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If <code>true</code>, the popup content will automatically inherit its style from the popup bar.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">inheritsVisualStyleFromPopupBar</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -245,6 +279,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupPresentationStyle</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationStyle.html">PBPopupPresentationStyle</a></span></code></pre>
 
                         </div>
@@ -273,6 +308,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupPresentationDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
 
                         </div>
@@ -301,6 +337,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupDismissalDuration</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
 
                         </div>
@@ -329,6 +366,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCompletionThreshold</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
@@ -357,6 +395,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCompletionFlickMagnitude</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
@@ -385,6 +424,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupContentSize</span><span class="p">:</span> <span class="kt">CGSize</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
@@ -413,6 +453,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">isFloating</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -441,6 +482,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">additionalFloatingBottomInset</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
@@ -469,6 +511,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCanDismissOnPassthroughViews</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -502,6 +545,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">wantsPopupDimmerView</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -530,6 +574,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupIgnoreDropShadowView</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -558,6 +603,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupTopModule</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -586,6 +632,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupImageModule</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -614,6 +661,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupImageView</span><span class="p">:</span> <span class="kt">UIImageView</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -643,6 +691,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@available</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="s">"Use popupBottomModule and popupTopModule instead"</span><span class="p">)</span>
 <span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupControlsModule</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -671,6 +720,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBottomModule</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -700,6 +750,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@available</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="nv">message</span><span class="p">:</span> <span class="s">"Use popupBottomModuleTopConstraint instead"</span><span class="p">)</span>
 <span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupControlsModuleTopConstraint</span><span class="p">:</span> <span class="kt">NSLayoutConstraint</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -728,6 +779,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBottomModuleTopConstraint</span><span class="p">:</span> <span class="kt">NSLayoutConstraint</span><span class="p">?</span></code></pre>
 
                         </div>
@@ -761,6 +813,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCloseButtonStyle</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupCloseButtonStyle.html">PBPopupCloseButtonStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
@@ -789,7 +842,8 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCloseButtonAutomaticallyUnobstructsTopBars</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+<span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">popupCloseButtonAutomaticallyUnobstructsTopBars</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -822,7 +876,56 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupContentDraggingView</span><span class="p">:</span> <span class="kt">UIView</span><span class="o">!</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/public%20Methods"></a>
+                <a name="//apple_ref/swift/Section/public Methods" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/public%20Methods"></a>
+                  <h3 class="section-name"><span>public Methods</span>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(cs)PBPopupContentView(im)updatePopupContentViewAppearance"></a>
+                    <a name="//apple_ref/swift/Method/updatePopupContentViewAppearance()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(cs)PBPopupContentView(im)updatePopupContentViewAppearance">updatePopupContentViewAppearance()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Call this method to update the popup content view appearance (style, tint color, etc.) according to its docking view. You should call this after updating the docking view.
+If the popup content view&rsquo;s <code><a href="../Classes/PBPopupContentView.html#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)inheritsVisualStyleFromPopupBar">inheritsVisualStyleFromPopupBar</a></code> property is set to <code>false</code>, this method has no effect.</p>
+<div class="aside aside-see-also">
+    <p class="aside-title">See also</p>
+    <code><a href="../Classes/PBPopupContentView.html#/c:@M@PBPopupController@objc(cs)PBPopupContentView(py)inheritsVisualStyleFromPopupBar">PBPopupContentView.inheritsVisualStyleFromPopupBar</a></code>.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">updatePopupContentViewAppearance</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -834,8 +937,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-01-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-10-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

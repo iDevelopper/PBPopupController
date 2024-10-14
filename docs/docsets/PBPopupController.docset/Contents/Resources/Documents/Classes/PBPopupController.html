@@ -17,7 +17,7 @@
     <a title="PBPopupController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.9.3 Docs</a> (84% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.10.4 Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -28,7 +28,9 @@
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
-        <a href="../index.html">PBPopupController Reference</a>
+        <a href="../index.html">PBPopupController</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Classes.html">Classes</a>
         <img id="carat" src="../img/carat.png" alt=""/>
         PBPopupController Class Reference
       </p>
@@ -145,6 +147,7 @@
                 <div class="language">
                   
                   <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="kt">PBPopupController</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">PBPopupController</span><span class="p">:</span> <span class="kt">UIViewControllerTransitioningDelegate</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">PBPopupController</span><span class="p">:</span> <span class="kt">UIViewControllerPreviewingDelegate</span></code></pre>
@@ -192,6 +195,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">dataSource</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDataSource.html">PBPopupControllerDataSource</a></span><span class="p">?</span></code></pre>
 
                         </div>
@@ -225,6 +229,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="k">weak</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">delegate</span><span class="p">:</span> <span class="kt"><a href="../Protocols/PBPopupControllerDelegate.html">PBPopupControllerDelegate</a></span><span class="p">?</span></code></pre>
 
                         </div>
@@ -259,6 +264,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">popupPresentationState</span><span class="p">:</span> <span class="kt"><a href="../Enums/PBPopupPresentationState.html">PBPopupPresentationState</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
@@ -287,6 +293,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBarTapGestureRecognizer</span><span class="p">:</span> <span class="kt">UITapGestureRecognizer</span><span class="o">!</span></code></pre>
 
                         </div>
@@ -315,6 +322,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupBarPanGestureRecognizer</span><span class="p">:</span> <span class="kt">UIPanGestureRecognizer</span><span class="o">!</span></code></pre>
 
                         </div>
@@ -343,6 +351,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupContentPanGestureRecognizer</span><span class="p">:</span> <span class="kt">UIPanGestureRecognizer</span><span class="o">!</span></code></pre>
 
                         </div>
@@ -371,6 +380,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">wantsAdditionalSafeAreaInsetBottom</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -399,6 +409,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">wantsAdditionalSafeAreaInsetTop</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -427,6 +438,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">containerPreferredStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
@@ -447,7 +459,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The preferred status bar style for the popup content view controller when <code>popupPresentationStyle</code> is set to <code>deck</code>.</p>
+                        <p>The preferred status bar style for the popup content view controller.</p>
 
                       </div>
                       <div class="declaration">
@@ -455,6 +467,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupPreferredStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span></code></pre>
 
                         </div>
@@ -483,6 +496,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">popupStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span></code></pre>
 
                         </div>
@@ -511,6 +525,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">allowPopupHapticFeedbackGeneration</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
@@ -539,6 +554,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">softFeedbackGeneratorIntensity</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
@@ -567,6 +583,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">@MainActor</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">rigidFeedbackGeneratorIntensity</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
@@ -607,7 +624,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">gestureRecognizer</span><span class="p">(</span><span class="n">_</span> <span class="nv">gestureRecognizer</span><span class="p">:</span> <span class="kt">UIGestureRecognizer</span><span class="p">,</span> <span class="n">shouldRequireFailureOf</span> <span class="nv">otherGestureRecognizer</span><span class="p">:</span> <span class="kt">UIGestureRecognizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@MainActor</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">gestureRecognizer</span><span class="p">(</span><span class="n">_</span> <span class="nv">gestureRecognizer</span><span class="p">:</span> <span class="kt">UIGestureRecognizer</span><span class="p">,</span> <span class="n">shouldRequireFailureOf</span> <span class="nv">otherGestureRecognizer</span><span class="p">:</span> <span class="kt">UIGestureRecognizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -619,8 +637,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-01-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-10-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

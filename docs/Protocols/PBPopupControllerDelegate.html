@@ -17,7 +17,7 @@
     <a title="PBPopupControllerDelegate Protocol Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">PBPopupController 3.9.3 Docs</a> (84% documented)</p>
+        <p><a href="../index.html">PBPopupController 3.10.4 Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/iDevelopper/PBPopupController"><img src="../img/gh.png" alt="GitHub"/>View on GitHub</a></p>
         <div class="header-right">
           <form role="search" action="../search.json">
@@ -28,7 +28,9 @@
     </header>
     <div class="content-wrapper">
       <p id="breadcrumbs">
-        <a href="../index.html">PBPopupController Reference</a>
+        <a href="../index.html">PBPopupController</a>
+        <img id="carat" src="../img/carat.png" alt=""/>
+        <a href="../Protocols.html">Protocols</a>
         <img id="carat" src="../img/carat.png" alt=""/>
         PBPopupControllerDelegate Protocol Reference
       </p>
@@ -516,6 +518,69 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)additionalAnimationsForOpeningWithPopupController:popupContentViewController:isInteractive:"></a>
+                    <a name="//apple_ref/swift/Method/additionalAnimationsForOpening(popupController:popupContentViewController:isInteractive:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)additionalAnimationsForOpeningWithPopupController:popupContentViewController:isInteractive:">additionalAnimationsForOpening(popupController:<wbr>popupContentViewController:<wbr>isInteractive:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Asks the delegate for addditional animations to add to the animator while opening the popup content view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">additionalAnimationsForOpening</span><span class="p">(</span><span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">,</span> <span class="nv">isInteractive</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupContentViewController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup content view controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A block containing the requested animations. The properties should be animatable.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:shouldClose:"></a>
                     <a name="//apple_ref/swift/Method/popupController(_:shouldClose:)" class="dashAnchor"></a>
                     <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)popupController:shouldClose:">popupController(_:<wbr>shouldClose:<wbr>)</a>
@@ -631,6 +696,69 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)additionalAnimationsForClosingWithPopupController:popupContentViewController:isInteractive:"></a>
+                    <a name="//apple_ref/swift/Method/additionalAnimationsForClosing(popupController:popupContentViewController:isInteractive:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@PBPopupController@objc(pl)PBPopupControllerDelegate(im)additionalAnimationsForClosingWithPopupController:popupContentViewController:isInteractive:">additionalAnimationsForClosing(popupController:<wbr>popupContentViewController:<wbr>isInteractive:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Asks the delegate for addditional animations to add to the animator while closing the popup content view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@objc</span>
+<span class="kd">optional</span> <span class="kd">func</span> <span class="nf">additionalAnimationsForClosing</span><span class="p">(</span><span class="nv">popupController</span><span class="p">:</span> <span class="kt"><a href="../Classes/PBPopupController.html">PBPopupController</a></span><span class="p">,</span> <span class="nv">popupContentViewController</span><span class="p">:</span> <span class="kt">UIViewController</span><span class="p">,</span> <span class="nv">isInteractive</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>popupContentViewController</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The popup content view controller object.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A block containing the requested animations. The properties should be animatable.</p>
                       </div>
                     </section>
                   </div>
@@ -1075,8 +1203,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-01-15)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.4</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+          <p>&copy; 2024 <a class="link" href="https://github.com/iDevelopper" target="_blank" rel="external noopener">Patrick Bodet</a>. All rights reserved. (Last updated: 2024-10-14)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.15.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
         </section>
       </article>
     </div>

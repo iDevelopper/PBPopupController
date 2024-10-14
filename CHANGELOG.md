@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 3.10.4
+
+Popup content dismissal animation improvements.
+Configure the visual effects of the popup content view to match those of the popup bar.
+Asks the delegate for additional animations to add to the animator while opening/closing the popup content view.
+
 ## 3.10.3
 
 Updated background color for bars transition.

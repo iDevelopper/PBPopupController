@@ -176,4 +176,37 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
         }
         return true
     }
+    
+    func additionalAnimationsForOpening(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)? {
+        PBLog("additionalAnimationsForOpening")
+        if isInteractive {
+            popupContentViewController.view.alpha = 1.0
+            return nil
+        }
+        
+        popupContentViewController.view.alpha = 0.0
+        return {
+            popupContentViewController.view.alpha = 1.0
+        }
+    }
+    
+    func additionalAnimationsForClosing(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)? {
+        PBLog("additionalAnimationsForClosing")
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+            return {
+                popupContent.view.alpha = 0.0
+            }
+        }
+        else {
+            return {
+                popupContentViewController.view.alpha = 0.0
+            }
+        }
+    }
+    
+    func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
+        PBLog("didClose - state: \(popupController.popupPresentationState.description)")
+        
+        popupContentViewController.view.alpha = 1.0
+    }
 }

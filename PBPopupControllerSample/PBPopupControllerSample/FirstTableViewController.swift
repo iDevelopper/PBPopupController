@@ -150,13 +150,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         super.viewDidDisappear(animated)
     }
 
+    /*
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        /*
         guard let popupBar = self.containerVC.popupBar else { return }
         popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
-        */
     }
+    */
     
     /*
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -380,7 +380,6 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     
     func commonSetup() {
         if let popupBar = self.containerVC?.popupBar {
-            // TODO:
             //self.popupBarIsFloating = popupBar.isFloating
             
             self.popupBarStyle = popupBar.popupBarStyle
@@ -1142,16 +1141,41 @@ extension FirstTableViewController: PBPopupControllerDelegate {
     
     func popupController(_ popupController: PBPopupController, willOpen popupContentViewController: UIViewController) {
         PBLog("willOpen - state: \(popupController.popupPresentationState.description)")
-
+        /*
         if let popupContentView = self.containerVC.popupContentView {
             if let bottomModule = popupContentView.popupBottomModule {
                 bottomModule.alpha = 1.0
             }
         }
-        popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
-        popupContentViewController.view.alpha = 1
+        */
     }
 
+    func additionalAnimationsForOpening(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)? {
+        PBLog("additionalAnimationsForOpening")
+        if isInteractive {
+            if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+                popupContent.view.alpha = 1.0
+            }
+            else {
+                popupContentViewController.view.alpha = 1.0
+            }
+            return nil
+        }
+        
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+            popupContent.view.alpha = 0.0
+            return {
+                popupContent.view.alpha = 1.0
+            }
+        }
+        else {
+            popupContentViewController.view.alpha = 0.0
+            return {
+                popupContentViewController.view.alpha = 1.0
+            }
+        }
+    }
+    
     func popupController(_ popupController: PBPopupController, didOpen popupContentViewController: UIViewController) {
         PBLog("didOpen - state: \(popupController.popupPresentationState.description)")
     }
@@ -1165,8 +1189,28 @@ extension FirstTableViewController: PBPopupControllerDelegate {
         PBLog("willClose - state: \(popupController.popupPresentationState.description)")
     }
     
+    func additionalAnimationsForClosing(popupController: PBPopupController, popupContentViewController: UIViewController, isInteractive: Bool) -> (() -> Void)? {
+        PBLog("additionalAnimationsForClosing")
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+            return {
+                popupContent.view.alpha = 0.0
+            }
+        }
+        else {
+            return {
+                popupContentViewController.view.alpha = 0.0
+            }
+        }
+    }
+    
     func popupController(_ popupController: PBPopupController, didClose popupContentViewController: UIViewController) {
         PBLog("didClose - state: \(popupController.popupPresentationState.description)")
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentViewController {
+            popupContent.view.alpha = 1.0
+        }
+        else {
+            popupContentViewController.view.alpha = 1.0
+        }
     }
     
     func popupController(_ popupController: PBPopupController, stateChanged state: PBPopupPresentationState, previousState: PBPopupPresentationState) {
@@ -1184,22 +1228,15 @@ extension FirstTableViewController: PBPopupControllerDelegate {
     }
     
     func popupController(_ popupController: PBPopupController, interactivePresentationFor popupContentViewController: UIViewController, state: PBPopupPresentationState, progress: CGFloat, location: CGFloat) {
+        /*
         if state == .closed {
             if let popupContentView = self.containerVC.popupContentView {
                 if let bottomModule = popupContentView.popupBottomModule {
                     bottomModule.alpha = progress
                 }
             }
-            
-            if let popupContentView = self.containerVC.popupContentView, let popupEffectView = popupContentView.popupEffectView, popupEffectView.effect == nil {
-                return
-            }
-
-            let alpha = (0.30 - progress) / 0.30
-            popupContentViewController.view.backgroundColor = UIColor.secondarySystemBackground
-            popupContentViewController.view.alpha = 1 - alpha
         }
-        //
+        */
     }
 }
 

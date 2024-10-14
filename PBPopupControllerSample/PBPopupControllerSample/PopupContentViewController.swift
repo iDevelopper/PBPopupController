@@ -187,6 +187,20 @@ class PopupContentViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var airPlayAudioButton: UIButton! {
+        didSet {
+            var image: UIImage?
+            let configuration = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            if #available(iOS 18.0, *) {
+                image = UIImage(systemName: "airplay.audio", withConfiguration: configuration)
+            }
+            else {
+                image = UIImage(systemName: "airplayaudio", withConfiguration: configuration)
+            }
+            airPlayAudioButton.setImage(image, for: .normal)
+        }
+    }
+    
     let accessibilityDateComponentsFormatter = DateComponentsFormatter()
     
     var timer: Timer?
@@ -248,8 +262,6 @@ class PopupContentViewController: UIViewController {
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        
-        self.view.backgroundColor = UIColor.secondarySystemBackground
     }
     
     override func viewWillLayoutSubviews() {

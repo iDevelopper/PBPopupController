@@ -28,6 +28,17 @@ import UIKit
     @objc public internal(set) var popupEffectView: UIVisualEffectView!
     
     /**
+     If `true`, the popup content will automatically inherit its style from the popup bar.
+     */
+    @objc public var inheritsVisualStyleFromPopupBar: Bool = true {
+        didSet {
+            self.popupController.containerViewController.configurePopupContentViewFromPopupBar()
+        }
+    }
+    
+    @objc internal var popupFloatingEffectView: UIVisualEffectView!
+    
+    /**
      The popup content view presentation style.
      
      Default presentation style: deck, was fullScreen for iOS 9 and above, otherwise deck.
@@ -185,10 +196,11 @@ import UIKit
                 return self
             }
             if popupEffectView.effect == nil {
-                self.popupEffectView.removeFromSuperview()
+                self.popupEffectView.effect = nil
+                self.popupFloatingEffectView.effect = nil
                 return self
             }
-            return self.popupEffectView.contentView
+            return self.popupFloatingEffectView.contentView
         }
     }
     
@@ -202,6 +214,8 @@ import UIKit
         super.init(frame: frame)
         
         self.setupEffectView()
+        
+        self.setupFloatingEffectView()
         
         self.layer.cornerCurve = .continuous
     }
@@ -225,19 +239,43 @@ import UIKit
         if let popupEffectView = self.popupEffectView {
             popupEffectView.frame = self.bounds
         }
+        if let popupFloatingEffectView = self.popupFloatingEffectView {
+            popupFloatingEffectView.frame = self.bounds
+        }
+    }
+    
+    // MARK: - public Methods
+    
+    /**
+     Call this method to update the popup content view appearance (style, tint color, etc.) according to its docking view. You should call this after updating the docking view.
+     If the popup content view's `inheritsVisualStyleFromPopupBar` property is set to `false`, this method has no effect.
+     
+     - SeeAlso: `PBPopupContentView.inheritsVisualStyleFromPopupBar`.
+     */
+    @objc public func updatePopupContentViewAppearance() {
+        self.popupController.containerViewController.configurePopupContentViewFromPopupBar()
     }
     
     // MARK: - private Methods
     
     private func setupEffectView()
     {
-        let effect = UIBlurEffect(style: .light)
-        
-        self.popupEffectView = PBPopupEffectView(effect: effect)
+        let effect = UIBlurEffect(style: .systemMaterial)
+
+        self.popupEffectView = _PBPopupEffectView(effect: effect)
         self.popupEffectView.autoresizingMask = []
         self.popupEffectView.frame = self.bounds
 
         self.addSubview(self.popupEffectView)
+    }
+    
+    private func setupFloatingEffectView()
+    {        
+        self.popupFloatingEffectView = _PBPopupEffectView(effect: nil)
+        self.popupFloatingEffectView.autoresizingMask = []
+        self.popupFloatingEffectView.frame = self.bounds
+
+        self.addSubview(self.popupFloatingEffectView)
     }
     
     private func setupPopupCloseButtonTintColor()
@@ -363,7 +401,7 @@ extension PBPopupContentView
     /**
      Custom views For Debug View Hierarchy Names
      */
-    internal class PBPopupEffectView: UIVisualEffectView
+    internal class _PBPopupEffectView: UIVisualEffectView
     {
         internal override init(effect: UIVisualEffect?)
         {

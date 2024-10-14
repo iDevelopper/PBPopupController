@@ -67,8 +67,8 @@ class PlayerTableViewCell: UITableViewCell
     
     @IBOutlet weak var timerButton: UIButton! {
         didSet {
-            let config = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
-            timerButton.setImage(UIImage(systemName: "timer", withConfiguration: config), for: .normal)
+            let configuration = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            timerButton.setImage(UIImage(systemName: "timer", withConfiguration: configuration), for: .normal)
             timerButton.tintColor = UIColor.systemPink
         }
     }
@@ -76,6 +76,20 @@ class PlayerTableViewCell: UITableViewCell
     @IBOutlet weak var volumeSlider: UISlider! {
         didSet {
             volumeSlider.tintColor = UIColor.label
+        }
+    }
+    
+    @IBOutlet weak var airPlayAudioButton: UIButton! {
+        didSet {
+            var image: UIImage?
+            let configuration = UIImage.SymbolConfiguration(pointSize: 25, weight: .regular, scale: .default)
+            if #available(iOS 18.0, *) {
+                image = UIImage(systemName: "airplay.audio", withConfiguration: configuration)
+            }
+            else {
+                image = UIImage(systemName: "airplayaudio", withConfiguration: configuration)
+            }
+            airPlayAudioButton.setImage(image, for: .normal)
         }
     }
     

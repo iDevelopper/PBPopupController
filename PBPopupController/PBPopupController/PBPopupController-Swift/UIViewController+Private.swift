@@ -420,17 +420,27 @@ internal extension UITabBarController
             self.tabBar.scrollEdgeAppearance = bottomBarAppearance
         }
         
-        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
-            return
+        if self.popupBar.inheritsVisualStyleFromBottomBar == true {
+            self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            self.popupBar.barStyle = self.tabBar.barStyle
+            self.popupBar.tintColor = self.tabBar.tintColor
+            if #available(iOS 18.0, *) {
+                self.fixesPopupBarTintColor()
+            }
+            self.popupBar.isTranslucent = self.tabBar.isTranslucent
+            self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
         }
-        self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
-        self.popupBar.barStyle = self.tabBar.barStyle
-        self.popupBar.tintColor = self.tabBar.tintColor
-        if #available(iOS 18.0, *) {
-            self.fixesPopupBarTintColor()
+        self.configurePopupContentViewFromPopupBar()
+    }
+    
+    @objc override func configurePopupContentViewFromPopupBar()
+    {
+        if let popupContentView = self.popupContentView {
+            if popupContentView.inheritsVisualStyleFromPopupBar {
+                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+            }
         }
-        self.popupBar.isTranslucent = self.tabBar.isTranslucent
-        self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
     }
     
     @available(iOS 18.0, *)
@@ -908,17 +918,27 @@ internal extension UINavigationController
             self.toolbar.compactScrollEdgeAppearance = bottomBarAppearance
         }
 
-        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
-            return
+        if self.popupBar.inheritsVisualStyleFromBottomBar == true {
+            self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
+            self.popupBar.barStyle = self.navigationBar.barStyle
+            self.popupBar.tintColor = self.navigationBar.tintColor
+            if let svc = self.splitViewController, let nc = svc.viewControllers[0] as? UINavigationController {
+                self.popupBar.tintColor = nc.navigationBar.tintColor
+            }
+            self.popupBar.isTranslucent = self.navigationBar.isTranslucent
+            self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
         }
-        self.popupBar.backgroundEffect = self.bottomBarAppearance.backgroundEffect
-        self.popupBar.barStyle = self.navigationBar.barStyle
-        self.popupBar.tintColor = self.navigationBar.tintColor
-        if let svc = self.splitViewController, let nc = svc.viewControllers[0] as? UINavigationController {
-            self.popupBar.tintColor = nc.navigationBar.tintColor
+        self.configurePopupContentViewFromPopupBar()
+    }
+    
+    @objc override func configurePopupContentViewFromPopupBar()
+    {
+        if let popupContentView = self.popupContentView {
+            if popupContentView.inheritsVisualStyleFromPopupBar {
+                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+            }
         }
-        self.popupBar.isTranslucent = self.navigationBar.isTranslucent
-        self.popupBar.backgroundColor = self.bottomBarAppearance.backgroundColor
     }
 }
 
@@ -1294,10 +1314,21 @@ internal extension UIViewController
         
         self.popupBar.backgroundColor = nil
         
-        if self.popupBar.inheritsVisualStyleFromBottomBar == false {
-            return
+        if self.popupBar.inheritsVisualStyleFromBottomBar == true {
+            self.popupBar.tintColor = self.view.tintColor
         }
-        self.popupBar.tintColor = self.view.tintColor
+        self.configurePopupContentViewFromPopupBar()
+    }
+    
+    @objc func configurePopupContentViewFromPopupBar()
+    {
+        if let popupContentView = self.popupContentView {
+            if popupContentView.inheritsVisualStyleFromPopupBar {
+                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+            }
+        }
+
     }
 }
 

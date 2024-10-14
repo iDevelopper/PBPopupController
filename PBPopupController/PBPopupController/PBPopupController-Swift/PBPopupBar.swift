@@ -829,6 +829,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
 
             self.configureContentSizeCategory()
             
+            self.updatePopupBarAppearance()
             self.setNeedsLayout()
         }
     }
@@ -1146,6 +1147,13 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
         
         NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification, object: nil, queue: .main) { [weak self] notification in
             self?.configureTitleLabels()
+        }
+        
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitDisplayScale.self, UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                let style = self.traitCollection.userInterfaceStyle
+                self.highlightView?.backgroundColor = style == .light ? UIColor.black.withAlphaComponent(0.10) : UIColor.white.withAlphaComponent(0.10)
+            }
         }
     }
     
@@ -2225,16 +2233,16 @@ extension PBPopupBar
                 self.setNeedsLayout()
                 
                 if let userFloatingBackgroundShadow = self.userFloatingBackgroundShadow {
-                    self.colorToken = self.userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
+                    self.colorToken = userFloatingBackgroundShadow.observe(\.shadowColor, options: .new) { (shadowColor, change) in
                         self.updateShadowColor()
                     }
                     
-                    self.offsetToken = self.userFloatingBackgroundShadow.observe(\.shadowOffset, options: .new) { (shadowOffset, change) in
+                    self.offsetToken = userFloatingBackgroundShadow.observe(\.shadowOffset, options: .new) { (shadowOffset, change) in
                         guard let shadowOffset = change.newValue else { return }
                         self.layer.shadowOffset = shadowOffset
                     }
                     
-                    self.radiusToken = self.userFloatingBackgroundShadow.observe(\.shadowBlurRadius, options: .new) { (shadowBlurRadius, change) in
+                    self.radiusToken = userFloatingBackgroundShadow.observe(\.shadowBlurRadius, options: .new) { (shadowBlurRadius, change) in
                         guard let shadowBlurRadius = change.newValue else { return }
                         self.layer.shadowRadius = shadowBlurRadius
                     }

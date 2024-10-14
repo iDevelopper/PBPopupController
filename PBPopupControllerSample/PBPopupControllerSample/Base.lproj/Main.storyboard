@@ -841,6 +841,7 @@
                                 </constraints>
                             </view>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="bhK-q3-jcP"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="1Lz-iy-bc4" secondAttribute="trailing" id="2mY-t2-HSB"/>
@@ -1181,6 +1182,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="airPlayAudioButton" destination="gTl-Ok-BQz" id="Mlv-YE-E5J"/>
                         <outlet property="albumArtImageView" destination="7RQ-q7-Hqx" id="oLc-Yl-ceS"/>
                         <outlet property="albumArtImageViewBottomConstraint" destination="PVy-8f-pLQ" id="gN6-JY-mQa"/>
                         <outlet property="albumArtImageViewLeadingConstraint" destination="Ma2-b0-Nu9" id="76e-NL-0pT"/>
@@ -1471,6 +1473,7 @@
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <inset key="separatorInset" minX="60" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
+                                    <outlet property="airPlayAudioButton" destination="UWN-3Y-2t7" id="YgH-cC-sJQ"/>
                                     <outlet property="albumArtImageView" destination="ogd-WA-KAD" id="Lz2-dn-41e"/>
                                     <outlet property="albumNameLabel" destination="z5K-e2-kft" id="TBq-v8-YDD"/>
                                     <outlet property="nextButton" destination="U4h-2G-nod" id="Mex-He-MSJ"/>

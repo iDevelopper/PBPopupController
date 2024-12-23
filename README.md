@@ -78,6 +78,7 @@ pod 'PBPopupController'
 * Accessibility support.
 * iOS 13 dark mode support.
 * macOS Catalyst support.
+* macOS Apple Silicon support.
 * iPad look and feel support.
 * Floating bar style support.
 

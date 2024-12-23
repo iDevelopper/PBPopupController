@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 3.10.5
+
+Further improvements to iOS 18 support.
+Internal improvements.
+Fixed safe area inset and layout margin issues.
+PBPopupContentView improvements.
+PBPopupCloseButton improvements.
+Exposes the popupCloseButton on the content view controller.
+Status bar management improvements.
+Added support for prefersHomeIndicatorAutoHidden / setNeedsUpdateOfHomeIndicatorAutoHidden.
+Added a property (shouldUseSnapshotForPresentingView) to present the popup without capturing the presenting view.
+The presenting view will be scaled if popupController.shouldUseSnapshotForPresentingView is false (default).
+
 ## 3.10.4
 
 Popup content dismissal animation improvements.

@@ -208,19 +208,25 @@ class PopupContentViewController: UIViewController {
     // MARK: - Status bar
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        guard let containerVC = self.containerVC else {return.default}
-        guard let popupContentView = containerVC.popupContentView else {return .default}
+        guard let containerVC = self.containerVC else { return .default }
+        guard let popupController = containerVC.popupController else { return .default }
         
-        if popupContentView.popupPresentationStyle != .deck {
-            return .default
-        }
-        return containerVC.popupController.popupStatusBarStyle
+        let popupStatusBarStyle = popupController.popupStatusBarStyle
+        return popupStatusBarStyle
     }
+
+    // MARK: - Home indicator
     
+    override public var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.registerForTraitChanges()
         
         self.albumArtImageView.image = self.albumArtImage
         self.songNameLabel.text = self.songTitle
@@ -260,8 +266,34 @@ class PopupContentViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func registerForTraitChanges() {
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                guard let containerVC = self.containerVC else { return }
+                guard let popupController = containerVC.popupController else { return }
+
+                let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+                popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+                
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+    }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
+        guard let containerVC = self.containerVC else { return }
+        guard let popupController = containerVC.popupController else { return }
+        
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+        
+        self.setNeedsStatusBarAppearanceUpdate()
     }
     
     override func viewWillLayoutSubviews() {

@@ -49,10 +49,22 @@ class PopupContentTableViewController: UITableViewController {
         }
     }
     
+    // MARK: - Status bar
+    
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let containerVC = self.popupContainerViewController else { return .default }
+        guard let popupController = containerVC.popupController else { return .default }
+        
+        let popupStatusBarStyle = popupController.popupStatusBarStyle        
+        return popupStatusBarStyle
+    }
+
     // MARK: - View lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.registerForTraitChanges()
         
         self.tableView.tableFooterView = UIView()
         
@@ -83,6 +95,36 @@ class PopupContentTableViewController: UITableViewController {
         super.viewWillLayoutSubviews()
     }
     
+    func registerForTraitChanges() {
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                guard let containerVC = self.popupContainerViewController else { return }
+                guard let popupController = containerVC.popupController else { return }
+
+                let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+                popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+                
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard let containerVC = self.popupContainerViewController else { return }
+        guard let popupController = containerVC.popupController else { return }
+        
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+        
+        self.setNeedsStatusBarAppearanceUpdate()
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
@@ -91,16 +133,6 @@ class PopupContentTableViewController: UITableViewController {
         tableView.contentInset = insets
         tableView.scrollIndicatorInsets = insets
 #endif
-    }
-    
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        guard let containerVC = self.popupContainerViewController else {return.default}
-        guard let popupContentView = containerVC.popupContentView else {return .default}
-        
-        if popupContentView.popupPresentationStyle != .deck {
-            return .default
-        }
-        return containerVC.popupController.popupStatusBarStyle
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

@@ -20,6 +20,7 @@ class CustomPopupBarViewController: UIViewController {
         super.viewDidLoad()
 
         preferredContentSize = CGSize(width: -1, height: 56)
+        // Custom width
         //preferredContentSize = CGSize(width: 300, height: 56)
 
         self.view.preservesSuperviewLayoutMargins = true

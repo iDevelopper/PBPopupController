@@ -71,8 +71,15 @@ extension PBPopupCloseButtonStyle
      
      - Note: In order to change the button's style, set the `popupCloseButtonStyle` property of the popup content view.
      */
-    @objc public private(set) var style: PBPopupCloseButtonStyle = .default
-    
+    @objc public internal(set) var style: PBPopupCloseButtonStyle = .default {
+        didSet {
+            if oldValue != style {
+                self.cleanup()
+                self.commonSetup()
+            }
+        }
+    }
+
     /**
      The button’s background view. (read-only)
      
@@ -166,8 +173,9 @@ extension PBPopupCloseButtonStyle
         self.layer.shadowOffset = CGSize(width: 0, height: 0)
         self.layer.masksToBounds = false
         
+        self.tintColor = UIColor.label
         self.setTitleColor(self.tintColor, for: .normal)
-        
+
         let configuration = UIImage.SymbolConfiguration(pointSize: 15, weight: .heavy, scale: .small)
         let image = UIImage(systemName: "chevron.down", withConfiguration: configuration)?.withRenderingMode(.alwaysTemplate)
         self.setImage(image, for: .normal)
@@ -181,9 +189,31 @@ extension PBPopupCloseButtonStyle
         if let aView = chevronView {
             addSubview(aView)
         }
+        self.tintColor = UIColor.init(white: 0.5, alpha: 1.0)
     }
     
     // MARK: - Private Methods
+    
+    private func cleanup()
+    {
+        self.chevronView?.removeFromSuperview()
+        self.chevronView = nil
+        
+        self.effectView?.removeFromSuperview()
+        self.effectView = nil
+        
+        self.highlightView?.removeFromSuperview()
+        self.highlightView = nil
+        
+        self.setImage(nil, for: .normal)
+        self.tintColor = nil
+
+        self.layer.shadowColor = nil
+        self.layer.shadowOpacity = 0
+        self.layer.shadowRadius = 0
+        self.layer.shadowOffset = CGSizeMake(0, 0)
+        self.layer.masksToBounds = true
+    }
     
     private func _setHighlighted(_ highlighted: Bool, animated: Bool)
     {

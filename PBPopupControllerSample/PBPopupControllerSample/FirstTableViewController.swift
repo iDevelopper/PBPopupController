@@ -11,7 +11,21 @@ import PBPopupController
 
 class PopupNavigationController: UINavigationController {
     override open var childForStatusBarStyle: UIViewController? {
-        return self.topViewController
+        if let topViewController = self.topViewController as? PopupContentViewController {
+            return topViewController
+        }
+        if let topViewController = self.topViewController as? PopupContentTableViewController {
+            return topViewController
+        }
+        return nil
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let container = self.popupContainerViewController else { return .default }
+        guard let popupController = container.popupController else { return .default }
+        
+        let popupStatusBarStyle = popupController.popupStatusBarStyle
+        return popupStatusBarStyle
     }
 }
 
@@ -46,7 +60,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     var popupPrevButtonItem: UIBarButtonItem!
     var popupMoreButtonItem: UIBarButtonItem!
 
-    var popupBarIsFloating: Bool!
+    var popupBarIsFloating: Bool = false
     var popupBarStyle: PBPopupBarStyle!
     var progressViewStyle: PBPopupBarProgressViewStyle!
     var popupPresentationStyle: PBPopupPresentationStyle!
@@ -82,9 +96,16 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
     // MARK: - View lifecycle
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        return userInterfaceStyle == .light ? .darkContent : .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.registerForTraitChanges()
+
         for idx in 1...self.tableView(tableView, numberOfRowsInSection: 3) {
             let imageName = String(format: "Cover%02d", idx)
             images += [UIImage(named: imageName)!]
@@ -108,7 +129,7 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
 
         self.setupTabBarAppearance()
         self.setupToolbarAppearance()
-
+        
         //self.containerVC.usePopupBarLegacyShadow = true
         //self.containerVC.usePopupBarSmoothGradient = false
         if #available(iOS 17.0, *) {
@@ -149,14 +170,26 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
+    
+    func registerForTraitChanges() {
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                self.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
 
-    /*
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+    }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        guard let popupBar = self.containerVC.popupBar else { return }
-        popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
+        //guard let popupBar = self.containerVC.popupBar else { return }
+        //popupBar.floatingBackgroundShadow.shadowColor = self.traitCollection.userInterfaceStyle == .light ? UIColor.cyan.withAlphaComponent(0.80) : UIColor.magenta.withAlphaComponent(0.30)
+
+        self.setNeedsStatusBarAppearanceUpdate()
     }
-    */
     
     /*
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -275,10 +308,13 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             else {
                 self.headerTitle.text = tabBarController.title
             }
-            self.title = tabBarItem.title
-            //if #available(iOS 18.0, *) {
-                //tabBarController.mode = .tabSidebar
-            //}
+            if #available(iOS 18.0, *) {
+                self.title = tabBarItem.title
+                tabBarController.mode = .tabSidebar
+            }
+            else {
+                self.title = tabBarController.title
+            }
         }
         else if let navigationController = self.navigationController as? NavigationController {
             navigationController.isToolbarHidden = true
@@ -392,6 +428,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             
             self.containerVC.popupController.delegate = self
             
+            self.containerVC.popupController.shouldUseSnapshotForPresentingView = false // default
+            
 #if targetEnvironment(macCatalyst)
             if let tabBarController = self.tabBarController, self.navigationController == nil {
                 if tabBarController.modalPresentationStyle == .fullScreen {
@@ -459,6 +497,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
                 let interaction = UIContextMenuInteraction(delegate: self)
                 popupBar.addInteraction(interaction)
             }
+            
+            //popupBar.floatingInsets = UIEdgeInsets(top: 4, left: 30, bottom: 4, right: 30)
             //popupBar.semanticContentAttribute = .forceRightToLeft
             //popupBar.barButtonItemsSemanticContentAttribute = .forceRightToLeft
             
@@ -478,7 +518,8 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
             }
             
             self.containerVC.popupController.containerPreferredStatusBarStyle = .default
-            self.containerVC.popupController.popupPreferredStatusBarStyle = .lightContent
+            let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+            self.containerVC.popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
         }
     }
     
@@ -748,16 +789,19 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         self.setupBarButtonItems()
 
         DispatchQueue.main.async {
-            /*
-            self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
-                PBLog("Popup Bar Presented")
-            })
-            */
             // Presenting a navigation controller
-            
-            self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.isContentEmbeddedInNavigation ? PopupNavigationController(rootViewController: self.popupContentVC) : self.popupContentVC, animated: true, completion: {
-                PBLog("Popup Bar Presented")
-            })
+            if self.isContentEmbeddedInNavigation {
+                let nc = PopupNavigationController(rootViewController: self.popupContentVC)
+                
+                self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : nc, animated: true, completion: {
+                    PBLog("Popup Bar Presented")
+                })
+            }
+            else {
+                self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC, animated: true, completion: {
+                    PBLog("Popup Bar Presented")
+                })
+            }
         }
     }
     

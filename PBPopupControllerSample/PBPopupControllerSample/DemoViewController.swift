@@ -13,6 +13,11 @@ class DemoViewController: UIViewController {
     
     @IBOutlet weak var containerView: UIView!
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        return userInterfaceStyle == .light ? .darkContent : .lightContent
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

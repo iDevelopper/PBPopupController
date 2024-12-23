@@ -775,7 +775,12 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     
     internal var popupBarHeight: CGFloat {
         if self.popupBarStyle == .custom {
-            return customPopupBarViewController != nil ? customPopupBarViewController!.preferredContentSize.height : PBPopupBarHeightProminent
+            if let customPopupBarViewController = self.customPopupBarViewController {
+                return customPopupBarViewController.preferredContentSize.height
+            }
+            else {
+                return PBPopupBarHeightProminent
+            }
         }
         return self.popupBarStyle == .prominent ? PBPopupBarHeightProminent : PBPopupBarHeightCompact
     }
@@ -788,7 +793,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 return width > 0 ? width : defaultWidth
             }
         }
-        return self.popupController.containerViewController.defaultFrameForBottomBar().width
+        return defaultWidth
     }
     
     private var systemBarStyle: UIBarStyle!
@@ -847,6 +852,7 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
     
     private var effectGroupingIdentifierKey: String?
     {
+        // groupName
         let gN = "Z3JvdXBOYW1l"
         var rv: String? = nil
         rv = _PBPopupDecodeBase64String(base64String: gN)
@@ -1924,6 +1930,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             if leftItems.count > 0 {
                 // If LTR: leftItems will be at left: return the frame of last one + width in left variable
                 if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
+                    if self.enablePopupBarColorsDebug {
+                        if let lastItemView = (leftItems[0] as AnyObject).value(forKey: "view") as? UIView {
+                            lastItemView.backgroundColor = UIColor.blue
+                        }
+                    }
                     if let leftItemView = (leftItems[leftItems.count - 1] as AnyObject).value(forKey: "view") as? UIView {
                         if self.enablePopupBarColorsDebug {
                             leftItemView.backgroundColor = UIColor.green
@@ -1943,6 +1954,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 }
                 else {
                     // If RTL: leftItems will be at right: return the frame of last one in right variable
+                    if self.enablePopupBarColorsDebug {
+                        if let lastItemView = (leftItems[0] as AnyObject).value(forKey: "view") as? UIView {
+                            lastItemView.backgroundColor = UIColor.blue
+                        }
+                    }
                     if let leftItemView = (leftItems[leftItems.count - 1] as AnyObject).value(forKey: "view") as? UIView {
                         if self.enablePopupBarColorsDebug {
                             leftItemView.backgroundColor = UIColor.green
@@ -1964,7 +1980,12 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
             
             if rightItems.count > 0 {
                 // If LTR: rightItems will be at right: return the frame of first one in right variable
-                if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
+               if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .leftToRight {
+                    if self.enablePopupBarColorsDebug {
+                        if let lastItemView = (rightItems[rightItems.count - 1] as AnyObject).value(forKey: "view") as? UIView {
+                            lastItemView.backgroundColor = UIColor.blue
+                        }
+                    }
                     if let rightItemView = (rightItems[0] as AnyObject).value(forKey: "view") as? UIView {
                         if self.enablePopupBarColorsDebug {
                             rightItemView.backgroundColor = UIColor.green
@@ -1987,6 +2008,11 @@ internal let PBPopupBarImageHeightFloating: CGFloat = 40.0
                 }
                 else {
                     // If RTL: rightItems will be at left: return the frame of first one + width in left variable
+                    if self.enablePopupBarColorsDebug {
+                        if let lastItemView = (rightItems[rightItems.count - 1] as AnyObject).value(forKey: "view") as? UIView {
+                            lastItemView.backgroundColor = UIColor.blue
+                        }
+                    }
                     if let rightItemView = (rightItems[0] as AnyObject).value(forKey: "view") as? UIView {
                         if self.enablePopupBarColorsDebug {
                             rightItemView.backgroundColor = UIColor.green

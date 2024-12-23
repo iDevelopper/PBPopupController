@@ -10,8 +10,12 @@ import UIKit
 import PBPopupController
 
 class NavigationController: UINavigationController {
-
+    
     var toolbarIsShown: Bool = false
+    
+    override var childForStatusBarStyle: UIViewController? {
+        return topViewController
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

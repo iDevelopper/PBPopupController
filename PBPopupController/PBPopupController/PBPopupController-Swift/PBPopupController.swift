@@ -380,6 +380,11 @@ extension PBPopupPresentationStyle
     @objc weak public var delegate: PBPopupControllerDelegate?
     
     /**
+     When presenting the contextual content view, the presentation controller will use a snapshot of the presentation view based on its content.
+     */
+    @objc public var shouldUseSnapshotForPresentingView: Bool = false
+    
+    /**
      The state of the popup presentation. (read-only)
      
      - SeeAlso:
@@ -416,16 +421,45 @@ extension PBPopupPresentationStyle
     /**
      The preferred status bar style for the container view controller.
      */
-    @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle = .default {
-        didSet {
-            containerViewController.setNeedsStatusBarAppearanceUpdate()
+
+    @objc public var containerPreferredStatusBarStyle: UIStatusBarStyle {
+        get {
+            return _containerPreferredStatusBarStyle
+        }
+        set {
+            _containerPreferredStatusBarStyle = newValue
         }
     }
     
+    internal var _containerPreferredStatusBarStyle: UIStatusBarStyle = .default
+
     /**
      The preferred status bar style for the popup content view controller.
      */
-    @objc public var popupPreferredStatusBarStyle: UIStatusBarStyle = .lightContent
+    @objc public var popupPreferredStatusBarStyle: UIStatusBarStyle {
+        get {
+            guard let vc = self.containerViewController else { return _popupPreferredStatusBarStyle }
+            guard let popupContentView = vc.popupContentView else { return _popupPreferredStatusBarStyle }
+            
+            let popupPresentationStyle = popupContentView.popupPresentationStyle
+            switch popupPresentationStyle {
+            case .deck:
+                return .lightContent
+            case .custom:
+                return self.containerPreferredStatusBarStyle
+            case .popup:
+                return self.containerPreferredStatusBarStyle
+            case .fullScreen:
+                return _popupPreferredStatusBarStyle
+            }
+        }
+        set {
+            _popupPreferredStatusBarStyle = newValue
+            self.popupStatusBarStyle = newValue
+        }
+    }
+
+    internal var _popupPreferredStatusBarStyle: UIStatusBarStyle = .default
     
     /**
      The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.
@@ -456,15 +490,15 @@ extension PBPopupPresentationStyle
             if let popupContentView = self.containerViewController.popupContentView, let popupEffectView = popupContentView.popupEffectView, popupEffectView.effect != nil {
                 if popupContentView.inheritsVisualStyleFromPopupBar == false {
 #if targetEnvironment(macCatalyst)
+                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterial)
                     if barStyle == .black {
                         popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterialDark)
                     }
-                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemThickMaterial)
 #else
+                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
                     if barStyle == .black {
                         popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterialDark)
                     }
-                    popupContentView.popupEffectView.effect = UIBlurEffect(style: .systemChromeMaterial)
 #endif
                 }
             }
@@ -472,15 +506,6 @@ extension PBPopupPresentationStyle
     }
     
     internal var popupBarView: _PBPopupBarView!
-    
-    // TODO: WIP (Do not use)
-    let kPopupBarViewUseFrame: Bool = true
-
-    // TODO: WIP
-    internal var popupBarViewLeadingConstraint: NSLayoutConstraint!
-    internal var popupBarViewTrailingConstraint: NSLayoutConstraint!
-    internal var popupBarViewBottomConstraint: NSLayoutConstraint!
-    internal var popupBarViewHeightConstraint: NSLayoutConstraint!
     
     internal var bottomBarHeight: CGFloat
     {
@@ -675,7 +700,6 @@ extension PBPopupPresentationStyle
         rv.clipsToBounds = true
         
         rv.preservesSuperviewLayoutMargins = true // default: false
-        rv.contentView.preservesSuperviewLayoutMargins = true  // default: false
         rv.layer.masksToBounds = true
         
         self.containerViewController.popupContentView = rv
@@ -799,7 +823,6 @@ extension PBPopupPresentationStyle
             vc.configurePopupBarFromBottomBar()
             
             self.setPopupBarViewFrame(for: .hidden)
-            self.popupBarView.alpha = 0.0
             
             self.fixInsetsForContainerIfNeeded(addInsets: false)
         }) { (success) in
@@ -817,6 +840,7 @@ extension PBPopupPresentationStyle
             self.popupBarView = nil
             self.popupPresentationState = .dismissed
             vc.popupContentViewController.popupContainerViewController = nil
+            vc.popupContentViewController.popupCloseButton = nil
             vc.popupContentViewController = nil
             
             completionBlock?()
@@ -838,9 +862,8 @@ extension PBPopupPresentationStyle
         self.popupPresentationState = .dismissing
         
         let block = {
+            vc.configurePopupBarFromBottomBar()
             self.setPopupBarViewFrame(for: .hidden)
-            self.popupBarView.alpha = 0.0
-            
             self.fixInsetsForContainerIfNeeded(addInsets: false)
         }
         
@@ -1026,38 +1049,36 @@ extension PBPopupPresentationStyle
         
         self.disableInteractiveTransitioning = true
         self.popupContentPanGestureRecognizer.isEnabled = false
-        delay(0.1) {
+        let previousState = self.popupPresentationState
+        self.popupPresentationState = .opening
+        self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
+        self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
+        
+        if let block = self.delegate?.additionalAnimationsForOpening?(popupController: self, popupContentViewController: vc.popupContentViewController, isInteractive: false) {
+            self._delegate_additionalAnimationsForOpening = block
+        }
+        
+        // TODO: SwiftUI
+        if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
+            if (vc.popupContentView.superview != nil) {
+                vc.popupContentViewController.view.removeFromSuperview()
+                vc.popupContentView.removeFromSuperview()
+            }
+        }
+        //
+        
+        vc.present(vc.popupContentViewController, animated: true) {
+            if let scrollView = vc.popupContentViewController.view as? UIScrollView {
+                self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
+            }
             let previousState = self.popupPresentationState
-            self.popupPresentationState = .opening
+            self.popupPresentationState = .open
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
-            self.delegate?.popupController?(self, willOpen: vc.popupContentViewController)
-            
-            if let block = self.delegate?.additionalAnimationsForOpening?(popupController: self, popupContentViewController: vc.popupContentViewController, isInteractive: false) {
-                self._delegate_additionalAnimationsForOpening = block
-            }
-            
-            // TODO: SwiftUI
-            if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
-                if (vc.popupContentView.superview != nil) {
-                    vc.popupContentViewController.view.removeFromSuperview()
-                    vc.popupContentView.removeFromSuperview()
-                }
-            }
-            //
-            
-            vc.present(vc.popupContentViewController, animated: true) {
-                if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                    self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                }
-                let previousState = self.popupPresentationState
-                self.popupPresentationState = .open
-                self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
-                self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
-                self._delegate_additionalAnimationsForOpening = nil
-                completionBlock?()
-                self.disableInteractiveTransitioning = false
-                self.popupContentPanGestureRecognizer.isEnabled = true
-            }
+            self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
+            self._delegate_additionalAnimationsForOpening = nil
+            completionBlock?()
+            self.disableInteractiveTransitioning = false
+            self.popupContentPanGestureRecognizer.isEnabled = true
         }
     }
     
@@ -1156,12 +1177,17 @@ extension PBPopupPresentationStyle
         return statusBarHeight
     }
     
+    internal func statusBarIsHidden(for view: UIView) -> Bool
+    {
+#if !targetEnvironment(macCatalyst)
+        return view.window?.windowScene?.statusBarManager?.isStatusBarHidden ?? false
+#else
+        return false
+#endif
+    }
+    
     internal func popupBarViewFrameForPopupStateHidden() -> CGRect
     {
-        if self.kPopupBarViewUseFrame == false {
-            return self.popupBarView.frame
-        }
-        
         guard let vc = self.containerViewController else { return .zero }
         
         var frame = self.popupBarViewFrameForPopupStateClosed()
@@ -1179,36 +1205,27 @@ extension PBPopupPresentationStyle
         
     internal func popupBarViewFrameForPopupStateClosed() -> CGRect
     {
-        if self.kPopupBarViewUseFrame == false {
-            return self.popupBarView.frame
-        }
-        
         guard let vc = self.containerViewController else { return .zero }
-        guard let popupBarView = self.popupBarView,
-              popupBarView.superview != nil
-        else {
-            return .zero
-        }
+
         let defaultFrame = vc.defaultFrameForBottomBar()
         
         let insets = vc.insetsForBottomBar()
         
         var height = vc.popupBar.popupBarHeight
         
-        var width = vc.popupBar.popupBarWidth
-        if vc.popupBar.popupBarStyle == .custom {
-            if vc.popupContentView.popupContentSize.width > 0 {
-                width = vc.popupContentView.popupContentSize.width
-            }
-        }
+        let width = vc.popupBar.popupBarWidth
+        
         // Safe Area
         if self.bottomBarIsHidden, vc.popupBar.popupBarStyle != .custom || vc.popupBar.shouldExtendCustomBarUnderSafeArea {
             height += insets.bottom
         }
         let x = max((defaultFrame.size.width - width) / 2, defaultFrame.origin.x)
+        
         var y = defaultFrame.origin.y - height
         y -= vc.popupBar.popupBarStyle == .custom && self.bottomBarIsHidden ? insets.bottom : 0.0
+        
         var frame = CGRect(x: x, y: y, width: min(defaultFrame.size.width, width), height: height)
+        
         if let svc = vc.splitViewController, vc === svc.viewControllers.first {
             frame.origin.x += abs(vc.view.frame.minX)
             frame.size.width -= abs(vc.view.frame.minX)
@@ -1216,105 +1233,13 @@ extension PBPopupPresentationStyle
         PBLog("\(frame)")
         return frame
     }
-    
-    // TODO: WIP (Do not use)
-    internal func updatePopupBarViewConstraints(for state: PBPopupPresentationState) {
-        guard let vc = self.containerViewController else { return }
-        guard let popupBarView = self.popupBarView,
-              popupBarView.superview != nil
-        else {
-            return
-        }
         
-        let bottomBarInset = self.bottomBarInset
-        
-        let bottomBarHeight = self.bottomBarHeight
-        
-        let popupBarWidth = vc.popupBar.popupBarWidth
-        
-        var shouldExtendCustomBarUnderSafeArea = false
-        if self.bottomBarIsHidden && vc.popupBar.popupBarStyle == .custom {
-            shouldExtendCustomBarUnderSafeArea = vc.popupBar.shouldExtendCustomBarUnderSafeArea
-        }
-        
-        var popupBarMargin = 0.0
-        if popupBarWidth < vc.view.frame.width {
-            popupBarMargin = (vc.view.frame.width - popupBarWidth) / 2
-        }
-
-        self.popupBarView.translatesAutoresizingMaskIntoConstraints = false
-                    
-        var leadingConstant = 0.0
-        if let svc = vc.splitViewController, vc === svc.viewControllers.first {
-            //leadingConstant += vc.view.safeAreaInsets.left
-            leadingConstant += abs(vc.view.frame.minX)
-        }
-        
-        if let popupBarViewLeadingConstraint = self.popupBarViewLeadingConstraint {
-            popupBarViewLeadingConstraint.constant = leadingConstant + popupBarMargin
-        }
-        else {
-            self.popupBarViewLeadingConstraint = self.popupBarView.leadingAnchor.constraint(equalTo: vc.view.leadingAnchor, constant: leadingConstant + popupBarMargin)
-            self.popupBarViewLeadingConstraint.isActive = true
-        }
-        
-        let trailingConstant = 0.0
-        if let popupBarViewTrailingConstraint = self.popupBarViewTrailingConstraint {
-            popupBarViewTrailingConstraint.constant = trailingConstant - popupBarMargin
-        }
-        else {
-            self.popupBarViewTrailingConstraint = self.popupBarView.trailingAnchor.constraint(equalTo: vc.view.trailingAnchor, constant: trailingConstant - popupBarMargin)
-            self.popupBarViewTrailingConstraint.isActive = true
-        }
-        
-        var bottomConstant = 0.0
-        if state == .closed {
-            bottomConstant = -(bottomBarHeight + (self.bottomBarIsHidden ? 0.0 : bottomBarInset))
-            if self.bottomBarIsHidden && vc.popupBar.popupBarStyle == .custom {
-                bottomConstant -= bottomBarInset
-            }
-        }
-        else {
-            bottomConstant = vc.popupBar.popupBarHeight + (self.bottomBarIsHidden ? bottomBarInset : 0.0)
-        }
-        if let popupBarViewBottomConstraint = self.popupBarViewBottomConstraint {
-            popupBarViewBottomConstraint.constant = bottomConstant
-        }
-        else {
-            self.popupBarViewBottomConstraint = self.popupBarView.bottomAnchor.constraint(equalTo: vc.view.bottomAnchor, constant: bottomConstant)
-            self.popupBarViewBottomConstraint.isActive = true
-        }
-        
-        var heightConstant = vc.popupBar.popupBarHeight
-        if self.bottomBarIsHidden {
-            if vc.popupBar.popupBarStyle == .custom {
-                heightConstant += shouldExtendCustomBarUnderSafeArea ? bottomBarInset : 0.0
-            }
-            else {
-                heightConstant += bottomBarInset
-            }
-        }
-
-        if let popupBarViewHeightConstraint = self.popupBarViewHeightConstraint {
-            popupBarViewHeightConstraint.constant = heightConstant
-        }
-        else {
-            self.popupBarViewHeightConstraint = self.popupBarView.heightAnchor.constraint(equalToConstant: heightConstant)
-            self.popupBarViewHeightConstraint.isActive = true
-        }
-    }
-    
     internal func setPopupBarViewFrame(for state: PBPopupPresentationState) {
-        if !kPopupBarViewUseFrame {
-            self.updatePopupBarViewConstraints(for: state)
+        if state == .hidden {
+            self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
         }
         else {
-            if state == .hidden {
-                self.popupBarView.frame = self.popupBarViewFrameForPopupStateHidden()
-            }
-            else {
-                self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
-            }
+            self.popupBarView.frame = self.popupBarViewFrameForPopupStateClosed()
         }
     }
 }
@@ -1328,6 +1253,12 @@ extension PBPopupController: UIViewControllerTransitioningDelegate
      */
     public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning?
     {
+        self.popupPresentationController?.shouldUseSnapshotForPresentingView = self.shouldUseSnapshotForPresentingView
+        // TODO: SwiftUI
+        if NSStringFromClass(type(of: presented).self).contains("PBPopupUIContentController") {
+            self.popupPresentationController?.shouldUseSnapshotForPresentingView = true
+        }
+        //
         self.popupPresentationController?.isPresenting = true
         self.popupPresentationController?.popupController = self
         self.popupPresentationController?.popupPresentationStyle = self.containerViewController.popupContentView.popupPresentationStyle
@@ -1340,6 +1271,12 @@ extension PBPopupController: UIViewControllerTransitioningDelegate
      */
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning?
     {
+        self.popupPresentationController?.shouldUseSnapshotForPresentingView = self.shouldUseSnapshotForPresentingView
+        // TODO: SwiftUI
+        if NSStringFromClass(type(of: dismissed).self).contains("PBPopupUIContentController") {
+            self.popupPresentationController?.shouldUseSnapshotForPresentingView = true
+        }
+        //
         self.popupPresentationController?.isPresenting = false
         self.popupPresentationController?.popupController = self
         self.popupPresentationController?.popupPresentationStyle = self.containerViewController.popupContentView.popupPresentationStyle

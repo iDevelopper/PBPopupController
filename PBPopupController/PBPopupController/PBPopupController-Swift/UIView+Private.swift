@@ -15,22 +15,21 @@ private let _bVLGN = "X2JhY2tkcm9wVmlld0xheWVyR3JvdXBOYW1l"
 
 internal extension UIView
 {
-    func popupContentViewFor(_ view: UIView) -> PBPopupContentView?
-    {
-        var inputView: UIView? = view
+    func superview<T:UIView>(ofType aType:T.Type) -> T? {
+        var inputView: UIView? = self
         while inputView != nil {
             guard let view = inputView else { continue }
             inputView = view.superview
             if inputView == nil {
                 return nil
             }
-            if inputView is PBPopupContentView {
-                return inputView as? PBPopupContentView
+            if inputView is T {
+                return inputView as? T
             }
         }
         return nil
     }
-    
+
     func subviews<T:UIView>(ofType aType:T.Type) -> [T] {
         var result = self.subviews.compactMap {$0 as? T}
         for sub in self.subviews {

@@ -7,7 +7,109 @@
 //
 
 import UIKit
+import WebKit
 import SwiftUI
+
+class MainPopupNavigationController: UINavigationController
+{
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        guard let container = self.popupContainerViewController else { return .default }
+        guard let popupController = container.popupController else { return .default }
+        
+        let popupStatusBarStyle = popupController.popupStatusBarStyle
+        return popupStatusBarStyle
+    }
+}
+class MainWebViewController: UIViewController, WKUIDelegate, WKNavigationDelegate
+{
+    private let webView: WKWebView = {
+        let webView = WKWebView(frame: .zero)
+        return webView
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        webView.isOpaque = false
+        webView.backgroundColor = .clear
+        
+        webView.uiDelegate = self
+        webView.navigationDelegate = self
+        
+        view.addSubview(webView)
+        
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor).isActive = true
+        webView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor).isActive = true
+        webView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        webView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+
+        guard let url = URL(string: "https://github.com/iDevelopper/PBPopupController") else { return }
+        
+        webView.isHidden = true
+        webView.load(URLRequest(url: url))
+
+        if #available(iOS 17.0, *) {
+            self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
+                guard let containerVC = self.navigationController?.popupContainerViewController else { return }
+                guard let popupController = containerVC.popupController else { return }
+                
+                let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+                popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+
+                self.navigationController?.setNeedsStatusBarAppearanceUpdate()
+            }
+        }
+    }
+    
+    override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        guard let containerVC = self.navigationController?.popupContainerViewController else { return }
+        guard let popupController = containerVC.popupController else { return }
+        
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        popupController.popupPreferredStatusBarStyle = userInterfaceStyle == .light ? .darkContent : .lightContent
+
+        self.navigationController?.setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        webView.isHidden = false
+    }
+    
+    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
+        webView.isHidden = false
+    }
+}
+
+// TODO: LNPopup: _fixupGestureRecognizer
+extension MainWebViewController: UIGestureRecognizerDelegate
+{
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let containerVC = self.navigationController?.popupContainerViewController else { return false }
+        guard let popupController = containerVC.popupController else { return false }
+
+        if gestureRecognizer == popupController.popupContentPanGestureRecognizer && NSStringFromClass(type(of: otherGestureRecognizer.view!).self).contains("WKScrollView") {
+            let scrollView = otherGestureRecognizer.view as! UIScrollView
+            //print("contentOffset: \(scrollView.contentOffset.y)")
+            if scrollView.contentOffset.y <= 0 {
+                return false
+            }
+            return true
+        }
+        return false
+    }
+}
 
 class MainTableViewController: UITableViewController {
     
@@ -18,6 +120,11 @@ class MainTableViewController: UITableViewController {
     var enableColorsDebug: Bool = false
     
     // MARK: - View lifecycle
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        return userInterfaceStyle == .light ? .darkContent : .lightContent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +138,22 @@ class MainTableViewController: UITableViewController {
         self.navigationItem.leftBarButtonItem = enableColors
         
         self.tableView.tableFooterView = UIView()
+        
+        self.setupPopupBar()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if self.navigationController?.popupController.popupPresentationState == .hidden {
+            let vc = MainWebViewController()
+            let nc = MainPopupNavigationController(rootViewController: vc)
+            vc.view.backgroundColor = .systemBackground
+            self.navigationController?.presentPopupBar(withPopupContentViewController: nc, animated: true, completion: {
+                print("Popup Bar Presented!")
+                self.navigationController?.popupController.popupContentPanGestureRecognizer.delegate = vc
+            })
+        }
     }
 
     // MARK: - Navigation
@@ -55,7 +178,36 @@ class MainTableViewController: UITableViewController {
             enableColors.image = self.enableColorsDebug ? UIImage(systemName: "circle.hexagongrid.fill")?.withRenderingMode(.alwaysOriginal) : UIImage(systemName: "circle.hexagongrid.fill")
         }
     }
+
+    // MARK: - PopupBar setup
     
+    func setupPopupBar() {
+        if let popupBar = self.navigationController?.popupBar {
+            
+            if #available(iOS 17.0, *) {
+                popupBar.isFloating = true
+            }
+            
+            popupBar.inheritsVisualStyleFromBottomBar = true
+            popupBar.shadowImageView.shadowOpacity = 0
+            popupBar.borderViewStyle = .none
+
+            popupBar.image = UIImage(named: "AppImage")
+            popupBar.title = NSLocalizedString("Welcome to PBPopupController!", comment: "")
+            popupBar.image?.accessibilityLabel = NSLocalizedString("Welcome to PBPopupController!", comment: "")
+                        
+            if let popupContentView = self.navigationController?.popupContentView {
+                popupContentView.popupIgnoreDropShadowView = true
+                popupContentView.popupCanDismissOnPassthroughViews = true
+                popupContentView.popupCloseButtonStyle = .chevron
+                popupContentView.popupPresentationStyle = .fullScreen
+            }
+            
+            self.navigationController?.popupController.containerPreferredStatusBarStyle = .default
+            self.navigationController?.popupController.popupPreferredStatusBarStyle = self.traitCollection.userInterfaceStyle == .light ? .darkContent : .lightContent
+        }
+    }
+
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -109,6 +261,7 @@ class MainTableViewController: UITableViewController {
             vc.isModalInPresentation = true
             
             vc.enablePopupBarColorsDebug = self.enableColorsDebug
+            vc.enablePopupColorsDebug = self.enableColorsDebug
             self.present(vc, animated: true, completion: nil)
             // TODO: for internal tests (comment the line above & decomment the 2 lines below)
             //let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate

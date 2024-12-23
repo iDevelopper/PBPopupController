@@ -169,13 +169,13 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 vc.popupContentView.popupCloseButton?.alpha = alpha
             }
             
-            if let backingView = self.presentationController.backingView, let layerPresentation = backingView.layer.presentation() {
+            if let sourceView = self.presentationController.shouldUseSnapshotForPresentingView ? self.presentationController.backingView : self.presentationController.presentingVC.view, let layerPresentation = sourceView.layer.presentation() {
                 let statusBarFrame = self.popupController.statusBarFrame(for: vc.view)
                 let statusBarHeightThreshold = statusBarFrame.minY + statusBarFrame.height / 2
-                let backingViewY = layerPresentation.frame.minY
+                let sourceViewY = layerPresentation.frame.minY
                 
-                if self.statusBarThresholdDir == 1 && backingViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && backingViewY < statusBarHeightThreshold {
-                    self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? self.popupController.popupPreferredStatusBarStyle : self.popupController.containerPreferredStatusBarStyle
+                if self.statusBarThresholdDir == 1 && sourceViewY >= statusBarHeightThreshold || self.statusBarThresholdDir == -1 && sourceViewY < statusBarHeightThreshold {
+                    self.popupController.popupStatusBarStyle = self.statusBarThresholdDir == 1 ? .lightContent : self.popupController.containerPreferredStatusBarStyle
                     //UIView.animate(withDuration: 0.25, delay: 0.0, usingSpringWithDamping: 500, initialSpringVelocity: 0, options: []) {
                     // Apple Documentation: If you call this method within an animation block, the changes are animated along with the rest of the animation block.
                     vc.setNeedsStatusBarAppearanceUpdate()
@@ -183,7 +183,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.statusBarThresholdDir = -self.statusBarThresholdDir
                 }
             }
-            
+
             let location = self.location + (availableHeight * self.progress)
             self.popupController.delegate?.popupController?(self.popupController, interactivePresentationFor: vc.popupContentViewController, state: self.isPresenting ? .closed : .open, progress: self.progress, location: location)
 
@@ -212,6 +212,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                     self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
                     animator.addAnimations {
                         vc.setNeedsStatusBarAppearanceUpdate()
+                        vc.setNeedsUpdateOfHomeIndicatorAutoHidden()
                     }
                     
                     animator.addCompletion { (_) in
@@ -227,7 +228,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 }
                 else {
                     self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
-                    
                     if self.isDismissing {
                         animator.addAnimations {
                             vc.setNeedsStatusBarAppearanceUpdate()
@@ -274,6 +274,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         animator.addAnimations {
             vc.setNeedsStatusBarAppearanceUpdate()
+            vc.setNeedsUpdateOfHomeIndicatorAutoHidden()
             vc.popupContentView.popupCloseButton?.alpha = 1.0
             self.presentationController.popupBarForPresentation?.alpha = 0.0
         }
@@ -387,6 +388,9 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
             otherGestureRecognizer.state = UIGestureRecognizer.State.failed
             return true
         }
+        
+        // TODO: View hierarchy might add more and more views with gesture recognizers. Let's try to "import" them for our system.
+
         return true
     }
     

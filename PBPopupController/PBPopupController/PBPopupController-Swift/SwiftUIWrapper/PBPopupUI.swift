@@ -16,7 +16,7 @@ public class RoundShadowImageView: PBPopupRoundShadowImageView {
     public override func layoutSubviews() {
         super.layoutSubviews()
         
-        if let popupContentView = self.popupContentView {
+        if let popupContentView = self.superview(ofType: PBPopupContentView.self) {
             popupContentView.popupImageModule = self
             popupContentView.popupImageView = self.imageView
         }
@@ -304,7 +304,7 @@ public extension View {
     /// - Parameters:
     ///   - customizer: A customizing closure that is called to customize the popup bar object.
     ///   - popupContentView: The popup content view to customize.
-    func popupContentViewCustomizer(_ customizer: @escaping (_ popupBContentView: PBPopupContentView) -> Void) -> some View {
+    func popupContentViewCustomizer(_ customizer: @escaping (_ popupContentView: PBPopupContentView) -> Void) -> some View {
         return environment(\.popupContentViewCustomizer, customizer)
     }
 }

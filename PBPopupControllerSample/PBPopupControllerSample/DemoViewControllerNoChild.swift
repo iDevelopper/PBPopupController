@@ -15,6 +15,11 @@ class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
     var titles = [String]()
     var subtitles = [String]()
 
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        return userInterfaceStyle == .light ? .darkContent : .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -98,6 +103,7 @@ class DemoViewControllerNoChild: UIViewController, PBPopupControllerDelegate {
             self.popupBar.title = LoremIpsum.title
             self.popupBar.subtitle = LoremIpsum.sentence
             self.popupContentView.popupCloseButtonStyle = .chevron
+            self.popupContentView.popupCloseButtonIsUserPositioned = true
             self.popupContentView.popupIgnoreDropShadowView = false
             
             let storyboard = UIStoryboard(name: "Main", bundle: nil)

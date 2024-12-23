@@ -56,6 +56,7 @@ class DemoChildViewController: UIViewController {
     @IBAction func popupBarIsFloating(_ sender: UIButton) {
         if let containerVC = self.parent {
             containerVC.popupBar.isFloating.toggle()
+            sender.isSelected.toggle()
         }
     }
     
@@ -118,7 +119,7 @@ class DemoChildViewController: UIViewController {
         if let containerVC = self.parent as? DemoContainerController {
             containerVC.popupController.dataSource = containerVC
             containerVC.popupController.delegate = containerVC
-            containerVC.popupBar.isFloating = true
+            //containerVC.popupBar.isFloating = true
             containerVC.popupBar.inheritsVisualStyleFromBottomBar = false
             containerVC.popupBar.backgroundEffect = containerVC.tabBar.standardAppearance.backgroundEffect
             containerVC.popupBar.image = UIImage(named: "Cover22")

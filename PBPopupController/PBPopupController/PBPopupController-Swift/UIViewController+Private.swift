@@ -333,6 +333,16 @@ internal extension UITabBarController
         self.tabBar._ignoringLayoutDuringTransition = ignoringLayoutDuringTransition
     }
     
+    @objc override func snapshotBottomBar() -> UIView?
+    {
+        guard self.bottomBarIsHidden() == false else { return nil }
+        
+        if let snapshot = self.view.resizableSnapshotView(from: self.tabBar.frame, afterScreenUpdates: false, withCapInsets: .zero)
+        {
+            return snapshot
+        }
+        return nil
+    }
 
     @objc override func _animateBottomBarToHidden( _ hidden: Bool)
     {
@@ -372,7 +382,7 @@ internal extension UITabBarController
     {
         let defaultFrame = self.tabBar.frame
         let layoutFrame = self.tabBar.safeAreaLayoutGuide.layoutFrame
-        let bottomBarFrame = CGRect(x: defaultFrame.minX, y: self.view.bounds.size.height - (self.bottomBarIsHidden() ? 0.0 : defaultFrame.size.height), width: defaultFrame.width, height: layoutFrame.height)
+        let bottomBarFrame = CGRect(x: defaultFrame.minX, y: self.view.bounds.size.height - (self.bottomBarIsHidden() ? 0.0 : defaultFrame.size.height), width: defaultFrame.width, height: self.bottomBarIsHidden() ? 0.0 : layoutFrame.height)
         return bottomBarFrame
     }
     
@@ -394,6 +404,10 @@ internal extension UITabBarController
     
     @objc override func configurePopupBarFromBottomBar()
     {
+        if self.popupController.popupPresentationState == .hidden {
+            return
+        }
+        
         self.popupBar.effectGroupingIdentifier = self.tabBar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
@@ -437,8 +451,8 @@ internal extension UITabBarController
     {
         if let popupContentView = self.popupContentView {
             if popupContentView.inheritsVisualStyleFromPopupBar {
-                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
-                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+                popupContentView.popupEffectView?.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView?.effect = self.popupBar.contentView.effect
             }
         }
     }
@@ -807,6 +821,19 @@ internal extension UINavigationController
         return
     }
     
+    @objc override func snapshotBottomBar() -> UIView?
+    {
+        guard self.bottomBarIsHidden() == false else { return nil }
+        
+        var frame = self.toolbar.frame
+        frame.size.height += self.insetsForBottomBar().bottom
+        if let snapshot = self.view.resizableSnapshotView(from: frame, afterScreenUpdates: false, withCapInsets: .zero)
+        {
+            return snapshot
+        }
+        return nil
+    }
+
     @objc override func _animateBottomBarToHidden( _ hidden: Bool)
     {
         var height = self.toolbar.frame.height
@@ -890,6 +917,10 @@ internal extension UINavigationController
     
     @objc override func configurePopupBarFromBottomBar()
     {
+        if self.popupController.popupPresentationState == .hidden {
+            return
+        }
+        
         self.popupBar.effectGroupingIdentifier = self.toolbar._effectGroupingIdentifierIfAvailable
         self.popupBar.applyGroupingIdentifier(fromBottomBar: true)
         
@@ -935,8 +966,8 @@ internal extension UINavigationController
     {
         if let popupContentView = self.popupContentView {
             if popupContentView.inheritsVisualStyleFromPopupBar {
-                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
-                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+                popupContentView.popupEffectView?.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView?.effect = self.popupBar.contentView.effect
             }
         }
     }
@@ -1056,13 +1087,33 @@ public extension UIViewController
     //_viewSafeAreaInsetsFromScene
     @objc private func _vSAIFS() -> UIEdgeInsets
     {
-        /// Find the popup content view safe area insets
-        if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView {
-            if var insets = popupContentView.superview?.safeAreaInsets {
-                insets.top = 0
-                return insets
+        /// Find the popup content superview (containerView) safe area insets
+        if let vc = self.popupContainerViewController, let popupContentView = vc.popupContentView, let containerView = popupContentView.superview {
+            if popupContentView.popupContentViewController == self {
+                var insets = containerView.safeAreaInsets
+                switch popupContentView.popupPresentationStyle {
+                case .popup:
+                    if vc.popupContentViewController.view.preservesSuperviewLayoutMargins == false {
+                        vc.popupContentViewController.viewRespectsSystemMinimumLayoutMargins = false
+                    }
+                    return .zero
+                case .deck, .custom:
+                    if popupContentView.popupContentSize.height == UIScreen.main.bounds.height {
+                        return insets
+                    }
+                    insets.top = 0
+                    return insets
+                case .fullScreen:
+                    if popupContentView.popupContentViewController is UINavigationController {
+                        insets.top = 0
+                    }
+                    return insets
+                default:
+                    return insets
+                }
             }
         }
+
         let insets = self._vSAIFS()
         return insets
     }
@@ -1190,6 +1241,9 @@ public extension UIViewController
     internal func _cleanupPopup()
     {
         PBLog("_cleanupPopup")
+        withUnsafePointer(to: &AssociatedKeys.enablePopupColorsDebug) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
         withUnsafePointer(to: &AssociatedKeys.enablePopupBarColorsDebug) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
@@ -1235,6 +1289,12 @@ public extension UIViewController
         withUnsafePointer(to: &AssociatedKeys.popupController) {
             objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
+        withUnsafePointer(to: &AssociatedKeys.popupContainerViewController) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+        withUnsafePointer(to: &AssociatedKeys.popupCloseButton) {
+            objc_setAssociatedObject(self, $0, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
 }
 
@@ -1245,6 +1305,15 @@ internal extension UIViewController
         return
     }
     
+    @objc func snapshotBottomBar() -> UIView?
+    {
+        guard self.bottomBarIsHidden() == false else { return nil }
+        
+        let snapshot = self.view.resizableSnapshotView(from: self.bottomBar.frame, afterScreenUpdates: false, withCapInsets: .zero)
+        
+        return snapshot
+    }
+
     @objc func _animateBottomBarToHidden( _ hidden: Bool)
     {
         let height = self.defaultFrameForBottomBar().height
@@ -1309,6 +1378,10 @@ internal extension UIViewController
     
     @objc func configurePopupBarFromBottomBar()
     {
+        if self.popupController.popupPresentationState == .hidden {
+            return
+        }
+        
         let toolBarAppearance = UIToolbarAppearance()
         self.popupBar.shadowColor = toolBarAppearance.shadowColor
         
@@ -1324,8 +1397,8 @@ internal extension UIViewController
     {
         if let popupContentView = self.popupContentView {
             if popupContentView.inheritsVisualStyleFromPopupBar {
-                popupContentView.popupEffectView.effect = self.popupBar.backgroundEffect
-                popupContentView.popupFloatingEffectView.effect = self.popupBar.contentView.effect
+                popupContentView.popupEffectView?.effect = self.popupBar.backgroundEffect
+                popupContentView.popupFloatingEffectView?.effect = self.popupBar.contentView.effect
             }
         }
 

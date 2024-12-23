@@ -11,20 +11,12 @@ import UIKit
 /**
  A custom view that provide a shadow's layer arround an image view with a corner radius.
  */
-@objc open class PBPopupRoundShadowImageView: UIView {
-    
+
+@objc public class PBPopupRoundShadowImageView: UIView {
+
     // MARK: - Public Properties
     
     public let imageView = UIImageView()
-    
-    /**
-     The popup content view.
-     
-     - SeeAlso: `PBPopupContentView`.
-     */
-    @objc public var popupContentView: PBPopupContentView? {
-        return self.popupContentViewFor(self)
-    }
     
     @objc public var image: UIImage! {
         didSet {

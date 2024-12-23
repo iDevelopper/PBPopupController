@@ -27,6 +27,11 @@ class DemoContainerController: UIViewController, UITabBarDelegate, PBPopupContro
     var selectedIndex: Int = 0
     var currentChildVC: UIViewController!
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        let userInterfaceStyle = self.traitCollection.userInterfaceStyle
+        return userInterfaceStyle == .light ? .darkContent : .lightContent
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

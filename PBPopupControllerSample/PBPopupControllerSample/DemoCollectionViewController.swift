@@ -155,7 +155,7 @@ class DemoCollectionViewController: UICollectionViewController, UICollectionView
     // MARK: - UICollectionViewDelegate
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {        
-        print("\(String(describing: self.popupContainerViewController()))")
+        //print("\(String(describing: self.popupContainerViewController()))")
         if let containerVC = popupContainerViewController, let popupBar = containerVC.popupBar {
             popupBar.image = images[indexPath.row]
             popupBar.title = titles[indexPath.row]

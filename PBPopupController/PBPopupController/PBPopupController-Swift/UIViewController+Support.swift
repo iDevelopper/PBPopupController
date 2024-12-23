@@ -13,6 +13,7 @@ import ObjectiveC
 public extension UIViewController
 {
     internal struct AssociatedKeys {
+        static var enablePopupColorsDebug = "enablePopupColorsDebug"
         static var enablePopupBarColorsDebug = "enablePopupBarColorsDebug"
         static var usePopupBarSmoothGradient = "usePopupBarSmoothGradient"
         static var usePopupBarLegacyShadow = "usePopupBarLegacyShadow"
@@ -23,6 +24,7 @@ public extension UIViewController
         
         static var popupController: PBPopupController?
         static var popupContainerViewController: UIViewController?
+        static var popupCloseButton: PBPopupCloseButton?
         static var popupContentViewController: UIViewController?
         static var popupContentView: PBPopupContentView?
         static var isBottomBarHiddenDuringTransition = "isBottomBarHiddenDuringTransition"
@@ -61,6 +63,28 @@ public extension UIViewController
                 objc_getAssociatedObject(controller, $0) as? UIViewController
         }
         return rv
+    }
+    
+    /**
+     A Boolean value indicating whether the popup content displays the view layout with colors. The default value is `false`. If necessary, change the value to `true`..
+     */
+    @objc var enablePopupColorsDebug: Bool {
+        get {
+            let isEnabled = withUnsafePointer(to: &AssociatedKeys.enablePopupColorsDebug) {
+                objc_getAssociatedObject(self, $0) as? NSNumber
+            }
+            return isEnabled?.boolValue ?? false
+        }
+        set {
+            withUnsafePointer(to: &AssociatedKeys.enablePopupColorsDebug) {
+                objc_setAssociatedObject(
+                    self,
+                    $0,
+                    NSNumber(value: newValue),
+                    .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                )
+            }
+        }
     }
     
     /**
@@ -275,6 +299,33 @@ public extension UIViewController
                         self,
                         $0,
                         newValue as UIViewController,
+                        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+                    )
+                }
+            }
+        }
+    }
+    
+    /**
+     Returns the container (presenting) view controller for the popup bar, and for the presented view controller (popupContentViewController). May be `UIViewController`, `UINavigationController`, `UITabBarController` or a custom container view controller. (read-only).
+     
+     - SeeAlso: `popupContainerViewController`.
+     */
+    @objc internal(set) weak var popupCloseButton: PBPopupCloseButton! {
+        get {
+            let rv = withUnsafePointer(to: &AssociatedKeys.popupCloseButton) {
+                objc_getAssociatedObject(self, $0) as? PBPopupCloseButton
+            }
+            return rv
+        }
+        
+        set {
+            if let newValue = newValue {
+                withUnsafePointer(to: &AssociatedKeys.popupCloseButton) {
+                    objc_setAssociatedObject(
+                        self,
+                        $0,
+                        newValue as PBPopupCloseButton,
                         .OBJC_ASSOCIATION_RETAIN_NONATOMIC
                     )
                 }
@@ -520,11 +571,14 @@ public extension UIViewController
         }
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
+        controller.popupCloseButton = self.popupContentView.popupCloseButton
 
         controller.view.translatesAutoresizingMaskIntoConstraints = true
         controller.view.autoresizingMask = []
         controller.view.frame = self.view.bounds
         controller.view.clipsToBounds = false
+        
+        self.popupContentView.popupContentViewController = controller
         
         // TODO: SwiftUI
         // SwiftUI: The popup content view must be in the responder chain for the preferences to work.
@@ -633,11 +687,14 @@ public extension UIViewController
 
         self.popupContentViewController = controller
         controller.popupContainerViewController = self
+        controller.popupCloseButton = self.popupContentView.popupCloseButton
 
         controller.view.translatesAutoresizingMaskIntoConstraints = true
         controller.view.autoresizingMask = []
         controller.view.frame = self.view.bounds
         controller.view.clipsToBounds = false
+        
+        self.popupContentView.popupContentViewController = controller
         
         // TODO: SwiftUI
         // SwiftUI: The popup content view must be in the responder chain for the preferences to work.

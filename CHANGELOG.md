@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.10.6
+
+Status bar management improvements.
+Updated documentation.
+
 ## 3.10.5
 
 Further improvements to iOS 18 support.

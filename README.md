@@ -175,9 +175,6 @@ When you override the `preferredStatusBarStyle` variable in your popup content v
         guard let containerVC = self.popupContainerViewController else {return.default}
         guard let popupContentView = containerVC.popupContentView else {return .default}
     
-        if popupContentView.popupPresentationStyle != .deck {
-            return .default
-        }
         return containerVC.popupController.popupStatusBarStyle
     }
 ```

@@ -1068,6 +1068,12 @@ public extension UIViewController
         if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
             method_exchangeImplementations(originalMethod, swizzledMethod)
         }
+
+        originalMethod = class_getInstanceMethod(aClass, #selector(setNeedsStatusBarAppearanceUpdate))
+        swizzledMethod = class_getInstanceMethod(aClass, #selector(pb_setNeedsStatusBarAppearanceUpdate))
+        if let originalMethod = originalMethod, let swizzledMethod = swizzledMethod {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
     }()
     
     /**
@@ -1236,6 +1242,14 @@ public extension UIViewController
                 self.popupController?.popupBarView?.superview?.insertSubview(self.popupController.popupBarView, belowSubview: self.bottomBar)
             }
         }
+    }
+    
+    @objc private func pb_setNeedsStatusBarAppearanceUpdate()
+    {
+        //let statusBarManager = self.view.window?.windowScene?.statusBarManager
+        //print("status bar style: \(String(describing: statusBarManager?.statusBarStyle.rawValue))")
+        
+        self.pb_setNeedsStatusBarAppearanceUpdate()
     }
     
     internal func _cleanupPopup()

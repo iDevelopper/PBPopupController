@@ -65,8 +65,6 @@ internal class PBPopupPresentationController: UIPresentationController
     
     internal var isPresenting = false
     
-    private var isInteractive: Bool = false
-    
     internal var animator: UIViewPropertyAnimator!
     
     private var finishAnimator: UIViewPropertyAnimator!
@@ -270,8 +268,6 @@ internal class PBPopupPresentationController: UIPresentationController
             return
         }
 
-        self.isInteractive = coordinator.isInteractive
-        
         containerView.frame = self.popupContainerViewFrame()
         
         let frame = containerView.bounds
@@ -296,11 +292,6 @@ internal class PBPopupPresentationController: UIPresentationController
         self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true)
         
         presentedView.frame = self.presentedViewFrame()
-        
-        self.popupController.popupStatusBarStyle = .default
-        if !coordinator.isInteractive {
-            self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
-        }
         
         if self.popupPresentationStyle != .popup {
             self.popupBarForPresentation = self.setupPopupBarForPresentation()
@@ -333,9 +324,16 @@ internal class PBPopupPresentationController: UIPresentationController
         
         containerView.layoutIfNeeded()
         
+        if !coordinator.isInteractive {
+            self.popupController.popupStatusBarStyle = self.popupController.popupPreferredStatusBarStyle
+        }
+        
         coordinator.animate {context in
-            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
-            self.presentingVC.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            if !context.isInteractive {
+                self.presentingVC.setNeedsStatusBarAppearanceUpdate()
+                self.presentingVC.setNeedsUpdateOfHomeIndicatorAutoHidden()
+            }
+            
             self.animatePresentingViewToDeck(true, animated: true)
             self.animateImageViewInFinalPosition()
             self.setupCornerRadiusForPopupContentView(open: true)
@@ -388,19 +386,6 @@ internal class PBPopupPresentationController: UIPresentationController
             return
         }
         
-        if self.popupPresentationStyle == .fullScreen {
-            self.popupController.popupStatusBarStyle = .default
-        }
-        
-        self.isInteractive = coordinator.isInteractive
-        
-        if !isInteractive {
-            self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
-            if self.popupPresentationStyle == .deck {
-                self.popupController.popupStatusBarStyle = .lightContent
-            }
-        }
-
         if self.popupPresentationStyle != .popup {
             self.popupBarForPresentation = self.setupPopupBarForPresentation()
             if let popupBarForPresentation = self.popupBarForPresentation {
@@ -439,14 +424,17 @@ internal class PBPopupPresentationController: UIPresentationController
         self.setupCornerRadiusForPopupContentView(open: true)
         //
         
-        if !isInteractive {
+        containerView.layoutIfNeeded()
+        
+        if !coordinator.isInteractive {
             self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
         }
         
-        containerView.layoutIfNeeded()
-        
         coordinator.animate { context in
-            self.presentingVC.setNeedsStatusBarAppearanceUpdate()
+            if !context.isInteractive {
+                self.presentingVC.setNeedsStatusBarAppearanceUpdate()
+            }
+            
             self.animatePresentingViewToDeck(false, animated: true)
             
             if !context.isInteractive {
@@ -485,6 +473,7 @@ internal class PBPopupPresentationController: UIPresentationController
                     self.popupContentView.frame = self.popupContentViewFrameForPopupStateClosed(finish: true, isInteractive: true)
                 }
                 presentedView.frame = self.presentedViewFrame()
+                
                 self.popupBarForPresentation?.center.x = self.popupContentView.bounds.center.x
                 self.animateBottomBarToHidden(false)
                 self.animatePresentingViewToDeck(false, animated: true)

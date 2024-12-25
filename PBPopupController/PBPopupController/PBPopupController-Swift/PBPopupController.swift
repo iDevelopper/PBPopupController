@@ -446,6 +446,9 @@ extension PBPopupPresentationStyle
             case .deck:
                 return .lightContent
             case .custom:
+                if popupContentView.popupContentSize.height == UIScreen.main.bounds.height {
+                    return _popupPreferredStatusBarStyle
+                }
                 return self.containerPreferredStatusBarStyle
             case .popup:
                 return self.containerPreferredStatusBarStyle
@@ -464,8 +467,17 @@ extension PBPopupPresentationStyle
     /**
      The status bar style of the popup content view controller. Return this value when you override the preferredStatusBarStyle variable.
      */
-    @objc public var popupStatusBarStyle: UIStatusBarStyle = .default
-    
+    @objc public var popupStatusBarStyle: UIStatusBarStyle {
+        get {
+            return _popupStatusBarStyle
+        }
+        set {
+            _popupStatusBarStyle = newValue
+        }
+    }
+
+    internal var _popupStatusBarStyle: UIStatusBarStyle = .default
+
     /**
      Controls whether interaction with the popup generates haptic feedback to the user. The default value is `true`.
      */
@@ -603,6 +615,31 @@ extension PBPopupPresentationStyle
 #else
         return UIScreen.main.displayCornerRadius
 #endif
+    }
+    
+    private func updatePopupStatusBarStyle(for state: PBPopupPresentationState, previousState: PBPopupPresentationState)
+    {
+        if let vc = self.containerViewController {
+            let popupContentView = vc.popupContentView
+            switch popupContentView?.popupPresentationStyle {
+            case .deck, .fullScreen:
+                if state == .opening, previousState == .closed {
+                    self.popupStatusBarStyle = .lightContent
+                }
+                if state == .closing, previousState == .open {
+                    self.popupStatusBarStyle = .lightContent
+                }
+                if state == .transitioning, previousState == .closed {
+                    self.popupStatusBarStyle = self.containerPreferredStatusBarStyle
+                }
+                if state == .transitioning, previousState == .open {
+                    self.popupStatusBarStyle = .lightContent
+                }
+            default:
+                self.popupStatusBarStyle = .default
+            }
+            vc.setNeedsStatusBarAppearanceUpdate()
+        }
     }
     
     // MARK: - Init
@@ -1067,6 +1104,8 @@ extension PBPopupPresentationStyle
         }
         //
         
+        self.updatePopupStatusBarStyle(for: self.popupPresentationState, previousState: previousState)
+        
         vc.present(vc.popupContentViewController, animated: true) {
             if let scrollView = vc.popupContentViewController.view as? UIScrollView {
                 self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
@@ -1109,6 +1148,9 @@ extension PBPopupPresentationStyle
         if let block = self.delegate?.additionalAnimationsForClosing?(popupController: self, popupContentViewController: vc.popupContentViewController, isInteractive: false) {
             self._delegate_additionalAnimationsForClosing = block
         }
+        
+        self.updatePopupStatusBarStyle(for: self.popupPresentationState, previousState: previousState)
+
         vc.popupContentViewController.dismiss(animated: animated) {
             let previousState = self.popupPresentationState
             self.popupPresentationState = .closed
@@ -1347,6 +1389,8 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
 
             self._generateSoftFeedbackWithIntensity(self.softFeedbackGeneratorIntensity)
             
+            self.updatePopupStatusBarStyle(for: self.popupPresentationState, previousState: previousState)
+            
             vc.present(vc.popupContentViewController, animated: true) {
                 if self.popupPresentationState == .opening {
                     if let scrollView = vc.popupContentViewController.view as? UIScrollView {
@@ -1388,6 +1432,8 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             
             self._generateSoftFeedbackWithIntensity(self.softFeedbackGeneratorIntensity)
+            
+            self.updatePopupStatusBarStyle(for: self.popupPresentationState, previousState: previousState)
             
             vc.popupContentViewController.dismiss(animated: true) {
                 if self.popupPresentationState == .closing {

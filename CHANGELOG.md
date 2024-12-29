@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.10.7
+
+Gestures improvements.
+
 ## 3.10.6
 
 Status bar management improvements.

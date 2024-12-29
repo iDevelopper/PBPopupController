@@ -791,9 +791,9 @@ class FirstTableViewController: UITableViewController, PBPopupControllerDataSour
         DispatchQueue.main.async {
             // Presenting a navigation controller
             if self.isContentEmbeddedInNavigation {
-                let nc = PopupNavigationController(rootViewController: self.popupContentVC)
+                let nc = PopupNavigationController(rootViewController: self.isPopupContentTableView ? self.popupContentTVC : self.popupContentVC)
                 
-                self.containerVC.presentPopupBar(withPopupContentViewController: self.isPopupContentTableView ? self.popupContentTVC : nc, animated: true, completion: {
+                self.containerVC.presentPopupBar(withPopupContentViewController: nc, animated: true, completion: {
                     PBLog("Popup Bar Presented")
                 })
             }
@@ -1180,6 +1180,13 @@ extension FirstTableViewController: PBPopupControllerDelegate {
             popupContent.songTitle = self.containerVC.popupBar.title
             popupContent.albumTitle = self.containerVC.popupBar.subtitle
         }
+
+        if let nc = popupContentViewController as? UINavigationController, let popupContent = nc.topViewController as? PopupContentTableViewController {
+            popupContent.albumArtImage = self.containerVC.popupBar.image
+            popupContent.songTitle = self.containerVC.popupBar.title
+            popupContent.albumTitle = self.containerVC.popupBar.subtitle
+        }
+
         return true
     }
     

@@ -21,8 +21,6 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     private var isDismissing: Bool!
     
     private weak var view: UIView!
-        
-    internal var contentOffset: CGPoint!
     
     private var gesture: UIPanGestureRecognizer!
         
@@ -101,8 +99,11 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         let translation = gesture.translation(in: gesture.view?.superview)
         
         if !self.isPresenting {
-            if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                if scrollView.contentOffset.y <= self.contentOffset.y {
+            if let scrollView = vc.popupContentView.subviews(ofType: UIScrollView.self).first, scrollView.panGestureRecognizer.isEnabled, scrollView._pb_hasVerticalContent {
+                if scrollView.contentOffset.y <= -scrollView.adjustedContentInset.top {
+                    
+                    scrollView.panGestureRecognizer.state = .failed
+                    
                     if !self.isDismissing {
                         self.isDismissing = true
                         self.delegate?.dismissInteractive()
@@ -114,41 +115,38 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         switch gesture.state {
         case .began:
-            self.animator = nil
-            self.progress = 0.0
-            self.location = 0.0
-            self.shouldComplete = false
-            
-            if self.isPresenting {
-                self.delegate?.presentInteractive()
-            }
-            else {
-                if !self.isDismissing {
-                    if !(vc.popupContentViewController.view is UIScrollView) {
-                        self.isDismissing = true
-                        self.delegate?.dismissInteractive()
+                self.animator = nil
+                self.progress = 0.0
+                self.location = 0.0
+                self.shouldComplete = false
+                
+                if self.isPresenting {
+                    self.delegate?.presentInteractive()
+                }
+                else {
+                    if !self.isDismissing {
+                        let scrollView = vc.popupContentView.subviews(ofType: UIScrollView.self).first
+                        if scrollView == nil {
+                            self.isDismissing = true
+                            self.delegate?.dismissInteractive()
+                        }
                     }
                 }
-            }
-            self.location = vc.popupContentView.frame.minY
-            
-            if self.isPresenting {
-                self.location = self.popupController.popupBarView.frame.minY
-            }
-            
-            if self.isDismissing {
-                self.presentationController.imageViewForPresentation?.isHidden = true
-                vc.popupContentView.popupImageView?.isHidden = false
-                vc.popupContentView.popupImageModule?.isHidden = false
-            }
-
-            self.statusBarThresholdDir = self.isPresenting ? 1 : -1
-
+                self.location = vc.popupContentView.frame.minY
+                
+                if self.isPresenting {
+                    self.location = self.popupController.popupBarView.frame.minY
+                }
+                
+                if self.isDismissing {
+                    self.presentationController.imageViewForPresentation?.isHidden = true
+                    vc.popupContentView.popupImageView?.isHidden = false
+                    vc.popupContentView.popupImageModule?.isHidden = false
+                }
+                
+                self.statusBarThresholdDir = self.isPresenting ? 1 : -1
+            //}
         case .changed:
-            if self.isDismissing, let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                scrollView.contentOffset = self.contentOffset
-            }
-            
             guard let animator = self.animator else { return }
             
             self.progress = translation.y / self.availableHeight
@@ -233,11 +231,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                             vc.setNeedsStatusBarAppearanceUpdate()
                             vc.popupContentView.popupCloseButton?.setButtonStateStationary()
                         }
-                        if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                            animator.addCompletion { (_) in
-                                scrollView.contentOffset = self.contentOffset
-                            }
-                        }
+                         
                         animator.addCompletion { (_) in
                             let previousState = self.popupController.popupPresentationState
                             self.popupController.popupPresentationState = .open
@@ -388,9 +382,6 @@ extension PBPopupInteractivePresentationController: UIGestureRecognizerDelegate
             otherGestureRecognizer.state = UIGestureRecognizer.State.failed
             return true
         }
-        
-        // TODO: View hierarchy might add more and more views with gesture recognizers. Let's try to "import" them for our system.
-
         return true
     }
     

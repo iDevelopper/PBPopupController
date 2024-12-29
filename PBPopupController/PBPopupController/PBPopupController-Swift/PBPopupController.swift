@@ -636,7 +636,7 @@ extension PBPopupPresentationStyle
                     self.popupStatusBarStyle = .lightContent
                 }
             default:
-                self.popupStatusBarStyle = .default
+                self.popupStatusBarStyle = self.containerPreferredStatusBarStyle
             }
             vc.setNeedsStatusBarAppearanceUpdate()
         }
@@ -876,6 +876,7 @@ extension PBPopupPresentationStyle
             self.popupBarView?.removeFromSuperview()
             self.popupBarView = nil
             self.popupPresentationState = .dismissed
+            self.popupPresentationInteractiveController = nil
             vc.popupContentViewController.popupContainerViewController = nil
             vc.popupContentViewController.popupCloseButton = nil
             vc.popupContentViewController = nil
@@ -995,7 +996,18 @@ extension PBPopupPresentationStyle
                 self.popupPresentationInteractiveController.attachToViewController(popupController: self, withView: self.popupBarView, presenting: true)
                 self.popupPresentationInteractiveController.delegate = self
             }
-            
+            if let popupVC = vc.popupContentViewController {
+                popupVC.transitioningDelegate = self
+                popupVC.modalPresentationStyle = .custom
+                popupVC.isModalInPresentation = true
+                popupVC.modalPresentationCapturesStatusBarAppearance = true
+            }
+        }
+    }
+    
+    internal func preparePopupContentViewControllerForDismissal()
+    {
+        if let vc = self.containerViewController {
             self.popupDismissalInteractiveController = PBPopupInteractivePresentationController()
             if vc.popupContentView.popupContentDraggingView != nil {
                 vc.popupContentView.addSubview(vc.popupContentView.popupContentDraggingView)
@@ -1005,13 +1017,6 @@ extension PBPopupPresentationStyle
                 self.popupDismissalInteractiveController.attachToViewController(popupController: self, withView: vc.popupContentView, presenting: false)
             }
             self.popupDismissalInteractiveController.delegate = self
-            
-            if let popupVC = vc.popupContentViewController {
-                popupVC.transitioningDelegate = self
-                popupVC.modalPresentationStyle = .custom
-                popupVC.isModalInPresentation = true
-                popupVC.modalPresentationCapturesStatusBarAppearance = true
-            }
         }
     }
     
@@ -1085,7 +1090,9 @@ extension PBPopupPresentationStyle
         vc.view.layoutIfNeeded()
         
         self.disableInteractiveTransitioning = true
-        self.popupContentPanGestureRecognizer.isEnabled = false
+        // TODO;
+        //self.popupContentPanGestureRecognizer.isEnabled = false
+        self.popupContentPanGestureRecognizer?.isEnabled = false // ou supprimer la ligne
         let previousState = self.popupPresentationState
         self.popupPresentationState = .opening
         self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
@@ -1107,17 +1114,16 @@ extension PBPopupPresentationStyle
         self.updatePopupStatusBarStyle(for: self.popupPresentationState, previousState: previousState)
         
         vc.present(vc.popupContentViewController, animated: true) {
-            if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-            }
             let previousState = self.popupPresentationState
             self.popupPresentationState = .open
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
             self._delegate_additionalAnimationsForOpening = nil
+            
             completionBlock?()
+            
             self.disableInteractiveTransitioning = false
-            self.popupContentPanGestureRecognizer.isEnabled = true
+            self.preparePopupContentViewControllerForDismissal()
         }
     }
     
@@ -1156,12 +1162,10 @@ extension PBPopupPresentationStyle
             self.popupPresentationState = .closed
             self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
             self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
-            if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-            }
             self._delegate_additionalAnimationsForClosing = nil
             self.popupPresentationController = nil
-            
+            self.popupDismissalInteractiveController = nil
+
             // TODO: SwiftUI
             if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                 vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)
@@ -1366,8 +1370,6 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
     internal func presentInteractive()
     {
         if let vc = self.containerViewController {
-            self.popupContentPanGestureRecognizer.isEnabled = false
-
             self._prepareSoftFeedback()
             
             if self.delegate?.popupController?(self, shouldOpen: vc.popupContentViewController) == false {
@@ -1393,13 +1395,12 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             
             vc.present(vc.popupContentViewController, animated: true) {
                 if self.popupPresentationState == .opening {
-                    if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                        self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                    }
                     let previousState = self.popupPresentationState
                     self.popupPresentationState = .open
                     self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
                     self.delegate?.popupController?(self, didOpen: vc.popupContentViewController)
+
+                    self.preparePopupContentViewControllerForDismissal()
                 }
                 // TODO: SwiftUI
                 else {
@@ -1410,7 +1411,6 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
                     }
                 }
                 //
-                self.popupContentPanGestureRecognizer?.isEnabled = true
             }
         }
     }
@@ -1437,15 +1437,14 @@ extension PBPopupController: PBPopupInteractivePresentationDelegate
             
             vc.popupContentViewController.dismiss(animated: true) {
                 if self.popupPresentationState == .closing {
-                    if let scrollView = vc.popupContentViewController.view as? UIScrollView {
-                        self.popupDismissalInteractiveController.contentOffset = scrollView.contentOffset
-                    }
                     let previousState = self.popupPresentationState
                     self.popupPresentationState = .closed
                     self.delegate?.popupController?(self, stateChanged: self.popupPresentationState, previousState: previousState)
                     self.delegate?.popupController?(self, didClose: vc.popupContentViewController)
 
                     self.popupPresentationController = nil
+                    self.popupDismissalInteractiveController = nil
+                    
                     // TODO: SwiftUI
                     if NSStringFromClass(type(of: vc.popupContentViewController).self).contains("PBPopupUIContentController") {
                         vc.popupContentView.insertSubview(vc.popupContentViewController.view, at: 0)

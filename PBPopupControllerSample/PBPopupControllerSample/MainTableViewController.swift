@@ -87,7 +87,6 @@ class MainWebViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     }
 }
 
-// TODO: LNPopup: _fixupGestureRecognizer
 extension MainWebViewController: UIGestureRecognizerDelegate
 {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -151,7 +150,7 @@ class MainTableViewController: UITableViewController {
             vc.view.backgroundColor = .systemBackground
             self.navigationController?.presentPopupBar(withPopupContentViewController: nc, animated: true, completion: {
                 print("Popup Bar Presented!")
-                self.navigationController?.popupController.popupContentPanGestureRecognizer.delegate = vc
+                //self.navigationController?.popupController.popupContentPanGestureRecognizer.delegate = vc
             })
         }
     }

@@ -52,3 +52,35 @@ internal extension UIView
         return nil
     }
 }
+
+internal extension UIScrollView
+{
+    var _pb_adjustedBounds: CGRect
+    {
+        return self.bounds.inset(by: self.adjustedContentInset)
+    }
+
+    var _pb_hasHorizontalContent: Bool
+    {
+        let rv = self.contentSize.width > self._pb_adjustedBounds.size.width
+        return rv
+    }
+
+    var _pb_hasVerticalContent: Bool
+    {
+        let rv = self.contentSize.height > self._pb_adjustedBounds.size.height
+        return rv
+    }
+
+    func _pb_scrollingOnlyVertically() -> Bool
+    {
+        return self._pb_hasHorizontalContent == false || self.panGestureRecognizer.translation(in: self).x == 0
+    }
+
+    func _pb_isAtTop() -> Bool
+    {
+        return self.contentOffset.y <= -self.adjustedContentInset.top
+    }
+
+}
+

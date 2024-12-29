@@ -19,12 +19,19 @@ class PopupContentTableViewController: UITableViewController {
     
     var isPlaying: Bool = false
     
+    var containerVC: UIViewController! {
+        if let nc = self.navigationController {
+            return nc.popupContainerViewController
+        }
+        return self.popupContainerViewController
+    }
+    
     var albumArtImage: UIImage! {
         didSet {
             if isViewLoaded {
                 let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
                 cell.albumArtImageView.image = albumArtImage
-                if let containerVC = self.popupContainerViewController {
+                if let containerVC = containerVC {
                     containerVC.popupContentView.popupImageView = cell.albumArtImageView
                 }
             }
@@ -52,7 +59,7 @@ class PopupContentTableViewController: UITableViewController {
     // MARK: - Status bar
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
-        guard let containerVC = self.popupContainerViewController else { return .default }
+        guard let containerVC = self.containerVC else { return .default }
         guard let popupController = containerVC.popupController else { return .default }
         
         let popupStatusBarStyle = popupController.popupStatusBarStyle        
@@ -98,7 +105,7 @@ class PopupContentTableViewController: UITableViewController {
     func registerForTraitChanges() {
         if #available(iOS 17.0, *) {
             self.registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, previousTraitCollection: UITraitCollection) in
-                guard let containerVC = self.popupContainerViewController else { return }
+                guard let containerVC = self.containerVC else { return }
                 guard let popupController = containerVC.popupController else { return }
 
                 let userInterfaceStyle = self.traitCollection.userInterfaceStyle
@@ -116,7 +123,7 @@ class PopupContentTableViewController: UITableViewController {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard let containerVC = self.popupContainerViewController else { return }
+        guard let containerVC = self.containerVC else { return }
         guard let popupController = containerVC.popupController else { return }
         
         let userInterfaceStyle = self.traitCollection.userInterfaceStyle
@@ -177,7 +184,7 @@ class PopupContentTableViewController: UITableViewController {
             cell.albumArtImageView.image = self.albumArtImage
             cell.songNameLabel.text = self.songTitle
             cell.albumNameLabel.text = self.albumTitle
-            if let containerVC = self.popupContainerViewController {
+            if let containerVC = self.containerVC {
                 containerVC.popupContentView.popupImageView = cell.albumArtImageView
             }
             
@@ -268,7 +275,7 @@ class PopupContentTableViewController: UITableViewController {
         let cell = tableView.cellForRow(at: IndexPath(row: 0, section: 0)) as! PlayerTableViewCell
         cell.playPauseButton.setImage(self.isPlaying ? UIImage(named: "nowPlaying_pause") : UIImage(named: "nowPlaying_play"), for: .normal)
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
         
         if popupBar.popupBarStyle == .prominent {
@@ -289,7 +296,7 @@ class PopupContentTableViewController: UITableViewController {
             self.indexOfCurrentSong = self.images.count - 1
         }
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
         
         popupBar.image = self.images[self.indexOfCurrentSong]
@@ -311,7 +318,7 @@ class PopupContentTableViewController: UITableViewController {
             self.indexOfCurrentSong = 0
         }
         
-        guard let containerVC = self.popupContainerViewController,
+        guard let containerVC = self.containerVC,
               let popupBar = containerVC.popupBar else {return}
         
         popupBar.image = self.images[self.indexOfCurrentSong]

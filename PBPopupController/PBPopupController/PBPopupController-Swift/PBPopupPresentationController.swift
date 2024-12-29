@@ -430,6 +430,8 @@ internal class PBPopupPresentationController: UIPresentationController
             self.popupController.popupStatusBarStyle = self.popupController.containerPreferredStatusBarStyle
         }
         
+        self.presentingVC.beginAppearanceTransition(true, animated: true)
+        
         coordinator.animate { context in
             if !context.isInteractive {
                 self.presentingVC.setNeedsStatusBarAppearanceUpdate()
@@ -516,6 +518,7 @@ internal class PBPopupPresentationController: UIPresentationController
         //
         
         if completed {
+            self.presentingVC.endAppearanceTransition()
             self.cleanup()
         }
         else {
@@ -548,7 +551,14 @@ internal class PBPopupPresentationController: UIPresentationController
         self.touchForwardingView = nil
         
         self.presentedView?.removeFromSuperview()
-        self.popupContentView.removeFromSuperview()
+
+        if let popupContentView = self.popupContentView {
+            if let pgr = self.popupController.popupContentPanGestureRecognizer {
+                popupContentView.removeGestureRecognizer(pgr)
+                self.popupController.popupContentPanGestureRecognizer = nil
+                popupContentView.removeFromSuperview()
+            }
+        }
     }
 }
 

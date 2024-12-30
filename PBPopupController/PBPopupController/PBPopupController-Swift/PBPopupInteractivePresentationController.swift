@@ -20,6 +20,8 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
     
     private var isDismissing: Bool!
     
+    private var shouldDismiss: Bool!
+    
     private weak var view: UIView!
     
     private var gesture: UIPanGestureRecognizer!
@@ -100,6 +102,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
         
         if !self.isPresenting {
             if let scrollView = vc.popupContentView.subviews(ofType: UIScrollView.self).first, scrollView.panGestureRecognizer.isEnabled, scrollView._pb_hasVerticalContent {
+                self.shouldDismiss = false
                 if scrollView.contentOffset.y <= -scrollView.adjustedContentInset.top {
                     
                     scrollView.panGestureRecognizer.state = .failed
@@ -110,6 +113,9 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                         gesture.setTranslation(.zero, in: gesture.view?.superview)
                     }
                 }
+            }
+            else {
+                self.shouldDismiss = true
             }
         }
         
@@ -125,8 +131,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 }
                 else {
                     if !self.isDismissing {
-                        let scrollView = vc.popupContentView.subviews(ofType: UIScrollView.self).first
-                        if scrollView == nil {
+                        if self.shouldDismiss {
                             self.isDismissing = true
                             self.delegate?.dismissInteractive()
                         }
@@ -145,7 +150,7 @@ internal class PBPopupInteractivePresentationController: UIPercentDrivenInteract
                 }
                 
                 self.statusBarThresholdDir = self.isPresenting ? 1 : -1
-            //}
+            
         case .changed:
             guard let animator = self.animator else { return }
             

@@ -15,6 +15,17 @@ private let _bVLGN = "X2JhY2tkcm9wVmlld0xheWVyR3JvdXBOYW1l"
 
 internal extension UIView
 {
+    var isMostlyVisible: Bool {
+        guard !isHidden,
+              alpha > 0,
+              !bounds.isEmpty,
+              let window,
+              window.hitTest(window.convert(center, from: self.superview), with: nil) == self else {
+            return false
+        }
+        return true
+    }
+    
     func superview<T:UIView>(ofType aType:T.Type) -> T? {
         var inputView: UIView? = self
         while inputView != nil {

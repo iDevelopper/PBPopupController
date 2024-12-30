@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.10.8
+
+Gestures improvements.
+
 ## 3.10.7
 
 Gestures improvements.
